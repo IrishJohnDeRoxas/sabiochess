@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 64" width="280" height="64" fill="none">
+  <!-- Icon Mark -->
+  <g transform="translate(6, 6)">
+    <!-- Neubrutalist Hard Shadow -->
+    <rect x="5" y="5" width="48" height="48" fill="#222222" />
+    <!-- Orange Box with Border and slight tilt feeling -->
+    <rect x="0" y="0" width="48" height="48" fill="#FF4F00" stroke="#222222" stroke-width="3.5" stroke-linejoin="miter" />
+    
+    <!-- Vector White Pawn -->
+    <g transform="translate(24, 24) scale(0.95) translate(-22.5, -23)">
+      <path 
+        d="M22.5 7.5
+           C20 7.5 18 9.5 18 12
+           C18 13.1 18.4 14.1 19 14.9
+           C16.8 16.2 15.5 18.5 15.5 21.2
+           C15.5 23.4 16.5 25.3 18.1 26.6
+           C14.8 27.8 10 32.5 10 40.5
+           L35 40.5
+           C35 32.5 30.2 27.8 26.9 26.6
+           C28.5 25.3 29.5 23.4 29.5 21.2
+           C29.5 18.5 28.2 16.2 26 14.9
+           C26.6 14.1 27 13.1 27 12
+           C27 9.5 25 7.5 22.5 7.5 Z"
+        fill="#FFFFFF" 
+        stroke="#222222" 
+        stroke-width="2.5" 
+        stroke-linejoin="round"
+        stroke-linecap="round"
+      />
+      <line x1="12" y1="39" x2="33" y2="39" stroke="#222222" stroke-width="2" stroke-linecap="round" />
+    </g>
+  </g>
+
+  <!-- Brand Typography -->
+  <text x="70" y="44" font-family="'Archivo Black', 'Impact', sans-serif" font-size="30" font-weight="900" fill="#222222" letter-spacing="-0.03em" text-transform="uppercase">
+    SABIO<tspan fill="#FF4F00">CHESS</tspan>
+  </text>
+</svg>

@@ -1,0 +1,123 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.chess-board-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background-color: #222222;
+  overflow: hidden;
+  user-select: none;
+}
+
+.board-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+  width: 100%;
+  height: 100%;
+}
+
+.square {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  outline: none;
+  transition: background-color 0.1s ease;
+}
+
+/* Classic Readable Square Colors */
+.light-square {
+  background-color: #ECECD8;
+}
+
+.dark-square {
+  background-color: #739552;
+}
+
+/* Square States */
+.selected-square {
+  background-color: #F6F669 !important;
+  box-shadow: inset 0 0 0 3px #FF4F00;
+}
+
+.prev-move-square {
+  background-color: rgba(245, 224, 80, 0.7);
+}
+
+.capture-target {
+  box-shadow: inset 0 0 0 3px #FF4F00;
+}
+
+/* Pieces */
+.piece-img {
+  width: 90%;
+  height: 90%;
+  object-fit: contain;
+  z-index: 5;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.3));
+  transition: transform 0.1s ease;
+}
+
+.square:hover .piece-img {
+  transform: scale(1.05);
+}
+
+/* Legal Move Indicators */
+.legal-dot {
+  position: absolute;
+  width: 28%;
+  height: 28%;
+  border-radius: 50%;
+  background-color: rgba(34, 34, 34, 0.35);
+  z-index: 6;
+  pointer-events: none;
+}
+
+.capture-ring {
+  position: absolute;
+  width: 88%;
+  height: 88%;
+  border-radius: 50%;
+  border: 4px solid #FF4F00;
+  z-index: 6;
+  pointer-events: none;
+}
+
+/* Space Mono Coordinate Labels */
+.coord {
+  position: absolute;
+  font-size: 0.7rem;
+  font-weight: 700;
+  pointer-events: none;
+  z-index: 4;
+  line-height: 1;
+}
+
+.rank-coord {
+  top: 3px;
+  left: 3px;
+}
+
+.file-coord {
+  bottom: 3px;
+  right: 3px;
+}
+
+.dark-text {
+  color: #739552;
+}
+
+.light-text {
+  color: #ECECD8;
+}
+
+@media (min-width: 640px) {
+  .coord {
+    font-size: 0.8rem;
+  }
+}

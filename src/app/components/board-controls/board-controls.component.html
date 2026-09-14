@@ -1,0 +1,111 @@
+<div class="flex flex-col gap-4 w-full">
+  <!-- Game Status Card -->
+  <div class="card-brutal p-4 bg-white flex flex-col gap-3">
+    <div class="flex items-center justify-between border-b-2 border-[#222222] pb-2.5">
+      <div class="flex items-center gap-2">
+        <span class="font-display text-lg tracking-tight uppercase">MATCH STATUS</span>
+      </div>
+      <div 
+        class="badge-brutal"
+        [ngClass]="game.turn() === 'w' ? 'bg-[#FFFFFF] text-[#222222]' : 'bg-[#222222] text-[#FFFFFF]'"
+      >
+        TURN: {{ game.turn() === 'w' ? 'WHITE' : 'BLACK' }}
+      </div>
+    </div>
+
+    <!-- Check / Game Over Banner -->
+    @if (game.isGameOver()) {
+      <div class="bg-[#FF4F00] text-white p-3 border-2 border-[#222222] shadow-[3px_3px_0_0_#222222] font-accent text-center text-sm uppercase flex items-center justify-center gap-2">
+        <app-icon name="trophy" size="w-5 h-5"></app-icon>
+        <span>{{ game.gameOverReason() }}</span>
+      </div>
+    } @else if (game.isCheck()) {
+      <div class="bg-[#FF4F00] text-white p-2 border-2 border-[#222222] shadow-[3px_3px_0_0_#222222] font-accent text-center text-sm uppercase animate-bounce flex items-center justify-center gap-1.5">
+        <app-icon name="exclamation-triangle" size="w-5 h-5"></app-icon>
+        <span>CHECK!</span>
+      </div>
+    } @else {
+      <div class="flex items-center justify-between text-xs font-label text-[#222222] bg-[#D9D9D9] p-2 border border-[#222222]">
+        <span>POSITION EVAL:</span>
+        <strong class="text-[#0E4C92] font-bold">{{ game.evalFormatted() }}</strong>
+      </div>
+    }
+
+    <!-- Quick Action Buttons -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
+      <button 
+        type="button" 
+        (click)="game.flipBoard()" 
+        class="btn-brutal btn-brutal-silver !py-2 !px-2 text-xs flex-1 flex items-center justify-center gap-1"
+        title="Flip the board view"
+      >
+        <app-icon name="arrow-path" size="w-3.5 h-3.5"></app-icon>
+        <span>FLIP</span>
+      </button>
+
+      <button 
+        type="button" 
+        (click)="game.undoMove()" 
+        class="btn-brutal btn-brutal-silver !py-2 !px-2 text-xs flex-1 flex items-center justify-center gap-1"
+        [disabled]="game.history().length === 0"
+        title="Undo last move"
+      >
+        <app-icon name="arrow-uturn-left" size="w-3.5 h-3.5"></app-icon>
+        <span>UNDO</span>
+      </button>
+
+      <button 
+        type="button" 
+        (click)="game.resetGame()" 
+        class="btn-brutal btn-brutal-orange !py-2 !px-2 text-xs flex-1 flex items-center justify-center gap-1"
+        title="Start a new game"
+      >
+        <app-icon name="plus" size="w-3.5 h-3.5"></app-icon>
+        <span>NEW</span>
+      </button>
+
+      <button 
+        type="button" 
+        (click)="copyFen()" 
+        class="btn-brutal btn-brutal-blue !py-2 !px-2 text-xs flex-1 flex items-center justify-center gap-1"
+        title="Copy current FEN string to clipboard"
+      >
+        <app-icon [name]="copiedFen() ? 'check' : 'clipboard-document'" size="w-3.5 h-3.5"></app-icon>
+        <span>{{ copiedFen() ? 'COPIED' : 'FEN' }}</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Move History Card -->
+  <div class="card-brutal p-4 bg-white flex flex-col gap-2.5 flex-1 min-h-[220px]">
+    <div class="flex items-center justify-between border-b-2 border-[#222222] pb-2">
+      <span class="font-display text-base tracking-tight uppercase">MOVE NOTATION</span>
+      <span class="badge-brutal bg-[#C0C0C0] text-[#222222] text-[10px]">
+        {{ game.history().length }} PLY
+      </span>
+    </div>
+
+    <!-- Notation History Table -->
+    <div class="overflow-y-auto max-h-[260px] pr-1 flex flex-col gap-1">
+      @if (game.history().length === 0) {
+        <div class="text-center py-8 text-gray-500 font-label text-xs">
+          No moves played yet. Click any piece to begin!
+        </div>
+      } @else {
+        <div class="grid grid-cols-[40px_1fr_1fr] text-xs font-label font-bold border-b border-[#222222] pb-1 text-[#222222] bg-[#D9D9D9] px-2 py-1">
+          <span>#</span>
+          <span>WHITE</span>
+          <span>BLACK</span>
+        </div>
+        
+        @for (pair of getMovePairs(); track pair.num) {
+          <div class="grid grid-cols-[40px_1fr_1fr] text-xs font-label px-2 py-1 border-b border-gray-200 hover:bg-[#D9D9D9] transition-colors items-center">
+            <span class="text-gray-500 font-bold">{{ pair.num }}.</span>
+            <span class="font-bold text-[#0E4C92]">{{ pair.white }}</span>
+            <span class="font-bold text-[#222222]">{{ pair.black || '...' }}</span>
+          </div>
+        }
+      }
+    </div>
+  </div>
+</div>

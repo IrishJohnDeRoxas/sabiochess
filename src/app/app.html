@@ -1,0 +1,99 @@
+<div class="min-h-screen flex flex-col bg-[#D9D9D9] text-[#222222]">
+  <!-- Neubrutalist Header -->
+  <app-header></app-header>
+
+  <!-- Main Game Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 flex flex-col gap-6">
+    
+    <!-- Hero / Mode Banner -->
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-[#FFFFFF] border-[3px] border-[#222222] p-4 shadow-[5px_5px_0_0_#222222]">
+      <div>
+        <div class="flex items-center gap-2 mb-1">
+          <span class="badge-brutal bg-[#FF4F00] text-white flex items-center gap-1.5">
+            <app-icon name="bolt" size="w-3.5 h-3.5"></app-icon>
+            <span>LIVE GAME</span>
+          </span>
+          <span class="badge-brutal bg-[#0E4C92] text-white flex items-center gap-1.5">
+            <app-icon name="sparkles" size="w-3.5 h-3.5"></app-icon>
+            <span>ANALYSIS READY</span>
+          </span>
+        </div>
+        <h2 class="font-display text-xl sm:text-2xl tracking-tight uppercase text-[#222222]">
+          INTERACTIVE NEUBRUTALIST BOARD
+        </h2>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <span class="badge-brutal bg-[#C0C0C0] text-[#222222] font-label text-xs flex items-center gap-1.5">
+          <app-icon name="shield-check" size="w-3.5 h-3.5"></app-icon>
+          <span>RULESET: FIDE STD</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Arena Grid Layout -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      
+      <!-- Board Area: Eval Bar + Chess Board (lg:col-span-8) with CSS Grid matching heights -->
+      <div class="lg:col-span-8 grid grid-cols-[28px_1fr] sm:grid-cols-[32px_1fr] gap-3 sm:gap-4 items-stretch w-full max-w-[640px] mx-auto lg:max-w-none">
+        
+        <!-- Eval Bar Column -->
+        <div class="w-full h-full min-h-0 relative">
+          <app-eval-bar class="w-full h-full block"></app-eval-bar>
+        </div>
+
+        <!-- Main Chess Board Column -->
+        <div class="w-full min-w-0">
+          <app-chess-board></app-chess-board>
+        </div>
+
+      </div>
+
+      <!-- Controls & History Sidebar (lg:col-span-4) -->
+      <div class="lg:col-span-4 w-full max-w-[640px] mx-auto lg:max-w-none">
+        <app-board-controls></app-board-controls>
+      </div>
+
+    </div>
+
+    <!-- Bottom Feature Cards Strip -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
+      <div class="card-brutal p-4 bg-white flex flex-col gap-1.5">
+        <div class="flex items-center gap-2">
+          <span class="p-1 bg-[#FF4F00] text-white inline-flex items-center justify-center border border-[#222222]">
+            <app-icon name="swatch" size="w-4 h-4"></app-icon>
+          </span>
+          <span class="font-accent text-sm uppercase">HIGH CONTRAST GRAMMAR</span>
+        </div>
+        <p class="font-body text-xs text-gray-700 leading-relaxed">
+          Zero-blur hard drop shadows, heavy 4px structural borders, and bold tactile buttons.
+        </p>
+      </div>
+
+      <div class="card-brutal p-4 bg-white flex flex-col gap-1.5">
+        <div class="flex items-center gap-2">
+          <span class="p-1 bg-[#0E4C92] text-white inline-flex items-center justify-center border border-[#222222]">
+            <app-icon name="chart-bar" size="w-4 h-4"></app-icon>
+          </span>
+          <span class="font-accent text-sm uppercase">DYNAMIC EVALUATION</span>
+        </div>
+        <p class="font-body text-xs text-gray-700 leading-relaxed">
+          Real-time position evaluation with Space Mono advantage metrics and flipped board alignment.
+        </p>
+      </div>
+
+      <div class="card-brutal p-4 bg-white flex flex-col gap-1.5">
+        <div class="flex items-center gap-2">
+          <span class="p-1 bg-[#222222] text-white inline-flex items-center justify-center border border-[#222222]">
+            <app-icon name="cpu-chip" size="w-4 h-4"></app-icon>
+          </span>
+          <span class="font-accent text-sm uppercase">CHESS.JS ENGINE CORE</span>
+        </div>
+        <p class="font-body text-xs text-gray-700 leading-relaxed">
+          Full move validation, check/stalemate detection, SAN history tracking, and FEN export.
+        </p>
+      </div>
+    </div>
+
+  </main>
+</div>

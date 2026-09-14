@@ -1,0 +1,52 @@
+<div class="chess-board-wrapper card-brutal-lg">
+  <div class="board-grid">
+    @for (square of game.boardSquares(); track square.square) {
+      <div
+        class="square"
+        [class.light-square]="square.isLight"
+        [class.dark-square]="!square.isLight"
+        [class.selected-square]="square.isSelected"
+        [class.prev-move-square]="square.isPreviousMove"
+        [class.capture-target]="square.isLegalCapture"
+        (click)="onSquareClick(square)"
+        [attr.aria-label]="square.square"
+        role="button"
+        tabindex="0"
+      >
+        <!-- Legal Move Indicator Dot -->
+        @if (square.isLegalMove && !square.isLegalCapture) {
+          <div class="legal-dot"></div>
+        }
+
+        <!-- Legal Capture Ring -->
+        @if (square.isLegalCapture) {
+          <div class="capture-ring"></div>
+        }
+
+        <!-- Piece SVG -->
+        @if (square.piece) {
+          <img
+            [src]="getPieceSvgUrl(square.piece)"
+            [alt]="(square.piece.color === 'w' ? 'White ' : 'Black ') + square.piece.type"
+            class="piece-img select-none pointer-events-none"
+            draggable="false"
+          />
+        }
+
+        <!-- Rank Coordinate (on a-file) -->
+        @if ((!game.isBoardFlipped() && square.file === 'a') || (game.isBoardFlipped() && square.file === 'h')) {
+          <span class="coord rank-coord font-label" [class.dark-text]="square.isLight" [class.light-text]="!square.isLight">
+            {{ square.rank }}
+          </span>
+        }
+
+        <!-- File Coordinate (on 1-rank) -->
+        @if ((!game.isBoardFlipped() && square.rank === 1) || (game.isBoardFlipped() && square.rank === 8)) {
+          <span class="coord file-coord font-label" [class.dark-text]="square.isLight" [class.light-text]="!square.isLight">
+            {{ square.file }}
+          </span>
+        }
+      </div>
+    }
+  </div>
+</div>

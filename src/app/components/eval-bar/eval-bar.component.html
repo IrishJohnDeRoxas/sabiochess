@@ -1,0 +1,23 @@
+<div 
+  class="eval-bar-wrapper"
+  [class.flipped]="game.isBoardFlipped()"
+  [attr.aria-label]="'Evaluation: ' + game.evalFormatted()"
+>
+  <!-- Background Black Bar -->
+  <div class="eval-black-segment"></div>
+
+  <!-- Foreground White Bar -->
+  <div 
+    class="eval-white-segment"
+    [style.height.%]="game.whiteAdvantagePercentage()"
+  ></div>
+
+  <!-- Space Mono Advantage Score Badge -->
+  <div 
+    class="eval-score-badge font-label"
+    [class.white-adv]="game.evalScore() >= 0"
+    [class.black-adv]="game.evalScore() < 0"
+  >
+    {{ game.evalFormatted() }}
+  </div>
+</div>
