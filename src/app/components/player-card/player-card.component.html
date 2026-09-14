@@ -20,64 +20,50 @@
     </div>
 
     <!-- Name & Rating Info Stack -->
-    <div class="flex flex-col min-w-0 justify-center">
-      <!-- Top Line: Title + Username -->
-      <div class="flex items-center gap-1.5 min-w-0 leading-tight">
-        @if (player.title) {
-          <span class="badge-brutal text-[9px] !px-1.5 !py-0 bg-[#F59E0B] text-[#222222] font-black shrink-0 tracking-tight shadow-[1px_1px_0_0_#222222]">
-            {{ player.title }}
-          </span>
-        }
-        <span class="font-display font-bold text-xs sm:text-sm text-[#222222] truncate max-w-[120px] sm:max-w-[200px]" [title]="player.name">
-          {{ player.name }}
+    <div class="flex items-center gap-1.5 sm:gap-2 min-w-0">
+      @if (player.title) {
+        <span class="badge-brutal text-[9px] !px-1.5 !py-0.5 bg-[#F59E0B] text-[#222222] font-black shrink-0 tracking-tight shadow-[1px_1px_0_0_#222222]">
+          {{ player.title }}
         </span>
-      </div>
+      }
+      <span class="font-display font-bold text-xs sm:text-sm text-[#222222] truncate max-w-[130px] sm:max-w-[220px]" [title]="player.name">
+        {{ player.name }}
+      </span>
 
-      <!-- Bottom Line: Rating Tag + Captured Pieces Tray -->
-      <div class="flex items-center gap-1.5 sm:gap-2 mt-0.5 min-w-0">
-        <!-- Rating Pill -->
-        <span class="badge-brutal text-[10px] !px-1.5 !py-0 bg-[#D9D9D9] text-[#222222] font-label font-bold shrink-0">
-          {{ formattedRating }}
-        </span>
+      <!-- Rating Pill -->
+      <span class="badge-brutal text-[10px] sm:text-xs !px-1.5 !py-0.5 bg-[#D9D9D9] text-[#222222] font-label font-bold shrink-0">
+        {{ formattedRating }}
+      </span>
+    </div>
+  </div>
 
-        <!-- Captured Pieces Tray & Material Count -->
-        @if (capturedPieces.length > 0 || materialAdvantage > 0) {
-          <div class="flex items-center gap-1 min-w-0 overflow-x-hidden">
-            <!-- Piece icons -->
-            <div class="flex items-center -space-x-1 sm:space-x-0">
-              @for (cap of capturedPieces; track cap.type) {
-                <div class="flex items-center relative" [title]="'Captured ' + cap.count + ' ' + cap.type">
-                  <img [src]="cap.svgUrl" [alt]="cap.type" class="w-3.5 h-3.5 sm:w-4 sm:h-4 inline-block opacity-85 select-none pointer-events-none" />
-                  @if (cap.count > 1) {
-                    <span class="text-[8px] font-bold text-[#222222] -ml-0.5 leading-none">×{{ cap.count }}</span>
-                  }
-                </div>
-              }
-            </div>
-
-            <!-- Material Lead (+X) -->
-            @if (materialAdvantage > 0) {
-              <span class="badge-brutal bg-[#10B981] text-white text-[9px] font-black !px-1 !py-0 shadow-[1px_1px_0_0_#222222]">
-                +{{ materialAdvantage }}
-              </span>
+  <!-- Right: Captured Pieces Tray & Material Count -->
+  <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+    @if (capturedPieces.length > 0) {
+      <div class="flex items-center -space-x-1 sm:space-x-0.5 overflow-x-hidden">
+        @for (cap of capturedPieces; track cap.type) {
+          <div class="flex items-center relative" [title]="'Captured ' + cap.count + ' ' + cap.type">
+            <img [src]="cap.svgUrl" [alt]="cap.type" class="w-3.5 h-3.5 sm:w-4 sm:h-4 inline-block opacity-85 select-none pointer-events-none" />
+            @if (cap.count > 1) {
+              <span class="text-[8px] font-bold text-[#222222] -ml-0.5 leading-none">×{{ cap.count }}</span>
             }
           </div>
         }
       </div>
-    </div>
-  </div>
+    }
 
-  <!-- Right: Digital Clock / Match Indicator Box -->
-  <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
-    @if (isTurn) {
-      <div class="flex items-center gap-1.5 px-2 sm:px-2.5 py-1 bg-[#FF4F00] text-white border-2 border-[#222222] shadow-[2px_2px_0_0_#222222] font-accent text-[10px] sm:text-xs font-bold animate-pulse">
-        <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-white inline-block"></span>
-        <span class="tracking-wider">TO MOVE</span>
-      </div>
-    } @else {
-      <div class="px-2 sm:px-2.5 py-1 bg-[#ECECD8] text-[#222222] border-2 border-[#222222] shadow-[2px_2px_0_0_#222222] font-label text-[10px] sm:text-xs font-bold opacity-80">
-        <span>WAITING</span>
-      </div>
+    <!-- Material Lead (+X) -->
+    @if (materialAdvantage > 0) {
+      <span class="badge-brutal bg-[#10B981] text-white text-[9px] sm:text-[10px] font-black !px-1.5 !py-0.5 shadow-[1px_1px_0_0_#222222]">
+        +{{ materialAdvantage }}
+      </span>
+    }
+
+    <!-- Optional Time Control Badge -->
+    @if (timeControl) {
+      <span class="badge-brutal bg-[#ECECD8] text-[#222222] text-[9px] sm:text-[10px] font-label font-bold !px-1.5 !py-0.5 opacity-75 hidden sm:inline-block">
+        {{ timeControl }}
+      </span>
     }
   </div>
 </div>

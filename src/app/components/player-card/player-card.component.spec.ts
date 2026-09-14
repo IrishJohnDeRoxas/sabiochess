@@ -45,12 +45,12 @@ describe('PlayerCardComponent', () => {
     expect(compiled.textContent).toContain('?');
   });
 
-  it('should show turn indicator when isTurn is true', () => {
+  it('should apply is-active-turn class when isTurn is true', () => {
     component.isTurn = true;
     fixture.detectChanges();
 
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.textContent).toContain('TO MOVE');
+    const container = fixture.nativeElement.querySelector('.player-card-container') as HTMLElement;
+    expect(container.classList.contains('is-active-turn')).toBe(true);
   });
 
   it('should display material advantage when positive', () => {

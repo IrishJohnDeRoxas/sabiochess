@@ -353,15 +353,11 @@ export class ChessGameService {
       this.stopAutoplay();
     }
 
-    // If viewing past history, resume to live board on interaction
-    if (this.isBrowsingHistory()) {
-      this.goToEnd();
-    }
-
-    if (this.liveChess.isGameOver()) return;
+    const activeChess = this.getActiveChess();
+    if (activeChess.isGameOver()) return;
 
     const currentSelected = this.selectedSquare();
-    const pieceOnSquare = this.liveChess.get(square);
+    const pieceOnSquare = activeChess.get(square);
 
     if (currentSelected === square) {
       this.clearSelection();
@@ -369,13 +365,24 @@ export class ChessGameService {
     }
 
     if (currentSelected && this.legalMoveSquares().includes(square)) {
+      // If branching from an earlier move in review history, update liveChess to match
+      if (this.isBrowsingHistory()) {
+        const ply = this.currentPlyIndex();
+        if (ply !== null && ply >= 0) {
+          this.liveChess = new Chess(this.displayChess.fen());
+          this.history.update((h) => h.slice(0, ply + 1));
+        } else if (ply === -1) {
+          this.liveChess = new Chess();
+          this.history.set([]);
+        }
+      }
       this.makeMove(currentSelected, square);
       return;
     }
 
-    if (pieceOnSquare && pieceOnSquare.color === this.turn()) {
+    if (pieceOnSquare && pieceOnSquare.color === activeChess.turn()) {
       this.selectedSquare.set(square);
-      const moves = this.liveChess.moves({ square, verbose: true }) as Move[];
+      const moves = activeChess.moves({ square, verbose: true }) as Move[];
       this.legalMoveSquares.set(moves.map((m) => m.to as Square));
     } else {
       this.clearSelection();
