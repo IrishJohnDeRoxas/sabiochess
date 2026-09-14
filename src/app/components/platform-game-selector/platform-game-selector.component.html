@@ -39,14 +39,14 @@
         (ngModelChange)="username.set($event)"
         name="username"
         [placeholder]="activePlatform() === 'chess.com' ? 'Chess.com Username (e.g. Hikaru)' : 'Lichess Username (e.g. DrNykterstein)'"
-        class="w-full bg-[#D9D9D9] border-2 border-[#222222] px-2.5 py-1.5 text-xs font-label text-[#222222] focus:bg-white focus:outline-none focus:border-[#FF4F00] uppercase placeholder:normal-case"
+        class="w-full h-8 bg-[#D9D9D9] border-2 border-[#222222] px-2.5 text-xs font-label text-[#222222] focus:bg-white focus:outline-none focus:border-[#FF4F00] uppercase placeholder:normal-case box-border"
       />
     </div>
 
     <button
       type="submit"
       [disabled]="isLoading()"
-      class="btn-brutal btn-brutal-orange !py-1.5 !px-3 text-xs flex items-center gap-1 whitespace-nowrap"
+      class="btn-brutal btn-brutal-orange h-8 !py-0 !px-3 text-xs flex items-center justify-center gap-1 whitespace-nowrap cursor-pointer box-border"
     >
       @if (isLoading()) {
         <app-icon name="arrow-path" size="w-3.5 h-3.5 animate-spin"></app-icon>

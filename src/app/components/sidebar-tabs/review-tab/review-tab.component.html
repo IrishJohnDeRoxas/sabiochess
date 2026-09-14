@@ -71,17 +71,6 @@
           </div>
         }
 
-        <!-- Importer / Online Fetcher Toggle Button -->
-        <button
-          type="button"
-          (click)="toggleImporter()"
-          class="btn-brutal !py-1 !px-2 text-xs flex items-center gap-1 cursor-pointer"
-          [ngClass]="isImporterOpen() ? 'btn-brutal-orange' : 'btn-brutal-silver'"
-          title="Fetch from Chess.com / Lichess, load classic samples or paste PGN"
-        >
-          <app-icon name="arrow-down-tray" size="w-3 h-3"></app-icon>
-          <span>FETCH / PGN</span>
-        </button>
       </div>
     </div>
 
