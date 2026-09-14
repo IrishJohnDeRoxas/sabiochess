@@ -330,8 +330,7 @@ export class ChessGameService {
       }
       return '½-½';
     }
-    const sign = score > 0 ? '+' : '';
-    return `${sign}${score.toFixed(1)}`;
+    return `${score.toFixed(1)}`;
   });
 
   readonly whiteAdvantagePercentage = computed<number>(() => {
