@@ -1,6 +1,6 @@
-<div class="flex flex-col gap-3 w-full">
+<div class="flex flex-col gap-3 w-full h-full min-h-0">
   <!-- Neubrutalist Tab Buttons Navigation Strip -->
-  <div class="grid grid-cols-3 gap-2 bg-[#FFFFFF] border-[3px] border-[#222222] p-1.5 shadow-[5px_5px_0_0_#222222]" role="tablist">
+  <div class="shrink-0 grid grid-cols-3 gap-2 bg-[#FFFFFF] border-[3px] border-[#222222] p-1.5 shadow-[5px_5px_0_0_#222222]" role="tablist">
     <!-- Tab 1: Review -->
     <button
       type="button"
@@ -45,7 +45,7 @@
   @if (analysisService.isAnalyzing() && activeTab() !== 'analysis') {
     <div 
       (click)="setTab('analysis')"
-      class="bg-[#FF4F00] text-white border-2 border-[#222222] p-2 flex items-center justify-between text-xs font-accent uppercase cursor-pointer hover:opacity-95 shadow-[3px_3px_0_0_#222222] animate-pulse"
+      class="shrink-0 bg-[#FF4F00] text-white border-2 border-[#222222] p-2 flex items-center justify-between text-xs font-accent uppercase cursor-pointer hover:opacity-95 shadow-[3px_3px_0_0_#222222] animate-pulse"
       title="Click to open Analysis tab"
     >
       <span class="flex items-center gap-1.5">
@@ -56,8 +56,8 @@
     </div>
   }
 
-  <!-- Active Tab Body -->
-  <div class="w-full min-h-0 lg:max-h-[calc(100dvh-125px)] lg:overflow-y-auto pr-0.5">
+  <!-- Active Tab Body (Scrollable container matching board height) -->
+  <div class="flex-1 min-h-0 overflow-y-auto pr-1 pb-1">
     @switch (activeTab()) {
       @case ('review') {
         <app-review-tab></app-review-tab>
