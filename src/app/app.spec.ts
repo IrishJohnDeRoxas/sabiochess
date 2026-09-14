@@ -4,6 +4,7 @@ import { ChessGameService } from './services/chess-game.service';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { ChessBoardComponent } from './components/chess-board/chess-board.component';
+import { PlayerCardComponent } from './components/player-card/player-card.component';
 import { EvalBarComponent } from './components/eval-bar/eval-bar.component';
 import { SidebarTabsComponent } from './components/sidebar-tabs/sidebar-tabs.component';
 import { LogoComponent } from './components/logo/logo.component';
@@ -15,7 +16,16 @@ import { describe, it, expect, beforeEach } from 'vitest';
 describe('SabioChess Neubrutalist Suite', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [App, HeaderComponent, FooterComponent, ChessBoardComponent, EvalBarComponent, SidebarTabsComponent, LogoComponent],
+      imports: [
+        App,
+        HeaderComponent,
+        FooterComponent,
+        ChessBoardComponent,
+        PlayerCardComponent,
+        EvalBarComponent,
+        SidebarTabsComponent,
+        LogoComponent,
+      ],
       providers: [ChessGameService, SettingsService, SoundService, GameAnalysisService],
     }).compileComponents();
   });
@@ -24,6 +34,19 @@ describe('SabioChess Neubrutalist Suite', () => {
     const fixture = TestBed.createComponent(App);
     const app = fixture.componentInstance;
     expect(app).toBeTruthy();
+  });
+
+  it('should render player cards with username and rating', () => {
+    const fixture = TestBed.createComponent(App);
+    const service = TestBed.inject(ChessGameService);
+    service.loadSampleGame('opera');
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.textContent).toContain('Paul Morphy');
+    expect(compiled.textContent).toContain('2600');
+    expect(compiled.textContent).toContain('Duke Karl / Count Isouard');
+    expect(compiled.textContent).toContain('2100');
   });
 
   it('should render the brand header with SabioChess title', () => {
@@ -55,11 +78,17 @@ describe('SabioChess Neubrutalist Suite', () => {
     expect(service.history()[0].san).toBe('e4');
   });
 
-  it('should flip the board orientation when flipBoard() is called', () => {
+  it('should flip the board orientation and invert player cards', () => {
     const service = TestBed.inject(ChessGameService);
+    service.loadSampleGame('opera');
     expect(service.isBoardFlipped()).toBe(false);
+    expect(service.topPlayer().name).toBe('Duke Karl / Count Isouard');
+    expect(service.bottomPlayer().name).toBe('Paul Morphy');
+
     service.flipBoard();
     expect(service.isBoardFlipped()).toBe(true);
+    expect(service.topPlayer().name).toBe('Paul Morphy');
+    expect(service.bottomPlayer().name).toBe('Duke Karl / Count Isouard');
   });
 
   it('should render EvalBar and update value based on position', () => {
@@ -78,3 +107,4 @@ describe('SabioChess Neubrutalist Suite', () => {
     expect(compiled.textContent).toContain('Chess');
   });
 });
+

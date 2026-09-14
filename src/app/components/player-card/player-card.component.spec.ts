@@ -1,0 +1,63 @@
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { PlayerCardComponent } from './player-card.component';
+import { describe, it, expect, beforeEach } from 'vitest';
+
+describe('PlayerCardComponent', () => {
+  let component: PlayerCardComponent;
+  let fixture: ComponentFixture<PlayerCardComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [PlayerCardComponent],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(PlayerCardComponent);
+    component = fixture.componentInstance;
+  });
+
+  it('should create PlayerCardComponent', () => {
+    expect(component).toBeTruthy();
+  });
+
+  it('should display player name, rating and title', () => {
+    component.player = {
+      name: 'Hikaru Nakamura',
+      rating: 2875,
+      title: 'GM',
+    };
+    component.color = 'w';
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.textContent).toContain('Hikaru Nakamura');
+    expect(compiled.textContent).toContain('2875');
+    expect(compiled.textContent).toContain('GM');
+  });
+
+  it('should display unrated symbol (?) when rating is missing', () => {
+    component.player = {
+      name: 'Casual Player',
+    };
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.textContent).toContain('Casual Player');
+    expect(compiled.textContent).toContain('?');
+  });
+
+  it('should show turn indicator when isTurn is true', () => {
+    component.isTurn = true;
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.textContent).toContain('TO MOVE');
+  });
+
+  it('should display material advantage when positive', () => {
+    component.materialAdvantage = 3;
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.textContent).toContain('+3');
+  });
+});

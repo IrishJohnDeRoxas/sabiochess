@@ -8,22 +8,46 @@
     <!-- Arena Grid Layout -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center my-auto">
       
-      <!-- Board Area: Eval Bar + Chess Board (lg:col-span-7) -->
-      <div 
-        class="lg:col-span-7 grid gap-3 sm:gap-4 items-stretch w-full max-w-[640px] mx-auto lg:max-w-none"
-        [ngClass]="settings.showEvalBar() ? 'grid-cols-[28px_1fr] sm:grid-cols-[32px_1fr]' : 'grid-cols-1'"
-      >
-        <!-- Eval Bar Column -->
-        @if (settings.showEvalBar()) {
-          <div class="w-full h-full min-h-0 relative">
-            <app-eval-bar class="w-full h-full block"></app-eval-bar>
-          </div>
-        }
+      <!-- Board Area: Top Player + [Eval Bar + Chess Board] + Bottom Player (lg:col-span-7) -->
+      <div class="lg:col-span-7 flex flex-col gap-2 w-full max-w-[640px] mx-auto lg:max-w-none">
+        
+        <!-- Top Player Card -->
+        <app-player-card
+          [player]="game.topPlayer()"
+          [color]="game.topColor()"
+          [isTurn]="game.isTopTurn()"
+          [capturedPieces]="game.topCapturedPieces()"
+          [materialAdvantage]="game.topMaterialAdvantage()"
+          [timeControl]="game.matchMetadata().timeControl"
+        ></app-player-card>
 
-        <!-- Main Chess Board Column -->
-        <div class="w-full min-w-0">
-          <app-chess-board></app-chess-board>
+        <!-- Board Row: Eval Bar + Chess Board (matching exact height) -->
+        <div 
+          class="grid gap-2.5 sm:gap-3 items-stretch w-full"
+          [ngClass]="settings.showEvalBar() ? 'grid-cols-[24px_1fr] sm:grid-cols-[28px_1fr]' : 'grid-cols-1'"
+        >
+          <!-- Eval Bar Column -->
+          @if (settings.showEvalBar()) {
+            <div class="w-full h-full min-h-0 relative">
+              <app-eval-bar class="w-full h-full block"></app-eval-bar>
+            </div>
+          }
+
+          <!-- Main Chess Board -->
+          <div class="w-full min-w-0">
+            <app-chess-board></app-chess-board>
+          </div>
         </div>
+
+        <!-- Bottom Player Card -->
+        <app-player-card
+          [player]="game.bottomPlayer()"
+          [color]="game.bottomColor()"
+          [isTurn]="game.isBottomTurn()"
+          [capturedPieces]="game.bottomCapturedPieces()"
+          [materialAdvantage]="game.bottomMaterialAdvantage()"
+          [timeControl]="game.matchMetadata().timeControl"
+        ></app-player-card>
 
       </div>
 

@@ -68,7 +68,7 @@ export class PlatformGameSelectorComponent {
   }
 
   loadGame(game: FetchedGame): void {
-    const success = this.gameService.loadPgn(game.pgn);
+    const success = this.gameService.loadOnlineGame(game);
     if (success) {
       this.gameSelected.emit(game);
     } else {

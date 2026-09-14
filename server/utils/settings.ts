@@ -91,7 +91,7 @@ export function extractUserSettings(user?: Partial<User> | null): UserSettings {
 
   const chesscomUsername =
     typeof user?.chesscomUsername === 'string' && user.chesscomUsername.trim().length > 0
-      ? user.chesscomUsername
+      ? user.chesscomUsername.trim()
       : null;
 
   return {
