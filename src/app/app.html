@@ -2,14 +2,13 @@
   <!-- Neubrutalist Header -->
   <app-header></app-header>
 
-  <!-- Main Game Container -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 flex flex-col gap-6">
+  <!-- Main Game Arena (Fills initial viewport cleanly) -->
+  <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 flex flex-col justify-center min-h-[calc(100vh-64px)]">
     
-
     <!-- Arena Grid Layout -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center my-auto">
       
-      <!-- Board Area: Eval Bar + Chess Board (lg:col-span-7 or 8) -->
+      <!-- Board Area: Eval Bar + Chess Board (lg:col-span-7) -->
       <div 
         class="lg:col-span-7 grid gap-3 sm:gap-4 items-stretch w-full max-w-[640px] mx-auto lg:max-w-none"
         [ngClass]="settings.showEvalBar() ? 'grid-cols-[28px_1fr] sm:grid-cols-[32px_1fr]' : 'grid-cols-1'"
@@ -35,44 +34,11 @@
 
     </div>
 
-    <!-- Bottom Feature Cards Strip -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-2">
-      <div class="card-brutal p-4 bg-white flex flex-col gap-1.5">
-        <div class="flex items-center gap-2">
-          <span class="p-1 bg-[#FF4F00] text-white inline-flex items-center justify-center border border-[#222222]">
-            <app-icon name="swatch" size="w-4 h-4"></app-icon>
-          </span>
-          <span class="font-accent text-sm uppercase">HIGH CONTRAST GRAMMAR</span>
-        </div>
-        <p class="font-body text-xs text-gray-700 leading-relaxed">
-          Zero-blur hard drop shadows, heavy 3px/4px borders, tactile click states, and customizable visual themes.
-        </p>
-      </div>
-
-      <div class="card-brutal p-4 bg-white flex flex-col gap-1.5">
-        <div class="flex items-center gap-2">
-          <span class="p-1 bg-[#0E4C92] text-white inline-flex items-center justify-center border border-[#222222]">
-            <app-icon name="chart-bar" size="w-4 h-4"></app-icon>
-          </span>
-          <span class="font-accent text-sm uppercase">CAPS ACCURACY & REVIEW</span>
-        </div>
-        <p class="font-body text-xs text-gray-700 leading-relaxed">
-          Move classifications (Brilliant, Best, Blunder), interactive eval momentum chart, and opening theory book detection.
-        </p>
-      </div>
-
-      <div class="card-brutal p-4 bg-white flex flex-col gap-1.5">
-        <div class="flex items-center gap-2">
-          <span class="p-1 bg-[#222222] text-white inline-flex items-center justify-center border border-[#222222]">
-            <app-icon name="speaker-wave" size="w-4 h-4"></app-icon>
-          </span>
-          <span class="font-accent text-sm uppercase">VIRAL MEME & FX AUDIO</span>
-        </div>
-        <p class="font-body text-xs text-gray-700 leading-relaxed">
-          Dynamic audio reaction packs including Meme Vault, 8-Bit Arcade, Cartoon Slapstick, and Classical Symphony.
-        </p>
-      </div>
-    </div>
-
   </main>
+
+  <!-- Neubrutalist Footer (Pushed down below the first screen fold) -->
+  <app-footer class="mt-16 sm:mt-24"></app-footer>
 </div>
+
+
+

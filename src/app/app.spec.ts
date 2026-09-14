@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { App } from './app';
 import { ChessGameService } from './services/chess-game.service';
 import { HeaderComponent } from './components/header/header.component';
+import { FooterComponent } from './components/footer/footer.component';
 import { ChessBoardComponent } from './components/chess-board/chess-board.component';
 import { EvalBarComponent } from './components/eval-bar/eval-bar.component';
 import { SidebarTabsComponent } from './components/sidebar-tabs/sidebar-tabs.component';
@@ -14,7 +15,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 describe('SabioChess Neubrutalist Suite', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [App, HeaderComponent, ChessBoardComponent, EvalBarComponent, SidebarTabsComponent, LogoComponent],
+      imports: [App, HeaderComponent, FooterComponent, ChessBoardComponent, EvalBarComponent, SidebarTabsComponent, LogoComponent],
       providers: [ChessGameService, SettingsService, SoundService, GameAnalysisService],
     }).compileComponents();
   });

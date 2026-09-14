@@ -57,7 +57,7 @@
   }
 
   <!-- Active Tab Body -->
-  <div class="w-full">
+  <div class="w-full min-h-0 lg:max-h-[calc(100dvh-125px)] lg:overflow-y-auto pr-0.5">
     @switch (activeTab()) {
       @case ('review') {
         <app-review-tab></app-review-tab>
