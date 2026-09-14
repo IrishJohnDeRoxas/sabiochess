@@ -1,16 +1,16 @@
 <div
-  class="player-card-container px-2.5 py-1.5 sm:px-3 sm:py-2 bg-white flex items-center justify-between gap-2.5 select-none transition-all duration-150 w-full border-2 border-[#222222]"
+  class="player-card-container px-2.5 py-1.5 sm:px-3 sm:py-2 bg-white dark:bg-[#1E1F24] flex items-center justify-between gap-2.5 select-none transition-all duration-150 w-full border-2 border-[#222222] dark:border-black"
   [ngClass]="{
-    'is-active-turn shadow-[4px_4px_0_0_#FF4F00] bg-white': isTurn,
-    'is-waiting shadow-[4px_4px_0_0_#222222]': !isTurn
+    'is-active-turn shadow-[4px_4px_0_0_#FF4F00] bg-white dark:bg-[#1E1F24]': isTurn,
+    'is-waiting shadow-[4px_4px_0_0_#222222] dark:shadow-[4px_4px_0_0_#000000]': !isTurn
   }"
 >
   <!-- Left: Player Profile Details -->
   <div class="flex items-center gap-2 sm:gap-2.5 min-w-0">
     <!-- Square Avatar / Piece Icon Frame -->
     <div
-      class="player-avatar w-7 h-7 sm:w-8 sm:h-8 rounded-none border-2 border-[#222222] flex items-center justify-center shrink-0 shadow-[2px_2px_0_0_#222222] transition-transform"
-      [ngClass]="color === 'w' ? 'bg-[#ECECD8]' : 'bg-[#222222]'"
+      class="player-avatar w-7 h-7 sm:w-8 sm:h-8 rounded-none border-2 border-[#222222] dark:border-black flex items-center justify-center shrink-0 shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000] transition-transform"
+      [ngClass]="color === 'w' ? 'bg-[#ECECD8] dark:bg-[#2A2B32]' : 'bg-[#222222] dark:bg-[#141519]'"
     >
       @if (color === 'w') {
         <img src="pieces/wK.svg" alt="White Player" class="w-5 h-5 sm:w-6 sm:h-6 select-none pointer-events-none" />
@@ -22,16 +22,16 @@
     <!-- Name & Rating Info Stack -->
     <div class="flex items-center gap-1.5 sm:gap-2 min-w-0">
       @if (player.title) {
-        <span class="badge-brutal text-[9px] !px-1.5 !py-0.5 bg-[#F59E0B] text-[#222222] font-black shrink-0 tracking-tight shadow-[1px_1px_0_0_#222222]">
+        <span class="badge-brutal text-[9px] !px-1.5 !py-0.5 bg-[#F59E0B] text-[#222222] font-black shrink-0 tracking-tight shadow-[1px_1px_0_0_#222222] dark:shadow-[1px_1px_0_0_#000000]">
           {{ player.title }}
         </span>
       }
-      <span class="font-display font-bold text-xs sm:text-sm text-[#222222] truncate max-w-[130px] sm:max-w-[220px]" [title]="player.name">
+      <span class="font-display font-bold text-xs sm:text-sm text-[#222222] dark:text-[#F3F4F6] truncate max-w-[130px] sm:max-w-[220px]" [title]="player.name">
         {{ player.name }}
       </span>
 
       <!-- Rating Pill -->
-      <span class="badge-brutal text-[10px] sm:text-xs !px-1.5 !py-0.5 bg-[#D9D9D9] text-[#222222] font-label font-bold shrink-0">
+      <span class="badge-brutal text-[10px] sm:text-xs !px-1.5 !py-0.5 bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] font-label font-bold shrink-0">
         {{ formattedRating }}
       </span>
     </div>
@@ -45,7 +45,7 @@
           <div class="flex items-center relative" [title]="'Captured ' + cap.count + ' ' + cap.type">
             <img [src]="cap.svgUrl" [alt]="cap.type" class="w-3.5 h-3.5 sm:w-4 sm:h-4 inline-block opacity-85 select-none pointer-events-none" />
             @if (cap.count > 1) {
-              <span class="text-[8px] font-bold text-[#222222] -ml-0.5 leading-none">×{{ cap.count }}</span>
+              <span class="text-[8px] font-bold text-[#222222] dark:text-[#F3F4F6] -ml-0.5 leading-none">×{{ cap.count }}</span>
             }
           </div>
         }
@@ -54,14 +54,14 @@
 
     <!-- Material Lead (+X) -->
     @if (materialAdvantage > 0) {
-      <span class="badge-brutal bg-[#10B981] text-white text-[9px] sm:text-[10px] font-black !px-1.5 !py-0.5 shadow-[1px_1px_0_0_#222222]">
+      <span class="badge-brutal bg-[#10B981] text-white text-[9px] sm:text-[10px] font-black !px-1.5 !py-0.5 shadow-[1px_1px_0_0_#222222] dark:shadow-[1px_1px_0_0_#000000]">
         +{{ materialAdvantage }}
       </span>
     }
 
     <!-- Optional Time Control Badge -->
     @if (timeControl) {
-      <span class="badge-brutal bg-[#ECECD8] text-[#222222] text-[9px] sm:text-[10px] font-label font-bold !px-1.5 !py-0.5 opacity-75 hidden sm:inline-block">
+      <span class="badge-brutal bg-[#ECECD8] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] text-[9px] sm:text-[10px] font-label font-bold !px-1.5 !py-0.5 opacity-75 hidden sm:inline-block">
         {{ timeControl }}
       </span>
     }

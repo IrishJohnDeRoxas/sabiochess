@@ -1,11 +1,11 @@
-<div class="card-brutal p-3 bg-white flex flex-col gap-2.5 w-full">
+<div class="card-brutal p-3 bg-white dark:bg-[#1E1F24] flex flex-col gap-2.5 w-full text-[#222222] dark:text-[#F3F4F6]">
   <!-- Header -->
-  <div class="flex items-center justify-between border-b-2 border-[#222222] pb-1.5">
+  <div class="flex items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-1.5">
     <div class="flex items-center gap-1.5">
-      <span class="p-1 bg-[#10B981] text-white inline-flex border border-[#222222]">
+      <span class="p-1 bg-[#10B981] text-white inline-flex border border-[#222222] dark:border-black">
         <app-icon name="arrow-down-tray" size="w-3.5 h-3.5"></app-icon>
       </span>
-      <span class="font-display text-xs uppercase tracking-tight">FETCH ONLINE GAMES</span>
+      <span class="font-display text-xs uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6]">FETCH ONLINE GAMES</span>
     </div>
 
     <!-- Platform Buttons -->
@@ -14,7 +14,7 @@
         type="button"
         (click)="selectPlatform('chess.com')"
         class="badge-brutal cursor-pointer text-[10px] transition-colors"
-        [ngClass]="activePlatform() === 'chess.com' ? 'bg-[#10B981] text-white' : 'bg-[#D9D9D9] text-[#222222]'"
+        [ngClass]="activePlatform() === 'chess.com' ? 'bg-[#10B981] text-white' : 'bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6]'"
       >
         CHESS.COM
       </button>
@@ -23,7 +23,7 @@
         type="button"
         (click)="selectPlatform('lichess')"
         class="badge-brutal cursor-pointer text-[10px] transition-colors"
-        [ngClass]="activePlatform() === 'lichess' ? 'bg-[#0E4C92] text-white' : 'bg-[#D9D9D9] text-[#222222]'"
+        [ngClass]="activePlatform() === 'lichess' ? 'bg-[#0E4C92] text-white' : 'bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6]'"
       >
         LICHESS
       </button>
@@ -39,7 +39,7 @@
         (ngModelChange)="username.set($event)"
         name="username"
         [placeholder]="activePlatform() === 'chess.com' ? 'Chess.com Username (e.g. Hikaru)' : 'Lichess Username (e.g. DrNykterstein)'"
-        class="w-full h-8 bg-[#D9D9D9] border-2 border-[#222222] px-2.5 text-xs font-label text-[#222222] focus:bg-white focus:outline-none focus:border-[#FF4F00] uppercase placeholder:normal-case box-border"
+        class="w-full h-8 bg-[#D9D9D9] dark:bg-[#2A2B32] border-2 border-[#222222] dark:border-[#373A46] px-2.5 text-xs font-label text-[#222222] dark:text-[#F3F4F6] focus:bg-white dark:focus:bg-[#1E1F24] focus:outline-none focus:border-[#FF4F00] uppercase placeholder:normal-case box-border"
       />
     </div>
 
@@ -60,7 +60,7 @@
 
   <!-- Error Message Banner -->
   @if (errorMessage()) {
-    <div class="bg-[#EF4444] text-white text-xs font-accent p-2 border-2 border-[#222222] shadow-[2px_2px_0_0_#222222] flex items-center gap-1.5">
+    <div class="bg-[#EF4444] text-white text-xs font-accent p-2 border-2 border-[#222222] dark:border-black shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000] flex items-center gap-1.5">
       <app-icon name="exclamation-triangle" size="w-4 h-4"></app-icon>
       <span>{{ errorMessage() }}</span>
     </div>
@@ -68,8 +68,8 @@
 
   <!-- Games List Container -->
   @if (gamesList().length > 0) {
-    <div class="flex flex-col gap-1 border-2 border-[#222222] bg-[#ECECD8] p-1.5 max-h-[220px] overflow-y-auto select-none">
-      <div class="flex items-center justify-between text-[10px] font-label font-bold text-gray-700 px-1 border-b border-gray-300 pb-1">
+    <div class="flex flex-col gap-1 border-2 border-[#222222] dark:border-black bg-[#ECECD8] dark:bg-[#141519] p-1.5 max-h-[220px] overflow-y-auto select-none">
+      <div class="flex items-center justify-between text-[10px] font-label font-bold text-gray-700 dark:text-gray-300 px-1 border-b border-gray-300 dark:border-gray-700 pb-1">
         <span>RECENT MATCHES ({{ gamesList().length }})</span>
         <span>CLICK TO REVIEW</span>
       </div>
@@ -77,17 +77,17 @@
       @for (g of gamesList(); track g.id) {
         <div
           (click)="loadGame(g)"
-          class="flex items-center justify-between p-1.5 bg-white border border-[#222222] hover:bg-[#FF4F00] hover:text-white cursor-pointer transition-colors group"
+          class="flex items-center justify-between p-1.5 bg-white dark:bg-[#1E1F24] border border-[#222222] dark:border-[#373A46] hover:bg-[#FF4F00] dark:hover:bg-[#FF4F00] hover:text-white dark:hover:text-white cursor-pointer transition-colors group"
         >
           <!-- Player vs Player Info -->
           <div class="flex flex-col min-w-0 pr-2">
-            <div class="flex items-center gap-1 text-xs font-accent font-bold truncate">
+            <div class="flex items-center gap-1 text-xs font-accent font-bold truncate text-[#222222] dark:text-[#F3F4F6] group-hover:text-white">
               <span class="truncate">{{ g.white }}</span>
               <span class="text-gray-400 group-hover:text-white text-[10px]">vs</span>
               <span class="truncate">{{ g.black }}</span>
             </div>
 
-            <div class="flex items-center gap-2 text-[9px] font-label text-gray-600 group-hover:text-white opacity-90">
+            <div class="flex items-center gap-2 text-[9px] font-label text-gray-600 dark:text-gray-400 group-hover:text-white opacity-90">
               <span>{{ g.timeControl }}</span>
               <span>•</span>
               <span>{{ g.date }}</span>
@@ -106,7 +106,7 @@
                 'bg-[#10B981] text-white': g.userResult === 'win',
                 'bg-[#EF4444] text-white': g.userResult === 'loss',
                 'bg-[#C0C0C0] text-[#222222]': g.userResult === 'draw',
-                'bg-[#D9D9D9] text-[#222222]': g.userResult === 'unknown'
+                'bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6]': g.userResult === 'unknown'
               }"
             >
               {{ g.userResult === 'win' ? 'WON' : g.userResult === 'loss' ? 'LOST' : g.userResult === 'draw' ? 'DRAW' : g.result }}

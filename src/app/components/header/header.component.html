@@ -1,18 +1,18 @@
 <header
-  class="w-full bg-[#FFFFFF] border-b-[4px] border-[#222222] shadow-[0_4px_0_0_#222222] px-4 py-3 sm:px-6 lg:px-8">
+  class="w-full bg-[#FFFFFF] dark:bg-[#1E1F24] border-b-[4px] border-[#222222] dark:border-black shadow-[0_4px_0_0_#222222] dark:shadow-[0_4px_0_0_#000000] px-4 py-3 sm:px-6 lg:px-8 transition-colors duration-150">
   <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
     <!-- Brand / Logo Area -->
     <app-logo size="md"></app-logo>
 
     <!-- Center / Status (Energy & Mode) -->
     <div class="hidden md:flex items-center gap-3">
-      <div class="badge-brutal bg-[#D9D9D9] text-[#222222] flex items-center gap-2 py-1.5 px-3">
+      <div class="badge-brutal bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] flex items-center gap-2 py-1.5 px-3">
         <app-icon name="bolt" size="w-4 h-4" class="text-[#FF4F00] animate-pulse"></app-icon>
         <span class="font-label text-xs tracking-wider">
-          ENERGY: <strong class="text-[#0E4C92]">{{ energy() }}/{{ maxEnergy() }}</strong>
+          ENERGY: <strong class="text-[#0E4C92] dark:text-[#60A5FA]">{{ energy() }}/{{ maxEnergy() }}</strong>
         </span>
       </div>
-      <div class="badge-brutal bg-[#C0C0C0] text-[#222222] flex items-center gap-1.5 py-1.5 px-3 font-label text-xs">
+      <div class="badge-brutal bg-[#C0C0C0] dark:bg-[#373A46] text-[#222222] dark:text-[#F3F4F6] flex items-center gap-1.5 py-1.5 px-3 font-label text-xs">
         <app-icon name="cpu-chip" size="w-3.5 h-3.5"></app-icon>
         <span>STOCKFISH 18</span>
       </div>

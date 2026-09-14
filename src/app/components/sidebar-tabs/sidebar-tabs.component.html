@@ -1,41 +1,28 @@
 <div class="flex flex-col gap-3 w-full h-full min-h-0">
   <!-- Neubrutalist Tab Buttons Navigation Strip -->
-  <div class="shrink-0 grid grid-cols-3 gap-2 bg-[#FFFFFF] border-[3px] border-[#222222] p-1.5 shadow-[5px_5px_0_0_#222222]" role="tablist">
+  <div
+    class="shrink-0 grid grid-cols-3 gap-2 bg-[#FFFFFF] dark:bg-[#1E1F24] border-[3px] border-[#222222] dark:border-black p-1.5 shadow-[5px_5px_0_0_#222222] dark:shadow-[5px_5px_0_0_#000000] transition-colors"
+    role="tablist">
     <!-- Tab 1: Review -->
-    <button
-      type="button"
-      role="tab"
-      (click)="setTab('review')"
-      [attr.aria-selected]="activeTab() === 'review'"
+    <button type="button" role="tab" (click)="setTab('review')" [attr.aria-selected]="activeTab() === 'review'"
       class="btn-brutal !py-2 !px-2 text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer select-none"
-      [ngClass]="activeTab() === 'review' ? 'btn-brutal-orange !shadow-[2px_2px_0_0_#222222]' : 'bg-[#D9D9D9] hover:bg-white !shadow-none'"
-    >
+      [ngClass]="activeTab() === 'review' ? 'btn-brutal-orange !shadow-[2px_2px_0_0_#222222] dark:!shadow-[2px_2px_0_0_#000000]' : 'bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] hover:bg-white dark:hover:bg-[#373A46] !shadow-none'">
       <app-icon name="star" size="w-3.5 h-3.5"></app-icon>
       <span class="font-accent tracking-wider uppercase">REVIEW</span>
     </button>
 
     <!-- Tab 2: Analysis -->
-    <button
-      type="button"
-      role="tab"
-      (click)="setTab('analysis')"
-      [attr.aria-selected]="activeTab() === 'analysis'"
+    <button type="button" role="tab" (click)="setTab('analysis')" [attr.aria-selected]="activeTab() === 'analysis'"
       class="btn-brutal !py-2 !px-2 text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer select-none"
-      [ngClass]="activeTab() === 'analysis' ? 'btn-brutal-blue !shadow-[2px_2px_0_0_#222222]' : 'bg-[#D9D9D9] hover:bg-white !shadow-none'"
-    >
+      [ngClass]="activeTab() === 'analysis' ? 'btn-brutal-blue !shadow-[2px_2px_0_0_#222222] dark:!shadow-[2px_2px_0_0_#000000]' : 'bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] hover:bg-white dark:hover:bg-[#373A46] !shadow-none'">
       <app-icon name="chart-bar" size="w-3.5 h-3.5"></app-icon>
       <span class="font-accent tracking-wider uppercase">ANALYSIS</span>
     </button>
 
     <!-- Tab 3: Settings -->
-    <button
-      type="button"
-      role="tab"
-      (click)="setTab('settings')"
-      [attr.aria-selected]="activeTab() === 'settings'"
+    <button type="button" role="tab" (click)="setTab('settings')" [attr.aria-selected]="activeTab() === 'settings'"
       class="btn-brutal !py-2 !px-2 text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer select-none"
-      [ngClass]="activeTab() === 'settings' ? 'bg-[#222222] text-white !shadow-[2px_2px_0_0_#222222]' : 'bg-[#D9D9D9] hover:bg-white !shadow-none'"
-    >
+      [ngClass]="activeTab() === 'settings' ? 'bg-[#222222] dark:bg-[#373A46] text-white !shadow-[2px_2px_0_0_#222222] dark:!shadow-[2px_2px_0_0_#000000]' : 'bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] hover:bg-white dark:hover:bg-[#373A46] !shadow-none'">
       <app-icon name="cog-6-tooth" size="w-3.5 h-3.5"></app-icon>
       <span class="font-accent tracking-wider uppercase">SETTINGS</span>
     </button>
@@ -43,31 +30,29 @@
 
   <!-- Realtime Analysis Top Strip Indicator (visible if analyzing in background) -->
   @if (analysisService.isAnalyzing() && activeTab() !== 'analysis') {
-    <div 
-      (click)="setTab('analysis')"
-      class="shrink-0 bg-[#FF4F00] text-white border-2 border-[#222222] p-2 flex items-center justify-between text-xs font-accent uppercase cursor-pointer hover:opacity-95 shadow-[3px_3px_0_0_#222222] animate-pulse"
-      title="Click to open Analysis tab"
-    >
-      <span class="flex items-center gap-1.5">
-        <app-icon name="bolt" size="w-3.5 h-3.5"></app-icon>
-        <span>ANALYSIS IN PROGRESS: {{ analysisService.progress() }}%</span>
-      </span>
-      <span class="underline font-label text-[10px]">VIEW ➔</span>
-    </div>
+  <div (click)="setTab('analysis')"
+    class="shrink-0 bg-[#FF4F00] text-white border-2 border-[#222222] p-2 flex items-center justify-between text-xs font-accent uppercase cursor-pointer hover:opacity-95 shadow-[3px_3px_0_0_#222222] animate-pulse"
+    title="Click to open Analysis tab">
+    <span class="flex items-center gap-1.5">
+      <app-icon name="bolt" size="w-3.5 h-3.5"></app-icon>
+      <span>ANALYSIS IN PROGRESS: {{ analysisService.progress() }}%</span>
+    </span>
+    <span class="underline font-label text-[10px]">VIEW ➔</span>
+  </div>
   }
 
   <!-- Active Tab Body (Scrollable container matching board height) -->
   <div class="flex-1 min-h-0 overflow-y-auto pr-1 pb-1">
     @switch (activeTab()) {
-      @case ('review') {
-        <app-review-tab></app-review-tab>
-      }
-      @case ('analysis') {
-        <app-analysis-tab></app-analysis-tab>
-      }
-      @case ('settings') {
-        <app-settings-tab></app-settings-tab>
-      }
+    @case ('review') {
+    <app-review-tab></app-review-tab>
+    }
+    @case ('analysis') {
+    <app-analysis-tab></app-analysis-tab>
+    }
+    @case ('settings') {
+    <app-settings-tab></app-settings-tab>
+    }
     }
   </div>
 </div>

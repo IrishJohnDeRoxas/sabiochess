@@ -1,5 +1,6 @@
 import { Injectable, computed, effect, inject, signal } from '@angular/core';
 import {
+  AppTheme,
   BOARD_THEMES,
   BoardTheme,
   DEFAULT_SETTINGS,
@@ -16,6 +17,7 @@ const STORAGE_KEY = 'sabiochess_settings_v2';
 export class SettingsService {
   private readonly soundService = inject(SoundService);
 
+  readonly appTheme = signal<AppTheme>(DEFAULT_SETTINGS.appTheme);
   readonly boardTheme = signal<BoardTheme>(DEFAULT_SETTINGS.boardTheme);
   readonly moveSounds = signal<boolean>(DEFAULT_SETTINGS.moveSounds);
   readonly memeSounds = signal<boolean>(DEFAULT_SETTINGS.memeSounds);
@@ -28,6 +30,11 @@ export class SettingsService {
   readonly chesscomUsername = signal<string>(DEFAULT_SETTINGS.chesscomUsername);
   readonly lichessUsername = signal<string>(DEFAULT_SETTINGS.lichessUsername);
 
+  readonly toastMessage = signal<string | null>(null);
+  private toastTimer: ReturnType<typeof setTimeout> | null = null;
+
+  readonly isDarkMode = computed(() => this.appTheme() === 'dark');
+
   readonly activeBoardThemeOption = computed(() => {
     const id = this.boardTheme();
     return BOARD_THEMES.find((t) => t.id === id) || BOARD_THEMES[0];
@@ -36,9 +43,22 @@ export class SettingsService {
   constructor() {
     this.loadSettings();
 
+    // Effect to apply .dark class to HTML element
+    effect(() => {
+      const isDark = this.appTheme() === 'dark';
+      if (typeof document !== 'undefined') {
+        if (isDark) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      }
+    });
+
     // Effect to persist to localStorage on changes
     effect(() => {
       const state: UserSettings = {
+        appTheme: this.appTheme(),
         boardTheme: this.boardTheme(),
         moveSounds: this.moveSounds(),
         memeSounds: this.memeSounds(),
@@ -53,6 +73,14 @@ export class SettingsService {
       };
       this.saveSettings(state);
     });
+  }
+
+  setAppTheme(theme: AppTheme): void {
+    this.appTheme.set(theme);
+  }
+
+  toggleAppTheme(): void {
+    this.appTheme.update((t) => (t === 'dark' ? 'light' : 'dark'));
   }
 
   setBoardTheme(theme: BoardTheme): void {
@@ -100,6 +128,7 @@ export class SettingsService {
   }
 
   resetToDefaults(): void {
+    this.appTheme.set(DEFAULT_SETTINGS.appTheme);
     this.boardTheme.set(DEFAULT_SETTINGS.boardTheme);
     this.moveSounds.set(DEFAULT_SETTINGS.moveSounds);
     this.memeSounds.set(DEFAULT_SETTINGS.memeSounds);
@@ -111,6 +140,29 @@ export class SettingsService {
     this.showEvalBar.set(DEFAULT_SETTINGS.showEvalBar);
   }
 
+  flashToast(msg: string, duration = 1800): void {
+    if (this.toastTimer) {
+      clearTimeout(this.toastTimer);
+      this.toastTimer = null;
+    }
+    if (this.toastMessage()) {
+      this.toastMessage.set(null);
+      setTimeout(() => {
+        this.toastMessage.set(msg);
+        this.toastTimer = setTimeout(() => {
+          this.toastMessage.set(null);
+          this.toastTimer = null;
+        }, duration);
+      }, 10);
+      return;
+    }
+    this.toastMessage.set(msg);
+    this.toastTimer = setTimeout(() => {
+      this.toastMessage.set(null);
+      this.toastTimer = null;
+    }, duration);
+  }
+
   private loadSettings(): void {
     if (typeof localStorage === 'undefined') return;
     try {
@@ -118,6 +170,7 @@ export class SettingsService {
       if (!raw) return;
       const data = JSON.parse(raw) as Partial<UserSettings>;
 
+      if (data.appTheme) this.appTheme.set(data.appTheme);
       if (data.boardTheme) this.boardTheme.set(data.boardTheme);
       if (typeof data.moveSounds === 'boolean') this.moveSounds.set(data.moveSounds);
       if (typeof data.memeSounds === 'boolean') this.memeSounds.set(data.memeSounds);

@@ -1,5 +1,7 @@
 @import 'tailwindcss';
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-brutal-orange: #FF4F00;
   --color-brutal-canvas: #D9D9D9;
@@ -40,6 +42,7 @@ body {
   background-color: #D9D9D9;
   color: #222222;
   font-family: 'Inter', sans-serif;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 /* Custom Neubrutalist Utility Classes */
@@ -184,3 +187,114 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #FF4F00;
 }
+
+/* Dark Mode Overrides & Neubrutalist Midnight Palette */
+html.dark {
+  color-scheme: dark;
+}
+
+.dark body {
+  background-color: #141519;
+  color: #F3F4F6;
+}
+
+.dark * {
+  scrollbar-color: #373A46 #141519;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #141519;
+  border-left: 2px solid #000000;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #373A46;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #FF4F00;
+}
+
+.dark .card-brutal {
+  background-color: #1E1F24;
+  border-color: #000000;
+  box-shadow: 5px 5px 0 0 #000000;
+  color: #F3F4F6;
+}
+
+.dark .card-brutal-lg {
+  background-color: #1E1F24;
+  border-color: #000000;
+  box-shadow: 8px 8px 0 0 #000000;
+  color: #F3F4F6;
+}
+
+.dark .btn-brutal {
+  background-color: #2A2B32;
+  color: #F3F4F6;
+  border-color: #000000;
+  box-shadow: 4px 4px 0 0 #000000;
+}
+
+.dark .btn-brutal:hover {
+  box-shadow: 6px 6px 0 0 #000000;
+}
+
+.dark .btn-brutal:active {
+  box-shadow: 1px 1px 0 0 #000000;
+}
+
+.dark .btn-brutal-silver {
+  background-color: #373A46;
+  color: #F3F4F6;
+}
+
+.dark .btn-brutal-silver:hover {
+  background-color: #454958;
+}
+
+.dark .badge-brutal {
+  border-color: #000000;
+  box-shadow: 2px 2px 0 0 #000000;
+}
+
+.dark .shadow-brutal-sm {
+  box-shadow: 3px 3px 0 0 #000000;
+}
+
+.dark .shadow-brutal {
+  box-shadow: 5px 5px 0 0 #000000;
+}
+
+.dark .shadow-brutal-lg {
+  box-shadow: 8px 8px 0 0 #000000;
+}
+
+/* Smooth Neubrutalist Toast Notification Animation (Enter + Solid Hold + Fadeout) */
+@keyframes toast-enter-exit {
+  0% {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+  }
+  12% {
+    opacity: 1;
+    transform: translateY(1px) scale(1);
+  }
+  18% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  78% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+}
+
+.animate-toast {
+  animation: toast-enter-exit 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+

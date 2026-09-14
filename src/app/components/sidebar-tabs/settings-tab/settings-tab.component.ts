@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SettingsService } from '../../../services/settings.service';
 import { SoundService } from '../../../services/sound.service';
-import { BOARD_THEMES, BoardTheme, MEME_SOUND_PACKS, MemeSoundPack } from '../../../models/settings.model';
+import { AppTheme, BOARD_THEMES, BoardTheme, MEME_SOUND_PACKS, MemeSoundPack } from '../../../models/settings.model';
 import { IconComponent } from '../../icon/icon.component';
 
 @Component({
@@ -19,18 +19,21 @@ export class SettingsTabComponent {
 
   readonly boardThemes = BOARD_THEMES;
   readonly soundPacks = MEME_SOUND_PACKS;
-  readonly saveToast = signal<string | null>(null);
+  selectAppTheme(theme: AppTheme): void {
+    this.settings.setAppTheme(theme);
+    this.settings.flashToast(theme === 'dark' ? 'DARK MODE ACTIVATED' : 'LIGHT MODE ACTIVATED');
+  }
 
   selectBoardTheme(theme: BoardTheme): void {
     this.settings.setBoardTheme(theme);
-    this.flashToast('BOARD THEME APPLIED');
+    this.settings.flashToast('BOARD THEME APPLIED');
   }
 
   selectSoundPack(pack: MemeSoundPack): void {
     this.settings.setMemePack(pack);
     this.settings.setMemeSounds(true);
     this.soundService.setMuted(false);
-    this.flashToast('AUDIO PACK SELECTED');
+    this.settings.flashToast('AUDIO PACK SELECTED');
   }
 
   previewSoundPack(pack: MemeSoundPack, event: Event): void {
@@ -50,13 +53,6 @@ export class SettingsTabComponent {
 
   resetDefaults(): void {
     this.settings.resetToDefaults();
-    this.flashToast('SETTINGS RESET');
-  }
-
-  private flashToast(msg: string): void {
-    this.saveToast.set(msg);
-    setTimeout(() => {
-      this.saveToast.set(null);
-    }, 1800);
+    this.settings.flashToast('SETTINGS RESET');
   }
 }

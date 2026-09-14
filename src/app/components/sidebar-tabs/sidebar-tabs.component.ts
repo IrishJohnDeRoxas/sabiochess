@@ -4,6 +4,7 @@ import { ReviewTabComponent } from './review-tab/review-tab.component';
 import { AnalysisTabComponent } from './analysis-tab/analysis-tab.component';
 import { SettingsTabComponent } from './settings-tab/settings-tab.component';
 import { GameAnalysisService } from '../../services/game-analysis.service';
+import { SettingsService } from '../../services/settings.service';
 import { IconComponent } from '../icon/icon.component';
 
 export type ActiveSidebarTab = 'review' | 'analysis' | 'settings';
@@ -22,6 +23,7 @@ export type ActiveSidebarTab = 'review' | 'analysis' | 'settings';
   styleUrls: ['./sidebar-tabs.component.css'],
 })
 export class SidebarTabsComponent {
+  readonly settings = inject(SettingsService);
   readonly analysisService = inject(GameAnalysisService);
   readonly activeTab = signal<ActiveSidebarTab>('review');
 

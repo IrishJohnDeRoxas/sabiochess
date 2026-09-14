@@ -117,7 +117,10 @@ export const MEME_SOUND_PACKS: MemePackOption[] = [
   },
 ];
 
+export type AppTheme = 'light' | 'dark';
+
 export interface UserSettings {
+  appTheme: AppTheme;
   boardTheme: BoardTheme;
   moveSounds: boolean;
   memeSounds: boolean;
@@ -132,6 +135,7 @@ export interface UserSettings {
 }
 
 export const DEFAULT_SETTINGS: UserSettings = {
+  appTheme: 'light',
   boardTheme: 'green',
   moveSounds: true,
   memeSounds: true,
