@@ -1,12 +1,21 @@
 {
   "name": "sabiochess",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "dev": "concurrently -n \"app,api\" -c \"magenta,cyan\" \"ng serve\" \"wrangler dev\"",
+    "dev:api": "wrangler dev",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "db:migrate": "wrangler d1 migrations apply sabiochess-db --local",
+    "db:migrate:prod": "wrangler d1 migrations apply sabiochess-db --remote",
+    "db:seed": "wrangler d1 execute sabiochess-db --local --file=./server/db/seeds/promo_codes.sql",
+    "db:seed:prod": "wrangler d1 execute sabiochess-db --remote --file=./server/db/seeds/promo_codes.sql",
+    "db:clear:guests": "node scripts/clear-guest-users.js --local",
+    "db:clear:guests:prod": "node scripts/clear-guest-users.js --remote"
   },
   "private": true,
   "packageManager": "npm@10.9.8",
@@ -18,6 +27,8 @@
     "@angular/platform-browser": "^22.1.0",
     "@angular/router": "^22.1.0",
     "chess.js": "^1.4.0",
+    "drizzle-orm": "^0.45.2",
+    "hono": "^4.13.7",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },
@@ -25,12 +36,17 @@
     "@angular/build": "^22.1.7",
     "@angular/cli": "^22.1.7",
     "@angular/compiler-cli": "^22.1.0",
+    "@cloudflare/workers-types": "^5.20260908.1",
     "@tailwindcss/postcss": "^4.1.12",
+    "@types/node": "^26.4.1",
+    "concurrently": "^10.0.5",
+    "drizzle-kit": "^0.31.10",
     "jsdom": "^28.0.0",
     "postcss": "^8.5.3",
     "prettier": "^3.8.1",
     "tailwindcss": "^4.1.12",
     "typescript": "~6.0.2",
-    "vitest": "^4.0.8"
+    "vitest": "^4.0.8",
+    "wrangler": "^4.129.0"
   }
 }
