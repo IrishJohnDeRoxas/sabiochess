@@ -1,0 +1,405 @@
+<div class="flex flex-col gap-3.5 w-full">
+  <!-- Review Header & Sound Bar -->
+  <div class="card-brutal p-3 bg-white flex flex-col gap-2.5">
+    <div class="flex items-center justify-between border-b-2 border-[#222222] pb-2">
+      <div class="flex items-center gap-1.5">
+        <span class="p-1 bg-[#FF4F00] text-white inline-flex border border-[#222222]">
+          <app-icon name="star" size="w-3.5 h-3.5"></app-icon>
+        </span>
+        <span class="font-display text-sm uppercase tracking-tight">GAME REVIEW</span>
+      </div>
+
+      <div class="flex items-center gap-1.5 relative">
+        <!-- Quick Sound Menu Trigger -->
+        <button
+          type="button"
+          (click)="toggleSoundMenu()"
+          class="badge-brutal cursor-pointer transition-colors flex items-center gap-1 text-[11px]"
+          [ngClass]="soundService.isMuted() ? 'bg-[#222222] text-white' : 'bg-[#0E4C92] text-white'"
+          title="Sound FX Pack Selector"
+        >
+          <app-icon [name]="soundService.isMuted() ? 'speaker-x-mark' : 'speaker-wave'" size="w-3 h-3"></app-icon>
+          <span>{{ activeSoundLabel() }}</span>
+          <app-icon name="chevron-down" size="w-2.5 h-2.5"></app-icon>
+        </button>
+
+        <!-- Sound Dropdown Popover -->
+        @if (isSoundMenuOpen()) {
+          <div class="absolute right-0 top-full mt-1.5 z-30 w-64 bg-white border-[3px] border-[#222222] shadow-[5px_5px_0_0_#222222] p-2 flex flex-col gap-1.5 animate-fadeIn">
+            <div class="font-accent text-xs uppercase border-b-2 border-[#222222] pb-1 flex items-center justify-between">
+              <span>AUDIO PACK</span>
+              <button 
+                type="button" 
+                (click)="soundService.toggleMute()" 
+                class="text-[10px] underline font-label cursor-pointer text-[#FF4F00]"
+              >
+                {{ soundService.isMuted() ? 'UNMUTE ALL' : 'MUTE ALL' }}
+              </button>
+            </div>
+
+            @for (pack of soundPacks; track pack.id) {
+              <div 
+                (click)="selectSoundPack(pack.id)"
+                class="flex items-center justify-between p-1.5 border border-[#222222] cursor-pointer hover:bg-[#D9D9D9] text-xs font-accent transition-colors"
+                [ngClass]="{'bg-[#D9D9D9] font-bold': settings.memePack() === pack.id && settings.memeSounds() && !soundService.isMuted()}"
+              >
+                <div class="flex flex-col">
+                  <span>{{ pack.name }}</span>
+                  <span class="text-[9px] font-label text-gray-600 leading-tight">{{ pack.badge }}</span>
+                </div>
+                <button 
+                  type="button" 
+                  (click)="previewSoundPack(pack.id, $event)" 
+                  class="p-1 bg-white border border-[#222222] hover:bg-[#FF4F00] hover:text-white"
+                  title="Preview audio"
+                >
+                  <app-icon name="play" size="w-3 h-3"></app-icon>
+                </button>
+              </div>
+            }
+
+            <div 
+              (click)="setStandardSounds()"
+              class="flex items-center justify-between p-1.5 border border-[#222222] cursor-pointer hover:bg-[#D9D9D9] text-xs font-accent transition-colors"
+              [ngClass]="{'bg-[#D9D9D9] font-bold': !settings.memeSounds() && !soundService.isMuted()}"
+            >
+              <div class="flex flex-col">
+                <span>Standard Chess Only</span>
+                <span class="text-[9px] font-label text-gray-600 leading-tight">Board clicks & captures</span>
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- Importer / Online Fetcher Toggle Button -->
+        <button
+          type="button"
+          (click)="toggleImporter()"
+          class="btn-brutal !py-1 !px-2 text-xs flex items-center gap-1 cursor-pointer"
+          [ngClass]="isImporterOpen() ? 'btn-brutal-orange' : 'btn-brutal-silver'"
+          title="Fetch from Chess.com / Lichess, load classic samples or paste PGN"
+        >
+          <app-icon name="arrow-down-tray" size="w-3 h-3"></app-icon>
+          <span>FETCH / PGN</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Collapsible Import Drawer (Online Chess.com / Lichess, Samples, PGN) -->
+    @if (isImporterOpen()) {
+      <div class="bg-[#ECECD8] border-2 border-[#222222] p-2.5 flex flex-col gap-2 shadow-[3px_3px_0_0_#222222]">
+        <!-- Importer Sub-Tabs Strip -->
+        <div class="grid grid-cols-3 gap-1 bg-[#D9D9D9] p-1 border border-[#222222]">
+          <button
+            type="button"
+            (click)="setImporterTab('online')"
+            class="text-[10px] font-accent uppercase py-1 font-bold transition-colors cursor-pointer"
+            [ngClass]="importerTab() === 'online' ? 'bg-[#10B981] text-white border border-[#222222]' : 'hover:bg-white text-[#222222]'"
+          >
+            CHESS.COM
+          </button>
+          <button
+            type="button"
+            (click)="setImporterTab('samples')"
+            class="text-[10px] font-accent uppercase py-1 font-bold transition-colors cursor-pointer"
+            [ngClass]="importerTab() === 'samples' ? 'bg-[#0E4C92] text-white border border-[#222222]' : 'hover:bg-white text-[#222222]'"
+          >
+            CLASSIC SAMPLES
+          </button>
+          <button
+            type="button"
+            (click)="setImporterTab('pgn')"
+            class="text-[10px] font-accent uppercase py-1 font-bold transition-colors cursor-pointer"
+            [ngClass]="importerTab() === 'pgn' ? 'bg-[#222222] text-white border border-[#222222]' : 'hover:bg-white text-[#222222]'"
+          >
+            PASTE PGN
+          </button>
+        </div>
+
+        <!-- SubTab 1: Live Chess.com / Lichess Importer -->
+        @if (importerTab() === 'online') {
+          <app-platform-game-selector (gameSelected)="onOnlineGameSelected($event)"></app-platform-game-selector>
+        }
+
+        <!-- SubTab 2: Grandmaster Classic Samples -->
+        @if (importerTab() === 'samples') {
+          <div class="flex flex-col gap-1.5">
+            <div class="grid grid-cols-2 gap-1.5">
+              @for (sample of sampleGames; track sample.id) {
+                <button
+                  type="button"
+                  (click)="loadSample(sample.id)"
+                  class="btn-brutal !p-1.5 text-left text-[11px] font-accent flex flex-col bg-white hover:bg-[#FF4F00] hover:text-white transition-colors"
+                >
+                  <span class="font-bold truncate">{{ sample.title }}</span>
+                  <span class="text-[9px] font-label opacity-80 truncate">{{ sample.result }} • {{ sample.event }}</span>
+                </button>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- SubTab 3: Paste Custom PGN / FEN -->
+        @if (importerTab() === 'pgn') {
+          <div class="flex flex-col gap-1 mt-1">
+            <label class="font-label text-[10px] uppercase text-[#222222] font-bold">Paste PGN Text:</label>
+            <textarea
+              [ngModel]="pgnInputText()"
+              (ngModelChange)="pgnInputText.set($event)"
+              rows="3"
+              placeholder="1. e4 e5 2. Nf3 Nc6..."
+              class="w-full bg-white border-2 border-[#222222] p-1.5 text-xs font-label focus:outline-none focus:border-[#FF4F00]"
+            ></textarea>
+            <div class="flex justify-end gap-1.5 pt-1">
+              <button
+                type="button"
+                (click)="importPgn()"
+                class="btn-brutal btn-brutal-orange !py-1 !px-3 text-xs"
+              >
+                LOAD PGN
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Coach Commentary & Move Quality Badge -->
+    <div class="bg-[#D9D9D9] border-2 border-[#222222] p-2.5 flex flex-col gap-1.5 shadow-[2px_2px_0_0_#222222] relative">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-1.5">
+          <span class="p-1 bg-[#222222] text-white inline-flex items-center justify-center">
+            <app-icon name="cpu-chip" size="w-3.5 h-3.5"></app-icon>
+          </span>
+          <span class="font-display text-xs uppercase tracking-tight">SABIO COACH</span>
+        </div>
+
+        @if (game.currentMoveAnalysis(); as curr) {
+          <span 
+            class="badge-brutal text-[10px] flex items-center gap-1"
+            [ngClass]="getClassificationBadgeClass(curr.classification)"
+          >
+            <span>{{ getClassificationSymbol(curr.classification) }}</span>
+            <span>{{ curr.classification.toUpperCase() }}</span>
+          </span>
+        } @else {
+          <span class="badge-brutal bg-white text-[#222222] text-[10px]">
+            START POSITION
+          </span>
+        }
+      </div>
+
+      <!-- Coach Feedback Text -->
+      <p class="font-body text-xs text-[#222222] leading-relaxed">
+        @if (game.currentMoveAnalysis()?.commentary; as comm) {
+          {{ comm }}
+        } @else if (game.isGameOver()) {
+          {{ game.gameOverReason() }}
+        } @else if (game.history().length === 0) {
+          Ready for move 1. Play your moves on the board, or fetch a match from Chess.com below!
+        } @else {
+          Position evaluated. Step through moves using the controls below to review tactical choices.
+        }
+      </p>
+
+      @if (game.currentMoveAnalysis()?.bestMoveSan; as bestSan) {
+        @if (game.currentMoveAnalysis()?.classification === 'blunder' || game.currentMoveAnalysis()?.classification === 'mistake' || game.currentMoveAnalysis()?.classification === 'inaccuracy') {
+          <div class="flex items-center gap-1.5 text-[11px] font-label font-bold text-[#0E4C92] pt-0.5 border-t border-gray-400">
+            <app-icon name="sparkles" size="w-3 h-3"></app-icon>
+            <span>BEST MOVE WAS: <u>{{ bestSan }}</u></span>
+          </div>
+        }
+      }
+    </div>
+  </div>
+
+  <!-- Main Review Body: When 0 moves are played, show the Online Fetcher right in the main panel; otherwise show the Move List! -->
+  @if (game.history().length === 0 && !isImporterOpen()) {
+    <div class="flex flex-col gap-2">
+      <!-- Direct Online Chess.com Fetcher in Empty State -->
+      <app-platform-game-selector (gameSelected)="onOnlineGameSelected($event)"></app-platform-game-selector>
+      
+      <!-- Classic Grandmaster Samples Quick Strip -->
+      <div class="card-brutal p-3 bg-white flex flex-col gap-2">
+        <div class="flex items-center justify-between border-b border-gray-200 pb-1">
+          <span class="font-accent text-xs uppercase text-[#222222] font-bold">OR LOAD CLASSIC MASTERPIECES</span>
+          <span class="badge-brutal bg-[#D9D9D9] text-[9px]">4 GAMES</span>
+        </div>
+        <div class="grid grid-cols-2 gap-1.5">
+          @for (sample of sampleGames; track sample.id) {
+            <button
+              type="button"
+              (click)="loadSample(sample.id)"
+              class="p-2 border border-[#222222] text-left text-[11px] font-accent flex flex-col bg-white hover:bg-[#FF4F00] hover:text-white transition-colors cursor-pointer"
+            >
+              <span class="font-bold truncate">{{ sample.title }}</span>
+              <span class="text-[9px] font-label opacity-80 truncate">{{ sample.result }} • {{ sample.event }}</span>
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+  } @else {
+    <!-- Move List Table Card -->
+    <div class="card-brutal p-3 bg-white flex flex-col gap-2 flex-1 min-h-[190px]">
+      <div class="flex items-center justify-between border-b-2 border-[#222222] pb-1.5">
+        <span class="font-display text-xs uppercase tracking-tight">MOVE NOTATION</span>
+        <span class="badge-brutal bg-[#C0C0C0] text-[#222222] text-[10px]">
+          {{ game.history().length }} PLY
+        </span>
+      </div>
+
+      <!-- Scrollable Notation Container -->
+      <div class="overflow-y-auto max-h-[220px] pr-1 flex flex-col gap-0.5 select-none">
+        <div class="grid grid-cols-[36px_1fr_1fr] text-[11px] font-label font-bold border-b border-[#222222] pb-1 text-[#222222] bg-[#D9D9D9] px-2 py-1 sticky top-0 z-10">
+          <span>#</span>
+          <span>WHITE</span>
+          <span>BLACK</span>
+        </div>
+
+        @for (pair of movePairs(); track pair.num) {
+          <div class="grid grid-cols-[36px_1fr_1fr] text-xs font-label px-2 py-1 border-b border-gray-100 hover:bg-[#D9D9D9] items-center transition-colors">
+            <span class="text-gray-500 font-bold text-[11px]">{{ pair.num }}.</span>
+            
+            <!-- White Move -->
+            <button
+              type="button"
+              (click)="game.jumpToMove(pair.whitePly)"
+              class="text-left font-bold px-1.5 py-0.5 transition-colors rounded-none hover:bg-[#FF4F00] hover:text-white cursor-pointer"
+              [ngClass]="{
+                'bg-[#FF4F00] text-white shadow-[2px_2px_0_0_#222222] border border-[#222222]': game.currentPlyIndex() === pair.whitePly || (game.currentPlyIndex() === null && pair.whitePly === game.history().length - 1)
+              }"
+            >
+              {{ pair.whiteSan }}
+            </button>
+
+            <!-- Black Move -->
+            @if (pair.blackSan) {
+              <button
+                type="button"
+                (click)="game.jumpToMove(pair.blackPly!)"
+                class="text-left font-bold px-1.5 py-0.5 transition-colors rounded-none hover:bg-[#0E4C92] hover:text-white cursor-pointer"
+                [ngClass]="{
+                  'bg-[#0E4C92] text-white shadow-[2px_2px_0_0_#222222] border border-[#222222]': game.currentPlyIndex() === pair.blackPly || (game.currentPlyIndex() === null && pair.blackPly === game.history().length - 1)
+                }"
+              >
+                {{ pair.blackSan }}
+              </button>
+            } @else {
+              <span class="text-gray-400">...</span>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Timeline Stepper Bar -->
+    <div class="card-brutal p-2 bg-[#D9D9D9] flex items-center justify-between gap-1.5">
+      <!-- First Move -->
+      <button
+        type="button"
+        (click)="game.goToStart()"
+        [disabled]="game.history().length === 0"
+        class="btn-brutal !py-1.5 !px-2 flex-1 text-xs cursor-pointer"
+        title="Go to Start"
+      >
+        <app-icon name="chevron-double-left" size="w-3.5 h-3.5"></app-icon>
+      </button>
+
+      <!-- Prev Move -->
+      <button
+        type="button"
+        (click)="game.prevMove()"
+        [disabled]="game.history().length === 0"
+        class="btn-brutal !py-1.5 !px-2 flex-1 text-xs cursor-pointer"
+        title="Previous Move"
+      >
+        <app-icon name="chevron-left" size="w-3.5 h-3.5"></app-icon>
+      </button>
+
+      <!-- Auto Play / Pause -->
+      <button
+        type="button"
+        (click)="game.toggleAutoplay()"
+        [disabled]="game.history().length === 0"
+        class="btn-brutal btn-brutal-orange !py-1.5 !px-3 flex-1 text-xs flex items-center justify-center gap-1 cursor-pointer"
+        title="Autoplay Moves"
+      >
+        <app-icon [name]="game.isAutoplaying() ? 'pause' : 'play'" size="w-3.5 h-3.5"></app-icon>
+      </button>
+
+      <!-- Next Move -->
+      <button
+        type="button"
+        (click)="game.nextMove()"
+        [disabled]="game.history().length === 0"
+        class="btn-brutal !py-1.5 !px-2 flex-1 text-xs cursor-pointer"
+        title="Next Move"
+      >
+        <app-icon name="chevron-right" size="w-3.5 h-3.5"></app-icon>
+      </button>
+
+      <!-- Last Move / Live -->
+      <button
+        type="button"
+        (click)="game.goToEnd()"
+        [disabled]="game.history().length === 0"
+        class="btn-brutal !py-1.5 !px-2 flex-1 text-xs cursor-pointer"
+        title="Go to Latest Position"
+      >
+        <app-icon name="chevron-double-right" size="w-3.5 h-3.5"></app-icon>
+      </button>
+    </div>
+
+    <!-- Bottom Quick Controls -->
+    <div class="grid grid-cols-4 gap-1.5">
+      <button
+        type="button"
+        (click)="game.flipBoard()"
+        class="btn-brutal btn-brutal-silver !py-1.5 !px-1 text-[11px] flex items-center justify-center gap-1 cursor-pointer"
+        title="Flip board orientation"
+      >
+        <app-icon name="arrow-path" size="w-3 h-3"></app-icon>
+        <span>FLIP</span>
+      </button>
+
+      <button
+        type="button"
+        (click)="game.undoMove()"
+        [disabled]="game.history().length === 0"
+        class="btn-brutal btn-brutal-silver !py-1.5 !px-1 text-[11px] flex items-center justify-center gap-1 cursor-pointer"
+        title="Undo move"
+      >
+        <app-icon name="arrow-uturn-left" size="w-3 h-3"></app-icon>
+        <span>UNDO</span>
+      </button>
+
+      <button
+        type="button"
+        (click)="game.resetGame()"
+        class="btn-brutal btn-brutal-orange !py-1.5 !px-1 text-[11px] flex items-center justify-center gap-1 cursor-pointer"
+        title="Start new game"
+      >
+        <app-icon name="plus" size="w-3 h-3"></app-icon>
+        <span>NEW</span>
+      </button>
+
+      <button
+        type="button"
+        (click)="copyFen()"
+        class="btn-brutal btn-brutal-blue !py-1.5 !px-1 text-[11px] flex items-center justify-center gap-1 cursor-pointer"
+        title="Copy FEN string"
+      >
+        <app-icon [name]="copiedNotification() === 'FEN COPIED' ? 'check' : 'clipboard-document'" size="w-3 h-3"></app-icon>
+        <span>{{ copiedNotification() === 'FEN COPIED' ? 'COPIED' : 'FEN' }}</span>
+      </button>
+    </div>
+  }
+
+  <!-- Copied Toast Banner -->
+  @if (copiedNotification()) {
+    <div class="bg-[#10B981] text-white text-xs font-accent uppercase text-center p-1.5 border-2 border-[#222222] shadow-[2px_2px_0_0_#222222] animate-bounce">
+      {{ copiedNotification() }}
+    </div>
+  }
+</div>

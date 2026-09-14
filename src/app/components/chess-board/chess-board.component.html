@@ -1,4 +1,8 @@
-<div class="chess-board-wrapper card-brutal-lg">
+<div 
+  class="chess-board-wrapper card-brutal-lg"
+  [style.--board-light]="settings.activeBoardThemeOption().light"
+  [style.--board-dark]="settings.activeBoardThemeOption().dark"
+>
   <div class="board-grid">
     @for (square of game.boardSquares(); track square.square) {
       <div

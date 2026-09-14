@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ChessGameService, BoardSquareData } from '../../services/chess-game.service';
-import { Square } from 'chess.js';
+import { SettingsService } from '../../services/settings.service';
 
 @Component({
   selector: 'app-chess-board',
@@ -12,6 +12,7 @@ import { Square } from 'chess.js';
 })
 export class ChessBoardComponent {
   readonly game = inject(ChessGameService);
+  readonly settings = inject(SettingsService);
 
   onSquareClick(squareData: BoardSquareData): void {
     this.game.handleSquareClick(squareData.square);

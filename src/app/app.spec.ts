@@ -4,15 +4,18 @@ import { ChessGameService } from './services/chess-game.service';
 import { HeaderComponent } from './components/header/header.component';
 import { ChessBoardComponent } from './components/chess-board/chess-board.component';
 import { EvalBarComponent } from './components/eval-bar/eval-bar.component';
-import { BoardControlsComponent } from './components/board-controls/board-controls.component';
+import { SidebarTabsComponent } from './components/sidebar-tabs/sidebar-tabs.component';
 import { LogoComponent } from './components/logo/logo.component';
+import { SettingsService } from './services/settings.service';
+import { SoundService } from './services/sound.service';
+import { GameAnalysisService } from './services/game-analysis.service';
 import { describe, it, expect, beforeEach } from 'vitest';
 
 describe('SabioChess Neubrutalist Suite', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [App, HeaderComponent, ChessBoardComponent, EvalBarComponent, BoardControlsComponent, LogoComponent],
-      providers: [ChessGameService],
+      imports: [App, HeaderComponent, ChessBoardComponent, EvalBarComponent, SidebarTabsComponent, LogoComponent],
+      providers: [ChessGameService, SettingsService, SoundService, GameAnalysisService],
     }).compileComponents();
   });
 

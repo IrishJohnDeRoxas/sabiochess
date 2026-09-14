@@ -1,0 +1,166 @@
+<div class="flex flex-col gap-3.5 w-full">
+  <!-- Analysis Status & Accuracy Card -->
+  <div class="card-brutal p-3 bg-white flex flex-col gap-3">
+    <div class="flex items-center justify-between border-b-2 border-[#222222] pb-2">
+      <div class="flex items-center gap-1.5">
+        <span class="p-1 bg-[#0E4C92] text-white inline-flex border border-[#222222]">
+          <app-icon name="chart-bar" size="w-3.5 h-3.5"></app-icon>
+        </span>
+        <span class="font-display text-sm uppercase tracking-tight">GAME ACCURACY</span>
+      </div>
+
+      <div class="flex items-center gap-1">
+        <span class="badge-brutal bg-[#D9D9D9] text-[#222222] text-[10px]">
+          DEPTH: {{ settings.analysisDepth() }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Accuracy Comparison Split -->
+    @if (analysisService.summary(); as sum) {
+      <div class="grid grid-cols-2 gap-2.5">
+        <!-- White Accuracy Card -->
+        <div class="border-2 border-[#222222] bg-[#FFFFFF] p-2 flex flex-col items-center justify-center gap-1 shadow-[3px_3px_0_0_#222222]">
+          <span class="font-label text-[10px] uppercase font-bold text-gray-700">WHITE ACCURACY</span>
+          <span class="font-display text-2xl tracking-tight text-[#222222]">{{ sum.whiteAccuracy }}%</span>
+          <div class="w-full h-2 bg-[#D9D9D9] border border-[#222222] overflow-hidden mt-0.5">
+            <div class="h-full bg-[#10B981]" [style.width]="sum.whiteAccuracy + '%'"></div>
+          </div>
+        </div>
+
+        <!-- Black Accuracy Card -->
+        <div class="border-2 border-[#222222] bg-[#222222] text-white p-2 flex flex-col items-center justify-center gap-1 shadow-[3px_3px_0_0_#FF4F00]">
+          <span class="font-label text-[10px] uppercase font-bold text-gray-300">BLACK ACCURACY</span>
+          <span class="font-display text-2xl tracking-tight text-white">{{ sum.blackAccuracy }}%</span>
+          <div class="w-full h-2 bg-[#444444] border border-white overflow-hidden mt-0.5">
+            <div class="h-full bg-[#FF4F00]" [style.width]="sum.blackAccuracy + '%'"></div>
+          </div>
+        </div>
+      </div>
+    } @else {
+      <div class="bg-[#ECECD8] border-2 border-[#222222] p-3 text-center flex flex-col items-center gap-2 shadow-[2px_2px_0_0_#222222]">
+        <app-icon name="sparkles" size="w-5 h-5 text-[#0E4C92]"></app-icon>
+        <div class="font-accent text-xs uppercase">
+          {{ game.history().length > 0 ? 'Full Analysis Available' : 'No Moves Recorded Yet' }}
+        </div>
+        <p class="font-body text-[11px] text-gray-600 max-w-[240px]">
+          {{ game.history().length > 0 ? 'Run full engine evaluation to calculate CAPS accuracy and mistake breakdown.' : 'Play moves or load a game to view accuracy statistics.' }}
+        </p>
+      </div>
+    }
+
+    <!-- Run Analysis Button / Progress Indicator -->
+    @if (analysisService.isAnalyzing()) {
+      <div class="flex flex-col gap-1 border-2 border-[#222222] p-2 bg-[#D9D9D9]">
+        <div class="flex items-center justify-between text-xs font-accent uppercase font-bold">
+          <span class="flex items-center gap-1">
+            <app-icon name="arrow-path" size="w-3.5 h-3.5 animate-spin"></app-icon>
+            <span>ANALYZING MOVES...</span>
+          </span>
+          <span class="font-label">{{ analysisService.progress() }}%</span>
+        </div>
+        <div class="w-full h-3.5 bg-white border border-[#222222] overflow-hidden">
+          <div 
+            class="h-full bg-[#FF4F00] transition-all duration-150"
+            [style.width]="analysisService.progress() + '%'"
+          ></div>
+        </div>
+      </div>
+    } @else {
+      <button
+        type="button"
+        (click)="triggerFullAnalysis()"
+        [disabled]="game.history().length === 0"
+        class="btn-brutal btn-brutal-orange w-full !py-2 text-xs flex items-center justify-center gap-1.5"
+      >
+        <app-icon name="bolt" size="w-3.5 h-3.5"></app-icon>
+        <span>RUN FULL DEEP ANALYSIS</span>
+      </button>
+    }
+  </div>
+
+  <!-- Opening Theory Banner -->
+  @if (analysisService.detectedOpening(); as opening) {
+    <div class="card-brutal p-2.5 bg-[#D9D9D9] flex items-center justify-between gap-2">
+      <div class="flex items-center gap-2">
+        <span class="badge-brutal bg-[#222222] text-white text-[11px]">
+          {{ opening.eco }}
+        </span>
+        <div class="flex flex-col">
+          <span class="font-accent text-xs uppercase font-bold truncate max-w-[200px]">{{ opening.name }}</span>
+          <span class="font-label text-[9px] text-gray-600 uppercase">THEORETICAL OPENING</span>
+        </div>
+      </div>
+      <app-icon name="book-open" size="w-4 h-4 text-[#0E4C92]"></app-icon>
+    </div>
+  }
+
+  <!-- Interactive Advantage Momentum Graph -->
+  @if (analysisService.evalGraphPoints().length > 0) {
+    <div class="card-brutal p-3 bg-white flex flex-col gap-2">
+      <div class="flex items-center justify-between border-b-2 border-[#222222] pb-1.5">
+        <div class="flex items-center gap-1.5">
+          <app-icon name="arrow-trending-up" size="w-3.5 h-3.5 text-[#FF4F00]"></app-icon>
+          <span class="font-display text-xs uppercase tracking-tight">EVALUATION MOMENTUM</span>
+        </div>
+        <span class="font-label text-[10px] text-gray-500">CLICK BAR TO SEEK</span>
+      </div>
+
+      <!-- Graph Container -->
+      <div class="h-24 bg-[#D9D9D9] border-2 border-[#222222] p-1 flex items-stretch gap-0.5 overflow-x-auto relative">
+        <!-- 0.0 Centerline -->
+        <div class="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-[1px] bg-[#222222] opacity-40 pointer-events-none z-0"></div>
+
+        @for (pt of analysisService.evalGraphPoints(); track pt.ply; let idx = $index) {
+          <div
+            (click)="jumpToPly(idx)"
+            class="flex-1 min-w-[6px] h-full flex flex-col justify-center items-center cursor-pointer hover:opacity-80 transition-opacity relative group z-10"
+            [title]="'Ply ' + pt.ply + ' (' + pt.san + '): ' + (pt.evalScore > 0 ? '+' : '') + pt.evalScore.toFixed(1)"
+          >
+            <!-- Vertical Advantage Bar -->
+            <div
+              class="w-full transition-all"
+              [ngClass]="pt.evalScore >= 0 ? 'bg-[#0E4C92]' : 'bg-[#FF4F00]'"
+              [style.height]="getBarHeightPercentage(pt.evalScore) + '%'"
+              [class.ring-2]="game.currentPlyIndex() === idx"
+              [class.ring-black]="game.currentPlyIndex() === idx"
+            ></div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Move Quality Breakdown Grid -->
+  <div class="card-brutal p-3 bg-white flex flex-col gap-2 flex-1">
+    <div class="flex items-center justify-between border-b-2 border-[#222222] pb-1.5">
+      <span class="font-display text-xs uppercase tracking-tight">MOVE CLASSIFICATION</span>
+      <div class="flex items-center gap-3 font-label text-[11px] font-bold">
+        <span class="text-[#222222]">WHITE</span>
+        <span class="text-[#222222]">BLACK</span>
+      </div>
+    </div>
+
+    <!-- Rows List -->
+    <div class="flex flex-col gap-1">
+      @for (row of classificationRows(); track row.key) {
+        <div class="flex items-center justify-between p-1 border-b border-gray-100 hover:bg-[#D9D9D9] text-xs font-accent transition-colors">
+          <div class="flex items-center gap-2">
+            <span 
+              class="badge-brutal text-[9px] !px-1 !py-0.5 w-6 text-center justify-center font-bold"
+              [ngClass]="row.badgeClass"
+            >
+              {{ row.symbol }}
+            </span>
+            <span class="font-bold uppercase text-[11px] text-[#222222]">{{ row.label }}</span>
+          </div>
+
+          <div class="flex items-center gap-6 font-label text-xs font-bold pr-1">
+            <span class="w-4 text-center" [class.text-gray-300]="row.whiteCount === 0">{{ row.whiteCount }}</span>
+            <span class="w-4 text-center" [class.text-gray-300]="row.blackCount === 0">{{ row.blackCount }}</span>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>
