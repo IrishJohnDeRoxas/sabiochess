@@ -76,4 +76,28 @@ describe('ChessGameService', () => {
     expect(service.currentPlyIndex()).toBe(32);
     expect(service.history()[32].san).toBe('Rd8#');
   });
+
+  it('should not show winner/loser outcome on player cards when at start or intermediate plies', () => {
+    service.loadSampleGame('opera');
+    // Board starts at ply -1 (start of game)
+    expect(service.currentPlyIndex()).toBe(-1);
+    expect(service.isAtFinalMove()).toBe(false);
+    expect(service.bottomOutcome().isWinner).toBe(false);
+    expect(service.topOutcome().isLoser).toBe(false);
+    expect(service.bottomOutcome().score).toBeNull();
+
+    // Step to move 1 (ply 0)
+    service.jumpToPly(0);
+    expect(service.isAtFinalMove()).toBe(false);
+    expect(service.bottomOutcome().isWinner).toBe(false);
+    expect(service.topOutcome().isLoser).toBe(false);
+
+    // Jump to the final checkmate ply (ply 32)
+    service.goToEnd();
+    expect(service.isAtFinalMove()).toBe(true);
+    expect(service.bottomOutcome().isWinner).toBe(true);
+    expect(service.bottomOutcome().score).toBe('1');
+    expect(service.topOutcome().isLoser).toBe(true);
+    expect(service.topOutcome().score).toBe('0');
+  });
 });

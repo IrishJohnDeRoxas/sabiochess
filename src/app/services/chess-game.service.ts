@@ -226,11 +226,38 @@ export class ChessGameService {
     return getPlayerOutcomeStatus(this.gameOutcome(), 'black');
   });
 
+  readonly isAtFinalMove = computed<boolean>(() => {
+    const hist = this.history();
+    const ply = this.currentPlyIndex();
+    if (hist.length === 0) return true;
+    return ply === null || ply === hist.length - 1;
+  });
+
   readonly topOutcome = computed<PlayerOutcomeStatus>(() => {
+    if (!this.isAtFinalMove()) {
+      return {
+        isWinner: false,
+        isLoser: false,
+        isDraw: false,
+        score: null,
+        reason: null,
+        shortReason: null,
+      };
+    }
     return this.isBoardFlipped() ? this.whiteOutcome() : this.blackOutcome();
   });
 
   readonly bottomOutcome = computed<PlayerOutcomeStatus>(() => {
+    if (!this.isAtFinalMove()) {
+      return {
+        isWinner: false,
+        isLoser: false,
+        isDraw: false,
+        score: null,
+        reason: null,
+        shortReason: null,
+      };
+    }
     return this.isBoardFlipped() ? this.blackOutcome() : this.whiteOutcome();
   });
 
@@ -673,7 +700,8 @@ export class ChessGameService {
       const site = customMeta?.site || headers['Site'] || this.extractPgnTag(pgnString, 'Site') || undefined;
       const date = customMeta?.date || headers['Date'] || headers['UTCDate'] || this.extractPgnTag(pgnString, 'Date') || undefined;
       const result = customMeta?.result || headers['Result'] || this.extractPgnTag(pgnString, 'Result') || undefined;
-      const timeControl = customMeta?.timeControl || headers['TimeControl'] || this.extractPgnTag(pgnString, 'TimeControl') || undefined;
+      const pgnTimeControl = headers['TimeControl'] || this.extractPgnTag(pgnString, 'TimeControl');
+      const timeControl = pgnTimeControl || customMeta?.timeControl || undefined;
       const termination = customMeta?.termination || headers['Termination'] || this.extractPgnTag(pgnString, 'Termination') || undefined;
       const eco = customMeta?.eco || headers['ECO'] || this.extractPgnTag(pgnString, 'ECO') || undefined;
       const openingName = customMeta?.openingName || headers['Opening'] || this.extractPgnTag(pgnString, 'Opening') || undefined;

@@ -24,6 +24,15 @@ describe('chess-clock.util', () => {
       expect(parseTimeControl('1/86400')).toEqual({ baseSeconds: 86400, incrementSeconds: 0 });
     });
 
+    it('should parse human-readable minute time controls from online platforms', () => {
+      expect(parseTimeControl('3m Blitz')).toEqual({ baseSeconds: 180, incrementSeconds: 0 });
+      expect(parseTimeControl('1m Bullet')).toEqual({ baseSeconds: 60, incrementSeconds: 0 });
+      expect(parseTimeControl('5m Blitz')).toEqual({ baseSeconds: 300, incrementSeconds: 0 });
+      expect(parseTimeControl('10m Rapid')).toEqual({ baseSeconds: 600, incrementSeconds: 0 });
+      expect(parseTimeControl('15|10 Rapid')).toEqual({ baseSeconds: 900, incrementSeconds: 10 });
+      expect(parseTimeControl('3+2')).toEqual({ baseSeconds: 180, incrementSeconds: 2 });
+    });
+
     it('should handle undefined or unknown time control', () => {
       expect(parseTimeControl(undefined)).toEqual({ baseSeconds: undefined, incrementSeconds: 0 });
       expect(parseTimeControl('?')).toEqual({ baseSeconds: undefined, incrementSeconds: 0 });

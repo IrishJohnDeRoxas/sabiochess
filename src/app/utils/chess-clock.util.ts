@@ -36,14 +36,66 @@ export function parseTimeControl(timeControl?: string): TimeControlInfo {
     };
   }
 
-  // Base+Increment format: e.g. 900+10 or 600
-  const plusParts = clean.split('+');
-  const base = parseFloat(plusParts[0]);
-  const inc = plusParts[1] ? parseFloat(plusParts[1]) : 0;
+  // Pipe format: e.g. "15|10 Rapid", "15|10", "3|2"
+  const pipeMatch = clean.match(/^(\d+(?:\.\d+)?)\s*\|\s*(\d+(?:\.\d+)?)/);
+  if (pipeMatch) {
+    const minOrSec = parseFloat(pipeMatch[1]);
+    const inc = parseFloat(pipeMatch[2]);
+    const baseSeconds = minOrSec <= 120 ? minOrSec * 60 : minOrSec;
+    return {
+      baseSeconds,
+      incrementSeconds: isNaN(inc) ? 0 : inc,
+    };
+  }
+
+  // Human-readable minute format: e.g. "3m Blitz", "10m Rapid", "1m Bullet", "5 min", "15 mins"
+  const minMatch = clean.match(/^(\d+(?:\.\d+)?)\s*(?:m|min|mins|minute|minutes)(?:\s*\+\s*(\d+(?:\.\d+)?)\s*s?)?/i);
+  if (minMatch) {
+    const mins = parseFloat(minMatch[1]);
+    const inc = minMatch[2] ? parseFloat(minMatch[2]) : 0;
+    return {
+      baseSeconds: isNaN(mins) ? undefined : mins * 60,
+      incrementSeconds: isNaN(inc) ? 0 : inc,
+    };
+  }
+
+  // Descriptive words: e.g. "bullet", "blitz", "rapid", "daily"
+  const lower = clean.toLowerCase();
+  if (lower === 'bullet' || lower === '1m bullet') {
+    return { baseSeconds: 60, incrementSeconds: 0 };
+  }
+  if (lower === 'blitz' || lower === '3m blitz') {
+    return { baseSeconds: 180, incrementSeconds: 0 };
+  }
+  if (lower === '5m blitz') {
+    return { baseSeconds: 300, incrementSeconds: 0 };
+  }
+  if (lower === 'rapid' || lower === '10m rapid') {
+    return { baseSeconds: 600, incrementSeconds: 0 };
+  }
+  if (lower === 'daily') {
+    return { baseSeconds: 86400, incrementSeconds: 0 };
+  }
+
+  // Base+Increment format: e.g. "900+10", "180+2", "600", "180", "3+2"
+  const plusMatch = clean.match(/^(\d+(?:\.\d+)?)(?:\s*\+\s*(\d+(?:\.\d+)?))?/);
+  if (plusMatch) {
+    let base = parseFloat(plusMatch[1]);
+    const inc = plusMatch[2] ? parseFloat(plusMatch[2]) : 0;
+    if (!isNaN(base)) {
+      if (base < 60 && plusMatch[2] !== undefined && base <= 30) {
+        base = base * 60;
+      }
+      return {
+        baseSeconds: base,
+        incrementSeconds: isNaN(inc) ? 0 : inc,
+      };
+    }
+  }
 
   return {
-    baseSeconds: isNaN(base) ? undefined : base,
-    incrementSeconds: isNaN(inc) ? 0 : inc,
+    baseSeconds: undefined,
+    incrementSeconds: 0,
   };
 }
 
