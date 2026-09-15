@@ -78,5 +78,22 @@ describe('ReviewTabComponent', () => {
     expect(gameService.isVariationActive()).toBe(false);
     expect(gameService.variations().length).toBe(0);
   });
+
+  it('should toggle sound menu and close on outside click or escape', () => {
+    expect(component.isSoundMenuOpen()).toBe(false);
+
+    component.toggleSoundMenu();
+    expect(component.isSoundMenuOpen()).toBe(true);
+
+    const outsideTarget = document.createElement('div');
+    const mockEvent = { target: outsideTarget } as unknown as MouseEvent;
+    component.onDocumentClick(mockEvent);
+    expect(component.isSoundMenuOpen()).toBe(false);
+
+    component.toggleSoundMenu();
+    expect(component.isSoundMenuOpen()).toBe(true);
+    component.onEscape();
+    expect(component.isSoundMenuOpen()).toBe(false);
+  });
 });
 

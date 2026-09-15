@@ -62,4 +62,19 @@ describe('HeaderComponent', () => {
     component.openProModal();
     expect(authService.isProModalOpen()).toBe(true);
   });
+
+  it('should close user menu when clicked outside or on escape', () => {
+    component.toggleUserMenu();
+    expect(authService.isUserMenuOpen()).toBe(true);
+
+    const outsideTarget = document.createElement('div');
+    const mockEvent = { target: outsideTarget } as unknown as MouseEvent;
+    component.onDocumentClick(mockEvent);
+    expect(authService.isUserMenuOpen()).toBe(false);
+
+    component.toggleUserMenu();
+    expect(authService.isUserMenuOpen()).toBe(true);
+    component.onEscape();
+    expect(authService.isUserMenuOpen()).toBe(false);
+  });
 });

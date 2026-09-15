@@ -1,6 +1,6 @@
 @if (auth.isProModalOpen()) {
-<div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in">
-  <div class="card-brutal w-full max-w-lg bg-white dark:bg-[#1E1F24] p-0 overflow-hidden shadow-[8px_8px_0_0_#222222] dark:shadow-[8px_8px_0_0_#000000] border-4 border-[#222222] dark:border-black animate-scale-up">
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in" (click)="onBackdropClick($event)">
+  <div class="card-brutal w-full max-w-lg bg-white dark:bg-[#1E1F24] p-0 overflow-hidden shadow-[8px_8px_0_0_#222222] dark:shadow-[8px_8px_0_0_#000000] border-4 border-[#222222] dark:border-black animate-scale-up" (click)="$event.stopPropagation()">
     
     <!-- Modal Header -->
     <div class="flex items-center justify-between p-4 bg-[#FF4F00] text-white border-b-4 border-[#222222] dark:border-black">
@@ -70,8 +70,20 @@
           <span class="font-accent text-sm uppercase font-bold text-[#FF4F00]">HAVE A PROMO CODE?</span>
         </div>
         
+        @if (!auth.isAuthenticated()) {
+        <div class="p-3 bg-[#ECECD8] dark:bg-[#2A2B32] border border-[#222222] dark:border-[#373A46] flex flex-col gap-2 text-center items-center">
+          <p class="font-body text-xs text-gray-700 dark:text-gray-300">
+            Sign in with Google to redeem your promo code and activate Lifetime Pro on your account.
+          </p>
+          <button type="button" (click)="openSignIn()"
+            class="btn-brutal btn-brutal-blue !py-2 !px-4 text-xs font-accent uppercase flex items-center gap-1.5 cursor-pointer shadow-[2px_2px_0_0_#222222]">
+            <app-icon name="user" size="w-3.5 h-3.5"></app-icon>
+            <span>SIGN IN WITH GOOGLE</span>
+          </button>
+        </div>
+        } @else {
         <p class="font-body text-xs text-gray-600 dark:text-gray-400">
-          Enter your founder invitation or event code below to activate Lifetime Pro for free:
+          Enter your founder invitation or event code below to activate Lifetime Pro:
         </p>
 
         <div class="flex gap-2">
@@ -99,6 +111,7 @@
             </button>
           }
         </div>
+        }
 
         <!-- Promo Feedback -->
         @if (promoMessage()) {
@@ -110,14 +123,16 @@
         }
       </div>
 
-      <!-- Direct One-Click Demo Unlock -->
+      <!-- Dev-Only Direct One-Click Unlock -->
+      @if (isDev) {
       <div class="flex flex-col gap-2 pt-1 border-t-2 border-[#222222] dark:border-[#373A46]">
         <button type="button" (click)="quickUnlockPro()"
           class="btn-brutal btn-brutal-orange !py-3 text-xs sm:text-sm font-accent uppercase flex items-center justify-center gap-2 cursor-pointer shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]">
           <app-icon name="star" size="w-4 h-4"></app-icon>
-          <span>INSTANT DEMO: UNLOCK LIFETIME PRO VIP</span>
+          <span>INSTANT DEV: UNLOCK LIFETIME PRO VIP</span>
         </button>
       </div>
+      }
 
     </div>
   </div>

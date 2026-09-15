@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, ElementRef, HostListener, inject, isDevMode } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LogoComponent } from '../logo/logo.component';
 import { IconComponent } from '../icon/icon.component';
@@ -13,6 +13,24 @@ import { AuthService } from '../../services/auth.service';
 })
 export class HeaderComponent {
   readonly auth = inject(AuthService);
+  private readonly elementRef = inject(ElementRef);
+  readonly isDev = isDevMode();
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (!this.auth.isUserMenuOpen()) return;
+    const clickedInside = this.elementRef.nativeElement.contains(event.target);
+    if (!clickedInside) {
+      this.auth.closeUserMenu();
+    }
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    if (this.auth.isUserMenuOpen()) {
+      this.auth.closeUserMenu();
+    }
+  }
 
   openAuthModal(): void {
     this.auth.openAuthModal();

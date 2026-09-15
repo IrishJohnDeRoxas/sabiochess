@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, HostListener, inject, isDevMode, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
@@ -14,6 +14,7 @@ import { VALID_PROMO_CODES } from '../../models/auth.model';
 })
 export class ProModalComponent {
   readonly auth = inject(AuthService);
+  readonly isDev = isDevMode();
 
   readonly promoCodeInput = signal<string>('');
   readonly promoMessage = signal<string | null>(null);
@@ -22,9 +23,26 @@ export class ProModalComponent {
 
   readonly sampleCodes = VALID_PROMO_CODES.slice(0, 3);
 
+  @HostListener('document:keydown.escape')
+  handleEscape(): void {
+    if (this.auth.isProModalOpen()) {
+      this.close();
+    }
+  }
+
+  onBackdropClick(event: MouseEvent): void {
+    if (event.target === event.currentTarget) {
+      this.close();
+    }
+  }
+
   close(): void {
     this.auth.closeProModal();
     this.promoMessage.set(null);
+  }
+
+  openSignIn(): void {
+    this.auth.openAuthModal();
   }
 
   applySampleCode(code: string): void {

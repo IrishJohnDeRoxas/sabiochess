@@ -47,7 +47,15 @@ describe('SettingsTabComponent', () => {
     expect(component.promoCodeInput()).toBe('EARLYBIRD');
   });
 
-  it('should display error when submitting empty promo code', async () => {
+  it('should display error when submitting promo code as guest', async () => {
+    component.promoCodeInput.set('EARLYBIRD');
+    await component.redeemPromoCode();
+    expect(component.promoStatusIsError()).toBe(true);
+    expect(component.promoStatusMessage()).toContain('Sign in with Google required');
+  });
+
+  it('should display error when submitting empty promo code while authenticated', async () => {
+    authService.signInMock('free');
     component.promoCodeInput.set('   ');
     await component.redeemPromoCode();
     expect(component.promoStatusIsError()).toBe(true);
@@ -66,10 +74,15 @@ describe('SettingsTabComponent', () => {
     expect(component.promoStatusMessage()).toContain('Lifetime Pro');
   });
 
-  it('should render promo code section in DOM', () => {
+  it('should render promo code section in DOM with Google sign-in guard for guest and form for authenticated user', () => {
     fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
+    let compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.textContent).toContain('PROMO CODE & PRO MEMBERSHIP');
+    expect(compiled.textContent).toContain('GOOGLE SIGN-IN REQUIRED');
+
+    authService.signInMock('free');
+    fixture.detectChanges();
+    compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.textContent).toContain('REDEEM CODE');
     expect(compiled.textContent).toContain('EARLYBIRD');
   });

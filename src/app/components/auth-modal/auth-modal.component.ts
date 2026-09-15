@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, HostListener, inject, isDevMode, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
@@ -14,6 +14,7 @@ import { VALID_PROMO_CODES } from '../../models/auth.model';
 })
 export class AuthModalComponent {
   readonly auth = inject(AuthService);
+  readonly isDev = isDevMode();
 
   readonly promoCodeInput = signal<string>('');
   readonly promoMessage = signal<string | null>(null);
@@ -22,6 +23,19 @@ export class AuthModalComponent {
   readonly activeTab = signal<'signin' | 'compare' | 'promo'>('signin');
 
   readonly presetCodes = VALID_PROMO_CODES.slice(0, 3);
+
+  @HostListener('document:keydown.escape')
+  handleEscape(): void {
+    if (this.auth.isAuthModalOpen()) {
+      this.close();
+    }
+  }
+
+  onBackdropClick(event: MouseEvent): void {
+    if (event.target === event.currentTarget) {
+      this.close();
+    }
+  }
 
   close(): void {
     this.auth.closeAuthModal();
@@ -34,13 +48,7 @@ export class AuthModalComponent {
   }
 
   async onGoogleSignIn(): Promise<void> {
-    // For local dev or mock Google token
-    const mockGoogleToken = 'mock_google_token_' + Date.now();
-    const res = await this.auth.signInWithGoogle(mockGoogleToken);
-    if (!res.success) {
-      // If server is not responding, sign in as free user
-      this.auth.signInMock('free', 'Google Chess Player', 'player@gmail.com');
-    }
+    await this.auth.signInWithGoogle();
   }
 
   signInFree(): void {

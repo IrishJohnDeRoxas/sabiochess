@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal, ElementRef, ViewChild, effect } from '@angular/core';
+import { Component, computed, inject, signal, ElementRef, ViewChild, HostListener, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChessGameService, SAMPLE_GAMES } from '../../../services/chess-game.service';
@@ -79,6 +79,23 @@ export class ReviewTabComponent {
   private followUpOriginalPly = -1;
 
   @ViewChild('movesListContainer') movesListContainer?: ElementRef<HTMLDivElement>;
+  @ViewChild('soundMenuContainer') soundMenuContainer?: ElementRef<HTMLDivElement>;
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (!this.isSoundMenuOpen()) return;
+    const clickedInside = this.soundMenuContainer?.nativeElement?.contains(event.target as Node);
+    if (!clickedInside) {
+      this.isSoundMenuOpen.set(false);
+    }
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    if (this.isSoundMenuOpen()) {
+      this.isSoundMenuOpen.set(false);
+    }
+  }
 
   constructor() {
     effect(() => {

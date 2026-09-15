@@ -50,12 +50,34 @@ describe('AuthModalComponent', () => {
     expect(authService.isGuest()).toBe(true);
   });
 
-  it('should apply preset promo code to input and redeem', async () => {
+  it('should reject promo code redemption when guest', async () => {
+    component.applyPresetCode('EARLYBIRD');
+    await component.redeemCode();
+    expect(component.promoError()).toBe(true);
+    expect(component.promoMessage()).toContain('Sign in with Google required');
+  });
+
+  it('should apply preset promo code to input and redeem when signed in', async () => {
+    authService.signInMock('free');
     component.applyPresetCode('EARLYBIRD');
     expect(component.promoCodeInput()).toBe('EARLYBIRD');
 
     await component.redeemCode();
     expect(authService.isPro()).toBe(true);
     expect(component.promoError()).toBe(false);
+  });
+
+  it('should close on backdrop click and escape key', () => {
+    authService.openAuthModal();
+    expect(authService.isAuthModalOpen()).toBe(true);
+
+    const mockEvent = { target: 'backdrop', currentTarget: 'backdrop' } as unknown as MouseEvent;
+    component.onBackdropClick(mockEvent);
+    expect(authService.isAuthModalOpen()).toBe(false);
+
+    authService.openAuthModal();
+    expect(authService.isAuthModalOpen()).toBe(true);
+    component.handleEscape();
+    expect(authService.isAuthModalOpen()).toBe(false);
   });
 });

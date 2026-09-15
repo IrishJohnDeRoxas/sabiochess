@@ -73,6 +73,21 @@ describe('AuthService', () => {
     expect(service.token()).toBeNull();
   });
 
+  it('should reject promo code redemption when user is guest', async () => {
+    expect(service.isGuest()).toBe(true);
+    const res = await service.redeemPromoCode('EARLYBIRD');
+    expect(res.success).toBe(false);
+    expect(res.message).toContain('Sign in with Google required');
+    expect(service.isPro()).toBe(false);
+  });
+
+  it('should sign in with Google credential and update user state', async () => {
+    const res = await service.signInWithGoogle('test_google_credential');
+    expect(res.success).toBe(true);
+    expect(service.isAuthenticated()).toBe(true);
+    expect(service.currentUser()?.email).toBeTruthy();
+  });
+
   it('should redeem valid promo code and upgrade free user to lifetime pro', async () => {
     service.signInMock('free');
     expect(service.isPro()).toBe(false);
@@ -85,6 +100,7 @@ describe('AuthService', () => {
   });
 
   it('should reject empty promo code', async () => {
+    service.signInMock('free');
     const res = await service.redeemPromoCode('   ');
     expect(res.success).toBe(false);
   });
