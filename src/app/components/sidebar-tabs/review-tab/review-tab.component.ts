@@ -32,7 +32,6 @@ export class ReviewTabComponent {
   readonly isImporterOpen = signal<boolean>(false);
   readonly importerTab = signal<ImporterSubTab>('online');
   readonly pgnInputText = signal<string>('');
-  readonly copiedNotification = signal<string | null>(null);
 
   readonly activeSoundLabel = computed(() => {
     if (this.soundService.isMuted()) return 'MUTED';
@@ -96,14 +95,14 @@ export class ReviewTabComponent {
 
   onOnlineGameSelected(_game: FetchedGame): void {
     this.isImporterOpen.set(false);
-    this.flashNotification('ONLINE GAME LOADED');
+    this.settings.flashToast('ONLINE GAME LOADED');
   }
 
   loadSample(gameId: string): void {
     const success = this.game.loadSampleGame(gameId);
     if (success) {
       this.isImporterOpen.set(false);
-      this.flashNotification('SAMPLE LOADED');
+      this.settings.flashToast('SAMPLE LOADED');
     }
   }
 
@@ -114,7 +113,7 @@ export class ReviewTabComponent {
     if (success) {
       this.isImporterOpen.set(false);
       this.pgnInputText.set('');
-      this.flashNotification('PGN IMPORTED');
+      this.settings.flashToast('PGN IMPORTED');
     } else {
       alert('Could not parse PGN. Please check notation syntax.');
     }
@@ -123,7 +122,7 @@ export class ReviewTabComponent {
   copyFen(): void {
     if (typeof navigator !== 'undefined' && navigator.clipboard) {
       navigator.clipboard.writeText(this.game.fen()).then(() => {
-        this.flashNotification('FEN COPIED');
+        this.settings.flashToast('FEN COPIED');
       });
     }
   }
@@ -139,16 +138,9 @@ export class ReviewTabComponent {
     }
     if (typeof navigator !== 'undefined' && navigator.clipboard) {
       navigator.clipboard.writeText(pgnStr.trim()).then(() => {
-        this.flashNotification('PGN COPIED');
+        this.settings.flashToast('PGN COPIED');
       });
     }
-  }
-
-  private flashNotification(msg: string): void {
-    this.copiedNotification.set(msg);
-    setTimeout(() => {
-      this.copiedNotification.set(null);
-    }, 2000);
   }
 
   getClassificationBadgeClass(classification: string): string {
