@@ -1,6 +1,6 @@
 @if (auth.isAuthModalOpen()) {
-<div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in" (click)="onBackdropClick($event)">
-  <div class="card-brutal w-full max-w-lg bg-white dark:bg-[#1E1F24] p-0 overflow-hidden shadow-[8px_8px_0_0_#222222] dark:shadow-[8px_8px_0_0_#000000] border-4 border-[#222222] dark:border-black animate-scale-up" (click)="$event.stopPropagation()">
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs animate-fade-in" (click)="onBackdropClick($event)">
+  <div class="card-brutal w-full max-w-md bg-white dark:bg-[#1E1F24] p-0 overflow-hidden shadow-[8px_8px_0_0_#222222] dark:shadow-[8px_8px_0_0_#000000] border-4 border-[#222222] dark:border-black animate-scale-up" (click)="$event.stopPropagation()">
     
     <!-- Modal Header -->
     <div class="flex items-center justify-between p-4 bg-[#FF4F00] text-white border-b-4 border-[#222222] dark:border-black">
@@ -16,21 +16,16 @@
     </div>
 
     <!-- Navigation Tabs -->
-    <div class="grid grid-cols-3 border-b-2 border-[#222222] dark:border-[#373A46] bg-[#ECECD8] dark:bg-[#2A2B32] text-xs font-accent font-bold uppercase">
+    <div class="grid grid-cols-2 border-b-2 border-[#222222] dark:border-[#373A46] bg-[#ECECD8] dark:bg-[#2A2B32] text-xs font-accent font-bold uppercase">
       <button type="button" (click)="setTab('signin')"
         class="py-2.5 px-3 border-r-2 border-[#222222] dark:border-[#373A46] cursor-pointer transition-colors text-center"
         [ngClass]="activeTab() === 'signin' ? 'bg-white dark:bg-[#1E1F24] text-[#FF4F00] border-b-2 border-b-[#FF4F00]' : 'text-gray-700 dark:text-gray-300 hover:bg-white/50'">
         SIGN IN
       </button>
       <button type="button" (click)="setTab('compare')"
-        class="py-2.5 px-3 border-r-2 border-[#222222] dark:border-[#373A46] cursor-pointer transition-colors text-center"
+        class="py-2.5 px-3 cursor-pointer transition-colors text-center"
         [ngClass]="activeTab() === 'compare' ? 'bg-white dark:bg-[#1E1F24] text-[#FF4F00] border-b-2 border-b-[#FF4F00]' : 'text-gray-700 dark:text-gray-300 hover:bg-white/50'">
         COMPARE TIERS
-      </button>
-      <button type="button" (click)="setTab('promo')"
-        class="py-2.5 px-3 cursor-pointer transition-colors text-center"
-        [ngClass]="activeTab() === 'promo' ? 'bg-white dark:bg-[#1E1F24] text-[#FF4F00] border-b-2 border-b-[#FF4F00]' : 'text-gray-700 dark:text-gray-300 hover:bg-white/50'">
-        PROMO CODE
       </button>
     </div>
 
@@ -40,44 +35,76 @@
       <div class="text-center flex flex-col gap-1">
         <h3 class="font-display text-base sm:text-lg uppercase font-bold">WELCOME TO SABIOCHESS</h3>
         <p class="font-body text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-          Sign in with Google to save your game analyses, redeem promo codes, and unlock daily energy refills.
+          Sign in to unlock free Stockfish 18 game reviews, save your analysis history, and get daily refills.
         </p>
       </div>
 
-      <!-- Google Sign-In Button -->
-      <button type="button" (click)="onGoogleSignIn()"
-        class="btn-brutal !py-3 bg-white hover:bg-gray-100 text-black border-2 border-[#222222] dark:border-black flex items-center justify-center gap-3 shadow-[4px_4px_0_0_#222222] dark:shadow-[4px_4px_0_0_#000000] cursor-pointer transition-all active:translate-x-0.5 active:translate-y-0.5">
-        <svg class="w-5 h-5" viewBox="0 0 24 24">
-          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-        </svg>
-        <span class="font-accent text-sm font-bold tracking-wide">CONTINUE WITH GOOGLE</span>
-      </button>
-
-      <!-- Dev-only Mock Profiles -->
-      @if (isDev) {
-      <div class="relative flex py-1 items-center">
-        <div class="flex-grow border-t-2 border-[#222222] dark:border-[#373A46]"></div>
-        <span class="flex-shrink mx-3 font-label text-xs uppercase font-bold text-gray-500">QUICK DEV PROFILES</span>
-        <div class="flex-grow border-t-2 border-[#222222] dark:border-[#373A46]"></div>
+      <!-- Feature Highlights -->
+      <div class="flex flex-col gap-2 p-3 bg-[#ECECD8] dark:bg-[#2A2B32] border-2 border-[#222222] dark:border-[#373A46]">
+        <div class="flex items-center gap-2 text-xs font-accent font-bold">
+          <span class="p-1 bg-[#FF4F00] text-white inline-flex border border-black">
+            <app-icon name="bolt" size="w-3.5 h-3.5"></app-icon>
+          </span>
+          <span>5 FREE DAILY ENERGY REFILLS</span>
+        </div>
+        <div class="flex items-center gap-2 text-xs font-accent font-bold">
+          <span class="p-1 bg-[#0E4C92] text-white inline-flex border border-black">
+            <app-icon name="cpu-chip" size="w-3.5 h-3.5"></app-icon>
+          </span>
+          <span>STOCKFISH 18 WASM LOCAL ENGINE</span>
+        </div>
+        <div class="flex items-center gap-2 text-xs font-accent font-bold">
+          <span class="p-1 bg-emerald-600 text-white inline-flex border border-black">
+            <app-icon name="sparkles" size="w-3.5 h-3.5"></app-icon>
+          </span>
+          <span>MOVE QUALITY & ACCURACY SCORING</span>
+        </div>
       </div>
 
-      <div class="grid grid-cols-2 gap-2.5">
-        <button type="button" (click)="signInFree()"
-          class="btn-brutal btn-brutal-blue !py-2 text-xs flex flex-col items-center justify-center gap-0.5 cursor-pointer">
-          <span class="font-accent font-bold">FREE USER</span>
-          <span class="text-[10px] font-label opacity-90">5 Refills / Day</span>
-        </button>
-
-        <button type="button" (click)="signInPro()"
-          class="btn-brutal btn-brutal-orange !py-2 text-xs flex flex-col items-center justify-center gap-0.5 cursor-pointer">
-          <span class="font-accent font-bold">PRO VIP USER</span>
-          <span class="text-[10px] font-label opacity-90">Unlimited Energy</span>
-        </button>
+      <!-- Context Message Banner (e.g. Starter Energy Depleted) -->
+      @if (auth.authContextMessage() === 'guest_exhausted' || auth.authContextMessage()) {
+      <div class="p-3 bg-amber-50 dark:bg-amber-950/40 border-2 border-amber-500 text-amber-900 dark:text-amber-200 text-xs font-label flex items-center gap-2">
+        <app-icon name="bolt" size="w-4 h-4" class="text-[#FF4F00] shrink-0"></app-icon>
+        <span>
+          {{ auth.authContextMessage() === 'guest_exhausted' ? '5 Free starter analyses used! Sign in with Google in 1 tap to get 5 daily energy refills.' : auth.authContextMessage() }}
+        </span>
       </div>
       }
+
+      <!-- Error Alert -->
+      @if (auth.authError()) {
+      <div class="p-3 bg-red-100 dark:bg-red-950/50 border-2 border-red-500 text-red-700 dark:text-red-300 text-xs font-label font-bold flex items-center gap-2">
+        <app-icon name="x-mark" size="w-4 h-4" class="shrink-0"></app-icon>
+        <span>{{ auth.authError() }}</span>
+      </div>
+      }
+
+      <!-- Google OAuth Button Container -->
+      <div class="flex flex-col items-center gap-2 w-full pt-1">
+        @if (auth.isLoading()) {
+        <div class="w-full py-3 bg-[#ECECD8] dark:bg-[#2A2B32] border-2 border-[#222222] dark:border-[#373A46] flex items-center justify-center gap-2 text-xs font-accent font-bold">
+          <div class="loading-spinner"></div>
+          <span>SIGNING IN WITH GOOGLE...</span>
+        </div>
+        } @else {
+        <div class="relative w-full">
+          <!-- Custom Styled Neubrutalist Google Button -->
+          <button type="button" (click)="handleGoogleAuth()"
+            class="btn-brutal w-full !py-3 bg-white hover:bg-gray-100 text-black border-2 border-[#222222] dark:border-black flex items-center justify-center gap-3 shadow-[4px_4px_0_0_#222222] dark:shadow-[4px_4px_0_0_#000000] cursor-pointer transition-all active:translate-x-0.5 active:translate-y-0.5">
+            <svg class="w-5 h-5" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+            </svg>
+            <span class="font-accent text-sm font-bold tracking-wide">CONTINUE WITH GOOGLE</span>
+          </button>
+
+          <!-- GSI Native Overlay Container -->
+          <div #googleBtnContainer id="google-signin-btn-container" class="gsi-overlay-container" aria-hidden="true"></div>
+        </div>
+        }
+      </div>
 
       <!-- Continue as Guest -->
       <button type="button" (click)="continueGuest()"
@@ -134,94 +161,6 @@
           </ul>
         </div>
       </div>
-
-      <div class="p-3 bg-amber-100 dark:bg-amber-950/50 border-2 border-amber-600 text-xs font-label text-amber-900 dark:text-amber-200">
-        💡 <strong>Tip:</strong> Have a founder promo code like <code>EARLYBIRD</code> or <code>SABIOPRO</code>? Switch to the <strong>PROMO CODE</strong> tab to activate Lifetime Pro instantly!
-      </div>
-    </div>
-    }
-
-    <!-- Tab 3: Promo Code -->
-    @if (activeTab() === 'promo') {
-    <div class="p-5 flex flex-col gap-3.5 text-[#222222] dark:text-[#F3F4F6]">
-      <div class="flex flex-col gap-1">
-        <h3 class="font-display text-base uppercase font-bold flex items-center gap-1.5">
-          <app-icon name="key" size="w-4 h-4" class="text-[#FF4F00]"></app-icon>
-          REDEEM PROMO CODE
-        </h3>
-        <p class="font-body text-xs text-gray-600 dark:text-gray-400">
-          Enter a founder pass or event promo code to unlock permanent Lifetime Pro access.
-        </p>
-      </div>
-
-      @if (!auth.isAuthenticated()) {
-      <!-- Sign-In Required Guard for Guests -->
-      <div class="p-4 border-2 border-[#222222] dark:border-[#373A46] bg-[#ECECD8] dark:bg-[#2A2B32] flex flex-col items-center text-center gap-3">
-        <span class="p-2 bg-[#FF4F00] text-white inline-flex border-2 border-black">
-          <app-icon name="user" size="w-5 h-5"></app-icon>
-        </span>
-        <div class="flex flex-col gap-1">
-          <h4 class="font-display text-sm uppercase font-bold text-[#222222] dark:text-[#F3F4F6]">GOOGLE SIGN-IN REQUIRED</h4>
-          <p class="font-body text-xs text-gray-700 dark:text-gray-300 max-w-sm">
-            You must be signed in with a Google account before entering a promo code to link Lifetime Pro VIP to your account.
-          </p>
-        </div>
-        <button type="button" (click)="onGoogleSignIn()"
-          class="btn-brutal btn-brutal-blue !py-2.5 !px-5 text-xs font-accent uppercase flex items-center justify-center gap-2 cursor-pointer shadow-[2px_2px_0_0_#222222]">
-          <svg class="w-4 h-4" viewBox="0 0 24 24">
-            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-          </svg>
-          <span>SIGN IN WITH GOOGLE</span>
-        </button>
-      </div>
-      } @else {
-      <!-- Authenticated Promo Code Form -->
-      <div class="p-2.5 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-500 flex items-center justify-between text-xs font-accent">
-        <span class="text-emerald-800 dark:text-emerald-300 font-bold">Signed in as:</span>
-        <span class="text-emerald-900 dark:text-emerald-100 font-bold truncate max-w-[200px]">{{ auth.currentUser()?.email }}</span>
-      </div>
-
-      <!-- Promo Input Field -->
-      <div class="flex flex-col gap-1.5">
-        <div class="flex gap-2">
-          <input type="text" [ngModel]="promoCodeInput()" (ngModelChange)="promoCodeInput.set($event)"
-            placeholder="e.g. EARLYBIRD, SABIOPRO"
-            class="flex-1 bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] border-2 border-[#222222] dark:border-[#373A46] p-2.5 text-sm font-label font-bold uppercase placeholder:normal-case focus:bg-white dark:focus:bg-[#1E1F24] focus:outline-none focus:border-[#FF4F00]" />
-          
-          <button type="button" (click)="redeemCode()" [disabled]="isRedeeming() || !promoCodeInput().trim()"
-            class="btn-brutal btn-brutal-orange !px-4 text-xs font-accent uppercase cursor-pointer disabled:opacity-50">
-            @if (isRedeeming()) {
-              <span>APPLYING...</span>
-            } @else {
-              <span>REDEEM</span>
-            }
-          </button>
-        </div>
-
-        <!-- Preset Chips -->
-        <div class="flex items-center gap-1.5 flex-wrap pt-1">
-          <span class="font-label text-[10px] uppercase font-bold text-gray-500">SAMPLE CODES:</span>
-          @for (code of presetCodes; track code) {
-            <button type="button" (click)="applyPresetCode(code)"
-              class="badge-brutal bg-[#ECECD8] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] hover:bg-[#FF4F00] hover:text-white text-[10px] !py-0.5 !px-1.5 font-bold cursor-pointer transition-colors">
-              {{ code }}
-            </button>
-          }
-        </div>
-      </div>
-      }
-
-      <!-- Feedback Alert -->
-      @if (promoMessage()) {
-      <div class="p-3 border-2 text-xs font-label font-bold flex items-center gap-2"
-        [ngClass]="promoError() ? 'bg-red-100 dark:bg-red-950/50 border-red-500 text-red-700 dark:text-red-300' : 'bg-emerald-100 dark:bg-emerald-950/50 border-emerald-500 text-emerald-700 dark:text-emerald-300'">
-        <app-icon [name]="promoError() ? 'x-mark' : 'check'" size="w-4 h-4"></app-icon>
-        <span>{{ promoMessage() }}</span>
-      </div>
-      }
     </div>
     }
 

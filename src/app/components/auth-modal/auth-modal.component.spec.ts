@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AuthModalComponent } from './auth-modal.component';
 import { AuthService } from '../../services/auth.service';
@@ -26,22 +26,14 @@ describe('AuthModalComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should switch tabs between signin, compare, and promo', () => {
+  it('should switch tabs between signin and compare', () => {
     expect(component.activeTab()).toBe('signin');
 
     component.setTab('compare');
     expect(component.activeTab()).toBe('compare');
 
-    component.setTab('promo');
-    expect(component.activeTab()).toBe('promo');
-  });
-
-  it('should sign in as mock free user and pro user', () => {
-    component.signInFree();
-    expect(authService.isFreeUser()).toBe(true);
-
-    component.signInPro();
-    expect(authService.isPro()).toBe(true);
+    component.setTab('signin');
+    expect(component.activeTab()).toBe('signin');
   });
 
   it('should allow continuing as guest', () => {
@@ -50,21 +42,10 @@ describe('AuthModalComponent', () => {
     expect(authService.isGuest()).toBe(true);
   });
 
-  it('should reject promo code redemption when guest', async () => {
-    component.applyPresetCode('EARLYBIRD');
-    await component.redeemCode();
-    expect(component.promoError()).toBe(true);
-    expect(component.promoMessage()).toContain('Sign in with Google required');
-  });
-
-  it('should apply preset promo code to input and redeem when signed in', async () => {
-    authService.signInMock('free');
-    component.applyPresetCode('EARLYBIRD');
-    expect(component.promoCodeInput()).toBe('EARLYBIRD');
-
-    await component.redeemCode();
-    expect(authService.isPro()).toBe(true);
-    expect(component.promoError()).toBe(false);
+  it('should initiate Google sign in on button click', async () => {
+    const spy = vi.spyOn(authService, 'signInWithGoogle').mockResolvedValue({ success: true });
+    await component.onGoogleSignIn();
+    expect(spy).toHaveBeenCalled();
   });
 
   it('should close on backdrop click and escape key', () => {

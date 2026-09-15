@@ -74,15 +74,15 @@ describe('SettingsTabComponent', () => {
     expect(component.promoStatusMessage()).toContain('Lifetime Pro');
   });
 
-  it('should render promo code section in DOM with Google sign-in guard for guest and form for authenticated user', () => {
+  it('should hide promo code section for guest and render for authenticated user', () => {
     fixture.detectChanges();
     let compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.textContent).toContain('PROMO CODE & PRO MEMBERSHIP');
-    expect(compiled.textContent).toContain('GOOGLE SIGN-IN REQUIRED');
+    expect(compiled.textContent).not.toContain('PROMO CODE & PRO MEMBERSHIP');
 
     authService.signInMock('free');
     fixture.detectChanges();
     compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.textContent).toContain('PROMO CODE & PRO MEMBERSHIP');
     expect(compiled.textContent).toContain('REDEEM CODE');
     expect(compiled.textContent).toContain('EARLYBIRD');
   });

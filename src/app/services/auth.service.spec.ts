@@ -11,6 +11,7 @@ describe('AuthService', () => {
   beforeEach(() => {
     localStorage.clear();
     vi.restoreAllMocks();
+    vi.unstubAllGlobals();
 
     TestBed.configureTestingModule({
       providers: [AuthService, SettingsService],
@@ -82,10 +83,29 @@ describe('AuthService', () => {
   });
 
   it('should sign in with Google credential and update user state', async () => {
-    const res = await service.signInWithGoogle('test_google_credential');
+    const mockUser = {
+      id: 'g_12345',
+      email: 'gm_tester@gmail.com',
+      name: 'Grandmaster Tester',
+      avatarUrl: 'https://example.com/avatar.png',
+      tier: 'free' as const,
+      energy: 5,
+      maxEnergy: 5,
+      isUnlimited: false,
+    };
+
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({ token: 'mock_jwt_token', user: mockUser }),
+      })
+    );
+
+    const res = await service.loginWithGoogleToken('test_google_credential');
     expect(res.success).toBe(true);
     expect(service.isAuthenticated()).toBe(true);
-    expect(service.currentUser()?.email).toBeTruthy();
+    expect(service.currentUser()?.email).toBe('gm_tester@gmail.com');
   });
 
   it('should redeem valid promo code and upgrade free user to lifetime pro', async () => {

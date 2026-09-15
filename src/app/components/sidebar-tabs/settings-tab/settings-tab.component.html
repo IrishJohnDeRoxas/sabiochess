@@ -358,7 +358,8 @@
     </div>
   </div>
 
-  <!-- Section 6: Promo Code & Membership (Requested Feature) -->
+  <!-- Section 6: Promo Code & Membership (Visible only when logged in) -->
+  @if (auth.isAuthenticated()) {
   <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1F24] flex flex-col gap-3 border-4 border-[#222222] dark:border-black shadow-[4px_4px_0_0_#222222] dark:shadow-[4px_4px_0_0_#000000]">
     <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-2 gap-2">
       <div class="flex items-center gap-2 min-w-0">
@@ -373,8 +374,8 @@
       
       <!-- Current Tier Badge -->
       <span class="badge-brutal text-xs sm:text-sm font-bold self-start sm:self-auto shrink-0"
-        [ngClass]="auth.isPro() ? 'bg-[#FF4F00] text-white' : auth.isFreeUser() ? 'bg-[#0E4C92] text-white' : 'bg-[#222222] dark:bg-[#373A46] text-white'">
-        {{ auth.isPro() ? '👑 LIFETIME PRO' : auth.isFreeUser() ? 'FREE TIER (5/DAY)' : 'GUEST SESSION' }}
+        [ngClass]="auth.isPro() ? 'bg-[#FF4F00] text-white' : 'bg-[#0E4C92] text-white'">
+        {{ auth.isPro() ? '👑 LIFETIME PRO' : 'FREE TIER (5/DAY)' }}
       </span>
     </div>
 
@@ -390,26 +391,6 @@
           Unlimited Stockfish 18 evaluations, maximum depth 22 calculation, and VIP sound packs are unlocked permanently!
         </span>
       </div>
-    </div>
-    } @else if (!auth.isAuthenticated()) {
-    <!-- Guest Google Sign-In Required Guard -->
-    <div class="p-3 bg-[#ECECD8] dark:bg-[#2A2B32] border border-[#222222] dark:border-[#373A46] flex flex-col sm:flex-row items-center justify-between gap-3">
-      <div class="flex items-center gap-2.5">
-        <span class="p-1.5 bg-[#FF4F00] text-white inline-flex border border-[#222222] dark:border-black shrink-0">
-          <app-icon name="user" size="w-4 h-4"></app-icon>
-        </span>
-        <div class="flex flex-col">
-          <span class="font-accent font-bold text-xs sm:text-sm text-[#222222] dark:text-[#F3F4F6]">GOOGLE SIGN-IN REQUIRED</span>
-          <span class="font-body text-xs text-gray-600 dark:text-gray-400">
-            Sign in with Google to redeem promo codes and unlock Lifetime Pro.
-          </span>
-        </div>
-      </div>
-      <button type="button" (click)="openAuthModal()"
-        class="btn-brutal btn-brutal-blue !py-2 !px-4 text-xs font-accent uppercase shrink-0 flex items-center gap-1.5 cursor-pointer shadow-[2px_2px_0_0_#222222]">
-        <app-icon name="user" size="w-3.5 h-3.5"></app-icon>
-        <span>SIGN IN WITH GOOGLE</span>
-      </button>
     </div>
     } @else {
     <div class="p-2.5 bg-[#ECECD8] dark:bg-[#2A2B32] border border-[#222222] dark:border-[#373A46] flex flex-col gap-1">
@@ -470,6 +451,7 @@
     </div>
     }
   </div>
+  }
 
   <!-- Reset Defaults Action -->
   <div class="pt-1 pb-2">

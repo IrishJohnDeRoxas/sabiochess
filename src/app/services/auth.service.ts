@@ -1,4 +1,5 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
+import { environment } from '../../environments/environment';
 import { AuthUser, DEMO_USERS, EnergyStatus, PromoRedeemResult, UserTier, VALID_PROMO_CODES } from '../models/auth.model';
 import { SettingsService } from './settings.service';
 
@@ -43,6 +44,8 @@ const STORAGE_GUEST_ENERGY_KEY = 'sabiochess_guest_energy_v1';
 })
 export class AuthService {
   private readonly settings = inject(SettingsService);
+  readonly apiUrl = environment.apiUrl;
+  readonly googleClientId = environment.googleClientId;
 
   readonly currentUser = signal<AuthUser | null>(null);
   readonly token = signal<string | null>(null);
@@ -52,11 +55,15 @@ export class AuthService {
   readonly isUnlimitedEnergy = signal<boolean>(false);
   readonly nextRefillAt = signal<string | null>(null);
   readonly isLoading = signal<boolean>(false);
+  readonly authError = signal<string | null>(null);
+  readonly authContextMessage = signal<string | null>(null);
 
   // Modal UI state signals
   readonly isAuthModalOpen = signal<boolean>(false);
   readonly isProModalOpen = signal<boolean>(false);
   readonly isUserMenuOpen = signal<boolean>(false);
+
+  private isGoogleInitialized = false;
 
   // Computed state
   readonly isAuthenticated = computed(() => !!this.currentUser());
@@ -197,16 +204,99 @@ export class AuthService {
   }
 
   /**
-   * Authenticate with Google credential token (or fallback mock profile for client testing)
+   * Dynamically loads Google Identity Services SDK if not already loaded and configures client.
    */
-  async signInWithGoogle(credential?: string): Promise<{ success: boolean; message?: string }> {
-    this.isLoading.set(true);
+  async initGoogleAuth(): Promise<void> {
+    if (typeof window === 'undefined') return;
+
+    if (!window.google?.accounts?.id) {
+      const existingScript = document.querySelector('script[src*="accounts.google.com/gsi/client"]');
+      if (!existingScript) {
+        await new Promise<void>((resolve, reject) => {
+          const script = document.createElement('script');
+          script.src = 'https://accounts.google.com/gsi/client?hl=en';
+          script.async = true;
+          script.defer = true;
+          script.onload = () => resolve();
+          script.onerror = () => reject(new Error('Failed to load Google Identity Services'));
+          document.head.appendChild(script);
+        });
+      } else {
+        let attempts = 0;
+        while (!window.google?.accounts?.id && attempts < 20) {
+          await new Promise((r) => setTimeout(r, 100));
+          attempts++;
+        }
+      }
+    }
+
+    this.setupGoogleClient();
+  }
+
+  /**
+   * Initializes Google Identity configuration.
+   */
+  setupGoogleClient(): void {
+    if (!window.google?.accounts?.id || !this.googleClientId || this.isGoogleInitialized) return;
+
+    window.google.accounts.id.initialize({
+      client_id: this.googleClientId,
+      callback: (response) => {
+        if (response?.credential) {
+          this.loginWithGoogleToken(response.credential);
+        }
+      },
+      auto_select: false,
+      cancel_on_tap_outside: true,
+    });
+    this.isGoogleInitialized = true;
+  }
+
+  /**
+   * Renders Google Sign-In button inside a DOM element.
+   */
+  async renderGoogleButton(element: HTMLElement | string): Promise<boolean> {
+    const targetElement = typeof element === 'string' ? document.getElementById(element) : element;
+    if (!targetElement) return false;
+
     try {
-      const cred = credential || 'mock_google_token_' + Date.now();
-      const res = await fetch('/api/auth/google', {
+      await this.initGoogleAuth();
+    } catch {
+      return false;
+    }
+
+    if (window.google?.accounts?.id && targetElement) {
+      try {
+        window.google.accounts.id.renderButton(targetElement, {
+          type: 'standard',
+          theme: 'filled_black',
+          size: 'large',
+          text: 'continue_with',
+          shape: 'rectangular',
+          logo_alignment: 'left',
+          width: 320,
+          locale: 'en',
+        });
+        return targetElement.children.length > 0 || !!targetElement.querySelector('iframe');
+      } catch {
+        return false;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Sends Google credential token to backend API and establishes session.
+   */
+  async loginWithGoogleToken(credential: string): Promise<{ success: boolean; message?: string; user?: AuthUser; token?: string }> {
+    this.isLoading.set(true);
+    this.authError.set(null);
+
+    try {
+      const res = await fetch(`${this.apiUrl}/api/auth/google`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ credential: cred }),
+        body: JSON.stringify({ credential }),
       });
 
       const data = (await res.json()) as { token?: string; user?: AuthUser; error?: string; message?: string };
@@ -218,53 +308,39 @@ export class AuthService {
         this.updateEnergyFromUser(data.user);
         this.closeAuthModal();
         this.settings.flashToast(`Signed in as ${data.user.name || data.user.email}`);
-        return { success: true };
+        return { success: true, user: data.user, token: data.token };
       }
 
-      // Fallback for client mode / mock Google sign-in
-      const mockGoogleUser: AuthUser = {
-        id: 'g_' + Math.random().toString(36).substring(2, 10),
-        email: 'player@gmail.com',
-        name: 'Google Chess Player',
-        avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=faces',
-        tier: 'free',
-        energy: 5,
-        maxEnergy: 5,
-        isUnlimited: false,
-        nextRefillAt: new Date(Date.now() + 86400000).toISOString(),
-        chesscomUsername: 'GooglePlayer',
-      };
-      const mockToken = 'mock_jwt_google_' + Date.now();
-      this.saveSession(mockToken, mockGoogleUser);
-      this.currentUser.set(mockGoogleUser);
-      this.token.set(mockToken);
-      this.updateEnergyFromUser(mockGoogleUser);
-      this.closeAuthModal();
-      this.settings.flashToast(`Signed in as ${mockGoogleUser.name} (${mockGoogleUser.email})`);
-      return { success: true };
-    } catch {
-      const mockGoogleUser: AuthUser = {
-        id: 'g_' + Math.random().toString(36).substring(2, 10),
-        email: 'player@gmail.com',
-        name: 'Google Chess Player',
-        avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=faces',
-        tier: 'free',
-        energy: 5,
-        maxEnergy: 5,
-        isUnlimited: false,
-        nextRefillAt: new Date(Date.now() + 86400000).toISOString(),
-        chesscomUsername: 'GooglePlayer',
-      };
-      const mockToken = 'mock_jwt_google_' + Date.now();
-      this.saveSession(mockToken, mockGoogleUser);
-      this.currentUser.set(mockGoogleUser);
-      this.token.set(mockToken);
-      this.updateEnergyFromUser(mockGoogleUser);
-      this.closeAuthModal();
-      this.settings.flashToast(`Signed in as ${mockGoogleUser.name} (${mockGoogleUser.email})`);
-      return { success: true };
+      // If backend verification returned an error
+      const errorMessage = data.message || data.error || 'Authentication failed. Please try again.';
+      this.authError.set(errorMessage);
+      return { success: false, message: errorMessage };
+    } catch (err: unknown) {
+      const errorMessage = 'Authentication service is currently unavailable. Please try again later.';
+      this.authError.set(errorMessage);
+      return { success: false, message: errorMessage };
     } finally {
       this.isLoading.set(false);
+    }
+  }
+
+  /**
+   * Trigger Google Sign-In or process credential.
+   */
+  async signInWithGoogle(credential?: string): Promise<{ success: boolean; message?: string }> {
+    if (credential) {
+      return this.loginWithGoogleToken(credential);
+    }
+
+    try {
+      await this.initGoogleAuth();
+      if (typeof window !== 'undefined' && window.google?.accounts?.id?.prompt) {
+        window.google.accounts.id.prompt();
+      }
+      return { success: true };
+    } catch {
+      this.authError.set('Could not initialize Google Sign-In. Please try again.');
+      return { success: false, message: 'Could not initialize Google Sign-In' };
     }
   }
 
@@ -499,7 +575,9 @@ export class AuthService {
   }
 
   // UI Modal toggles
-  openAuthModal(): void {
+  openAuthModal(contextMessage?: string | null): void {
+    this.authError.set(null);
+    this.authContextMessage.set(contextMessage || null);
     this.isAuthModalOpen.set(true);
     this.isProModalOpen.set(false);
     this.isUserMenuOpen.set(false);
@@ -507,6 +585,8 @@ export class AuthService {
 
   closeAuthModal(): void {
     this.isAuthModalOpen.set(false);
+    this.authError.set(null);
+    this.authContextMessage.set(null);
   }
 
   openProModal(): void {

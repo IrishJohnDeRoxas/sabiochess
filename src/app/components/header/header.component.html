@@ -36,8 +36,8 @@
         <span>SUPPORT</span>
       </button>
 
-      <!-- Pro Upgrade Button (Visible when not already Lifetime Pro) -->
-      @if (!auth.isPro()) {
+      <!-- Pro Upgrade Button (Visible only when logged in and not already Lifetime Pro) -->
+      @if (auth.isAuthenticated() && !auth.isPro()) {
       <button type="button" (click)="openProModal()"
         class="btn-brutal btn-brutal-orange !py-1.5 sm:!py-2 !px-3.5 sm:!px-4 text-xs sm:text-sm flex items-center gap-1.5 font-accent cursor-pointer animate-pulse hover:animate-none">
         <app-icon name="star" size="w-4 h-4"></app-icon>
@@ -127,36 +127,12 @@
       </button>
       }
 
-      @if (!auth.isPro()) {
+      @if (auth.isAuthenticated() && !auth.isPro()) {
       <button type="button" (click)="openProModal()"
         class="btn-brutal btn-brutal-orange w-full !py-2 text-xs flex items-center justify-center gap-1.5 cursor-pointer">
         <app-icon name="star" size="w-3.5 h-3.5"></app-icon>
         <span>UPGRADE / ENTER PROMO CODE</span>
       </button>
-      }
-
-      <!-- Demo Account Quick Switcher (Only in Development) -->
-      @if (isDev) {
-      <div class="p-2 bg-[#ECECD8] dark:bg-[#2A2B32] border border-[#222222] dark:border-[#373A46] flex flex-col gap-1 my-0.5">
-        <span class="font-label text-[9px] uppercase font-bold text-gray-600 dark:text-gray-400">QUICK TIER SWITCHER (DEMO):</span>
-        <div class="grid grid-cols-3 gap-1">
-          <button type="button" (click)="switchToGuest()"
-            class="badge-brutal text-[9px] !py-0.5 !px-1 text-center justify-center font-bold cursor-pointer"
-            [ngClass]="auth.isGuest() ? 'bg-[#FF4F00] text-white' : 'bg-white dark:bg-[#1E1F24] text-black dark:text-white'">
-            GUEST
-          </button>
-          <button type="button" (click)="signInFree()"
-            class="badge-brutal text-[9px] !py-0.5 !px-1 text-center justify-center font-bold cursor-pointer"
-            [ngClass]="auth.isFreeUser() ? 'bg-[#FF4F00] text-white' : 'bg-white dark:bg-[#1E1F24] text-black dark:text-white'">
-            FREE
-          </button>
-          <button type="button" (click)="signInPro()"
-            class="badge-brutal text-[9px] !py-0.5 !px-1 text-center justify-center font-bold cursor-pointer"
-            [ngClass]="auth.isPro() ? 'bg-[#FF4F00] text-white' : 'bg-white dark:bg-[#1E1F24] text-black dark:text-white'">
-            PRO
-          </button>
-        </div>
-      </div>
       }
 
       @if (auth.isAuthenticated()) {
