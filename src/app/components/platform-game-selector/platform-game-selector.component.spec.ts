@@ -33,8 +33,8 @@ describe('PlatformGameSelectorComponent', () => {
     expect(component.activePlatform()).toBe('chess.com');
   });
 
-  it('should switch platform', () => {
+  it('should remain on chess.com and ignore lichess since it is locked in development', () => {
     component.selectPlatform('lichess');
-    expect(component.activePlatform()).toBe('lichess');
+    expect(component.activePlatform()).toBe('chess.com');
   });
 });

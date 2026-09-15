@@ -357,15 +357,21 @@
           class="bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] border-2 border-[#222222] dark:border-[#373A46] p-2 text-xs sm:text-sm font-label focus:bg-white dark:focus:bg-[#1E1F24] focus:outline-none focus:border-[#FF4F00] uppercase placeholder:normal-case" />
       </div>
 
-      <div class="flex flex-col gap-1">
+      <div class="flex flex-col gap-1 opacity-60">
         <label
-          class="font-label text-xs sm:text-sm uppercase text-gray-800 dark:text-gray-200 font-bold flex items-center gap-1.5">
-          <span class="w-2 h-2 bg-[#0E4C92] inline-block border border-[#222222] dark:border-black"></span>
-          <span>LICHESS USERNAME</span>
+          class="font-label text-xs sm:text-sm uppercase text-gray-800 dark:text-gray-200 font-bold flex items-center justify-between flex-wrap gap-1">
+          <div class="flex items-center gap-1.5">
+            <span class="w-2 h-2 bg-[#0E4C92] inline-block border border-[#222222] dark:border-black"></span>
+            <span>LICHESS USERNAME</span>
+          </div>
+          <span class="inline-flex items-center gap-1 text-[10px] bg-amber-500 text-black px-1.5 py-0.5 font-mono font-bold uppercase">
+            <app-icon name="lock-closed" size="w-2.5 h-2.5"></app-icon>
+            IN DEV
+          </span>
         </label>
-        <input type="text" [ngModel]="settings.lichessUsername()" (ngModelChange)="settings.setLichessUsername($event)"
-          placeholder="e.g. DrNykterstein, penguingm1"
-          class="bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] border-2 border-[#222222] dark:border-[#373A46] p-2 text-xs sm:text-sm font-label focus:bg-white dark:focus:bg-[#1E1F24] focus:outline-none focus:border-[#0E4C92] uppercase placeholder:normal-case" />
+        <input type="text" [ngModel]="settings.lichessUsername()" disabled
+          placeholder="Lichess integration in development..."
+          class="bg-[#D9D9D9] dark:bg-[#2A2B32] text-gray-500 dark:text-gray-400 border-2 border-[#222222] dark:border-[#373A46] p-2 text-xs sm:text-sm font-label cursor-not-allowed uppercase placeholder:normal-case select-none" />
       </div>
     </div>
   </div>

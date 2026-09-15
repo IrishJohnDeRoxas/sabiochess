@@ -29,13 +29,12 @@ export class PlatformGameSelectorComponent {
   readonly gamesList = signal<FetchedGame[]>([]);
 
   selectPlatform(platform: PlatformType): void {
+    if (platform === 'lichess') {
+      return;
+    }
     this.activePlatform.set(platform);
     this.errorMessage.set(null);
-    if (platform === 'chess.com') {
-      this.username.set(this.settings.chesscomUsername() || 'Hikaru');
-    } else {
-      this.username.set(this.settings.lichessUsername() || 'DrNykterstein');
-    }
+    this.username.set(this.settings.chesscomUsername() || 'Hikaru');
   }
 
   async fetchGames(): Promise<void> {

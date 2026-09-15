@@ -39,7 +39,8 @@ export type IconName =
   | 'trash'
   | 'arrow-trending-up'
   | 'sun'
-  | 'moon';
+  | 'moon'
+  | 'lock-closed';
 
 @Component({
   selector: 'app-icon',
@@ -319,6 +320,12 @@ export class IconComponent {
         return [
           {
             d: 'M7.455 2.004a.75.75 0 0 1 .26.77 7 7 0 0 0 9.958 7.967.75.75 0 0 1 1.067.853A8.5 8.5 0 1 1 6.647 1.921a.75.75 0 0 1 .808.083Z',
+          },
+        ];
+      case 'lock-closed':
+        return [
+          {
+            d: 'M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z',
           },
         ];
       default:
