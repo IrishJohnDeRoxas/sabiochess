@@ -1,19 +1,17 @@
 <div class="flex flex-col gap-3 w-full text-[#222222] dark:text-[#F3F4F6]">
   <!-- Section 1: App Interface Theme (Dark & Light Mode Toggle) -->
   <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1F24] flex flex-col gap-3">
-    <div class="flex items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-2">
-      <div class="flex items-center gap-2">
-        <span class="p-1.5 bg-[#FF4F00] text-white inline-flex border border-[#222222] dark:border-black">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-2 gap-2">
+      <div class="flex items-center gap-2 min-w-0">
+        <span class="p-1.5 bg-[#FF4F00] text-white inline-flex border border-[#222222] dark:border-black shrink-0">
           <app-icon [name]="settings.appTheme() === 'dark' ? 'moon' : 'sun'" size="w-4 h-4"></app-icon>
         </span>
-        <div>
-          <h3 class="font-display text-sm uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6]">APP INTERFACE
-            THEME</h3>
-          <p class="font-label text-[10px] text-gray-600 dark:text-gray-400">Neubrutalist light canvas vs midnight dark
-            mode</p>
+        <div class="min-w-0">
+          <h3 class="font-display text-sm sm:text-base uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6] truncate">APP INTERFACE THEME</h3>
+          <p class="font-label text-xs text-gray-600 dark:text-gray-400">Neubrutalist light canvas vs midnight dark mode</p>
         </div>
       </div>
-      <span class="badge-brutal text-[10px] transition-colors"
+      <span class="badge-brutal text-xs sm:text-sm font-bold transition-colors self-start sm:self-auto shrink-0"
         [ngClass]="settings.appTheme() === 'dark' ? 'bg-[#FF4F00] text-white' : 'bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6]'">
         {{ settings.appTheme() === 'dark' ? '🌙 DARK MODE' : '☀️ LIGHT MODE' }}
       </span>
@@ -30,26 +28,26 @@
             <span class="p-1 bg-[#F59E0B] text-white inline-flex border border-[#222222] dark:border-black">
               <app-icon name="sun" size="w-3.5 h-3.5"></app-icon>
             </span>
-            <span class="font-accent text-xs font-bold text-[#222222] dark:text-[#F3F4F6]">LIGHT MODE</span>
+            <span class="font-accent text-sm sm:text-base font-bold text-[#222222] dark:text-[#F3F4F6]">LIGHT MODE</span>
           </div>
           @if (settings.appTheme() === 'light') {
           <span class="p-0.5 bg-[#FF4F00] text-white rounded-none border border-[#222222] dark:border-black">
-            <app-icon name="check" size="w-2.5 h-2.5"></app-icon>
+            <app-icon name="check" size="w-3 h-3"></app-icon>
           </span>
           }
         </div>
 
         <!-- Visual Swatch Representation -->
-        <div class="flex items-center justify-between bg-[#D9D9D9] p-1.5 border border-[#222222]">
+        <div class="flex items-center justify-between bg-[#D9D9D9] dark:bg-[#2A2B32] p-1.5 border border-[#222222] dark:border-black">
           <div class="flex items-center gap-1.5">
-            <div class="w-4 h-4 bg-white border border-[#222222]"></div>
-            <div class="w-4 h-4 bg-[#FF4F00] border border-[#222222]"></div>
-            <div class="w-4 h-4 bg-[#0E4C92] border border-[#222222]"></div>
+            <div class="w-4 h-4 bg-white border border-[#222222] dark:border-black"></div>
+            <div class="w-4 h-4 bg-[#FF4F00] border border-[#222222] dark:border-black"></div>
+            <div class="w-4 h-4 bg-[#0E4C92] border border-[#222222] dark:border-black"></div>
           </div>
-          <span class="text-[9px] font-label text-gray-800 font-bold">CHALK</span>
+          <span class="text-xs font-label text-gray-800 dark:text-gray-200 font-bold">CHALK</span>
         </div>
 
-        <span class="font-body text-[11px] text-gray-600 dark:text-gray-400 leading-tight">
+        <span class="font-body text-xs sm:text-sm text-gray-600 dark:text-gray-400 leading-tight">
           High-contrast brutalist light canvas with bold borders.
         </span>
       </button>
@@ -63,11 +61,11 @@
             <span class="p-1 bg-[#6366F1] text-white inline-flex border border-[#222222] dark:border-black">
               <app-icon name="moon" size="w-3.5 h-3.5"></app-icon>
             </span>
-            <span class="font-accent text-xs font-bold text-[#222222] dark:text-[#F3F4F6]">DARK MODE</span>
+            <span class="font-accent text-sm sm:text-base font-bold text-[#222222] dark:text-[#F3F4F6]">DARK MODE</span>
           </div>
           @if (settings.appTheme() === 'dark') {
           <span class="p-0.5 bg-[#FF4F00] text-white rounded-none border border-[#222222] dark:border-black">
-            <app-icon name="check" size="w-2.5 h-2.5"></app-icon>
+            <app-icon name="check" size="w-3 h-3"></app-icon>
           </span>
           }
         </div>
@@ -79,10 +77,10 @@
             <div class="w-4 h-4 bg-[#FF4F00] border border-black"></div>
             <div class="w-4 h-4 bg-[#0E4C92] border border-black"></div>
           </div>
-          <span class="text-[9px] font-label text-gray-300 font-bold">MIDNIGHT</span>
+          <span class="text-xs font-label text-gray-300 font-bold">MIDNIGHT</span>
         </div>
 
-        <span class="font-body text-[11px] text-gray-600 dark:text-gray-400 leading-tight">
+        <span class="font-body text-xs sm:text-sm text-gray-600 dark:text-gray-400 leading-tight">
           Deep charcoal brutalist midnight canvas for low-light focus.
         </span>
       </button>
@@ -91,44 +89,51 @@
 
   <!-- Section 2: Engine & Evaluation Configuration -->
   <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1F24] flex flex-col gap-3">
-    <div class="flex items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-2">
-      <div class="flex items-center gap-2">
-        <span class="p-1.5 bg-[#FF4F00] text-white inline-flex border border-[#222222] dark:border-black">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-2 gap-2">
+      <div class="flex items-center gap-2 min-w-0">
+        <span class="p-1.5 bg-[#FF4F00] text-white inline-flex border border-[#222222] dark:border-black shrink-0">
           <app-icon name="cpu-chip" size="w-4 h-4"></app-icon>
         </span>
-        <div>
-          <h3 class="font-display text-sm uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6]">ENGINE & ANALYSIS
+        <div class="min-w-0">
+          <h3 class="font-display text-sm sm:text-base uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6] truncate">ENGINE & ANALYSIS
           </h3>
-          <p class="font-label text-[10px] text-gray-600 dark:text-gray-400">Stockfish evaluation & calculation depth
+          <p class="font-label text-xs text-gray-600 dark:text-gray-400">Stockfish evaluation & calculation depth
           </p>
         </div>
       </div>
-      <span class="badge-brutal bg-[#FF4F00] text-white text-[11px]">
+      <span class="badge-brutal bg-[#FF4F00] text-white text-xs sm:text-sm font-bold self-start sm:self-auto shrink-0">
         {{ settings.analysisDepth() }} PLIES
       </span>
     </div>
 
-    <!-- Analysis Depth Slider & Explanation -->
-    <div class="flex flex-col gap-2 bg-[#D9D9D9] dark:bg-[#2A2B32] p-3 border border-[#222222] dark:border-[#373A46]">
-      <div class="flex items-center justify-between font-accent text-xs">
+    <!-- Analysis Depth Presets & Slider -->
+    <div class="flex flex-col gap-2.5 bg-[#D9D9D9] dark:bg-[#2A2B32] p-3 border border-[#222222] dark:border-[#373A46]">
+      <div class="flex items-center justify-between font-accent text-xs sm:text-sm">
         <span class="font-bold uppercase text-[#222222] dark:text-[#F3F4F6]">Search Calculation Depth:</span>
         <span class="font-label font-bold text-[#0E4C92] dark:text-[#60A5FA]">{{ settings.analysisDepth() }}
           Plies</span>
       </div>
 
-      <input type="range" min="10" max="22" step="2" [value]="settings.analysisDepth()" (input)="onDepthChange($event)"
-        class="w-full accent-[#FF4F00] cursor-pointer h-2" aria-label="Stockfish engine calculation depth" />
-
-      <div class="flex justify-between text-[10px] font-label text-gray-600 dark:text-gray-400 font-bold px-0.5">
-        <span>10 (Fastest)</span>
-        <span>14 (Standard)</span>
-        <span>18 (Deep)</span>
-        <span>22 (Grandmaster)</span>
+      <!-- Quick Depth Preset Pills -->
+      <div class="grid grid-cols-4 sm:grid-cols-7 gap-1.5">
+        @for (preset of depthPresets; track preset.depth) {
+          <button
+            type="button"
+            (click)="setDepth(preset.depth)"
+            class="badge-brutal text-center justify-center flex flex-col !py-1 !px-0.5 cursor-pointer transition-all text-xs font-bold"
+            [ngClass]="settings.analysisDepth() === preset.depth ? 'bg-[#FF4F00] text-white !border-[#222222] dark:!border-black shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000]' : 'bg-white dark:bg-[#1E1F24] text-[#222222] dark:text-[#F3F4F6] hover:bg-[#ECECD8] dark:hover:bg-[#373A46]'"
+          >
+            <span>{{ preset.label }}</span>
+            <span class="text-[9px] font-label font-normal opacity-80 leading-none">{{ preset.name }}</span>
+          </button>
+        }
       </div>
 
-      <p class="font-body text-xs text-gray-700 dark:text-gray-300 leading-relaxed">
-        Higher depth evaluates deeper tactical combinations and calculates more precise CAPS accuracy scores, but takes
-        slightly longer per move.
+      <input type="range" min="10" max="22" step="2" [value]="settings.analysisDepth()" (input)="onDepthChange($event)"
+        class="w-full accent-[#FF4F00] cursor-pointer h-2.5 mt-1" aria-label="Stockfish engine calculation depth" />
+
+      <p class="font-body text-xs sm:text-sm text-gray-700 dark:text-gray-300 leading-relaxed font-medium">
+        {{ getDepthDescription(settings.analysisDepth()) }}
       </p>
     </div>
 
@@ -136,65 +141,65 @@
     <div class="flex flex-col gap-2">
       <!-- Auto Evaluate Toggle -->
       <label
-        class="flex items-start justify-between p-2.5 border-2 border-[#222222] dark:border-[#373A46] bg-white dark:bg-[#1E1F24] hover:bg-gray-50 dark:hover:bg-[#25272F] cursor-pointer transition-colors gap-3">
-        <div class="flex flex-col">
-          <span class="font-accent text-xs uppercase font-bold text-[#222222] dark:text-[#F3F4F6]">Auto-Evaluate Placed
+        class="flex items-start justify-between p-2.5 sm:p-3 border-2 border-[#222222] dark:border-[#373A46] bg-white dark:bg-[#1E1F24] hover:bg-gray-50 dark:hover:bg-[#25272F] cursor-pointer transition-colors gap-3">
+        <div class="flex flex-col gap-0.5">
+          <span class="font-accent text-xs sm:text-sm uppercase font-bold text-[#222222] dark:text-[#F3F4F6]">Auto-Evaluate Placed
             Moves</span>
-          <span class="font-body text-xs text-gray-600 dark:text-gray-400 leading-normal">
+          <span class="font-body text-xs sm:text-sm text-gray-600 dark:text-gray-400 leading-normal">
             Automatically calculates tactical classifications (Brilliant, Mistake, Blunder) immediately after each move
             is played.
           </span>
         </div>
         <input type="checkbox" [checked]="settings.autoEvaluation()"
           (change)="settings.setAutoEvaluation(!settings.autoEvaluation())"
-          class="accent-[#FF4F00] w-5 h-5 cursor-pointer shrink-0" />
+          class="accent-[#FF4F00] w-5 h-5 cursor-pointer shrink-0 mt-0.5" />
       </label>
 
       <!-- Real-Time Eval Bar Toggle -->
       <label
-        class="flex items-start justify-between p-2.5 border-2 border-[#222222] dark:border-[#373A46] bg-white dark:bg-[#1E1F24] hover:bg-gray-50 dark:hover:bg-[#25272F] cursor-pointer transition-colors gap-3">
-        <div class="flex flex-col">
-          <span class="font-accent text-xs uppercase font-bold text-[#222222] dark:text-[#F3F4F6]">Show Advantage Eval
+        class="flex items-start justify-between p-2.5 sm:p-3 border-2 border-[#222222] dark:border-[#373A46] bg-white dark:bg-[#1E1F24] hover:bg-gray-50 dark:hover:bg-[#25272F] cursor-pointer transition-colors gap-3">
+        <div class="flex flex-col gap-0.5">
+          <span class="font-accent text-xs sm:text-sm uppercase font-bold text-[#222222] dark:text-[#F3F4F6]">Show Advantage Eval
             Bar</span>
-          <span class="font-body text-xs text-gray-600 dark:text-gray-400 leading-normal">
+          <span class="font-body text-xs sm:text-sm text-gray-600 dark:text-gray-400 leading-normal">
             Displays the vertical advantage meter next to the board indicating White vs Black winning probability.
           </span>
         </div>
         <input type="checkbox" [checked]="settings.showEvalBar()"
           (change)="settings.setShowEvalBar(!settings.showEvalBar())"
-          class="accent-[#FF4F00] w-5 h-5 cursor-pointer shrink-0" />
+          class="accent-[#FF4F00] w-5 h-5 cursor-pointer shrink-0 mt-0.5" />
       </label>
 
       <!-- Auto Queen Toggle -->
       <label
-        class="flex items-start justify-between p-2.5 border-2 border-[#222222] dark:border-[#373A46] bg-white dark:bg-[#1E1F24] hover:bg-gray-50 dark:hover:bg-[#25272F] cursor-pointer transition-colors gap-3">
-        <div class="flex flex-col">
-          <span class="font-accent text-xs uppercase font-bold text-[#222222] dark:text-[#F3F4F6]">Auto-Promote Pawns to
+        class="flex items-start justify-between p-2.5 sm:p-3 border-2 border-[#222222] dark:border-[#373A46] bg-white dark:bg-[#1E1F24] hover:bg-gray-50 dark:hover:bg-[#25272F] cursor-pointer transition-colors gap-3">
+        <div class="flex flex-col gap-0.5">
+          <span class="font-accent text-xs sm:text-sm uppercase font-bold text-[#222222] dark:text-[#F3F4F6]">Auto-Promote Pawns to
             Queen</span>
-          <span class="font-body text-xs text-gray-600 dark:text-gray-400 leading-normal">
+          <span class="font-body text-xs sm:text-sm text-gray-600 dark:text-gray-400 leading-normal">
             Instantly promotes 8th-rank pawn pushes to Queens without interrupting move flow with a selection dialog.
           </span>
         </div>
         <input type="checkbox" [checked]="settings.autoQueen()" (change)="settings.setAutoQueen(!settings.autoQueen())"
-          class="accent-[#FF4F00] w-5 h-5 cursor-pointer shrink-0" />
+          class="accent-[#FF4F00] w-5 h-5 cursor-pointer shrink-0 mt-0.5" />
       </label>
     </div>
   </div>
 
   <!-- Section 3: Board Appearance Themes -->
   <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1F24] flex flex-col gap-3">
-    <div class="flex items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-2">
-      <div class="flex items-center gap-2">
-        <span class="p-1.5 bg-[#0E4C92] text-white inline-flex border border-[#222222] dark:border-black">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-2 gap-2">
+      <div class="flex items-center gap-2 min-w-0">
+        <span class="p-1.5 bg-[#0E4C92] text-white inline-flex border border-[#222222] dark:border-black shrink-0">
           <app-icon name="swatch" size="w-4 h-4"></app-icon>
         </span>
-        <div>
-          <h3 class="font-display text-sm uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6]">BOARD APPEARANCE
+        <div class="min-w-0">
+          <h3 class="font-display text-sm sm:text-base uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6] truncate">BOARD APPEARANCE
           </h3>
-          <p class="font-label text-[10px] text-gray-600 dark:text-gray-400">Square themes and high-contrast styling</p>
+          <p class="font-label text-xs text-gray-600 dark:text-gray-400">Square themes and high-contrast styling</p>
         </div>
       </div>
-      <span class="badge-brutal bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] text-[10px]">
+      <span class="badge-brutal bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] text-xs sm:text-sm font-bold self-start sm:self-auto shrink-0">
         {{ settings.activeBoardThemeOption().name.toUpperCase() }}
       </span>
     </div>
@@ -216,15 +221,15 @@
 
         <div class="flex flex-col min-w-0 flex-1">
           <div class="flex items-center justify-between">
-            <span class="font-accent text-xs font-bold text-[#222222] dark:text-[#F3F4F6] truncate">{{ theme.name
+            <span class="font-accent text-xs sm:text-sm font-bold text-[#222222] dark:text-[#F3F4F6] truncate">{{ theme.name
               }}</span>
             @if (settings.boardTheme() === theme.id) {
             <span class="p-0.5 bg-[#FF4F00] text-white rounded-none border border-[#222222] dark:border-black">
-              <app-icon name="check" size="w-2.5 h-2.5"></app-icon>
+              <app-icon name="check" size="w-3 h-3"></app-icon>
             </span>
             }
           </div>
-          <span class="font-body text-[11px] text-gray-600 dark:text-gray-400 leading-tight truncate">{{
+          <span class="font-body text-xs sm:text-sm text-gray-600 dark:text-gray-400 leading-tight truncate">{{
             theme.description }}</span>
         </div>
       </button>
@@ -234,21 +239,21 @@
 
   <!-- Section 4: Audio & Meme FX Reactions -->
   <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1F24] flex flex-col gap-3">
-    <div class="flex items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-2">
-      <div class="flex items-center gap-2">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-2 gap-2">
+      <div class="flex items-center gap-2 min-w-0">
         <span
-          class="p-1.5 bg-[#222222] dark:bg-[#373A46] text-white inline-flex border border-[#222222] dark:border-black">
+          class="p-1.5 bg-[#222222] dark:bg-[#373A46] text-white inline-flex border border-[#222222] dark:border-black shrink-0">
           <app-icon name="speaker-wave" size="w-4 h-4"></app-icon>
         </span>
-        <div>
-          <h3 class="font-display text-sm uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6]">AUDIO & SOUND FX
+        <div class="min-w-0">
+          <h3 class="font-display text-sm sm:text-base uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6] truncate">AUDIO & SOUND FX
           </h3>
-          <p class="font-label text-[10px] text-gray-600 dark:text-gray-400">Physical piece taps & viral reaction sounds
+          <p class="font-label text-xs text-gray-600 dark:text-gray-400">Physical piece taps & viral reaction sounds
           </p>
         </div>
       </div>
 
-      <button type="button" (click)="soundService.toggleMute()" class="badge-brutal cursor-pointer text-[10px]"
+      <button type="button" (click)="soundService.toggleMute()" class="badge-brutal cursor-pointer text-xs sm:text-sm font-bold self-start sm:self-auto shrink-0"
         [ngClass]="soundService.isMuted() ? 'bg-[#EF4444] text-white' : 'bg-[#10B981] text-white'">
         {{ soundService.isMuted() ? 'MUTED' : 'UNMUTED' }}
       </button>
@@ -257,63 +262,63 @@
     <!-- Toggles Row -->
     <div class="grid grid-cols-2 gap-2">
       <label
-        class="flex items-center gap-2 p-2 border-2 border-[#222222] dark:border-[#373A46] bg-[#D9D9D9] dark:bg-[#2A2B32] cursor-pointer text-xs font-accent">
+        class="flex items-center gap-2 p-2.5 border-2 border-[#222222] dark:border-[#373A46] bg-[#D9D9D9] dark:bg-[#2A2B32] cursor-pointer text-xs sm:text-sm font-accent">
         <input type="checkbox" [checked]="settings.moveSounds()"
-          (change)="settings.setMoveSounds(!settings.moveSounds())" class="accent-[#FF4F00] w-4 h-4 cursor-pointer" />
+          (change)="settings.setMoveSounds(!settings.moveSounds())" class="accent-[#FF4F00] w-4.5 h-4.5 cursor-pointer" />
         <div class="flex flex-col">
           <span class="font-bold text-[#222222] dark:text-[#F3F4F6]">Move Sounds</span>
-          <span class="text-[10px] text-gray-600 dark:text-gray-400 font-label">Wood clicks & captures</span>
+          <span class="text-xs text-gray-600 dark:text-gray-400 font-label">Wood clicks & captures</span>
         </div>
       </label>
 
       <label
-        class="flex items-center gap-2 p-2 border-2 border-[#222222] dark:border-[#373A46] bg-[#D9D9D9] dark:bg-[#2A2B32] cursor-pointer text-xs font-accent">
+        class="flex items-center gap-2 p-2.5 border-2 border-[#222222] dark:border-[#373A46] bg-[#D9D9D9] dark:bg-[#2A2B32] cursor-pointer text-xs sm:text-sm font-accent">
         <input type="checkbox" [checked]="settings.memeSounds()"
-          (change)="settings.setMemeSounds(!settings.memeSounds())" class="accent-[#FF4F00] w-4 h-4 cursor-pointer" />
+          (change)="settings.setMemeSounds(!settings.memeSounds())" class="accent-[#FF4F00] w-4.5 h-4.5 cursor-pointer" />
         <div class="flex flex-col">
           <span class="font-bold text-[#222222] dark:text-[#F3F4F6]">Meme Reactions</span>
-          <span class="text-[10px] text-gray-600 dark:text-gray-400 font-label">Tactical sound effects</span>
+          <span class="text-xs text-gray-600 dark:text-gray-400 font-label">Tactical sound effects</span>
         </div>
       </label>
     </div>
 
     <!-- Master Volume Slider -->
     <div
-      class="flex flex-col gap-1.5 bg-[#ECECD8] dark:bg-[#2A2B32] p-2.5 border border-[#222222] dark:border-[#373A46]">
-      <div class="flex justify-between text-xs font-accent">
+      class="flex flex-col gap-1.5 bg-[#ECECD8] dark:bg-[#2A2B32] p-3 border border-[#222222] dark:border-[#373A46]">
+      <div class="flex justify-between text-xs sm:text-sm font-accent">
         <span class="font-bold uppercase text-[#222222] dark:text-[#F3F4F6]">MASTER AUDIO VOLUME:</span>
         <span class="font-label font-bold text-[#0E4C92] dark:text-[#60A5FA]">{{ settings.volume() }}%</span>
       </div>
       <input type="range" min="0" max="100" [value]="settings.volume()" (input)="onVolumeChange($event)"
-        class="w-full accent-[#FF4F00] cursor-pointer" aria-label="Master volume slider" />
+        class="w-full accent-[#FF4F00] cursor-pointer h-2.5" aria-label="Master volume slider" />
     </div>
 
     <!-- Sound Pack Options List -->
     <div class="flex flex-col gap-1.5">
       <div class="flex items-center justify-between">
-        <span class="font-accent text-xs uppercase font-bold text-gray-800 dark:text-gray-200">SELECT REACTION SOUND
+        <span class="font-accent text-xs sm:text-sm uppercase font-bold text-gray-800 dark:text-gray-200">SELECT REACTION SOUND
           PACK:</span>
-        <span class="font-label text-[10px] text-gray-500 dark:text-gray-400">CLICK PLAY TO PREVIEW</span>
+        <span class="font-label text-xs text-gray-500 dark:text-gray-400 font-bold">CLICK PLAY TO PREVIEW</span>
       </div>
 
       @for (pack of soundPacks; track pack.id) {
       <div (click)="selectSoundPack(pack.id)"
-        class="flex items-center justify-between p-2.5 border-2 border-[#222222] dark:border-[#373A46] cursor-pointer hover:bg-[#D9D9D9] dark:hover:bg-[#2A2B32] text-xs font-accent transition-colors"
+        class="flex items-center justify-between p-2.5 sm:p-3 border-2 border-[#222222] dark:border-[#373A46] cursor-pointer hover:bg-[#D9D9D9] dark:hover:bg-[#2A2B32] text-xs sm:text-sm font-accent transition-colors"
         [ngClass]="{'bg-[#D9D9D9] dark:bg-[#2A2B32] font-bold border-l-4 border-l-[#FF4F00] shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000]': settings.memePack() === pack.id && settings.memeSounds() && !soundService.isMuted()}">
         <div class="flex flex-col pr-2 gap-0.5">
           <div class="flex items-center gap-1.5">
-            <span class="font-bold text-sm text-[#222222] dark:text-[#F3F4F6]">{{ pack.name }}</span>
-            <span class="badge-brutal bg-[#222222] dark:bg-[#373A46] text-white text-[9px] !py-0 !px-1">{{ pack.badge
+            <span class="font-bold text-sm sm:text-base text-[#222222] dark:text-[#F3F4F6]">{{ pack.name }}</span>
+            <span class="badge-brutal bg-[#222222] dark:bg-[#373A46] text-white text-[10px] sm:text-xs !py-0.5 !px-1.5 font-bold">{{ pack.badge
               }}</span>
           </div>
-          <span class="text-xs font-body text-gray-600 dark:text-gray-400 leading-tight">{{ pack.description
+          <span class="text-xs sm:text-sm font-body text-gray-600 dark:text-gray-400 leading-tight">{{ pack.description
             }}</span>
         </div>
 
         <button type="button" (click)="previewSoundPack(pack.id, $event)"
-          class="btn-brutal !p-1.5 bg-white dark:bg-[#1E1F24] border border-[#222222] dark:border-[#373A46] hover:bg-[#FF4F00] hover:text-white shrink-0 cursor-pointer"
+          class="btn-brutal !p-2 bg-white dark:bg-[#1E1F24] border border-[#222222] dark:border-[#373A46] hover:bg-[#FF4F00] hover:text-white shrink-0 cursor-pointer"
           title="Preview Audio Effect">
-          <app-icon name="play" size="w-3.5 h-3.5"></app-icon>
+          <app-icon name="play" size="w-4 h-4"></app-icon>
         </button>
       </div>
       }
@@ -328,39 +333,39 @@
           <app-icon name="user" size="w-4 h-4"></app-icon>
         </span>
         <div>
-          <h3 class="font-display text-sm uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6]">ONLINE PROFILES &
+          <h3 class="font-display text-sm sm:text-base uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6]">ONLINE PROFILES &
             SYNC</h3>
-          <p class="font-label text-[10px] text-gray-600 dark:text-gray-400">Fetch recent matches from online platforms
+          <p class="font-label text-xs sm:text-sm text-gray-600 dark:text-gray-400">Fetch recent matches from online platforms
           </p>
         </div>
       </div>
     </div>
 
-    <p class="font-body text-xs text-gray-700 dark:text-gray-300 leading-relaxed">
+    <p class="font-body text-xs sm:text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
       Save your platform usernames to automatically populate the Game Fetcher and load your recent games with 1 click.
     </p>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
       <div class="flex flex-col gap-1">
         <label
-          class="font-label text-[11px] uppercase text-gray-800 dark:text-gray-200 font-bold flex items-center gap-1">
+          class="font-label text-xs sm:text-sm uppercase text-gray-800 dark:text-gray-200 font-bold flex items-center gap-1.5">
           <span class="w-2 h-2 bg-[#10B981] inline-block border border-[#222222] dark:border-black"></span>
           <span>CHESS.COM USERNAME</span>
         </label>
         <input type="text" [ngModel]="settings.chesscomUsername()"
           (ngModelChange)="settings.setChesscomUsername($event)" placeholder="e.g. Hikaru, GothamChess"
-          class="bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] border-2 border-[#222222] dark:border-[#373A46] p-2 text-xs font-label focus:bg-white dark:focus:bg-[#1E1F24] focus:outline-none focus:border-[#FF4F00] uppercase placeholder:normal-case" />
+          class="bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] border-2 border-[#222222] dark:border-[#373A46] p-2 text-xs sm:text-sm font-label focus:bg-white dark:focus:bg-[#1E1F24] focus:outline-none focus:border-[#FF4F00] uppercase placeholder:normal-case" />
       </div>
 
       <div class="flex flex-col gap-1">
         <label
-          class="font-label text-[11px] uppercase text-gray-800 dark:text-gray-200 font-bold flex items-center gap-1">
+          class="font-label text-xs sm:text-sm uppercase text-gray-800 dark:text-gray-200 font-bold flex items-center gap-1.5">
           <span class="w-2 h-2 bg-[#0E4C92] inline-block border border-[#222222] dark:border-black"></span>
           <span>LICHESS USERNAME</span>
         </label>
         <input type="text" [ngModel]="settings.lichessUsername()" (ngModelChange)="settings.setLichessUsername($event)"
           placeholder="e.g. DrNykterstein, penguingm1"
-          class="bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] border-2 border-[#222222] dark:border-[#373A46] p-2 text-xs font-label focus:bg-white dark:focus:bg-[#1E1F24] focus:outline-none focus:border-[#0E4C92] uppercase placeholder:normal-case" />
+          class="bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] border-2 border-[#222222] dark:border-[#373A46] p-2 text-xs sm:text-sm font-label focus:bg-white dark:focus:bg-[#1E1F24] focus:outline-none focus:border-[#0E4C92] uppercase placeholder:normal-case" />
       </div>
     </div>
   </div>
@@ -368,8 +373,8 @@
   <!-- Reset Defaults Action -->
   <div class="pt-1 pb-2">
     <button type="button" (click)="resetDefaults()"
-      class="btn-brutal btn-brutal-silver w-full !py-2.5 text-xs flex items-center justify-center gap-2 cursor-pointer">
-      <app-icon name="arrow-path" size="w-3.5 h-3.5"></app-icon>
+      class="btn-brutal btn-brutal-silver w-full !py-3 text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer">
+      <app-icon name="arrow-path" size="w-4 h-4"></app-icon>
       <span class="font-accent uppercase font-bold">RESET ALL SETTINGS TO DEFAULTS</span>
     </button>
   </div>

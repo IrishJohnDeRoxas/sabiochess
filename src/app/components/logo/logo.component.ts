@@ -19,14 +19,14 @@ export class LogoComponent {
   readonly boxSizeClass = computed(() => {
     switch (this.size()) {
       case 'sm':
-        return 'w-8 h-8 border-[2.5px] shadow-[2.5px_2.5px_0_0_#222222] text-sm';
+        return 'w-8 h-8 border-[2.5px] border-[#222222] dark:border-black shadow-[2.5px_2.5px_0_0_#222222] dark:shadow-[2.5px_2.5px_0_0_#000000] text-sm';
       case 'lg':
-        return 'w-14 h-14 border-[4px] shadow-[4px_4px_0_0_#222222] text-2xl';
+        return 'w-14 h-14 border-[4px] border-[#222222] dark:border-black shadow-[4px_4px_0_0_#222222] dark:shadow-[4px_4px_0_0_#000000] text-2xl';
       case 'xl':
-        return 'w-18 h-18 border-[5px] shadow-[6px_6px_0_0_#222222] text-3xl';
+        return 'w-18 h-18 border-[5px] border-[#222222] dark:border-black shadow-[6px_6px_0_0_#222222] dark:shadow-[6px_6px_0_0_#000000] text-3xl';
       case 'md':
       default:
-        return 'w-10 h-10 border-[3px] shadow-[3px_3px_0_0_#222222] text-xl';
+        return 'w-10 h-10 border-[3px] border-[#222222] dark:border-black shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000] text-xl';
     }
   });
 

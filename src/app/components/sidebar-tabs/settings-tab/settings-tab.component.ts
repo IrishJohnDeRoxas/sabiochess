@@ -19,6 +19,17 @@ export class SettingsTabComponent {
 
   readonly boardThemes = BOARD_THEMES;
   readonly soundPacks = MEME_SOUND_PACKS;
+
+  readonly depthPresets = [
+    { depth: 10, label: '10', name: 'Fast' },
+    { depth: 12, label: '12', name: 'Quick' },
+    { depth: 14, label: '14', name: 'Standard' },
+    { depth: 16, label: '16', name: 'Deep' },
+    { depth: 18, label: '18', name: 'Master' },
+    { depth: 20, label: '20', name: 'GM' },
+    { depth: 22, label: '22', name: 'Ultra' },
+  ];
+
   selectAppTheme(theme: AppTheme): void {
     this.settings.setAppTheme(theme);
     this.settings.flashToast(theme === 'dark' ? 'DARK MODE ACTIVATED' : 'LIGHT MODE ACTIVATED');
@@ -49,6 +60,31 @@ export class SettingsTabComponent {
   onDepthChange(event: Event): void {
     const val = Number((event.target as HTMLInputElement).value);
     this.settings.setAnalysisDepth(val);
+  }
+
+  setDepth(depth: number): void {
+    this.settings.setAnalysisDepth(depth);
+    this.settings.flashToast(`DEPTH SET TO ${depth} PLIES`);
+  }
+
+  getDepthDescription(depth: number): string {
+    switch (depth) {
+      case 10:
+        return 'Fastest response — ideal for instant tactical checks on slower devices.';
+      case 12:
+        return 'Quick & snappy — balanced calculation speed with high accuracy.';
+      case 14:
+        return 'Standard depth — solid tournament-grade analysis with precise CAPS.';
+      case 16:
+        return 'Deep calculation — checks multi-move tactical combinations.';
+      case 18:
+        return 'Master level — comprehensive evaluation of positional subtleties.';
+      case 20:
+        return 'Grandmaster depth — finds deep endgame motifs and quiet sacrifices.';
+      case 22:
+      default:
+        return 'Ultra maximum depth — full exhaustive search for critical positions.';
+    }
   }
 
   resetDefaults(): void {

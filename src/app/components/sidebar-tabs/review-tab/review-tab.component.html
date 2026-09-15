@@ -4,9 +4,9 @@
     <div class="flex items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-2">
       <div class="flex items-center gap-1.5">
         <span class="p-1 bg-[#FF4F00] text-white inline-flex border border-[#222222] dark:border-black">
-          <app-icon name="star" size="w-3.5 h-3.5"></app-icon>
+          <app-icon name="star" size="w-4 h-4"></app-icon>
         </span>
-        <span class="font-display text-sm uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6]">GAME REVIEW</span>
+        <span class="font-display text-sm sm:text-base uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6]">GAME REVIEW</span>
       </div>
 
       <div class="flex items-center gap-1.5 relative">
@@ -14,24 +14,24 @@
         <button
           type="button"
           (click)="toggleSoundMenu()"
-          class="badge-brutal cursor-pointer transition-colors flex items-center gap-1 text-[11px]"
+          class="badge-brutal cursor-pointer transition-colors flex items-center gap-1 text-xs sm:text-sm !py-1 !px-2 font-bold"
           [ngClass]="soundService.isMuted() ? 'bg-[#222222] dark:bg-[#373A46] text-white' : 'bg-[#0E4C92] text-white'"
           title="Sound FX Pack Selector"
         >
-          <app-icon [name]="soundService.isMuted() ? 'speaker-x-mark' : 'speaker-wave'" size="w-3 h-3"></app-icon>
+          <app-icon [name]="soundService.isMuted() ? 'speaker-x-mark' : 'speaker-wave'" size="w-3.5 h-3.5"></app-icon>
           <span>{{ activeSoundLabel() }}</span>
-          <app-icon name="chevron-down" size="w-2.5 h-2.5"></app-icon>
+          <app-icon name="chevron-down" size="w-3 h-3"></app-icon>
         </button>
 
         <!-- Sound Dropdown Popover -->
         @if (isSoundMenuOpen()) {
-          <div class="absolute right-0 top-[calc(100%+6px)] z-30 w-64 bg-white dark:bg-[#1E1F24] border-[3px] border-[#222222] dark:border-black shadow-[5px_5px_0_0_#222222] dark:shadow-[5px_5px_0_0_#000000] p-2 flex flex-col gap-1.5 animate-fadeIn">
-            <div class="font-accent text-xs uppercase border-b-2 border-[#222222] dark:border-[#373A46] pb-1 flex items-center justify-between text-[#222222] dark:text-[#F3F4F6]">
+          <div class="absolute right-0 top-[calc(100%+6px)] z-30 w-68 bg-white dark:bg-[#1E1F24] border-[3px] border-[#222222] dark:border-black shadow-[5px_5px_0_0_#222222] dark:shadow-[5px_5px_0_0_#000000] p-2.5 flex flex-col gap-1.5 animate-fadeIn">
+            <div class="font-accent text-sm uppercase font-bold border-b-2 border-[#222222] dark:border-[#373A46] pb-1 flex items-center justify-between text-[#222222] dark:text-[#F3F4F6]">
               <span>AUDIO PACK</span>
               <button 
                 type="button" 
                 (click)="soundService.toggleMute()" 
-                class="text-[10px] underline font-label cursor-pointer text-[#FF4F00]"
+                class="text-xs underline font-label cursor-pointer text-[#FF4F00] font-bold"
               >
                 {{ soundService.isMuted() ? 'UNMUTE ALL' : 'MUTE ALL' }}
               </button>
@@ -40,32 +40,32 @@
             @for (pack of soundPacks; track pack.id) {
               <div 
                 (click)="selectSoundPack(pack.id)"
-                class="flex items-center justify-between p-1.5 border border-[#222222] dark:border-[#373A46] cursor-pointer hover:bg-[#D9D9D9] dark:hover:bg-[#2A2B32] text-xs font-accent transition-colors"
+                class="flex items-center justify-between p-2 border border-[#222222] dark:border-[#373A46] cursor-pointer hover:bg-[#D9D9D9] dark:hover:bg-[#2A2B32] text-xs sm:text-sm font-accent transition-colors"
                 [ngClass]="{'bg-[#D9D9D9] dark:bg-[#2A2B32] font-bold': settings.memePack() === pack.id && settings.memeSounds() && !soundService.isMuted()}"
               >
-                <div class="flex flex-col">
-                  <span class="text-[#222222] dark:text-[#F3F4F6]">{{ pack.name }}</span>
-                  <span class="text-[9px] font-label text-gray-600 dark:text-gray-400 leading-tight">{{ pack.badge }}</span>
+                <div class="flex flex-col pr-1">
+                  <span class="text-[#222222] dark:text-[#F3F4F6] font-bold">{{ pack.name }}</span>
+                  <span class="text-[10px] sm:text-[11px] font-label text-gray-600 dark:text-gray-400 leading-tight">{{ pack.badge }}</span>
                 </div>
                 <button 
                   type="button" 
                   (click)="previewSoundPack(pack.id, $event)" 
-                  class="p-1 bg-white dark:bg-[#2A2B32] border border-[#222222] dark:border-[#373A46] hover:bg-[#FF4F00] hover:text-white"
+                  class="p-1.5 bg-white dark:bg-[#2A2B32] border border-[#222222] dark:border-[#373A46] hover:bg-[#FF4F00] hover:text-white shrink-0"
                   title="Preview audio"
                 >
-                  <app-icon name="play" size="w-3 h-3"></app-icon>
+                  <app-icon name="play" size="w-3.5 h-3.5"></app-icon>
                 </button>
               </div>
             }
 
             <div 
               (click)="setStandardSounds()"
-              class="flex items-center justify-between p-1.5 border border-[#222222] dark:border-[#373A46] cursor-pointer hover:bg-[#D9D9D9] dark:hover:bg-[#2A2B32] text-xs font-accent transition-colors"
+              class="flex items-center justify-between p-2 border border-[#222222] dark:border-[#373A46] cursor-pointer hover:bg-[#D9D9D9] dark:hover:bg-[#2A2B32] text-xs sm:text-sm font-accent transition-colors"
               [ngClass]="{'bg-[#D9D9D9] dark:bg-[#2A2B32] font-bold': !settings.memeSounds() && !soundService.isMuted()}"
             >
               <div class="flex flex-col">
-                <span class="text-[#222222] dark:text-[#F3F4F6]">Standard Chess Only</span>
-                <span class="text-[9px] font-label text-gray-600 dark:text-gray-400 leading-tight">Board clicks & captures</span>
+                <span class="text-[#222222] dark:text-[#F3F4F6] font-bold">Standard Chess Only</span>
+                <span class="text-[10px] sm:text-[11px] font-label text-gray-600 dark:text-gray-400 leading-tight">Board clicks & captures</span>
               </div>
             </div>
           </div>
@@ -82,7 +82,7 @@
           <button
             type="button"
             (click)="setImporterTab('online')"
-            class="text-[10px] font-accent uppercase py-1 font-bold transition-colors cursor-pointer"
+            class="text-xs sm:text-sm font-accent uppercase py-1.5 font-bold transition-colors cursor-pointer"
             [ngClass]="importerTab() === 'online' ? 'bg-[#10B981] text-white border border-[#222222] dark:border-black' : 'hover:bg-white dark:hover:bg-[#373A46] text-[#222222] dark:text-[#F3F4F6]'"
           >
             CHESS.COM
@@ -90,7 +90,7 @@
           <button
             type="button"
             (click)="setImporterTab('samples')"
-            class="text-[10px] font-accent uppercase py-1 font-bold transition-colors cursor-pointer"
+            class="text-xs sm:text-sm font-accent uppercase py-1.5 font-bold transition-colors cursor-pointer"
             [ngClass]="importerTab() === 'samples' ? 'bg-[#0E4C92] text-white border border-[#222222] dark:border-black' : 'hover:bg-white dark:hover:bg-[#373A46] text-[#222222] dark:text-[#F3F4F6]'"
           >
             CLASSIC SAMPLES
@@ -98,7 +98,7 @@
           <button
             type="button"
             (click)="setImporterTab('pgn')"
-            class="text-[10px] font-accent uppercase py-1 font-bold transition-colors cursor-pointer"
+            class="text-xs sm:text-sm font-accent uppercase py-1.5 font-bold transition-colors cursor-pointer"
             [ngClass]="importerTab() === 'pgn' ? 'bg-[#222222] dark:bg-[#373A46] text-white border border-[#222222] dark:border-black' : 'hover:bg-white dark:hover:bg-[#373A46] text-[#222222] dark:text-[#F3F4F6]'"
           >
             PASTE PGN
@@ -118,10 +118,10 @@
                 <button
                   type="button"
                   (click)="loadSample(sample.id)"
-                  class="btn-brutal !p-1.5 text-left text-[11px] font-accent flex flex-col bg-white dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] hover:bg-[#FF4F00] dark:hover:bg-[#FF4F00] hover:text-white dark:hover:text-white transition-colors"
+                  class="btn-brutal !p-2 text-left text-xs sm:text-sm font-accent flex flex-col bg-white dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] hover:bg-[#FF4F00] dark:hover:bg-[#FF4F00] hover:text-white dark:hover:text-white transition-colors"
                 >
                   <span class="font-bold truncate">{{ sample.title }}</span>
-                  <span class="text-[9px] font-label opacity-80 truncate text-gray-600 dark:text-gray-300">{{ sample.result }} • {{ sample.event }}</span>
+                  <span class="text-[10px] sm:text-[11px] font-label opacity-80 truncate text-gray-600 dark:text-gray-300">{{ sample.result }} • {{ sample.event }}</span>
                 </button>
               }
             </div>
@@ -131,19 +131,19 @@
         <!-- SubTab 3: Paste Custom PGN / FEN -->
         @if (importerTab() === 'pgn') {
           <div class="flex flex-col gap-1.5">
-            <label class="font-label text-[10px] uppercase text-[#222222] dark:text-[#F3F4F6] font-bold">Paste PGN Text:</label>
+            <label class="font-label text-xs uppercase text-[#222222] dark:text-[#F3F4F6] font-bold">Paste PGN Text:</label>
             <textarea
               [ngModel]="pgnInputText()"
               (ngModelChange)="pgnInputText.set($event)"
               rows="3"
               placeholder="1. e4 e5 2. Nf3 Nc6..."
-              class="w-full bg-white dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] border-2 border-[#222222] dark:border-[#373A46] p-1.5 text-xs font-label focus:outline-none focus:border-[#FF4F00]"
+              class="w-full bg-white dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] border-2 border-[#222222] dark:border-[#373A46] p-2 text-xs sm:text-sm font-label focus:outline-none focus:border-[#FF4F00]"
             ></textarea>
             <div class="flex justify-end gap-1.5 pt-1">
               <button
                 type="button"
                 (click)="importPgn()"
-                class="btn-brutal btn-brutal-orange !py-1 !px-3 text-xs"
+                class="btn-brutal btn-brutal-orange !py-1.5 !px-3.5 text-xs sm:text-sm font-bold"
               >
                 LOAD PGN
               </button>
@@ -154,32 +154,32 @@
     }
 
     <!-- Coach Commentary & Move Quality Badge -->
-    <div class="bg-[#D9D9D9] dark:bg-[#2A2B32] border-2 border-[#222222] dark:border-black p-2.5 flex flex-col gap-1.5 shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000] relative">
+    <div class="bg-[#D9D9D9] dark:bg-[#2A2B32] border-2 border-[#222222] dark:border-black p-3 flex flex-col gap-2 shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000] relative">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-1.5">
           <span class="p-1 bg-[#222222] dark:bg-[#141519] text-white inline-flex items-center justify-center border border-[#222222] dark:border-black">
-            <app-icon name="cpu-chip" size="w-3.5 h-3.5"></app-icon>
+            <app-icon name="cpu-chip" size="w-4 h-4"></app-icon>
           </span>
-          <span class="font-display text-xs uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6]">SABIO COACH</span>
+          <span class="font-display text-xs sm:text-sm uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6]">SABIO COACH</span>
         </div>
 
         @if (game.currentMoveAnalysis(); as curr) {
           <span 
-            class="badge-brutal text-[10px] flex items-center gap-1"
+            class="badge-brutal text-xs sm:text-sm flex items-center gap-1 !py-1 !px-2 font-bold"
             [ngClass]="getClassificationBadgeClass(curr.classification)"
           >
             <span>{{ getClassificationSymbol(curr.classification) }}</span>
             <span>{{ curr.classification.toUpperCase() }}</span>
           </span>
         } @else {
-          <span class="badge-brutal bg-white dark:bg-[#1E1F24] text-[#222222] dark:text-[#F3F4F6] text-[10px]">
+          <span class="badge-brutal bg-white dark:bg-[#1E1F24] text-[#222222] dark:text-[#F3F4F6] text-xs sm:text-sm !py-1 !px-2 font-bold">
             START POSITION
           </span>
         }
       </div>
 
       <!-- Coach Feedback Text -->
-      <p class="font-body text-xs text-[#222222] dark:text-[#F3F4F6] leading-relaxed">
+      <p class="font-body text-xs sm:text-sm text-[#222222] dark:text-[#F3F4F6] leading-relaxed font-medium">
         @if (game.currentMoveAnalysis()?.commentary; as comm) {
           {{ comm }}
         } @else if (game.isGameOver()) {
@@ -193,8 +193,8 @@
 
       @if (game.currentMoveAnalysis()?.bestMoveSan; as bestSan) {
         @if (game.currentMoveAnalysis()?.classification === 'blunder' || game.currentMoveAnalysis()?.classification === 'mistake' || game.currentMoveAnalysis()?.classification === 'inaccuracy') {
-          <div class="flex items-center gap-1.5 text-[11px] font-label font-bold text-[#0E4C92] dark:text-[#60A5FA] pt-0.5 border-t border-gray-400 dark:border-gray-600">
-            <app-icon name="sparkles" size="w-3 h-3"></app-icon>
+          <div class="flex items-center gap-1.5 text-xs sm:text-sm font-label font-bold text-[#0E4C92] dark:text-[#60A5FA] pt-1 border-t border-gray-400 dark:border-gray-600">
+            <app-icon name="sparkles" size="w-3.5 h-3.5"></app-icon>
             <span>BEST MOVE WAS: <u>{{ bestSan }}</u></span>
           </div>
         }
@@ -209,20 +209,20 @@
       <app-platform-game-selector (gameSelected)="onOnlineGameSelected($event)"></app-platform-game-selector>
       
       <!-- Classic Grandmaster Samples Quick Strip -->
-      <div class="card-brutal p-3 bg-white dark:bg-[#1E1F24] flex flex-col gap-2">
-        <div class="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 pb-1">
-          <span class="font-accent text-xs uppercase text-[#222222] dark:text-[#F3F4F6] font-bold">OR LOAD CLASSIC MASTERPIECES</span>
-          <span class="badge-brutal bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] text-[9px]">4 GAMES</span>
+      <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1F24] flex flex-col gap-2">
+        <div class="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 pb-1.5">
+          <span class="font-accent text-xs sm:text-sm uppercase text-[#222222] dark:text-[#F3F4F6] font-bold">OR LOAD CLASSIC MASTERPIECES</span>
+          <span class="badge-brutal bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] text-xs font-bold">4 GAMES</span>
         </div>
-        <div class="grid grid-cols-2 gap-1.5">
+        <div class="grid grid-cols-2 gap-2">
           @for (sample of sampleGames; track sample.id) {
             <button
               type="button"
               (click)="loadSample(sample.id)"
-              class="p-2 border border-[#222222] dark:border-[#373A46] text-left text-[11px] font-accent flex flex-col bg-white dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] hover:bg-[#FF4F00] dark:hover:bg-[#FF4F00] hover:text-white dark:hover:text-white transition-colors cursor-pointer group"
+              class="p-2 sm:p-2.5 border border-[#222222] dark:border-[#373A46] text-left text-xs sm:text-sm font-accent flex flex-col bg-white dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] hover:bg-[#FF4F00] dark:hover:bg-[#FF4F00] hover:text-white dark:hover:text-white transition-colors cursor-pointer group"
             >
               <span class="font-bold truncate">{{ sample.title }}</span>
-              <span class="text-[9px] font-label text-gray-600 dark:text-gray-400 group-hover:text-white opacity-80 truncate">{{ sample.result }} • {{ sample.event }}</span>
+              <span class="text-[10px] sm:text-xs font-label text-gray-600 dark:text-gray-400 group-hover:text-white opacity-80 truncate">{{ sample.result }} • {{ sample.event }}</span>
             </button>
           }
         </div>
@@ -230,31 +230,31 @@
     </div>
   } @else {
     <!-- Move List Table Card -->
-    <div class="card-brutal p-3 bg-white dark:bg-[#1E1F24] flex flex-col gap-2 flex-1 min-h-[190px]">
-      <div class="flex items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-1.5">
-        <span class="font-display text-xs uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6]">MOVE NOTATION</span>
-        <span class="badge-brutal bg-[#C0C0C0] dark:bg-[#373A46] text-[#222222] dark:text-[#F3F4F6] text-[10px]">
+    <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1F24] flex flex-col gap-2 flex-1 min-h-[190px]">
+      <div class="flex items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-2">
+        <span class="font-display text-xs sm:text-sm uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6]">MOVE NOTATION</span>
+        <span class="badge-brutal bg-[#C0C0C0] dark:bg-[#373A46] text-[#222222] dark:text-[#F3F4F6] text-xs font-bold">
           {{ game.history().length }} PLY
         </span>
       </div>
 
       <!-- Scrollable Notation Container -->
-      <div class="overflow-y-auto max-h-[220px] pr-1 flex flex-col gap-0.5 select-none">
-        <div class="grid grid-cols-[36px_1fr_1fr] text-[11px] font-label font-bold border-b border-[#222222] dark:border-[#373A46] pb-1 text-[#222222] dark:text-[#F3F4F6] bg-[#D9D9D9] dark:bg-[#2A2B32] px-2 py-1 sticky top-0 z-10">
+      <div class="overflow-y-auto max-h-[240px] pr-1 flex flex-col gap-0.5 select-none">
+        <div class="grid grid-cols-[40px_1fr_1fr] text-xs sm:text-sm font-label font-bold border-b border-[#222222] dark:border-[#373A46] pb-1.5 text-[#222222] dark:text-[#F3F4F6] bg-[#D9D9D9] dark:bg-[#2A2B32] px-2.5 py-1.5 sticky top-0 z-10">
           <span>#</span>
           <span>WHITE</span>
           <span>BLACK</span>
         </div>
 
         @for (pair of movePairs(); track pair.num) {
-          <div class="grid grid-cols-[36px_1fr_1fr] text-xs font-label px-2 py-1 border-b border-gray-100 dark:border-gray-800 hover:bg-[#D9D9D9] dark:hover:bg-[#2A2B32] items-center transition-colors">
-            <span class="text-gray-500 dark:text-gray-400 font-bold text-[11px]">{{ pair.num }}.</span>
+          <div class="grid grid-cols-[40px_1fr_1fr] text-xs sm:text-sm font-label px-2.5 py-1.5 border-b border-gray-100 dark:border-gray-800 hover:bg-[#D9D9D9] dark:hover:bg-[#2A2B32] items-center transition-colors">
+            <span class="text-gray-500 dark:text-gray-400 font-bold text-xs">{{ pair.num }}.</span>
             
             <!-- White Move -->
             <button
               type="button"
               (click)="game.jumpToMove(pair.whitePly)"
-              class="text-left font-bold px-1.5 py-0.5 transition-colors rounded-none hover:bg-[#FF4F00] hover:text-white cursor-pointer text-[#222222] dark:text-[#F3F4F6]"
+              class="text-left font-bold px-2 py-0.5 transition-colors rounded-none hover:bg-[#FF4F00] hover:text-white cursor-pointer text-[#222222] dark:text-[#F3F4F6]"
               [ngClass]="{
                 'bg-[#FF4F00] !text-white shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000] border border-[#222222] dark:border-black': game.currentPlyIndex() === pair.whitePly || (game.currentPlyIndex() === null && pair.whitePly === game.history().length - 1)
               }"
@@ -267,7 +267,7 @@
               <button
                 type="button"
                 (click)="game.jumpToMove(pair.blackPly!)"
-                class="text-left font-bold px-1.5 py-0.5 transition-colors rounded-none hover:bg-[#0E4C92] hover:text-white cursor-pointer text-[#222222] dark:text-[#F3F4F6]"
+                class="text-left font-bold px-2 py-0.5 transition-colors rounded-none hover:bg-[#0E4C92] hover:text-white cursor-pointer text-[#222222] dark:text-[#F3F4F6]"
                 [ngClass]="{
                   'bg-[#0E4C92] !text-white shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000] border border-[#222222] dark:border-black': game.currentPlyIndex() === pair.blackPly || (game.currentPlyIndex() === null && pair.blackPly === game.history().length - 1)
                 }"
@@ -289,10 +289,10 @@
         type="button"
         (click)="game.goToStart()"
         [disabled]="game.history().length === 0"
-        class="btn-brutal !py-1.5 !px-2 flex-1 text-xs cursor-pointer"
+        class="btn-brutal !py-2 !px-2.5 flex-1 text-xs sm:text-sm cursor-pointer"
         title="Go to Start"
       >
-        <app-icon name="chevron-double-left" size="w-3.5 h-3.5"></app-icon>
+        <app-icon name="chevron-double-left" size="w-4 h-4"></app-icon>
       </button>
 
       <!-- Prev Move -->
@@ -300,10 +300,10 @@
         type="button"
         (click)="game.prevMove()"
         [disabled]="game.history().length === 0"
-        class="btn-brutal !py-1.5 !px-2 flex-1 text-xs cursor-pointer"
+        class="btn-brutal !py-2 !px-2.5 flex-1 text-xs sm:text-sm cursor-pointer"
         title="Previous Move"
       >
-        <app-icon name="chevron-left" size="w-3.5 h-3.5"></app-icon>
+        <app-icon name="chevron-left" size="w-4 h-4"></app-icon>
       </button>
 
       <!-- Auto Play / Pause -->
@@ -311,10 +311,10 @@
         type="button"
         (click)="game.toggleAutoplay()"
         [disabled]="game.history().length === 0"
-        class="btn-brutal btn-brutal-orange !py-1.5 !px-3 flex-1 text-xs flex items-center justify-center gap-1 cursor-pointer"
+        class="btn-brutal btn-brutal-orange !py-2 !px-3 flex-1 text-xs sm:text-sm flex items-center justify-center gap-1 cursor-pointer"
         title="Autoplay Moves"
       >
-        <app-icon [name]="game.isAutoplaying() ? 'pause' : 'play'" size="w-3.5 h-3.5"></app-icon>
+        <app-icon [name]="game.isAutoplaying() ? 'pause' : 'play'" size="w-4 h-4"></app-icon>
       </button>
 
       <!-- Next Move -->
@@ -322,10 +322,10 @@
         type="button"
         (click)="game.nextMove()"
         [disabled]="game.history().length === 0"
-        class="btn-brutal !py-1.5 !px-2 flex-1 text-xs cursor-pointer"
+        class="btn-brutal !py-2 !px-2.5 flex-1 text-xs sm:text-sm cursor-pointer"
         title="Next Move"
       >
-        <app-icon name="chevron-right" size="w-3.5 h-3.5"></app-icon>
+        <app-icon name="chevron-right" size="w-4 h-4"></app-icon>
       </button>
 
       <!-- Last Move / Live -->
@@ -333,10 +333,10 @@
         type="button"
         (click)="game.goToEnd()"
         [disabled]="game.history().length === 0"
-        class="btn-brutal !py-1.5 !px-2 flex-1 text-xs cursor-pointer"
+        class="btn-brutal !py-2 !px-2.5 flex-1 text-xs sm:text-sm cursor-pointer"
         title="Go to Latest Position"
       >
-        <app-icon name="chevron-double-right" size="w-3.5 h-3.5"></app-icon>
+        <app-icon name="chevron-double-right" size="w-4 h-4"></app-icon>
       </button>
     </div>
 
@@ -345,10 +345,10 @@
       <button
         type="button"
         (click)="game.flipBoard()"
-        class="btn-brutal btn-brutal-silver !py-1.5 !px-1 text-[11px] flex items-center justify-center gap-1 cursor-pointer"
+        class="btn-brutal btn-brutal-silver !py-2 !px-1.5 text-xs sm:text-sm font-bold flex items-center justify-center gap-1 cursor-pointer"
         title="Flip board orientation"
       >
-        <app-icon name="arrow-path" size="w-3 h-3"></app-icon>
+        <app-icon name="arrow-path" size="w-3.5 h-3.5"></app-icon>
         <span>FLIP</span>
       </button>
 
@@ -356,30 +356,30 @@
         type="button"
         (click)="game.undoMove()"
         [disabled]="game.history().length === 0"
-        class="btn-brutal btn-brutal-silver !py-1.5 !px-1 text-[11px] flex items-center justify-center gap-1 cursor-pointer"
+        class="btn-brutal btn-brutal-silver !py-2 !px-1.5 text-xs sm:text-sm font-bold flex items-center justify-center gap-1 cursor-pointer"
         title="Undo move"
       >
-        <app-icon name="arrow-uturn-left" size="w-3 h-3"></app-icon>
+        <app-icon name="arrow-uturn-left" size="w-3.5 h-3.5"></app-icon>
         <span>UNDO</span>
       </button>
 
       <button
         type="button"
         (click)="game.resetGame()"
-        class="btn-brutal btn-brutal-orange !py-1.5 !px-1 text-[11px] flex items-center justify-center gap-1 cursor-pointer"
+        class="btn-brutal btn-brutal-orange !py-2 !px-1.5 text-xs sm:text-sm font-bold flex items-center justify-center gap-1 cursor-pointer"
         title="Start new game"
       >
-        <app-icon name="plus" size="w-3 h-3"></app-icon>
+        <app-icon name="plus" size="w-3.5 h-3.5"></app-icon>
         <span>NEW</span>
       </button>
 
       <button
         type="button"
         (click)="copyFen()"
-        class="btn-brutal btn-brutal-blue !py-1.5 !px-1 text-[11px] flex items-center justify-center gap-1 cursor-pointer"
+        class="btn-brutal btn-brutal-blue !py-2 !px-1.5 text-xs sm:text-sm font-bold flex items-center justify-center gap-1 cursor-pointer"
         title="Copy FEN string"
       >
-        <app-icon [name]="settings.toastMessage() === 'FEN COPIED' ? 'check' : 'clipboard-document'" size="w-3 h-3"></app-icon>
+        <app-icon [name]="settings.toastMessage() === 'FEN COPIED' ? 'check' : 'clipboard-document'" size="w-3.5 h-3.5"></app-icon>
         <span>{{ settings.toastMessage() === 'FEN COPIED' ? 'COPIED' : 'FEN' }}</span>
       </button>
     </div>

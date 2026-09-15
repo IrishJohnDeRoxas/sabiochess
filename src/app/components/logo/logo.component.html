@@ -1,7 +1,7 @@
 <div class="inline-flex items-center gap-2.5 sm:gap-3 group" [class.cursor-pointer]="interactive()">
   <!-- Neubrutalist Pawn Badge Mark -->
   <div
-    class="bg-[#FF4F00] border-[#222222] flex items-center justify-center font-display text-white rotate-[-2deg] select-none group-hover:rotate-0 transition-all duration-150 active:translate-x-[2px] active:translate-y-[2px] shrink-0"
+    class="bg-[#FF4F00] flex items-center justify-center font-display text-white rotate-[-2deg] select-none group-hover:rotate-0 transition-all duration-150 active:translate-x-[2px] active:translate-y-[2px] shrink-0"
     [ngClass]="boxSizeClass()">
     <!-- Vector Neubrutalist Pawn Silhouette -->
     <svg 
@@ -42,7 +42,7 @@
         Sabio<span class="text-[#FF4F00]">Chess</span>
       </span>
       @if (showSubtitle()) {
-        <span class="font-label text-[10px] text-[#222222] dark:text-[#F3F4F6] opacity-80 uppercase tracking-wider block">
+        <span class="font-label text-xs text-[#222222] dark:text-[#F3F4F6] opacity-85 uppercase tracking-wider block font-bold">
           Neubrutalist Analysis
         </span>
       }

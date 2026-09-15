@@ -1,13 +1,13 @@
 <div class="flex flex-col gap-3 w-full">
   <!-- Game Status Card -->
-  <div class="card-brutal p-3 sm:p-3.5 bg-white flex flex-col gap-2.5">
-    <div class="flex items-center justify-between border-b-2 border-[#222222] pb-2">
+  <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1F24] flex flex-col gap-2.5">
+    <div class="flex items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-2">
       <div class="flex items-center gap-2">
-        <span class="font-display text-base sm:text-lg tracking-tight uppercase">MATCH STATUS</span>
+        <span class="font-display text-sm sm:text-base tracking-tight uppercase text-[#222222] dark:text-[#F3F4F6]">MATCH STATUS</span>
       </div>
       <div 
-        class="badge-brutal"
-        [ngClass]="game.turn() === 'w' ? 'bg-[#FFFFFF] text-[#222222]' : 'bg-[#222222] text-[#FFFFFF]'"
+        class="badge-brutal text-xs sm:text-sm font-bold"
+        [ngClass]="game.turn() === 'w' ? 'bg-[#FFFFFF] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6]' : 'bg-[#222222] dark:bg-[#141519] text-[#FFFFFF]'"
       >
         TURN: {{ game.turn() === 'w' ? 'WHITE' : 'BLACK' }}
       </div>
@@ -15,19 +15,19 @@
 
     <!-- Check / Game Over Banner -->
     @if (game.isGameOver()) {
-      <div class="bg-[#FF4F00] text-white p-2.5 border-2 border-[#222222] shadow-[3px_3px_0_0_#222222] font-accent text-center text-sm uppercase flex items-center justify-center gap-2">
+      <div class="bg-[#FF4F00] text-white p-2.5 sm:p-3 border-2 border-[#222222] dark:border-black shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000] font-accent text-center text-sm sm:text-base font-bold uppercase flex items-center justify-center gap-2">
         <app-icon name="trophy" size="w-5 h-5"></app-icon>
         <span>{{ game.gameOverReason() }}</span>
       </div>
     } @else if (game.isCheck()) {
-      <div class="bg-[#FF4F00] text-white p-2 border-2 border-[#222222] shadow-[3px_3px_0_0_#222222] font-accent text-center text-sm uppercase animate-bounce flex items-center justify-center gap-1.5">
+      <div class="bg-[#FF4F00] text-white p-2.5 sm:p-3 border-2 border-[#222222] dark:border-black shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000] font-accent text-center text-sm sm:text-base font-bold uppercase animate-bounce flex items-center justify-center gap-2">
         <app-icon name="exclamation-triangle" size="w-5 h-5"></app-icon>
         <span>CHECK!</span>
       </div>
     } @else {
-      <div class="flex items-center justify-between text-xs font-label text-[#222222] bg-[#D9D9D9] p-2 border border-[#222222]">
+      <div class="flex items-center justify-between text-xs sm:text-sm font-label text-[#222222] dark:text-[#F3F4F6] bg-[#D9D9D9] dark:bg-[#2A2B32] p-2.5 border border-[#222222] dark:border-[#373A46]">
         <span>POSITION EVAL:</span>
-        <strong class="text-[#0E4C92] font-bold">{{ game.evalFormatted() }}</strong>
+        <strong class="text-[#0E4C92] dark:text-[#60A5FA] font-bold">{{ game.evalFormatted() }}</strong>
       </div>
     }
 
@@ -36,7 +36,7 @@
       <button 
         type="button" 
         (click)="game.flipBoard()" 
-        class="btn-brutal btn-brutal-silver !py-2 !px-2 text-xs flex-1 flex items-center justify-center gap-1"
+        class="btn-brutal btn-brutal-silver !py-2 !px-2 text-xs sm:text-sm font-bold flex-1 flex items-center justify-center gap-1 cursor-pointer"
         title="Flip the board view"
       >
         <app-icon name="arrow-path" size="w-3.5 h-3.5"></app-icon>
@@ -46,7 +46,7 @@
       <button 
         type="button" 
         (click)="game.undoMove()" 
-        class="btn-brutal btn-brutal-silver !py-2 !px-2 text-xs flex-1 flex items-center justify-center gap-1"
+        class="btn-brutal btn-brutal-silver !py-2 !px-2 text-xs sm:text-sm font-bold flex-1 flex items-center justify-center gap-1 cursor-pointer"
         [disabled]="game.history().length === 0"
         title="Undo last move"
       >
@@ -57,7 +57,7 @@
       <button 
         type="button" 
         (click)="game.resetGame()" 
-        class="btn-brutal btn-brutal-orange !py-2 !px-2 text-xs flex-1 flex items-center justify-center gap-1"
+        class="btn-brutal btn-brutal-orange !py-2 !px-2 text-xs sm:text-sm font-bold flex-1 flex items-center justify-center gap-1 cursor-pointer"
         title="Start a new game"
       >
         <app-icon name="plus" size="w-3.5 h-3.5"></app-icon>
@@ -67,7 +67,7 @@
       <button 
         type="button" 
         (click)="copyFen()" 
-        class="btn-brutal btn-brutal-blue !py-2 !px-2 text-xs flex-1 flex items-center justify-center gap-1"
+        class="btn-brutal btn-brutal-blue !py-2 !px-2 text-xs sm:text-sm font-bold flex-1 flex items-center justify-center gap-1 cursor-pointer"
         title="Copy current FEN string to clipboard"
       >
         <app-icon [name]="copiedFen() ? 'check' : 'clipboard-document'" size="w-3.5 h-3.5"></app-icon>
@@ -77,10 +77,10 @@
   </div>
 
   <!-- Move History Card -->
-  <div class="card-brutal p-3 sm:p-3.5 bg-white flex flex-col gap-2.5 flex-1 min-h-[220px]">
-    <div class="flex items-center justify-between border-b-2 border-[#222222] pb-2">
-      <span class="font-display text-base tracking-tight uppercase">MOVE NOTATION</span>
-      <span class="badge-brutal bg-[#C0C0C0] text-[#222222] text-[10px]">
+  <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1F24] flex flex-col gap-2.5 flex-1 min-h-[220px]">
+    <div class="flex items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-2">
+      <span class="font-display text-sm sm:text-base tracking-tight uppercase text-[#222222] dark:text-[#F3F4F6]">MOVE NOTATION</span>
+      <span class="badge-brutal bg-[#C0C0C0] dark:bg-[#373A46] text-[#222222] dark:text-[#F3F4F6] text-xs font-bold">
         {{ game.history().length }} PLY
       </span>
     </div>
@@ -88,21 +88,21 @@
     <!-- Notation History Table -->
     <div class="overflow-y-auto max-h-[260px] pr-1 flex flex-col gap-1">
       @if (game.history().length === 0) {
-        <div class="text-center py-8 text-gray-500 font-label text-xs">
+        <div class="text-center py-8 text-gray-500 dark:text-gray-400 font-label text-xs sm:text-sm">
           No moves played yet. Click any piece to begin!
         </div>
       } @else {
-        <div class="grid grid-cols-[40px_1fr_1fr] text-xs font-label font-bold border-b border-[#222222] pb-1 text-[#222222] bg-[#D9D9D9] px-2 py-1">
+        <div class="grid grid-cols-[40px_1fr_1fr] text-xs sm:text-sm font-label font-bold border-b border-[#222222] dark:border-[#373A46] pb-1.5 text-[#222222] dark:text-[#F3F4F6] bg-[#D9D9D9] dark:bg-[#2A2B32] px-2.5 py-1.5">
           <span>#</span>
           <span>WHITE</span>
           <span>BLACK</span>
         </div>
         
         @for (pair of getMovePairs(); track pair.num) {
-          <div class="grid grid-cols-[40px_1fr_1fr] text-xs font-label px-2 py-1 border-b border-gray-200 hover:bg-[#D9D9D9] transition-colors items-center">
-            <span class="text-gray-500 font-bold">{{ pair.num }}.</span>
-            <span class="font-bold text-[#0E4C92]">{{ pair.white }}</span>
-            <span class="font-bold text-[#222222]">{{ pair.black || '...' }}</span>
+          <div class="grid grid-cols-[40px_1fr_1fr] text-xs sm:text-sm font-label px-2.5 py-1.5 border-b border-gray-200 dark:border-gray-800 hover:bg-[#D9D9D9] dark:hover:bg-[#2A2B32] transition-colors items-center">
+            <span class="text-gray-500 dark:text-gray-400 font-bold text-xs">{{ pair.num }}.</span>
+            <span class="font-bold text-[#0E4C92] dark:text-[#60A5FA]">{{ pair.white }}</span>
+            <span class="font-bold text-[#222222] dark:text-[#F3F4F6]">{{ pair.black || '...' }}</span>
           </div>
         }
       }

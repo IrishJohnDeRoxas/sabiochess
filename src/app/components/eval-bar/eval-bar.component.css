@@ -55,7 +55,7 @@
   z-index: 10;
   width: 100%;
   text-align: center;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   font-weight: 800;
   padding: 4px 2px;
   line-height: 1;
@@ -86,4 +86,19 @@
   bottom: 4px;
   color: #FFFFFF;
   background-color: rgba(34, 34, 34, 0.95);
+}
+
+/* Dark Mode Overrides */
+:host-context(.dark) .eval-bar-wrapper,
+:is(.dark *) .eval-bar-wrapper,
+.dark .eval-bar-wrapper {
+  background-color: #141519;
+  border-color: #000000;
+  box-shadow: 4px 4px 0 0 #000000;
+}
+
+:host-context(.dark) .eval-black-segment,
+:is(.dark *) .eval-black-segment,
+.dark .eval-black-segment {
+  background-color: #141519;
 }

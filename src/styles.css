@@ -162,9 +162,9 @@ body {
 .badge-brutal {
   display: inline-flex;
   align-items: center;
-  padding: 0.2rem 0.6rem;
+  padding: 0.25rem 0.65rem;
   font-family: 'Space Mono', monospace;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   font-weight: 700;
   border: 2px solid #222222;
   box-shadow: 2px 2px 0 0 #222222;
