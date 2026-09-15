@@ -16,9 +16,14 @@
       <div class="lg:col-span-7 flex flex-col gap-2.5 sm:gap-3 w-full max-w-[640px] mx-auto lg:max-w-none">
 
         <!-- Top Player Card -->
-        <app-player-card class="block" [player]="game.topPlayer()" [color]="game.topColor()" [isTurn]="game.isTopTurn()"
-          [capturedPieces]="game.topCapturedPieces()" [materialAdvantage]="game.topMaterialAdvantage()"
-          [timeControl]="game.matchMetadata().timeControl"></app-player-card>
+        <app-player-card
+          class="block"
+          [player]="game.topPlayer()"
+          [color]="game.topColor()"
+          [isTurn]="game.isTopTurn()"
+          [clock]="game.topClock()"
+          [outcome]="game.topOutcome()"
+        ></app-player-card>
 
         <!-- Board Row: Eval Bar + Chess Board (matching exact height) -->
         <div class="grid gap-2.5 sm:gap-3 items-stretch w-full"
@@ -37,10 +42,14 @@
         </div>
 
         <!-- Bottom Player Card -->
-        <app-player-card class="block" [player]="game.bottomPlayer()" [color]="game.bottomColor()"
-          [isTurn]="game.isBottomTurn()" [capturedPieces]="game.bottomCapturedPieces()"
-          [materialAdvantage]="game.bottomMaterialAdvantage()"
-          [timeControl]="game.matchMetadata().timeControl"></app-player-card>
+        <app-player-card
+          class="block"
+          [player]="game.bottomPlayer()"
+          [color]="game.bottomColor()"
+          [isTurn]="game.isBottomTurn()"
+          [clock]="game.bottomClock()"
+          [outcome]="game.bottomOutcome()"
+        ></app-player-card>
 
       </div>
 

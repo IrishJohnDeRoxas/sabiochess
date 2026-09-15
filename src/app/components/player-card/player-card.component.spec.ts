@@ -45,7 +45,7 @@ describe('PlayerCardComponent', () => {
     expect(compiled.textContent).toContain('?');
   });
 
-  it('should apply is-active-turn class when isTurn is true', () => {
+  it('should apply is-active-turn class when isTurn is true and game is not ended', () => {
     component.isTurn = true;
     fixture.detectChanges();
 
@@ -53,11 +53,31 @@ describe('PlayerCardComponent', () => {
     expect(container.classList.contains('is-active-turn')).toBe(true);
   });
 
-  it('should display material advantage when positive', () => {
-    component.materialAdvantage = 3;
+  it('should display outcome status and winner styling when player wins', () => {
+    component.outcome = {
+      isWinner: true,
+      isLoser: false,
+      isDraw: false,
+      score: '1',
+      reason: 'Won by checkmate',
+      shortReason: 'Checkmate',
+    };
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.textContent).toContain('+3');
+    expect(compiled.textContent).toContain('Won by checkmate');
+    expect(compiled.textContent).toContain('1');
+  });
+
+  it('should display clock time and detect low-time', () => {
+    component.clock = '00:08.4';
+    expect(component.isLowTime).toBe(true);
+
+    component.clock = '05:30';
+    expect(component.isLowTime).toBe(false);
+
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.textContent).toContain('05:30');
   });
 });

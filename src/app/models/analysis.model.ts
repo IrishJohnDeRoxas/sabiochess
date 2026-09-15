@@ -14,18 +14,27 @@ export type MoveClassification =
 export interface MoveAnalysis {
   plyIndex: number; // 0-indexed (0 = White's first move, 1 = Black's first move)
   san: string;
-  from: string;
-  to: string;
-  fenBefore: string;
-  fenAfter: string;
-  scoreBefore: number; // Centipawns from current player perspective
-  scoreAfter: number;
-  evalCp: number; // Score from White perspective (positive = White leads)
+  moveSan?: string; // Alias for san
+  from?: string;
+  to?: string;
+  fenBefore?: string;
+  fenAfter?: string;
+  scoreBefore: number | null; // Centipawns from current player perspective / White perspective
+  scoreAfter: number | null;
+  evalCp?: number; // Score from White perspective (positive = White leads)
+  cpl?: number | null; // Centipawn loss
+  winChanceBefore?: number | null; // 0 - 100%
+  winChanceAfter?: number | null; // 0 - 100%
   mate?: number | null;
-  bestMoveSan?: string;
+  mateBefore?: number | null;
+  mateAfter?: number | null;
+  bestMove?: string | null;
+  bestMoveSan?: string | null;
   bestMoveUci?: string;
+  bestMovePv?: string[];
+  followUpMoves?: string[];
   classification: MoveClassification;
-  accuracy: number; // 0 to 100
+  accuracy: number; // 0 to 100 CAPS2 accuracy
   commentary?: string;
 }
 
@@ -46,4 +55,31 @@ export interface EvalGraphPoint {
   rawScore: number;
   classification: MoveClassification;
   isCurrent: boolean;
+}
+
+export function getHeroIconForClass(c: MoveClassification): string {
+  switch (c) {
+    case 'brilliant':
+      return 'sparkles';
+    case 'great':
+      return 'arrow-trending-up';
+    case 'best':
+      return 'star';
+    case 'excellent':
+      return 'check';
+    case 'good':
+      return 'check';
+    case 'book':
+      return 'book-open';
+    case 'inaccuracy':
+      return 'exclamation-triangle';
+    case 'mistake':
+      return 'exclamation-triangle';
+    case 'miss':
+      return 'trash';
+    case 'blunder':
+      return 'exclamation-triangle';
+    default:
+      return 'star';
+  }
 }
