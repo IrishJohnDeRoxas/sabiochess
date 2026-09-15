@@ -163,7 +163,7 @@ export class ChessGameService {
   readonly isGameOver = signal<boolean>(false);
   readonly gameOverReason = signal<string | null>(null);
   readonly isCheck = signal<boolean>(false);
-  readonly evalScore = signal<number>(0.2); // White advantage in pawns
+  readonly heuristicEvalScore = signal<number>(0.0); // White advantage in pawns (fallback heuristic)
   readonly isAutoplaying = signal<boolean>(false);
   private autoplayInterval: ReturnType<typeof setInterval> | null = null;
 
@@ -432,20 +432,114 @@ export class ChessGameService {
     return squares;
   });
 
-  readonly evalFormatted = computed<string>(() => {
+  readonly evalScore = computed<number>(() => {
+    const ply = this.currentPlyIndex();
+    // Start of game / initial position is strictly 0.0
+    if (ply === -1 || (ply === null && this.history().length === 0)) {
+      return 0.0;
+    }
+
+    if (ply !== null && ply >= 0) {
+      const moveAnalysis = this.currentMoveAnalysis();
+      if (moveAnalysis) {
+        if (moveAnalysis.mateAfter !== null && moveAnalysis.mateAfter !== undefined) {
+          if (moveAnalysis.mateAfter > 0) return 100;
+          if (moveAnalysis.mateAfter < 0) return -100;
+          return this.getActiveChess().turn() === 'w' ? -100 : 100;
+        }
+        if (moveAnalysis.scoreAfter !== null && moveAnalysis.scoreAfter !== undefined) {
+          return Math.round((moveAnalysis.scoreAfter / 100) * 10) / 10;
+        }
+        if (moveAnalysis.evalCp !== null && moveAnalysis.evalCp !== undefined) {
+          return Math.round((moveAnalysis.evalCp / 100) * 10) / 10;
+        }
+      }
+    }
+
     const active = this.getActiveChess();
-    const score = this.evalScore();
+    if (active.isGameOver()) {
+      if (active.isCheckmate()) {
+        return active.turn() === 'w' ? -100 : 100;
+      }
+      return 0.0;
+    }
+
+    return this.heuristicEvalScore();
+  });
+
+  readonly evalFormatted = computed<string>(() => {
+    const ply = this.currentPlyIndex();
+    if (ply === -1 || (ply === null && this.history().length === 0)) {
+      return '0.0';
+    }
+
+    const active = this.getActiveChess();
     if (active.isGameOver()) {
       if (active.isCheckmate()) {
         return active.turn() === 'w' ? '#B' : '#W';
       }
       return '½-½';
     }
-    return `${score.toFixed(1)}`;
+
+    if (ply !== null && ply >= 0) {
+      const moveAnalysis = this.currentMoveAnalysis();
+      if (moveAnalysis) {
+        if (moveAnalysis.mateAfter !== null && moveAnalysis.mateAfter !== undefined) {
+          if (moveAnalysis.mateAfter !== 0) {
+            return `M${Math.abs(moveAnalysis.mateAfter)}`;
+          } else {
+            return active.turn() === 'w' ? '#B' : '#W';
+          }
+        }
+        if (moveAnalysis.scoreAfter !== null && moveAnalysis.scoreAfter !== undefined) {
+          const score = moveAnalysis.scoreAfter / 100;
+          const rounded = Math.round(Math.abs(score) * 10) / 10;
+          return `${rounded.toFixed(1)}`;
+        }
+        if (moveAnalysis.evalCp !== null && moveAnalysis.evalCp !== undefined) {
+          const score = moveAnalysis.evalCp / 100;
+          const rounded = Math.round(Math.abs(score) * 10) / 10;
+          return `${rounded.toFixed(1)}`;
+        }
+      }
+    }
+
+    const score = this.evalScore();
+    if (Math.abs(score) >= 90) {
+      return score > 0 ? '#W' : '#B';
+    }
+    const rounded = Math.round(Math.abs(score) * 10) / 10;
+    return `${rounded.toFixed(1)}`;
   });
 
   readonly whiteAdvantagePercentage = computed<number>(() => {
+    const ply = this.currentPlyIndex();
+    if (ply === -1 || (ply === null && this.history().length === 0)) {
+      return 50;
+    }
+
+    const active = this.getActiveChess();
+    if (active.isGameOver()) {
+      if (active.isCheckmate()) {
+        return active.turn() === 'w' ? 0 : 100;
+      }
+      return 50;
+    }
+
+    if (ply !== null && ply >= 0) {
+      const moveAnalysis = this.currentMoveAnalysis();
+      if (moveAnalysis) {
+        if (moveAnalysis.mateAfter !== null && moveAnalysis.mateAfter !== undefined) {
+          if (moveAnalysis.mateAfter > 0) return 100;
+          if (moveAnalysis.mateAfter < 0) return 0;
+          return active.turn() === 'w' ? 0 : 100;
+        }
+      }
+    }
+
     const score = this.evalScore();
+    if (score >= 90) return 100;
+    if (score <= -90) return 0;
     const winProb = 1 / (1 + Math.pow(10, -score / 4));
     return Math.max(5, Math.min(95, Math.round(winProb * 100)));
   });
@@ -554,6 +648,7 @@ export class ChessGameService {
     this.syncDisplayChess();
     this.clearSelection();
     this.updateState();
+    this.updateEvalHeuristic();
 
     if (this.settings.moveSounds() && plyIndex >= 0) {
       this.soundService.playChessMoveSound('move', this.settings.volume() * 0.7);
@@ -658,7 +753,7 @@ export class ChessGameService {
     this.lastMove.set(null);
     this.clearSelection();
     this.updateState();
-    this.evalScore.set(0.2);
+    this.heuristicEvalScore.set(0.0);
     this.analysisService.clearAnalysis();
     this.matchMetadata.set(this.getDefaultMetadata());
   }
@@ -921,6 +1016,11 @@ export class ChessGameService {
 
   private updateEvalHeuristic(): void {
     const active = this.getActiveChess();
+    if (active.history().length === 0 && active.fen().startsWith('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR')) {
+      this.heuristicEvalScore.set(0.0);
+      return;
+    }
+
     const pieceValues: Record<string, number> = {
       p: 1,
       n: 3.2,
@@ -950,13 +1050,14 @@ export class ChessGameService {
       }
     }
 
-    if (active.isCheckmate()) {
-      score = active.turn() === 'w' ? -20 : 20;
+    if (active.isGameOver()) {
+      if (active.isCheckmate()) {
+        score = active.turn() === 'w' ? -20 : 20;
+      } else {
+        score = 0;
+      }
     }
 
-    if (active.turn() === 'w') score += 0.15;
-    else score -= 0.15;
-
-    this.evalScore.set(Math.round(score * 10) / 10);
+    this.heuristicEvalScore.set(Math.round(score * 10) / 10);
   }
 }

@@ -501,7 +501,7 @@ export class GameAnalysisService implements OnDestroy {
     const results: MoveAnalysis[] = [];
     const tempChess = new Chess();
     const sanList = history.map((h) => h.san);
-    let prevScore = 20;
+    let prevScore = 0;
 
     for (let i = 0; i < history.length; i++) {
       const item = history[i];
@@ -640,6 +640,10 @@ export class GameAnalysisService implements OnDestroy {
   }
 
   private evaluatePosition(chess: Chess): number {
+    if (chess.history().length === 0 && chess.fen().startsWith('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR')) {
+      return 0;
+    }
+
     if (chess.isGameOver()) {
       if (chess.isCheckmate()) {
         return chess.turn() === 'w' ? -2000 : 2000;
