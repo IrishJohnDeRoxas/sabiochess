@@ -1,13 +1,16 @@
 import { TestBed } from '@angular/core/testing';
 import { ChessGameService, SAMPLE_GAMES } from './chess-game.service';
-import { describe, it, expect, beforeEach } from 'vitest';
+import { SoundService } from './sound.service';
+import { SettingsService } from './settings.service';
+import { GameAnalysisService } from './game-analysis.service';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 describe('ChessGameService', () => {
   let service: ChessGameService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [ChessGameService],
+      providers: [ChessGameService, SoundService, SettingsService, GameAnalysisService],
     });
     service = TestBed.inject(ChessGameService);
   });
@@ -265,6 +268,28 @@ describe('ChessGameService', () => {
     expect(service.variations().length).toBe(0);
     expect(service.isVariationActive()).toBe(false);
     expect(service.currentPlyIndex()).toBe(0);
+  });
+
+  it('should play reaction sound when navigating to a classified move and memeSounds is enabled', () => {
+    const soundService = TestBed.inject(SoundService);
+    const soundSpy = vi.spyOn(soundService, 'playReactionSound');
+    const settingsService = TestBed.inject(SettingsService);
+    const analysisService = TestBed.inject(GameAnalysisService);
+
+    settingsService.setMemeSounds(true);
+    service.loadSampleGame('opera');
+
+    // Mock analysis data for ply 0 and 1
+    analysisService.movesAnalysis.set([
+      { classification: 'book', plyIndex: 0 } as any,
+      { classification: 'blunder', plyIndex: 1 } as any,
+    ]);
+
+    service.jumpToPly(0);
+    expect(soundSpy).toHaveBeenCalledWith('book', 'meme', settingsService.volume());
+
+    service.jumpToPly(1);
+    expect(soundSpy).toHaveBeenCalledWith('blunder', 'meme', settingsService.volume());
   });
 });
 

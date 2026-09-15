@@ -584,14 +584,28 @@ export class ChessGameService {
     return this.displayChess;
   }
 
-  private playSoundForMove(move: any): void {
+  private playSoundForMove(move: any, plyIndex?: number): void {
+    if (this.soundService.isMuted()) return;
+
+    if (this.settings.memeSounds()) {
+      const activePly = plyIndex !== undefined ? plyIndex : this.currentPlyIndex();
+      if (activePly !== null && activePly >= 0) {
+        const moves = this.analysisService.movesAnalysis();
+        const item = moves[activePly];
+        if (item && item.classification && item.classification !== 'unknown') {
+          this.soundService.playReactionSound(item.classification, this.settings.memePack(), this.settings.volume());
+          return;
+        }
+      }
+    }
+
     if (this.settings.moveSounds()) {
       const isCheck = this.getActiveChess().inCheck();
       const soundType = isCheck
         ? 'check'
-        : (move.san && (move.san.startsWith('O-O') || move.san.startsWith('0-0')))
+        : (move?.san && (move.san.startsWith('O-O') || move.san.startsWith('0-0')))
         ? 'castle'
-        : (move.captured || (move.flags && (move.flags.includes('c') || move.flags.includes('e'))))
+        : (move?.captured || (move?.flags && (move.flags.includes('c') || move.flags.includes('e'))))
         ? 'capture'
         : 'move';
       this.soundService.playChessMoveSound(soundType, this.settings.volume());
@@ -767,8 +781,9 @@ export class ChessGameService {
     this.updateState();
     this.updateEvalHeuristic();
 
-    if (this.settings.moveSounds() && plyIndex >= 0) {
-      this.soundService.playChessMoveSound('move', this.settings.volume() * 0.7);
+    if (plyIndex >= 0) {
+      const currentMove = hist[plyIndex];
+      this.playSoundForMove(currentMove, plyIndex);
     }
   }
 
