@@ -95,10 +95,8 @@
           <app-icon name="cpu-chip" size="w-4 h-4"></app-icon>
         </span>
         <div class="min-w-0">
-          <h3 class="font-display text-sm sm:text-base uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6] truncate">ENGINE & ANALYSIS
-          </h3>
-          <p class="font-label text-xs text-gray-600 dark:text-gray-400">Stockfish evaluation & calculation depth
-          </p>
+          <h3 class="font-display text-sm sm:text-base uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6] truncate">ENGINE & ANALYSIS</h3>
+          <p class="font-label text-xs text-gray-600 dark:text-gray-400">Stockfish evaluation & calculation depth</p>
         </div>
       </div>
       <span class="badge-brutal bg-[#FF4F00] text-white text-xs sm:text-sm font-bold self-start sm:self-auto shrink-0">
@@ -110,8 +108,7 @@
     <div class="flex flex-col gap-2.5 bg-[#D9D9D9] dark:bg-[#2A2B32] p-3 border border-[#222222] dark:border-[#373A46]">
       <div class="flex items-center justify-between font-accent text-xs sm:text-sm">
         <span class="font-bold uppercase text-[#222222] dark:text-[#F3F4F6]">Search Calculation Depth:</span>
-        <span class="font-label font-bold text-[#0E4C92] dark:text-[#60A5FA]">{{ settings.analysisDepth() }}
-          Plies</span>
+        <span class="font-label font-bold text-[#0E4C92] dark:text-[#60A5FA]">{{ settings.analysisDepth() }} Plies</span>
       </div>
 
       <!-- Quick Depth Preset Pills -->
@@ -143,11 +140,9 @@
       <label
         class="flex items-start justify-between p-2.5 sm:p-3 border-2 border-[#222222] dark:border-[#373A46] bg-white dark:bg-[#1E1F24] hover:bg-gray-50 dark:hover:bg-[#25272F] cursor-pointer transition-colors gap-3">
         <div class="flex flex-col gap-0.5">
-          <span class="font-accent text-xs sm:text-sm uppercase font-bold text-[#222222] dark:text-[#F3F4F6]">Auto-Evaluate Placed
-            Moves</span>
+          <span class="font-accent text-xs sm:text-sm uppercase font-bold text-[#222222] dark:text-[#F3F4F6]">Auto-Evaluate Placed Moves</span>
           <span class="font-body text-xs sm:text-sm text-gray-600 dark:text-gray-400 leading-normal">
-            Automatically calculates tactical classifications (Brilliant, Mistake, Blunder) immediately after each move
-            is played.
+            Automatically calculates tactical classifications (Brilliant, Mistake, Blunder) immediately after each move is played.
           </span>
         </div>
         <input type="checkbox" [checked]="settings.autoEvaluation()"
@@ -159,8 +154,7 @@
       <label
         class="flex items-start justify-between p-2.5 sm:p-3 border-2 border-[#222222] dark:border-[#373A46] bg-white dark:bg-[#1E1F24] hover:bg-gray-50 dark:hover:bg-[#25272F] cursor-pointer transition-colors gap-3">
         <div class="flex flex-col gap-0.5">
-          <span class="font-accent text-xs sm:text-sm uppercase font-bold text-[#222222] dark:text-[#F3F4F6]">Show Advantage Eval
-            Bar</span>
+          <span class="font-accent text-xs sm:text-sm uppercase font-bold text-[#222222] dark:text-[#F3F4F6]">Show Advantage Eval Bar</span>
           <span class="font-body text-xs sm:text-sm text-gray-600 dark:text-gray-400 leading-normal">
             Displays the vertical advantage meter next to the board indicating White vs Black winning probability.
           </span>
@@ -174,8 +168,7 @@
       <label
         class="flex items-start justify-between p-2.5 sm:p-3 border-2 border-[#222222] dark:border-[#373A46] bg-white dark:bg-[#1E1F24] hover:bg-gray-50 dark:hover:bg-[#25272F] cursor-pointer transition-colors gap-3">
         <div class="flex flex-col gap-0.5">
-          <span class="font-accent text-xs sm:text-sm uppercase font-bold text-[#222222] dark:text-[#F3F4F6]">Auto-Promote Pawns to
-            Queen</span>
+          <span class="font-accent text-xs sm:text-sm uppercase font-bold text-[#222222] dark:text-[#F3F4F6]">Auto-Promote Pawns to Queen</span>
           <span class="font-body text-xs sm:text-sm text-gray-600 dark:text-gray-400 leading-normal">
             Instantly promotes 8th-rank pawn pushes to Queens without interrupting move flow with a selection dialog.
           </span>
@@ -194,8 +187,7 @@
           <app-icon name="swatch" size="w-4 h-4"></app-icon>
         </span>
         <div class="min-w-0">
-          <h3 class="font-display text-sm sm:text-base uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6] truncate">BOARD APPEARANCE
-          </h3>
+          <h3 class="font-display text-sm sm:text-base uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6] truncate">BOARD APPEARANCE</h3>
           <p class="font-label text-xs text-gray-600 dark:text-gray-400">Square themes and high-contrast styling</p>
         </div>
       </div>
@@ -221,16 +213,14 @@
 
         <div class="flex flex-col min-w-0 flex-1">
           <div class="flex items-center justify-between">
-            <span class="font-accent text-xs sm:text-sm font-bold text-[#222222] dark:text-[#F3F4F6] truncate">{{ theme.name
-              }}</span>
+            <span class="font-accent text-xs sm:text-sm font-bold text-[#222222] dark:text-[#F3F4F6] truncate">{{ theme.name }}</span>
             @if (settings.boardTheme() === theme.id) {
             <span class="p-0.5 bg-[#FF4F00] text-white rounded-none border border-[#222222] dark:border-black">
               <app-icon name="check" size="w-3 h-3"></app-icon>
             </span>
             }
           </div>
-          <span class="font-body text-xs sm:text-sm text-gray-600 dark:text-gray-400 leading-tight truncate">{{
-            theme.description }}</span>
+          <span class="font-body text-xs sm:text-sm text-gray-600 dark:text-gray-400 leading-tight truncate">{{ theme.description }}</span>
         </div>
       </button>
       }
@@ -241,15 +231,12 @@
   <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1F24] flex flex-col gap-3">
     <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-2 gap-2">
       <div class="flex items-center gap-2 min-w-0">
-        <span
-          class="p-1.5 bg-[#222222] dark:bg-[#373A46] text-white inline-flex border border-[#222222] dark:border-black shrink-0">
+        <span class="p-1.5 bg-[#222222] dark:bg-[#373A46] text-white inline-flex border border-[#222222] dark:border-black shrink-0">
           <app-icon name="speaker-wave" size="w-4 h-4"></app-icon>
         </span>
         <div class="min-w-0">
-          <h3 class="font-display text-sm sm:text-base uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6] truncate">AUDIO & SOUND FX
-          </h3>
-          <p class="font-label text-xs text-gray-600 dark:text-gray-400">Physical piece taps & viral reaction sounds
-          </p>
+          <h3 class="font-display text-sm sm:text-base uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6] truncate">AUDIO & SOUND FX</h3>
+          <p class="font-label text-xs text-gray-600 dark:text-gray-400">Physical piece taps & viral reaction sounds</p>
         </div>
       </div>
 
@@ -296,8 +283,7 @@
     <!-- Sound Pack Options List -->
     <div class="flex flex-col gap-1.5">
       <div class="flex items-center justify-between">
-        <span class="font-accent text-xs sm:text-sm uppercase font-bold text-gray-800 dark:text-gray-200">SELECT REACTION SOUND
-          PACK:</span>
+        <span class="font-accent text-xs sm:text-sm uppercase font-bold text-gray-800 dark:text-gray-200">SELECT REACTION SOUND PACK:</span>
         <span class="font-label text-xs text-gray-500 dark:text-gray-400 font-bold">CLICK PLAY TO PREVIEW</span>
       </div>
 
@@ -308,11 +294,9 @@
         <div class="flex flex-col pr-2 gap-0.5">
           <div class="flex items-center gap-1.5">
             <span class="font-bold text-sm sm:text-base text-[#222222] dark:text-[#F3F4F6]">{{ pack.name }}</span>
-            <span class="badge-brutal bg-[#222222] dark:bg-[#373A46] text-white text-[10px] sm:text-xs !py-0.5 !px-1.5 font-bold">{{ pack.badge
-              }}</span>
+            <span class="badge-brutal bg-[#222222] dark:bg-[#373A46] text-white text-[10px] sm:text-xs !py-0.5 !px-1.5 font-bold">{{ pack.badge }}</span>
           </div>
-          <span class="text-xs sm:text-sm font-body text-gray-600 dark:text-gray-400 leading-tight">{{ pack.description
-            }}</span>
+          <span class="text-xs sm:text-sm font-body text-gray-600 dark:text-gray-400 leading-tight">{{ pack.description }}</span>
         </div>
 
         <button type="button" (click)="previewSoundPack(pack.id, $event)"
@@ -333,10 +317,8 @@
           <app-icon name="user" size="w-4 h-4"></app-icon>
         </span>
         <div>
-          <h3 class="font-display text-sm sm:text-base uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6]">ONLINE PROFILES &
-            SYNC</h3>
-          <p class="font-label text-xs sm:text-sm text-gray-600 dark:text-gray-400">Fetch recent matches from online platforms
-          </p>
+          <h3 class="font-display text-sm sm:text-base uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6]">ONLINE PROFILES & SYNC</h3>
+          <p class="font-label text-xs sm:text-sm text-gray-600 dark:text-gray-400">Fetch recent matches from online platforms</p>
         </div>
       </div>
     </div>
@@ -374,6 +356,99 @@
           class="bg-[#D9D9D9] dark:bg-[#2A2B32] text-gray-500 dark:text-gray-400 border-2 border-[#222222] dark:border-[#373A46] p-2 text-xs sm:text-sm font-label cursor-not-allowed uppercase placeholder:normal-case select-none" />
       </div>
     </div>
+  </div>
+
+  <!-- Section 6: Promo Code & Membership (Requested Feature) -->
+  <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1F24] flex flex-col gap-3 border-4 border-[#222222] dark:border-black shadow-[4px_4px_0_0_#222222] dark:shadow-[4px_4px_0_0_#000000]">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-2 gap-2">
+      <div class="flex items-center gap-2 min-w-0">
+        <span class="p-1.5 bg-[#FF4F00] text-white inline-flex border border-[#222222] dark:border-black shrink-0">
+          <app-icon name="key" size="w-4 h-4"></app-icon>
+        </span>
+        <div class="min-w-0">
+          <h3 class="font-display text-sm sm:text-base uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6] truncate">PROMO CODE & PRO MEMBERSHIP</h3>
+          <p class="font-label text-xs text-gray-600 dark:text-gray-400">Redeem founder keys, beta passes, or upgrade your account</p>
+        </div>
+      </div>
+      
+      <!-- Current Tier Badge -->
+      <span class="badge-brutal text-xs sm:text-sm font-bold self-start sm:self-auto shrink-0"
+        [ngClass]="auth.isPro() ? 'bg-[#FF4F00] text-white' : auth.isFreeUser() ? 'bg-[#0E4C92] text-white' : 'bg-[#222222] dark:bg-[#373A46] text-white'">
+        {{ auth.isPro() ? '👑 LIFETIME PRO' : auth.isFreeUser() ? 'FREE TIER (5/DAY)' : 'GUEST SESSION' }}
+      </span>
+    </div>
+
+    <!-- Active Tier Status Info Box -->
+    @if (auth.isPro()) {
+    <div class="p-3 bg-gradient-to-r from-orange-100 to-amber-100 dark:from-orange-950/40 dark:to-amber-950/40 border-2 border-[#FF4F00] flex items-center gap-3">
+      <span class="p-2 bg-[#FF4F00] text-white inline-flex border border-black shrink-0">
+        <app-icon name="star" size="w-5 h-5"></app-icon>
+      </span>
+      <div class="flex flex-col">
+        <span class="font-accent font-bold text-xs sm:text-sm text-[#FF4F00]">👑 LIFETIME PRO VIP ACTIVE</span>
+        <span class="font-body text-xs text-gray-700 dark:text-gray-300">
+          Unlimited Stockfish 18 evaluations, maximum depth 22 calculation, and VIP sound packs are unlocked permanently!
+        </span>
+      </div>
+    </div>
+    } @else {
+    <div class="p-2.5 bg-[#ECECD8] dark:bg-[#2A2B32] border border-[#222222] dark:border-[#373A46] flex flex-col gap-1">
+      <div class="flex items-center justify-between text-xs font-accent">
+        <span class="font-bold text-gray-800 dark:text-gray-200">Current Status:</span>
+        <span class="font-bold text-[#0E4C92] dark:text-[#60A5FA]">
+          {{ auth.isFreeUser() ? '5 Daily Analysis Energy' : '5 Free Starter Analyses' }}
+        </span>
+      </div>
+      <p class="font-body text-xs text-gray-600 dark:text-gray-400">
+        Enter a founder promotion code below (e.g. <code>EARLYBIRD</code>, <code>SABIOPRO</code>) to instantly upgrade your account to <strong>Lifetime Pro</strong> with unlimited daily energy!
+      </p>
+    </div>
+
+    <!-- Promo Code Input Form -->
+    <div class="flex flex-col gap-2">
+      <label class="font-accent text-xs uppercase font-bold text-[#222222] dark:text-[#F3F4F6] flex items-center gap-1.5">
+        <app-icon name="sparkles" size="w-3.5 h-3.5" class="text-[#FF4F00]"></app-icon>
+        <span>ENTER PROMO CODE:</span>
+      </label>
+
+      <div class="flex flex-col sm:flex-row gap-2">
+        <input type="text" [ngModel]="promoCodeInput()" (ngModelChange)="promoCodeInput.set($event)"
+          placeholder="e.g. EARLYBIRD, SABIOPRO, BETA2026"
+          class="flex-1 bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] border-2 border-[#222222] dark:border-[#373A46] p-2.5 text-xs sm:text-sm font-label font-bold uppercase placeholder:normal-case focus:bg-white dark:focus:bg-[#1E1F24] focus:outline-none focus:border-[#FF4F00]" />
+
+        <button type="button" (click)="redeemPromoCode()" [disabled]="isRedeemingPromo() || !promoCodeInput().trim()"
+          class="btn-brutal btn-brutal-orange !py-2.5 !px-5 text-xs sm:text-sm font-accent uppercase flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50">
+          @if (isRedeemingPromo()) {
+            <span>APPLYING...</span>
+          } @else {
+            <app-icon name="key" size="w-4 h-4"></app-icon>
+            <span>REDEEM CODE</span>
+          }
+        </button>
+      </div>
+
+      <!-- Quick Preset Code Pills -->
+      <div class="flex items-center gap-1.5 flex-wrap pt-0.5">
+        <span class="font-label text-[10px] uppercase font-bold text-gray-500 dark:text-gray-400">SAMPLE CODES:</span>
+        @for (code of samplePromoCodes; track code) {
+          <button type="button" (click)="applyPromoPreset(code)"
+            class="badge-brutal bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] hover:bg-[#FF4F00] hover:text-white text-[10px] !py-0.5 !px-1.5 font-bold cursor-pointer transition-colors"
+            title="Click to paste code">
+            {{ code }}
+          </button>
+        }
+      </div>
+
+      <!-- Status / Feedback Alert -->
+      @if (promoStatusMessage()) {
+      <div class="p-2.5 border-2 text-xs font-label font-bold flex items-center gap-2 mt-1"
+        [ngClass]="promoStatusIsError() ? 'bg-red-100 dark:bg-red-950/50 border-red-500 text-red-700 dark:text-red-300' : 'bg-emerald-100 dark:bg-emerald-950/50 border-emerald-500 text-emerald-700 dark:text-emerald-300'">
+        <app-icon [name]="promoStatusIsError() ? 'x-mark' : 'check'" size="w-4 h-4"></app-icon>
+        <span>{{ promoStatusMessage() }}</span>
+      </div>
+      }
+    </div>
+    }
   </div>
 
   <!-- Reset Defaults Action -->

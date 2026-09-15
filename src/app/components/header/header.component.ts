@@ -1,7 +1,8 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LogoComponent } from '../logo/logo.component';
 import { IconComponent } from '../icon/icon.component';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -11,12 +12,40 @@ import { IconComponent } from '../icon/icon.component';
   styleUrls: ['./header.component.css'],
 })
 export class HeaderComponent {
-  readonly energy = signal<number>(5);
-  readonly maxEnergy = signal<number>(5);
-  readonly isPro = signal<boolean>(false);
-  readonly isUserMenuOpen = signal<boolean>(false);
+  readonly auth = inject(AuthService);
+
+  openAuthModal(): void {
+    this.auth.openAuthModal();
+  }
+
+  openProModal(): void {
+    this.auth.openProModal();
+  }
 
   toggleUserMenu(): void {
-    this.isUserMenuOpen.update((open) => !open);
+    this.auth.toggleUserMenu();
+  }
+
+  closeUserMenu(): void {
+    this.auth.closeUserMenu();
+  }
+
+  logout(): void {
+    this.auth.logout();
+  }
+
+  signInFree(): void {
+    this.auth.signInMock('free', 'Kasparov Trainee', 'trainee@chessclub.com');
+    this.auth.closeUserMenu();
+  }
+
+  signInPro(): void {
+    this.auth.signInMock('pro', 'Grandmaster VIP', 'founder@sabiochess.com');
+    this.auth.closeUserMenu();
+  }
+
+  switchToGuest(): void {
+    this.auth.switchToGuest();
+    this.auth.closeUserMenu();
   }
 }

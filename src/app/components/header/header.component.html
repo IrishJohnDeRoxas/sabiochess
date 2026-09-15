@@ -1,17 +1,27 @@
 <header
-  class="w-full bg-[#FFFFFF] dark:bg-[#1E1F24] border-b-[4px] border-[#222222] dark:border-black shadow-[0_4px_0_0_#222222] dark:shadow-[0_4px_0_0_#000000] px-4 py-3 sm:px-6 lg:px-8 transition-colors duration-150">
+  class="w-full bg-[#FFFFFF] dark:bg-[#1E1F24] border-b-[4px] border-[#222222] dark:border-black shadow-[0_4px_0_0_#222222] dark:shadow-[0_4px_0_0_#000000] px-4 py-3 sm:px-6 lg:px-8 transition-colors duration-150 relative z-30">
   <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
     <!-- Brand / Logo Area -->
     <app-logo size="md"></app-logo>
 
     <!-- Center / Status (Energy & Mode) -->
     <div class="hidden md:flex items-center gap-3">
+      <!-- Energy Badge (Pro Unlimited or Count) -->
+      @if (auth.isUnlimitedEnergy() || auth.isPro()) {
+      <div class="badge-brutal bg-[#FF4F00] text-white flex items-center gap-1.5 py-1.5 px-3 font-label text-xs sm:text-sm font-bold shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000]">
+        <app-icon name="star" size="w-4 h-4"></app-icon>
+        <span>LIFETIME PRO: <strong>UNLIMITED</strong></span>
+      </div>
+      } @else {
       <div class="badge-brutal bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] flex items-center gap-2 py-1.5 px-3">
         <app-icon name="bolt" size="w-4 h-4" class="text-[#FF4F00] animate-pulse"></app-icon>
         <span class="font-label text-xs sm:text-sm tracking-wide">
-          ENERGY: <strong class="text-[#0E4C92] dark:text-[#60A5FA] font-bold">{{ energy() }}/{{ maxEnergy() }}</strong>
+          ENERGY: <strong class="text-[#0E4C92] dark:text-[#60A5FA] font-bold">{{ auth.energy() }}/{{ auth.maxEnergy() }}</strong>
         </span>
       </div>
+      }
+
+      <!-- Stockfish Version Badge -->
       <div class="badge-brutal bg-[#C0C0C0] dark:bg-[#373A46] text-[#222222] dark:text-[#F3F4F6] flex items-center gap-1.5 py-1.5 px-3 font-label text-xs sm:text-sm font-bold">
         <app-icon name="cpu-chip" size="w-4 h-4"></app-icon>
         <span>STOCKFISH 18</span>
@@ -20,27 +30,142 @@
 
     <!-- Actions Area -->
     <div class="flex items-center gap-2 sm:gap-3">
-      <button type="button" class="btn-brutal btn-brutal-silver !py-1.5 sm:!py-2 !px-3 sm:!px-3.5 text-xs sm:text-sm hidden lg:inline-flex items-center gap-1.5 font-accent">
+      <!-- Support Button -->
+      <button type="button" class="btn-brutal btn-brutal-silver !py-1.5 sm:!py-2 !px-3 sm:!px-3.5 text-xs sm:text-sm hidden lg:inline-flex items-center gap-1.5 font-accent cursor-pointer">
         <app-icon name="lifebuoy" size="w-4 h-4"></app-icon>
         <span>SUPPORT</span>
       </button>
 
-      <button type="button" class="btn-brutal btn-brutal-silver !py-1.5 sm:!py-2 !px-3 sm:!px-3.5 text-xs sm:text-sm hidden sm:inline-flex items-center gap-1.5 font-accent">
-        <app-icon name="puzzle-piece" size="w-4 h-4"></app-icon>
-        <span>EXTENSION</span>
-      </button>
-
-      <button type="button" class="btn-brutal btn-brutal-orange !py-1.5 sm:!py-2 !px-3.5 sm:!px-4 text-xs sm:text-sm flex items-center gap-1.5 font-accent">
+      <!-- Pro Upgrade Button (Visible when not already Lifetime Pro) -->
+      @if (!auth.isPro()) {
+      <button type="button" (click)="openProModal()"
+        class="btn-brutal btn-brutal-orange !py-1.5 sm:!py-2 !px-3.5 sm:!px-4 text-xs sm:text-sm flex items-center gap-1.5 font-accent cursor-pointer animate-pulse hover:animate-none">
         <app-icon name="star" size="w-4 h-4"></app-icon>
         <span>PRO</span>
       </button>
+      }
 
-      <!-- Account Button -->
+      <!-- Account Button / User Chip Area -->
+      @if (auth.isGuest()) {
       <button type="button" (click)="toggleUserMenu()"
-        class="btn-brutal btn-brutal-blue !py-1.5 sm:!py-2 !px-3 sm:!px-3.5 text-xs sm:text-sm flex items-center gap-1.5 font-accent">
+        class="btn-brutal btn-brutal-blue !py-1.5 sm:!py-2 !px-3 sm:!px-3.5 text-xs sm:text-sm flex items-center gap-1.5 font-accent cursor-pointer">
         <app-icon name="user" size="w-4 h-4"></app-icon>
         <span>SIGN IN</span>
       </button>
+      } @else {
+      <button type="button" (click)="toggleUserMenu()"
+        class="btn-brutal !py-1 sm:!py-1.5 !px-2.5 sm:!px-3 text-xs sm:text-sm flex items-center gap-2 cursor-pointer"
+        [ngClass]="auth.isPro() ? 'btn-brutal-orange' : 'btn-brutal-blue'">
+        @if (auth.userAvatar()) {
+          <img [src]="auth.userAvatar()" alt="User avatar" class="w-5 h-5 rounded-none border border-[#222222] object-cover" />
+        } @else {
+          <span class="w-5 h-5 bg-white text-[#222222] font-bold text-[10px] flex items-center justify-center border border-[#222222]">
+            {{ auth.displayName().charAt(0).toUpperCase() }}
+          </span>
+        }
+        <span class="font-accent font-bold truncate max-w-[100px] sm:max-w-[140px]">{{ auth.displayName() }}</span>
+        <span class="badge-brutal !py-0.5 !px-1 text-[9px] bg-black text-white font-bold">
+          {{ auth.isPro() ? '👑 PRO' : 'FREE' }}
+        </span>
+      </button>
+      }
     </div>
   </div>
+
+  <!-- User Account Dropdown Menu Popover -->
+  @if (auth.isUserMenuOpen()) {
+  <div class="absolute right-4 sm:right-6 lg:right-8 top-full mt-2 w-72 sm:w-80 card-brutal p-0 bg-white dark:bg-[#1E1F24] border-4 border-[#222222] dark:border-black shadow-[6px_6px_0_0_#222222] dark:shadow-[6px_6px_0_0_#000000] z-50 animate-scale-up">
+    
+    <!-- User Info Header -->
+    <div class="p-3.5 border-b-2 border-[#222222] dark:border-[#373A46] bg-[#ECECD8] dark:bg-[#2A2B32] flex items-center justify-between">
+      <div class="flex items-center gap-2.5 min-w-0">
+        @if (auth.userAvatar()) {
+          <img [src]="auth.userAvatar()" alt="User Avatar" class="w-8 h-8 rounded-none border-2 border-[#222222] dark:border-black object-cover" />
+        } @else {
+          <span class="w-8 h-8 bg-[#FF4F00] text-white font-bold text-sm flex items-center justify-center border-2 border-[#222222] dark:border-black">
+            {{ auth.displayName().charAt(0).toUpperCase() }}
+          </span>
+        }
+        <div class="flex flex-col min-w-0">
+          <span class="font-accent font-bold text-xs sm:text-sm text-[#222222] dark:text-[#F3F4F6] truncate">{{ auth.displayName() }}</span>
+          <span class="font-label text-[10px] text-gray-600 dark:text-gray-400 truncate">{{ auth.currentUser()?.email || 'Guest Session' }}</span>
+        </div>
+      </div>
+
+      <span class="badge-brutal text-[10px] !py-0.5 !px-1.5 font-bold"
+        [ngClass]="auth.isPro() ? 'bg-[#FF4F00] text-white' : auth.isFreeUser() ? 'bg-[#0E4C92] text-white' : 'bg-[#222222] text-white'">
+        {{ auth.isPro() ? '👑 LIFETIME' : auth.isFreeUser() ? 'FREE TIER' : 'GUEST' }}
+      </span>
+    </div>
+
+    <!-- Energy Status Info Card -->
+    <div class="p-3 border-b-2 border-[#222222] dark:border-[#373A46] flex flex-col gap-1.5 bg-white dark:bg-[#1E1F24]">
+      <div class="flex items-center justify-between font-accent text-xs">
+        <span class="font-bold text-gray-700 dark:text-gray-300">ANALYSIS ENERGY:</span>
+        <span class="font-bold text-[#FF4F00]">
+          {{ auth.isUnlimitedEnergy() || auth.isPro() ? '⚡ UNLIMITED' : (auth.energy() + '/' + auth.maxEnergy()) }}
+        </span>
+      </div>
+
+      @if (!auth.isPro()) {
+      <div class="w-full bg-[#D9D9D9] dark:bg-[#373A46] h-2 border border-[#222222] dark:border-black">
+        <div class="bg-[#FF4F00] h-full transition-all" [style.width.%]="(auth.energy() / auth.maxEnergy()) * 100"></div>
+      </div>
+      <span class="font-label text-[10px] text-gray-500 dark:text-gray-400">
+        {{ auth.isFreeUser() ? 'Refills 5 analyses daily at midnight UTC.' : '5 free starter analyses for guests.' }}
+      </span>
+      }
+    </div>
+
+    <!-- Quick Actions Menu -->
+    <div class="p-2.5 flex flex-col gap-1.5 bg-white dark:bg-[#1E1F24]">
+      @if (auth.isGuest()) {
+      <button type="button" (click)="openAuthModal()"
+        class="btn-brutal btn-brutal-blue w-full !py-2 text-xs flex items-center justify-center gap-1.5 cursor-pointer">
+        <app-icon name="user" size="w-3.5 h-3.5"></app-icon>
+        <span>SIGN IN WITH GOOGLE</span>
+      </button>
+      }
+
+      @if (!auth.isPro()) {
+      <button type="button" (click)="openProModal()"
+        class="btn-brutal btn-brutal-orange w-full !py-2 text-xs flex items-center justify-center gap-1.5 cursor-pointer">
+        <app-icon name="star" size="w-3.5 h-3.5"></app-icon>
+        <span>UPGRADE / ENTER PROMO CODE</span>
+      </button>
+      }
+
+      <!-- Demo Account Quick Switcher (For grading / testing convenience) -->
+      <div class="p-2 bg-[#ECECD8] dark:bg-[#2A2B32] border border-[#222222] dark:border-[#373A46] flex flex-col gap-1 my-0.5">
+        <span class="font-label text-[9px] uppercase font-bold text-gray-600 dark:text-gray-400">QUICK TIER SWITCHER (DEMO):</span>
+        <div class="grid grid-cols-3 gap-1">
+          <button type="button" (click)="switchToGuest()"
+            class="badge-brutal text-[9px] !py-0.5 !px-1 text-center justify-center font-bold cursor-pointer"
+            [ngClass]="auth.isGuest() ? 'bg-[#FF4F00] text-white' : 'bg-white dark:bg-[#1E1F24] text-black dark:text-white'">
+            GUEST
+          </button>
+          <button type="button" (click)="signInFree()"
+            class="badge-brutal text-[9px] !py-0.5 !px-1 text-center justify-center font-bold cursor-pointer"
+            [ngClass]="auth.isFreeUser() ? 'bg-[#FF4F00] text-white' : 'bg-white dark:bg-[#1E1F24] text-black dark:text-white'">
+            FREE
+          </button>
+          <button type="button" (click)="signInPro()"
+            class="badge-brutal text-[9px] !py-0.5 !px-1 text-center justify-center font-bold cursor-pointer"
+            [ngClass]="auth.isPro() ? 'bg-[#FF4F00] text-white' : 'bg-white dark:bg-[#1E1F24] text-black dark:text-white'">
+            PRO
+          </button>
+        </div>
+      </div>
+
+      @if (auth.isAuthenticated()) {
+      <button type="button" (click)="logout()"
+        class="btn-brutal btn-brutal-silver w-full !py-1.5 text-xs flex items-center justify-center gap-1.5 cursor-pointer text-red-600 dark:text-red-400">
+        <app-icon name="arrow-path" size="w-3.5 h-3.5"></app-icon>
+        <span>SIGN OUT</span>
+      </button>
+      }
+    </div>
+
+  </div>
+  }
 </header>

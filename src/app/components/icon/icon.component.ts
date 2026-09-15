@@ -44,6 +44,7 @@ export type IconName =
   | 'question-mark-circle'
   | 'exclamation-circle'
   | 'x-mark'
+  | 'key'
   | 'hand-thumb-up'
   | 'arrow-left'
   | 'arrow-right';
@@ -195,6 +196,12 @@ export class IconComponent {
         return [
           {
             d: 'M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z',
+          },
+        ];
+      case 'key':
+        return [
+          {
+            d: 'M14 6a4 4 0 0 1-4.899 3.899l-1.955 1.955a.5.5 0 0 1-.353.146H5.5V13.5a.5.5 0 0 1-.5.5h-1.5v1.5a.5.5 0 0 1-.5.5H1.5a.5.5 0 0 1-.5-.5v-2.086a.5.5 0 0 1 .146-.353l3.455-3.456A4 4 0 1 1 14 6Zm-4-2a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Z',
           },
         ];
       case 'hand-thumb-up':
