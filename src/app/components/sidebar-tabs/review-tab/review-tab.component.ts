@@ -60,6 +60,24 @@ export class ReviewTabComponent {
   private followUpInterval: ReturnType<typeof setInterval> | null = null;
   private followUpOriginalPly: number | null = null;
 
+  @ViewChild('movesListContainer') movesListContainer?: ElementRef<HTMLDivElement>;
+
+  constructor() {
+    effect(() => {
+      const currentPly = this.game.currentPlyIndex();
+      if (currentPly !== null && currentPly !== undefined) {
+        setTimeout(() => {
+          const container = this.movesListContainer?.nativeElement;
+          if (!container) return;
+          const activeEl = container.querySelector('[data-active-move="true"]') as HTMLElement;
+          if (activeEl && typeof activeEl.scrollIntoView === 'function') {
+            activeEl.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+          }
+        }, 0);
+      }
+    });
+  }
+
   readonly statsList: StatItem[] = [
     { key: 'brilliant', label: 'Brilliant', icon: 'sparkles', symbol: '!!', badgeClass: 'bg-[#8B5CF6] text-white border-[#222222]' },
     { key: 'great', label: 'Great', icon: 'arrow-trending-up', symbol: '!', badgeClass: 'bg-[#06B6D4] text-white border-[#222222]' },

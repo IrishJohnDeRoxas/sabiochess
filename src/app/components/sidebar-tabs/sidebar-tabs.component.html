@@ -42,16 +42,20 @@
   }
 
   <!-- Active Tab Body (Scrollable container matching board height) -->
-  <div class="flex-1 min-h-0 overflow-y-auto pr-1 pb-1">
+  <div class="flex-1 min-h-0 flex flex-col">
     @switch (activeTab()) {
     @case ('review') {
-    <app-review-tab></app-review-tab>
+    <app-review-tab class="w-full h-full min-h-0 flex flex-col"></app-review-tab>
     }
     @case ('analysis') {
-    <app-analysis-tab></app-analysis-tab>
+    <div class="w-full h-full min-h-0 overflow-y-auto pr-1 pb-1">
+      <app-analysis-tab></app-analysis-tab>
+    </div>
     }
     @case ('settings') {
-    <app-settings-tab></app-settings-tab>
+    <div class="w-full h-full min-h-0 overflow-y-auto pr-1 pb-1">
+      <app-settings-tab></app-settings-tab>
+    </div>
     }
     }
   </div>
