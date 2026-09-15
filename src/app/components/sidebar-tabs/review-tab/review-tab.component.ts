@@ -112,9 +112,9 @@ export class ReviewTabComponent {
     { key: 'excellent', label: 'Excellent', icon: 'check', symbol: '✓', badgeClass: 'bg-[#84CC16] text-[#222222] border-[#222222]' },
     { key: 'good', label: 'Good', icon: 'check', symbol: '✓', badgeClass: 'bg-[#3B82F6] text-white border-[#222222]' },
     { key: 'book', label: 'Book', icon: 'book-open', symbol: '📖', badgeClass: 'bg-[#A16207] text-white border-[#222222]' },
-    { key: 'inaccuracy', label: 'Inaccuracy', icon: 'exclamation-triangle', symbol: '?!', badgeClass: 'bg-[#F59E0B] text-[#222222] border-[#222222]' },
-    { key: 'mistake', label: 'Mistake', icon: 'exclamation-triangle', symbol: '?', badgeClass: 'bg-[#F97316] text-white border-[#222222]' },
-    { key: 'miss', label: 'Miss', icon: 'trash', symbol: '✕', badgeClass: 'bg-[#EA580C] text-white border-[#222222]' },
+    { key: 'inaccuracy', label: 'Inaccuracy', icon: 'exclamation-circle', symbol: '?!', badgeClass: 'bg-[#F59E0B] text-[#222222] border-[#222222]' },
+    { key: 'mistake', label: 'Mistake', icon: 'question-mark-circle', symbol: '?', badgeClass: 'bg-[#F97316] text-white border-[#222222]' },
+    { key: 'miss', label: 'Miss', icon: 'x-mark', symbol: '✕', badgeClass: 'bg-[#EA580C] text-white border-[#222222]' },
     { key: 'blunder', label: 'Blunder', icon: 'exclamation-triangle', symbol: '??', badgeClass: 'bg-[#EF4444] text-white border-[#222222]' },
   ];
 

@@ -291,5 +291,30 @@ describe('ChessGameService', () => {
     service.jumpToPly(1);
     expect(soundSpy).toHaveBeenCalledWith('blunder', 'meme', settingsService.volume());
   });
+
+  it('should attach classification to the destination square of the last move in boardSquares', () => {
+    const analysisService = TestBed.inject(GameAnalysisService);
+    service.loadSampleGame('opera');
+
+    // Mock analysis data
+    analysisService.movesAnalysis.set([
+      { classification: 'book', plyIndex: 0, from: 'e2', to: 'e4' } as any,
+      { classification: 'best', plyIndex: 1, from: 'e7', to: 'e5' } as any,
+    ]);
+
+    // Ply 0: 1. e4 -> e4 should have book classification
+    service.jumpToPly(0);
+    const squaresPly0 = service.boardSquares();
+    const e4Square = squaresPly0.find((s) => s.square === 'e4');
+    const e2Square = squaresPly0.find((s) => s.square === 'e2');
+    expect(e4Square?.classification).toBe('book');
+    expect(e2Square?.classification).toBeUndefined();
+
+    // Ply 1: 1... e5 -> e5 should have best classification
+    service.jumpToPly(1);
+    const squaresPly1 = service.boardSquares();
+    const e5Square = squaresPly1.find((s) => s.square === 'e5');
+    expect(e5Square?.classification).toBe('best');
+  });
 });
 

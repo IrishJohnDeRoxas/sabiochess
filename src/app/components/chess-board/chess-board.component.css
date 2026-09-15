@@ -134,3 +134,84 @@
     font-size: 0.9rem;
   }
 }
+
+/* Move Annotations Overlay (Rendered above board and pieces) */
+.annotation-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+  pointer-events: none;
+  z-index: 20;
+}
+
+.annotation-cell {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.square-annotation {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+  font-size: 11px;
+  font-weight: bold;
+  z-index: 20;
+  box-shadow: 1.5px 1.5px 0px rgba(0, 0, 0, 0.8), 0 2px 4px rgba(0, 0, 0, 0.35);
+  border: 2px solid #ffffff;
+  box-sizing: border-box;
+  animation: popIn 0.18s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+  from {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.square-annotation-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+}
+
+/* Move Classification Badge Colors */
+.badge-brilliant { background: #8B5CF6; color: #ffffff; }
+.badge-great { background: #06B6D4; color: #ffffff; }
+.badge-best { background: #10B981; color: #ffffff; }
+.badge-excellent { background: #84CC16; color: #222222; }
+.badge-good { background: #3B82F6; color: #ffffff; }
+.badge-book { background: #A16207; color: #ffffff; }
+.badge-inaccuracy { background: #F59E0B; color: #222222; }
+.badge-mistake { background: #F97316; color: #ffffff; }
+.badge-miss { background: #EA580C; color: #ffffff; }
+.badge-blunder { background: #EF4444; color: #ffffff; }
+
+@media (max-width: 640px) {
+  .square-annotation {
+    width: 18px;
+    height: 18px;
+    top: 1px;
+    right: 1px;
+    border-width: 1.5px;
+  }
+}

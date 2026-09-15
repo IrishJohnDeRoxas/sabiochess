@@ -422,6 +422,19 @@ export class ChessGameService {
     const flipped = this.isBoardFlipped();
     const activeChess = this.getActiveChess();
     const isVariation = this.isVariationActive();
+    const ply = this.currentPlyIndex();
+
+    // Get analysis classification for the last move (only for main line)
+    let lastMoveClassification: MoveClassification | undefined = undefined;
+    if (!isVariation && ply !== null && ply >= 0) {
+      const analysisList = this.analysisService.movesAnalysis();
+      if (analysisList && analysisList.length > ply) {
+        const moveData = analysisList.find((a) => a.plyIndex === ply);
+        if (moveData && moveData.classification && moveData.classification !== 'unknown') {
+          lastMoveClassification = moveData.classification;
+        }
+      }
+    }
 
     const squares: BoardSquareData[] = [];
     const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
@@ -444,6 +457,8 @@ export class ChessGameService {
         const isPreviousMove = isPrev && !isVariation;
         const isVariationMove = isPrev && isVariation;
         const isMoveFrom = last ? last.from === squareName : false;
+        const classification =
+          !isVariation && last && squareName === last.to ? lastMoveClassification : undefined;
 
         squares.push({
           file,
@@ -457,6 +472,7 @@ export class ChessGameService {
           isPreviousMove,
           isVariationMove,
           isMoveFrom,
+          classification,
         });
       }
     }

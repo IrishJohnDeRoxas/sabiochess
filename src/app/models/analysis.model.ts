@@ -72,11 +72,11 @@ export function getHeroIconForClass(c: MoveClassification): string {
     case 'book':
       return 'book-open';
     case 'inaccuracy':
-      return 'exclamation-triangle';
+      return 'exclamation-circle';
     case 'mistake':
-      return 'exclamation-triangle';
+      return 'question-mark-circle';
     case 'miss':
-      return 'trash';
+      return 'x-mark';
     case 'blunder':
       return 'exclamation-triangle';
     default:

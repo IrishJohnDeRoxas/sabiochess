@@ -56,4 +56,22 @@
       </div>
     }
   </div>
+
+  <!-- Move Annotation Badges Overlay (Rendered above board and pieces) -->
+  <div class="annotation-overlay" aria-hidden="true">
+    @for (square of game.boardSquares(); track square.square) {
+      <div class="annotation-cell">
+        @if (square.classification) {
+          <div class="square-annotation badge-{{ square.classification }}">
+            <app-icon
+              [name]="getHeroIcon(square.classification)"
+              size="w-3 h-3"
+              class="square-annotation-icon"
+              aria-hidden="true"
+            ></app-icon>
+          </div>
+        }
+      </div>
+    }
+  </div>
 </div>
