@@ -6,7 +6,6 @@ import { ChessBoardComponent } from './components/chess-board/chess-board.compon
 import { PlayerCardComponent } from './components/player-card/player-card.component';
 import { EvalBarComponent } from './components/eval-bar/eval-bar.component';
 import { SidebarTabsComponent } from './components/sidebar-tabs/sidebar-tabs.component';
-import { IconComponent } from './components/icon/icon.component';
 import { SettingsService } from './services/settings.service';
 import { ChessGameService } from './services/chess-game.service';
 
@@ -21,7 +20,6 @@ import { ChessGameService } from './services/chess-game.service';
     PlayerCardComponent,
     EvalBarComponent,
     SidebarTabsComponent,
-    IconComponent,
   ],
   templateUrl: './app.html',
   styleUrls: ['./app.css'],

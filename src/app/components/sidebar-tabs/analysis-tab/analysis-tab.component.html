@@ -1,6 +1,6 @@
-<div class="flex flex-col gap-3.5 w-full text-[#222222] dark:text-[#F3F4F6]">
+<div class="flex flex-col gap-3 w-full text-[#222222] dark:text-[#F3F4F6]">
   <!-- Analysis Status & Accuracy Card -->
-  <div class="card-brutal p-3 bg-white dark:bg-[#1E1F24] flex flex-col gap-3">
+  <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1F24] flex flex-col gap-2.5">
     <div class="flex items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-2">
       <div class="flex items-center gap-1.5">
         <span class="p-1 bg-[#0E4C92] text-white inline-flex border border-[#222222] dark:border-black">
@@ -20,19 +20,19 @@
     @if (analysisService.summary(); as sum) {
       <div class="grid grid-cols-2 gap-2.5">
         <!-- White Accuracy Card -->
-        <div class="border-2 border-[#222222] dark:border-black bg-[#FFFFFF] dark:bg-[#2A2B32] p-2 flex flex-col items-center justify-center gap-1 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]">
+        <div class="border-2 border-[#222222] dark:border-black bg-[#FFFFFF] dark:bg-[#2A2B32] p-2 flex flex-col items-center justify-center gap-1.5 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]">
           <span class="font-label text-[10px] uppercase font-bold text-gray-700 dark:text-gray-300">WHITE ACCURACY</span>
           <span class="font-display text-2xl tracking-tight text-[#222222] dark:text-[#F3F4F6]">{{ sum.whiteAccuracy }}%</span>
-          <div class="w-full h-2 bg-[#D9D9D9] dark:bg-[#141519] border border-[#222222] dark:border-black overflow-hidden mt-0.5">
+          <div class="w-full h-2 bg-[#D9D9D9] dark:bg-[#141519] border border-[#222222] dark:border-black overflow-hidden">
             <div class="h-full bg-[#10B981]" [style.width]="sum.whiteAccuracy + '%'"></div>
           </div>
         </div>
 
         <!-- Black Accuracy Card -->
-        <div class="border-2 border-[#222222] dark:border-black bg-[#222222] dark:bg-[#141519] text-white p-2 flex flex-col items-center justify-center gap-1 shadow-[3px_3px_0_0_#FF4F00]">
+        <div class="border-2 border-[#222222] dark:border-black bg-[#222222] dark:bg-[#141519] text-white p-2 flex flex-col items-center justify-center gap-1.5 shadow-[3px_3px_0_0_#FF4F00]">
           <span class="font-label text-[10px] uppercase font-bold text-gray-300">BLACK ACCURACY</span>
           <span class="font-display text-2xl tracking-tight text-white">{{ sum.blackAccuracy }}%</span>
-          <div class="w-full h-2 bg-[#444444] border border-white dark:border-gray-500 overflow-hidden mt-0.5">
+          <div class="w-full h-2 bg-[#444444] border border-white dark:border-gray-500 overflow-hidden">
             <div class="h-full bg-[#FF4F00]" [style.width]="sum.blackAccuracy + '%'"></div>
           </div>
         </div>
@@ -97,7 +97,7 @@
 
   <!-- Interactive Advantage Momentum Graph -->
   @if (analysisService.evalGraphPoints().length > 0) {
-    <div class="card-brutal p-3 bg-white dark:bg-[#1E1F24] flex flex-col gap-2">
+    <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1F24] flex flex-col gap-2.5">
       <div class="flex items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-1.5">
         <div class="flex items-center gap-1.5">
           <app-icon name="arrow-trending-up" size="w-3.5 h-3.5 text-[#FF4F00]"></app-icon>
@@ -132,7 +132,7 @@
   }
 
   <!-- Move Quality Breakdown Grid -->
-  <div class="card-brutal p-3 bg-white dark:bg-[#1E1F24] flex flex-col gap-2 flex-1">
+  <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1F24] flex flex-col gap-2.5 flex-1">
     <div class="flex items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-1.5">
       <span class="font-display text-xs uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6]">MOVE CLASSIFICATION</span>
       <div class="flex items-center gap-3 font-label text-[11px] font-bold">

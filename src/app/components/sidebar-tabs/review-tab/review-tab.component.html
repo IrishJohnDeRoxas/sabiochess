@@ -1,6 +1,6 @@
-<div class="flex flex-col gap-3.5 w-full text-[#222222] dark:text-[#F3F4F6]">
+<div class="flex flex-col gap-3 w-full text-[#222222] dark:text-[#F3F4F6]">
   <!-- Review Header & Sound Bar -->
-  <div class="card-brutal p-3 bg-white dark:bg-[#1E1F24] flex flex-col gap-2.5">
+  <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1F24] flex flex-col gap-2.5">
     <div class="flex items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-2">
       <div class="flex items-center gap-1.5">
         <span class="p-1 bg-[#FF4F00] text-white inline-flex border border-[#222222] dark:border-black">
@@ -25,7 +25,7 @@
 
         <!-- Sound Dropdown Popover -->
         @if (isSoundMenuOpen()) {
-          <div class="absolute right-0 top-full mt-1.5 z-30 w-64 bg-white dark:bg-[#1E1F24] border-[3px] border-[#222222] dark:border-black shadow-[5px_5px_0_0_#222222] dark:shadow-[5px_5px_0_0_#000000] p-2 flex flex-col gap-1.5 animate-fadeIn">
+          <div class="absolute right-0 top-[calc(100%+6px)] z-30 w-64 bg-white dark:bg-[#1E1F24] border-[3px] border-[#222222] dark:border-black shadow-[5px_5px_0_0_#222222] dark:shadow-[5px_5px_0_0_#000000] p-2 flex flex-col gap-1.5 animate-fadeIn">
             <div class="font-accent text-xs uppercase border-b-2 border-[#222222] dark:border-[#373A46] pb-1 flex items-center justify-between text-[#222222] dark:text-[#F3F4F6]">
               <span>AUDIO PACK</span>
               <button 
@@ -130,7 +130,7 @@
 
         <!-- SubTab 3: Paste Custom PGN / FEN -->
         @if (importerTab() === 'pgn') {
-          <div class="flex flex-col gap-1 mt-1">
+          <div class="flex flex-col gap-1.5">
             <label class="font-label text-[10px] uppercase text-[#222222] dark:text-[#F3F4F6] font-bold">Paste PGN Text:</label>
             <textarea
               [ngModel]="pgnInputText()"

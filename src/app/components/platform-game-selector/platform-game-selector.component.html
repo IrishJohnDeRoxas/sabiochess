@@ -1,6 +1,6 @@
-<div class="card-brutal p-3 bg-white dark:bg-[#1E1F24] flex flex-col gap-2.5 w-full text-[#222222] dark:text-[#F3F4F6]">
+<div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1F24] flex flex-col gap-2.5 w-full text-[#222222] dark:text-[#F3F4F6]">
   <!-- Header -->
-  <div class="flex items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-1.5">
+  <div class="flex items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-2">
     <div class="flex items-center gap-1.5">
       <span class="p-1 bg-[#10B981] text-white inline-flex border border-[#222222] dark:border-black">
         <app-icon name="arrow-down-tray" size="w-3.5 h-3.5"></app-icon>
@@ -31,7 +31,7 @@
   </div>
 
   <!-- Search Input Row -->
-  <form (ngSubmit)="fetchGames()" class="flex items-center gap-1.5">
+  <form (ngSubmit)="fetchGames()" class="flex items-center gap-2">
     <div class="relative flex-1">
       <input
         type="text"

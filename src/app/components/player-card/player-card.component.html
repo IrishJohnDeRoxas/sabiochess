@@ -40,12 +40,12 @@
   <!-- Right: Captured Pieces Tray & Material Count -->
   <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
     @if (capturedPieces.length > 0) {
-      <div class="flex items-center -space-x-1 sm:space-x-0.5 overflow-x-hidden">
+      <div class="flex items-center gap-1 sm:gap-1.5 overflow-x-hidden">
         @for (cap of capturedPieces; track cap.type) {
-          <div class="flex items-center relative" [title]="'Captured ' + cap.count + ' ' + cap.type">
+          <div class="flex items-center gap-0.5 relative" [title]="'Captured ' + cap.count + ' ' + cap.type">
             <img [src]="cap.svgUrl" [alt]="cap.type" class="w-3.5 h-3.5 sm:w-4 sm:h-4 inline-block opacity-85 select-none pointer-events-none" />
             @if (cap.count > 1) {
-              <span class="text-[8px] font-bold text-[#222222] dark:text-[#F3F4F6] -ml-0.5 leading-none">×{{ cap.count }}</span>
+              <span class="text-[8px] font-bold text-[#222222] dark:text-[#F3F4F6] leading-none">×{{ cap.count }}</span>
             }
           </div>
         }

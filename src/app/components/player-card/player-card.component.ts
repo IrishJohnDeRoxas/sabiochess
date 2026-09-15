@@ -1,12 +1,11 @@
 import { Component, Input, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PlayerInfo, CapturedPiece } from '../../services/chess-game.service';
-import { IconComponent } from '../icon/icon.component';
 
 @Component({
   selector: 'app-player-card',
   standalone: true,
-  imports: [CommonModule, IconComponent],
+  imports: [CommonModule],
   templateUrl: './player-card.component.html',
   styleUrls: ['./player-card.component.css'],
 })

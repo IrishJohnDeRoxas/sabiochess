@@ -1,6 +1,6 @@
-<div class="flex flex-col gap-4 w-full text-[#222222] dark:text-[#F3F4F6]">
+<div class="flex flex-col gap-3 w-full text-[#222222] dark:text-[#F3F4F6]">
   <!-- Section 1: App Interface Theme (Dark & Light Mode Toggle) -->
-  <div class="card-brutal p-4 bg-white dark:bg-[#1E1F24] flex flex-col gap-3">
+  <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1F24] flex flex-col gap-3">
     <div class="flex items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-2">
       <div class="flex items-center gap-2">
         <span class="p-1.5 bg-[#FF4F00] text-white inline-flex border border-[#222222] dark:border-black">
@@ -40,11 +40,13 @@
         </div>
 
         <!-- Visual Swatch Representation -->
-        <div class="flex items-center gap-1.5 bg-[#D9D9D9] p-1.5 border border-[#222222]">
-          <div class="w-4 h-4 bg-white border border-[#222222]"></div>
-          <div class="w-4 h-4 bg-[#FF4F00] border border-[#222222]"></div>
-          <div class="w-4 h-4 bg-[#0E4C92] border border-[#222222]"></div>
-          <span class="text-[9px] font-label text-gray-800 ml-auto font-bold">CHALK</span>
+        <div class="flex items-center justify-between bg-[#D9D9D9] p-1.5 border border-[#222222]">
+          <div class="flex items-center gap-1.5">
+            <div class="w-4 h-4 bg-white border border-[#222222]"></div>
+            <div class="w-4 h-4 bg-[#FF4F00] border border-[#222222]"></div>
+            <div class="w-4 h-4 bg-[#0E4C92] border border-[#222222]"></div>
+          </div>
+          <span class="text-[9px] font-label text-gray-800 font-bold">CHALK</span>
         </div>
 
         <span class="font-body text-[11px] text-gray-600 dark:text-gray-400 leading-tight">
@@ -71,11 +73,13 @@
         </div>
 
         <!-- Visual Swatch Representation -->
-        <div class="flex items-center gap-1.5 bg-[#141519] p-1.5 border border-[#222222] dark:border-black">
-          <div class="w-4 h-4 bg-[#1E1F24] border border-[#373A46]"></div>
-          <div class="w-4 h-4 bg-[#FF4F00] border border-black"></div>
-          <div class="w-4 h-4 bg-[#0E4C92] border border-black"></div>
-          <span class="text-[9px] font-label text-gray-300 ml-auto font-bold">MIDNIGHT</span>
+        <div class="flex items-center justify-between bg-[#141519] p-1.5 border border-[#222222] dark:border-black">
+          <div class="flex items-center gap-1.5">
+            <div class="w-4 h-4 bg-[#1E1F24] border border-[#373A46]"></div>
+            <div class="w-4 h-4 bg-[#FF4F00] border border-black"></div>
+            <div class="w-4 h-4 bg-[#0E4C92] border border-black"></div>
+          </div>
+          <span class="text-[9px] font-label text-gray-300 font-bold">MIDNIGHT</span>
         </div>
 
         <span class="font-body text-[11px] text-gray-600 dark:text-gray-400 leading-tight">
@@ -86,7 +90,7 @@
   </div>
 
   <!-- Section 2: Engine & Evaluation Configuration -->
-  <div class="card-brutal p-4 bg-white dark:bg-[#1E1F24] flex flex-col gap-3">
+  <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1F24] flex flex-col gap-3">
     <div class="flex items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-2">
       <div class="flex items-center gap-2">
         <span class="p-1.5 bg-[#FF4F00] text-white inline-flex border border-[#222222] dark:border-black">
@@ -105,7 +109,7 @@
     </div>
 
     <!-- Analysis Depth Slider & Explanation -->
-    <div class="flex flex-col gap-1.5 bg-[#D9D9D9] dark:bg-[#2A2B32] p-3 border border-[#222222] dark:border-[#373A46]">
+    <div class="flex flex-col gap-2 bg-[#D9D9D9] dark:bg-[#2A2B32] p-3 border border-[#222222] dark:border-[#373A46]">
       <div class="flex items-center justify-between font-accent text-xs">
         <span class="font-bold uppercase text-[#222222] dark:text-[#F3F4F6]">Search Calculation Depth:</span>
         <span class="font-label font-bold text-[#0E4C92] dark:text-[#60A5FA]">{{ settings.analysisDepth() }}
@@ -122,7 +126,7 @@
         <span>22 (Grandmaster)</span>
       </div>
 
-      <p class="font-body text-xs text-gray-700 dark:text-gray-300 leading-relaxed mt-1">
+      <p class="font-body text-xs text-gray-700 dark:text-gray-300 leading-relaxed">
         Higher depth evaluates deeper tactical combinations and calculates more precise CAPS accuracy scores, but takes
         slightly longer per move.
       </p>
@@ -132,8 +136,8 @@
     <div class="flex flex-col gap-2">
       <!-- Auto Evaluate Toggle -->
       <label
-        class="flex items-start justify-between p-2.5 border-2 border-[#222222] dark:border-[#373A46] bg-white dark:bg-[#1E1F24] hover:bg-gray-50 dark:hover:bg-[#25272F] cursor-pointer transition-colors">
-        <div class="flex flex-col pr-3">
+        class="flex items-start justify-between p-2.5 border-2 border-[#222222] dark:border-[#373A46] bg-white dark:bg-[#1E1F24] hover:bg-gray-50 dark:hover:bg-[#25272F] cursor-pointer transition-colors gap-3">
+        <div class="flex flex-col">
           <span class="font-accent text-xs uppercase font-bold text-[#222222] dark:text-[#F3F4F6]">Auto-Evaluate Placed
             Moves</span>
           <span class="font-body text-xs text-gray-600 dark:text-gray-400 leading-normal">
@@ -143,13 +147,13 @@
         </div>
         <input type="checkbox" [checked]="settings.autoEvaluation()"
           (change)="settings.setAutoEvaluation(!settings.autoEvaluation())"
-          class="accent-[#FF4F00] w-5 h-5 mt-0.5 cursor-pointer shrink-0" />
+          class="accent-[#FF4F00] w-5 h-5 cursor-pointer shrink-0" />
       </label>
 
       <!-- Real-Time Eval Bar Toggle -->
       <label
-        class="flex items-start justify-between p-2.5 border-2 border-[#222222] dark:border-[#373A46] bg-white dark:bg-[#1E1F24] hover:bg-gray-50 dark:hover:bg-[#25272F] cursor-pointer transition-colors">
-        <div class="flex flex-col pr-3">
+        class="flex items-start justify-between p-2.5 border-2 border-[#222222] dark:border-[#373A46] bg-white dark:bg-[#1E1F24] hover:bg-gray-50 dark:hover:bg-[#25272F] cursor-pointer transition-colors gap-3">
+        <div class="flex flex-col">
           <span class="font-accent text-xs uppercase font-bold text-[#222222] dark:text-[#F3F4F6]">Show Advantage Eval
             Bar</span>
           <span class="font-body text-xs text-gray-600 dark:text-gray-400 leading-normal">
@@ -158,13 +162,13 @@
         </div>
         <input type="checkbox" [checked]="settings.showEvalBar()"
           (change)="settings.setShowEvalBar(!settings.showEvalBar())"
-          class="accent-[#FF4F00] w-5 h-5 mt-0.5 cursor-pointer shrink-0" />
+          class="accent-[#FF4F00] w-5 h-5 cursor-pointer shrink-0" />
       </label>
 
       <!-- Auto Queen Toggle -->
       <label
-        class="flex items-start justify-between p-2.5 border-2 border-[#222222] dark:border-[#373A46] bg-white dark:bg-[#1E1F24] hover:bg-gray-50 dark:hover:bg-[#25272F] cursor-pointer transition-colors">
-        <div class="flex flex-col pr-3">
+        class="flex items-start justify-between p-2.5 border-2 border-[#222222] dark:border-[#373A46] bg-white dark:bg-[#1E1F24] hover:bg-gray-50 dark:hover:bg-[#25272F] cursor-pointer transition-colors gap-3">
+        <div class="flex flex-col">
           <span class="font-accent text-xs uppercase font-bold text-[#222222] dark:text-[#F3F4F6]">Auto-Promote Pawns to
             Queen</span>
           <span class="font-body text-xs text-gray-600 dark:text-gray-400 leading-normal">
@@ -172,13 +176,13 @@
           </span>
         </div>
         <input type="checkbox" [checked]="settings.autoQueen()" (change)="settings.setAutoQueen(!settings.autoQueen())"
-          class="accent-[#FF4F00] w-5 h-5 mt-0.5 cursor-pointer shrink-0" />
+          class="accent-[#FF4F00] w-5 h-5 cursor-pointer shrink-0" />
       </label>
     </div>
   </div>
 
   <!-- Section 3: Board Appearance Themes -->
-  <div class="card-brutal p-4 bg-white dark:bg-[#1E1F24] flex flex-col gap-3">
+  <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1F24] flex flex-col gap-3">
     <div class="flex items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-2">
       <div class="flex items-center gap-2">
         <span class="p-1.5 bg-[#0E4C92] text-white inline-flex border border-[#222222] dark:border-black">
@@ -229,7 +233,7 @@
   </div>
 
   <!-- Section 4: Audio & Meme FX Reactions -->
-  <div class="card-brutal p-4 bg-white dark:bg-[#1E1F24] flex flex-col gap-3">
+  <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1F24] flex flex-col gap-3">
     <div class="flex items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-2">
       <div class="flex items-center gap-2">
         <span
@@ -296,13 +300,13 @@
       <div (click)="selectSoundPack(pack.id)"
         class="flex items-center justify-between p-2.5 border-2 border-[#222222] dark:border-[#373A46] cursor-pointer hover:bg-[#D9D9D9] dark:hover:bg-[#2A2B32] text-xs font-accent transition-colors"
         [ngClass]="{'bg-[#D9D9D9] dark:bg-[#2A2B32] font-bold border-l-4 border-l-[#FF4F00] shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000]': settings.memePack() === pack.id && settings.memeSounds() && !soundService.isMuted()}">
-        <div class="flex flex-col pr-2">
+        <div class="flex flex-col pr-2 gap-0.5">
           <div class="flex items-center gap-1.5">
             <span class="font-bold text-sm text-[#222222] dark:text-[#F3F4F6]">{{ pack.name }}</span>
             <span class="badge-brutal bg-[#222222] dark:bg-[#373A46] text-white text-[9px] !py-0 !px-1">{{ pack.badge
               }}</span>
           </div>
-          <span class="text-xs font-body text-gray-600 dark:text-gray-400 leading-tight mt-0.5">{{ pack.description
+          <span class="text-xs font-body text-gray-600 dark:text-gray-400 leading-tight">{{ pack.description
             }}</span>
         </div>
 
@@ -317,7 +321,7 @@
   </div>
 
   <!-- Section 5: Connected Platform Accounts -->
-  <div class="card-brutal p-4 bg-white dark:bg-[#1E1F24] flex flex-col gap-3">
+  <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1F24] flex flex-col gap-3">
     <div class="flex items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-2">
       <div class="flex items-center gap-2">
         <span class="p-1.5 bg-[#10B981] text-white inline-flex border border-[#222222] dark:border-black">
