@@ -57,12 +57,11 @@
         class="btn-brutal !py-1 sm:!py-1.5 !px-2.5 sm:!px-3 text-xs sm:text-sm flex items-center gap-2 cursor-pointer"
         [ngClass]="auth.isPro() ? 'btn-brutal-orange' : 'btn-brutal-blue'">
         @if (auth.userAvatar()) {
-          <img [src]="auth.userAvatar()" alt="User avatar" class="w-5 h-5 rounded-none border border-[#222222] object-cover" />
-        } @else {
-          <span class="w-5 h-5 bg-white text-[#222222] font-bold text-[10px] flex items-center justify-center border border-[#222222]">
-            {{ auth.displayName().charAt(0).toUpperCase() }}
-          </span>
+          <img [src]="auth.userAvatar()" alt="User avatar" referrerpolicy="no-referrer" (error)="onAvatarError($event)" class="w-5 h-5 rounded-none border border-[#222222] object-cover bg-white shrink-0" />
         }
+        <span class="w-5 h-5 bg-white text-[#222222] font-bold text-[10px] flex items-center justify-center border border-[#222222] shrink-0" [ngClass]="{ 'hidden': !!auth.userAvatar() }">
+          {{ auth.displayName().charAt(0).toUpperCase() }}
+        </span>
         <span class="font-accent font-bold truncate max-w-[100px] sm:max-w-[140px]">{{ auth.displayName() }}</span>
         <span class="badge-brutal !py-0.5 !px-1 text-[9px] bg-black text-white font-bold">
           {{ auth.isPro() ? '👑 PRO' : 'FREE' }}
@@ -80,12 +79,11 @@
     <div class="p-3.5 border-b-2 border-[#222222] dark:border-[#373A46] bg-[#ECECD8] dark:bg-[#2A2B32] flex items-center justify-between">
       <div class="flex items-center gap-2.5 min-w-0">
         @if (auth.userAvatar()) {
-          <img [src]="auth.userAvatar()" alt="User Avatar" class="w-8 h-8 rounded-none border-2 border-[#222222] dark:border-black object-cover" />
-        } @else {
-          <span class="w-8 h-8 bg-[#FF4F00] text-white font-bold text-sm flex items-center justify-center border-2 border-[#222222] dark:border-black">
-            {{ auth.displayName().charAt(0).toUpperCase() }}
-          </span>
+          <img [src]="auth.userAvatar()" alt="User Avatar" referrerpolicy="no-referrer" (error)="onAvatarError($event)" class="w-8 h-8 rounded-none border-2 border-[#222222] dark:border-black object-cover bg-white shrink-0" />
         }
+        <span class="w-8 h-8 bg-[#FF4F00] text-white font-bold text-sm flex items-center justify-center border-2 border-[#222222] dark:border-black shrink-0" [ngClass]="{ 'hidden': !!auth.userAvatar() }">
+          {{ auth.displayName().charAt(0).toUpperCase() }}
+        </span>
         <div class="flex flex-col min-w-0">
           <span class="font-accent font-bold text-xs sm:text-sm text-[#222222] dark:text-[#F3F4F6] truncate">{{ auth.displayName() }}</span>
           <span class="font-label text-[10px] text-gray-600 dark:text-gray-400 truncate">{{ auth.currentUser()?.email || 'Guest Session' }}</span>

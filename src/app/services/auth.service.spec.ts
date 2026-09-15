@@ -168,4 +168,11 @@ describe('AuthService', () => {
     service.closeUserMenu();
     expect(service.isUserMenuOpen()).toBe(false);
   });
+
+  it('should compute userAvatar based on current user', () => {
+    expect(service.userAvatar()).toBeNull();
+
+    service.signInMock('free', 'Test Player', 'test@example.com');
+    expect(service.userAvatar()).toContain('https://images.unsplash.com');
+  });
 });

@@ -66,4 +66,14 @@ export class HeaderComponent {
     this.auth.switchToGuest();
     this.auth.closeUserMenu();
   }
+
+  onAvatarError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    if (img) {
+      img.style.display = 'none';
+      if (img.nextElementSibling) {
+        (img.nextElementSibling as HTMLElement).style.display = 'flex';
+      }
+    }
+  }
 }

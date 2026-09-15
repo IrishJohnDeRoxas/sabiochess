@@ -77,4 +77,19 @@ describe('HeaderComponent', () => {
     component.onEscape();
     expect(authService.isUserMenuOpen()).toBe(false);
   });
+
+  it('should hide broken avatar image on loading error so initials display', () => {
+    const container = document.createElement('div');
+    const img = document.createElement('img');
+    const fallbackSpan = document.createElement('span');
+    fallbackSpan.style.display = 'none';
+    container.appendChild(img);
+    container.appendChild(fallbackSpan);
+
+    const mockEvent = { target: img } as unknown as Event;
+    component.onAvatarError(mockEvent);
+
+    expect(img.style.display).toBe('none');
+    expect(fallbackSpan.style.display).toBe('flex');
+  });
 });
