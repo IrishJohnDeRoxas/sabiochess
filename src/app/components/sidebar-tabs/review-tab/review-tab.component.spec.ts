@@ -53,4 +53,30 @@ describe('ReviewTabComponent', () => {
     expect(exp).not.toBeNull();
     expect(exp?.san).toBe('e4');
   });
+
+  it('should render variation rows and allow jumping to variation from review tab', () => {
+    gameService.loadSampleGame('opera');
+    gameService.jumpToPly(0); // after 1. e4
+    // Make alternate move 1... c5
+    gameService.move('c5');
+    fixture.detectChanges();
+
+    const pairs = component.movePairs();
+    expect(pairs[0].variations.length).toBe(1);
+    expect(pairs[0].variations[0].moves[0].san).toBe('c5');
+
+    const pills = fixture.nativeElement.querySelectorAll('.variation-move-pill');
+    expect(pills.length).toBeGreaterThan(0);
+    expect(pills[0].textContent).toContain('c5');
+
+    // Click pill to jump
+    component.jumpToVariation(pairs[0].variations[0].id, 0);
+    expect(gameService.isVariationActive()).toBe(true);
+
+    // Delete variation
+    component.deleteVariation(pairs[0].variations[0].id);
+    expect(gameService.isVariationActive()).toBe(false);
+    expect(gameService.variations().length).toBe(0);
+  });
 });
+

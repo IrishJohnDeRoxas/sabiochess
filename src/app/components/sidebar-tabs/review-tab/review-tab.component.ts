@@ -7,11 +7,26 @@ import { SoundService } from '../../../services/sound.service';
 import { SettingsService } from '../../../services/settings.service';
 import { MEME_SOUND_PACKS, MemeSoundPack } from '../../../models/settings.model';
 import { MoveClassification, getHeroIconForClass } from '../../../models/analysis.model';
+import { MoveVariation } from '../../../models/chess.model';
 import { IconComponent, IconName } from '../../icon/icon.component';
 import { PlatformGameSelectorComponent } from '../../platform-game-selector/platform-game-selector.component';
+import { VariationBannerComponent } from '../../variation-banner/variation-banner.component';
 import { FetchedGame } from '../../../services/platform-importer.service';
 
 export type ImporterSubTab = 'online' | 'samples' | 'pgn';
+
+export interface FormattedVariationMove {
+  label: string;
+  san: string;
+  plyIndex: number;
+  isActive: boolean;
+}
+
+export interface RenderedVariation {
+  id: string;
+  parentPly: number;
+  moves: FormattedVariationMove[];
+}
 
 export interface MovePairItem {
   moveNumber: number;
@@ -25,6 +40,7 @@ export interface MovePairItem {
   blackClass?: MoveClassification;
   blackMoveTime?: string;
   blackClock?: string;
+  variations: RenderedVariation[];
 }
 
 export interface StatItem {
@@ -38,7 +54,7 @@ export interface StatItem {
 @Component({
   selector: 'app-review-tab',
   standalone: true,
-  imports: [CommonModule, FormsModule, IconComponent, PlatformGameSelectorComponent],
+  imports: [CommonModule, FormsModule, IconComponent, PlatformGameSelectorComponent, VariationBannerComponent],
   templateUrl: './review-tab.component.html',
   styleUrls: ['./review-tab.component.css'],
 })
@@ -57,19 +73,30 @@ export class ReviewTabComponent {
   readonly pgnInputText = signal<string>('');
 
   readonly isPlayingFollowUp = signal<boolean>(false);
-  private followUpInterval: ReturnType<typeof setInterval> | null = null;
-  private followUpOriginalPly: number | null = null;
+  readonly isFollowUpActive = signal<boolean>(false);
+  readonly isBestVariation = signal<boolean>(false);
+  private followUpTimer: ReturnType<typeof setTimeout> | null = null;
+  private followUpOriginalPly = -1;
 
   @ViewChild('movesListContainer') movesListContainer?: ElementRef<HTMLDivElement>;
 
   constructor() {
     effect(() => {
+      const isVar = this.game.isVariationActive();
+      if (!isVar && this.isFollowUpActive() && !this.isPlayingFollowUp()) {
+        this.isFollowUpActive.set(false);
+        this.isBestVariation.set(false);
+      }
+    });
+
+    effect(() => {
       const currentPly = this.game.currentPlyIndex();
+      const activeVar = this.game.activeVariation();
       if (currentPly !== null && currentPly !== undefined) {
         setTimeout(() => {
           const container = this.movesListContainer?.nativeElement;
           if (!container) return;
-          const activeEl = container.querySelector('[data-active-move="true"]') as HTMLElement;
+          const activeEl = container.querySelector('[data-active-move="true"], .variation-move-pill.active') as HTMLElement;
           if (activeEl && typeof activeEl.scrollIntoView === 'function') {
             activeEl.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
           }
@@ -98,9 +125,44 @@ export class ReviewTabComponent {
     return pack ? pack.name.toUpperCase() : 'MEME';
   });
 
+  private formatVariation(v: MoveVariation): RenderedVariation {
+    const active = this.game.activeVariation();
+    const moves: FormattedVariationMove[] = v.moves.map((item, i) => {
+      const effectivePly = v.parentPly + 1 + i;
+      const isWhite = effectivePly % 2 === 0;
+      const mNum = Math.floor(effectivePly / 2) + 1;
+      let label = '';
+      if (i === 0) {
+        label = isWhite ? `${mNum}.` : `${mNum}...`;
+      } else if (isWhite) {
+        label = `${mNum}.`;
+      }
+      const isActive = active !== null && active.id === v.id && active.plyIndex === i;
+      return {
+        label,
+        san: item.move.san,
+        plyIndex: i,
+        isActive,
+      };
+    });
+
+    return {
+      id: v.id,
+      parentPly: v.parentPly,
+      moves,
+    };
+  }
+
+  readonly rootVariations = computed<RenderedVariation[]>(() => {
+    return this.game.variations()
+      .filter((v) => v.parentPly === -1)
+      .map((v) => this.formatVariation(v));
+  });
+
   readonly movePairs = computed<MovePairItem[]>(() => {
     const hist = this.game.history();
     const analyses = this.analysisService.movesAnalysis();
+    const allVariations = this.game.variations();
     const pairs: MovePairItem[] = [];
 
     for (let i = 0; i < hist.length; i += 2) {
@@ -108,6 +170,11 @@ export class ReviewTabComponent {
       const blackItem = i + 1 < hist.length ? hist[i + 1] : undefined;
       const whiteAnalysis = analyses[i];
       const blackAnalysis = analyses[i + 1];
+
+      // Variations branched after White's move (parentPly === i) or Black's move (parentPly === i + 1)
+      const pairVariations = allVariations
+        .filter((v) => v.parentPly === i || (blackItem && v.parentPly === i + 1))
+        .map((v) => this.formatVariation(v));
 
       pairs.push({
         moveNumber: Math.floor(i / 2) + 1,
@@ -121,6 +188,7 @@ export class ReviewTabComponent {
         blackClass: blackAnalysis?.classification,
         blackMoveTime: blackItem ? blackItem.formattedMoveTime : undefined,
         blackClock: blackItem ? blackItem.clock : undefined,
+        variations: pairVariations,
       });
     }
 
@@ -128,6 +196,39 @@ export class ReviewTabComponent {
   });
 
   readonly currentExplanation = computed(() => {
+    if (this.game.isVariationActive()) {
+      const active = this.game.activeVariation();
+      const variation = this.game.currentVariation();
+      if (active && variation && active.plyIndex >= 0 && active.plyIndex < variation.moves.length) {
+        const item = variation.moves[active.plyIndex];
+        const parentPly = variation.parentPly;
+        const analysis = parentPly >= 0 ? this.analysisService.movesAnalysis()[parentPly] : null;
+
+        let commentary = `Exploring variation move ${item.move.san}. Step forward or play alternate moves on the board.`;
+        if (this.isFollowUpActive()) {
+          commentary = 'Demonstrating the engine\'s recommended line from this position.';
+        } else if (this.isBestVariation()) {
+          commentary = 'This was the top engine choice in this position. Click Show Follow-Up to see the line unfold.';
+        }
+
+        return {
+          isVariation: true,
+          isFollowUp: this.isFollowUpActive(),
+          isBest: this.isBestVariation(),
+          plyIndex: parentPly,
+          san: item.move.san,
+          turn: item.move.color,
+          moveTime: undefined,
+          clock: undefined,
+          classification: (this.isBestVariation() ? 'best' : 'good') as MoveClassification,
+          accuracy: null,
+          commentary,
+          bestMoveSan: analysis?.bestMoveSan,
+          followUpMoves: analysis?.followUpMoves || [],
+        };
+      }
+    }
+
     const ply = this.game.currentPlyIndex();
     const hist = this.game.history();
     if (hist.length === 0) return null;
@@ -139,6 +240,9 @@ export class ReviewTabComponent {
     const analysis = this.game.currentMoveAnalysis() || this.analysisService.movesAnalysis()[targetPly];
 
     return {
+      isVariation: false,
+      isFollowUp: false,
+      isBest: false,
       plyIndex: targetPly,
       san: item.san,
       turn: item.turn,
@@ -150,6 +254,23 @@ export class ReviewTabComponent {
       bestMoveSan: analysis?.bestMoveSan,
       followUpMoves: analysis?.followUpMoves || [],
     };
+  });
+
+  readonly canPlayBest = computed(() => {
+    const exp = this.currentExplanation();
+    if (!exp) return false;
+    if (this.game.isVariationActive() && exp.isBest) return false;
+    if (exp.classification === 'best' || exp.classification === 'book') return false;
+    return !!exp.bestMoveSan;
+  });
+
+  readonly canRetry = computed(() => {
+    return this.game.isVariationActive() || (this.game.currentPlyIndex() !== null && this.game.currentPlyIndex()! >= 0);
+  });
+
+  readonly canNext = computed(() => {
+    if (this.game.isVariationActive()) return true;
+    return this.game.canRedo();
   });
 
   toggleSoundMenu(): void {
@@ -214,13 +335,77 @@ export class ReviewTabComponent {
     }
   }
 
+  isMainPlyActive(ply: number | undefined): boolean {
+    if (ply === undefined) return false;
+    return !this.game.isVariationActive() && this.game.currentPlyIndex() === ply;
+  }
+
   jumpTo(plyIndex: number): void {
     this.stopFollowUp();
     this.game.jumpToPly(plyIndex);
   }
 
+  jumpToVariation(varId: string, plyIndex: number): void {
+    this.stopFollowUp();
+    this.game.jumpToVariation(varId, plyIndex);
+  }
+
+  deleteVariation(varId: string, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.game.deleteVariation(varId);
+  }
+
+  playBestMove(): void {
+    this.stopFollowUp();
+    const exp = this.currentExplanation();
+    if (!exp?.bestMoveSan) return;
+
+    const ply = this.game.currentPlyIndex();
+    if (ply === null || ply < 0) return;
+
+    // Step back to position before this move
+    this.game.jumpToPly(ply - 1);
+    // Play the best move as variation
+    const ok = this.game.move(exp.bestMoveSan);
+    if (ok) {
+      this.isBestVariation.set(true);
+    }
+  }
+
+  retryMove(): void {
+    this.stopFollowUp();
+    this.isBestVariation.set(false);
+
+    if (this.game.isVariationActive()) {
+      this.game.exitVariation();
+      return;
+    }
+
+    const ply = this.game.currentPlyIndex();
+    if (ply !== null && ply >= 0) {
+      this.game.jumpToPly(ply - 1);
+    }
+  }
+
+  nextMove(): void {
+    this.stopFollowUp();
+    this.isBestVariation.set(false);
+
+    if (this.game.isVariationActive()) {
+      const curVar = this.game.currentVariation();
+      const parentPly = curVar ? curVar.parentPly : (this.game.currentPlyIndex() ?? 0);
+      this.game.exitVariation();
+      this.game.jumpToPly(parentPly + 1);
+      return;
+    }
+
+    this.game.redo();
+  }
+
   toggleFollowUp(): void {
-    if (this.isPlayingFollowUp()) {
+    if (this.isFollowUpActive()) {
       this.stopFollowUp();
     } else {
       this.startFollowUp();
@@ -229,30 +414,69 @@ export class ReviewTabComponent {
 
   private startFollowUp(): void {
     const exp = this.currentExplanation();
-    if (!exp || exp.followUpMoves.length === 0) return;
+    if (!exp) return;
 
-    this.followUpOriginalPly = this.game.currentPlyIndex();
+    let movesToPlay: string[] = [];
+    const isVar = this.game.isVariationActive();
+
+    if (isVar && this.isBestVariation()) {
+      movesToPlay = exp.followUpMoves?.slice(1) || [];
+    } else if (isVar) {
+      movesToPlay = exp.followUpMoves || [];
+    } else if (exp.classification === 'best' || exp.classification === 'book') {
+      movesToPlay = exp.followUpMoves || [];
+    } else if (exp.bestMoveSan) {
+      // Demonstrated move that should have been played
+      const currentPly = this.game.currentPlyIndex();
+      if (currentPly !== null && currentPly >= 0) {
+        this.game.jumpToPly(currentPly - 1);
+      }
+      movesToPlay = [exp.bestMoveSan, ...(exp.followUpMoves?.slice(1) || [])];
+    } else {
+      movesToPlay = exp.followUpMoves || [];
+    }
+
+    if (movesToPlay.length === 0) return;
+
+    this.followUpOriginalPly = this.game.currentPlyIndex() ?? -1;
+    this.isFollowUpActive.set(true);
     this.isPlayingFollowUp.set(true);
 
-    let step = 0;
-    const startPly = exp.plyIndex;
+    this.followUpTimer = setTimeout(() => {
+      this.playContinuationMoves(movesToPlay, 0);
+    }, 400);
+  }
 
-    this.followUpInterval = setInterval(() => {
-      if (step < exp.followUpMoves.length && startPly + step + 1 < this.game.history().length) {
-        step++;
-        this.game.jumpToPly(startPly + step);
-      } else {
-        this.stopFollowUp();
-      }
-    }, 1000);
+  private playContinuationMoves(moves: string[], index: number): void {
+    if (!this.isFollowUpActive()) return;
+
+    if (index >= moves.length) {
+      this.isPlayingFollowUp.set(false);
+      return;
+    }
+
+    const success = this.game.move(moves[index]);
+    if (!success) {
+      this.isPlayingFollowUp.set(false);
+      return;
+    }
+
+    if (index + 1 < moves.length) {
+      this.followUpTimer = setTimeout(() => {
+        this.playContinuationMoves(moves, index + 1);
+      }, 1000);
+    } else {
+      this.isPlayingFollowUp.set(false);
+    }
   }
 
   private stopFollowUp(): void {
-    this.isPlayingFollowUp.set(false);
-    if (this.followUpInterval) {
-      clearInterval(this.followUpInterval);
-      this.followUpInterval = null;
+    if (this.followUpTimer) {
+      clearTimeout(this.followUpTimer);
+      this.followUpTimer = null;
     }
+    this.isPlayingFollowUp.set(false);
+    this.isFollowUpActive.set(false);
   }
 
   formatAccuracy(acc?: number | null): string {

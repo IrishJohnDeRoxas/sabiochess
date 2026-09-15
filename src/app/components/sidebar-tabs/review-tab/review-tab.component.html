@@ -163,76 +163,153 @@
       </div>
     }
 
-    <!-- Coach Commentary & Move Explanation Card -->
-    <div class="bg-[#D9D9D9] dark:bg-[#2A2B32] border-2 border-[#222222] dark:border-black p-3 flex flex-col justify-between gap-2 shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000] relative">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-1.5">
-          <span class="p-1 bg-[#222222] dark:bg-[#141519] text-white inline-flex items-center justify-center border border-[#222222] dark:border-black shadow-[1px_1px_0_0_#222222]">
-            <app-icon name="cpu-chip" size="w-4 h-4"></app-icon>
-          </span>
-          <span class="font-display text-xs sm:text-sm uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6]">SABIO COACH</span>
+    <!-- Coach Commentary & Move Explanation Card with Avatar -->
+    <div class="flex flex-col gap-2.5">
+      <div class="flex items-start gap-2.5">
+        <!-- Coach Avatar -->
+        <div class="shrink-0 w-11 h-14 sm:w-13 sm:h-16 flex items-center justify-center" aria-label="Chess Coach">
+          <svg class="w-full h-full filter drop-shadow-[2px_2px_0_#222222] dark:drop-shadow-[2px_2px_0_#000000]" viewBox="0 0 70 85" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="35" cy="40" r="32" fill="#242c38" />
+            <!-- Sweater -->
+            <path d="M12 85C12 66 22 60 35 60C48 60 58 66 58 85" fill="#1e293b" />
+            <!-- Shirt Collar -->
+            <path d="M27 60L35 68L43 60" fill="#ffffff" />
+            <path d="M35 68V78" stroke="#cbd5e1" stroke-width="2" />
+            <!-- Neck -->
+            <rect x="29" y="50" width="12" height="12" fill="#e2a87a" rx="2" />
+            <!-- Head -->
+            <ellipse cx="35" cy="37" rx="15" ry="17" fill="#f3be94" />
+            <!-- Hair -->
+            <path d="M20 32C20 20 26 15 35 15C44 15 50 20 50 32C47 28 44 26 40 26C35 26 32 28 28 28C24 28 21 30 20 32Z" fill="#5c3a21" />
+            <!-- Ears -->
+            <circle cx="19" cy="37" r="3" fill="#e2a87a" />
+            <circle cx="51" cy="37" r="3" fill="#e2a87a" />
+            <!-- Beard -->
+            <path d="M23 38C23 52 28 56 35 56C42 56 47 52 47 38C45 40 42 41 35 41C28 41 25 40 23 38Z" fill="#5c3a21" />
+            <!-- Mouth / Smile -->
+            <path d="M31 47Q35 50 39 47" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" />
+            <!-- Glasses -->
+            <rect x="23" y="31" width="10" height="8" rx="2" stroke="#0f172a" stroke-width="1.8" fill="rgba(255,255,255,0.25)" />
+            <rect x="37" y="31" width="10" height="8" rx="2" stroke="#0f172a" stroke-width="1.8" fill="rgba(255,255,255,0.25)" />
+            <line x1="33" y1="35" x2="37" y2="35" stroke="#0f172a" stroke-width="1.8" />
+            <!-- Eyes -->
+            <circle cx="28" cy="35" r="1.5" fill="#0f172a" />
+            <circle cx="42" cy="35" r="1.5" fill="#0f172a" />
+            <!-- Eyebrows -->
+            <path d="M24 28Q28 26 32 28" stroke="#3d2616" stroke-width="1.5" stroke-linecap="round" />
+            <path d="M38 28Q42 26 46 28" stroke="#3d2616" stroke-width="1.5" stroke-linecap="round" />
+          </svg>
         </div>
 
-        @if (currentExplanation(); as exp) {
-          <div class="flex items-center gap-1.5">
-            @if (exp.moveTime) {
-              <span class="badge-brutal bg-white dark:bg-[#1E1F24] text-[#222222] dark:text-[#F3F4F6] text-[11px] sm:text-xs !py-0.5 !px-1.5 font-bold flex items-center gap-1">
-                ⏱ {{ exp.moveTime }}
+        <!-- Speech Bubble Card -->
+        <div class="flex-1 bg-white dark:bg-[#1E1F24] border-2 border-[#222222] dark:border-black p-2.5 sm:p-3 flex flex-col gap-2 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000] min-w-0">
+          <div class="flex items-center justify-between gap-1.5">
+            <div class="flex items-center gap-1.5 min-w-0">
+              @if (currentExplanation(); as exp) {
+                <span 
+                  class="badge-brutal text-xs !py-0.5 !px-1.5 font-bold shrink-0"
+                  [ngClass]="getClassificationBadgeClass(exp.classification)"
+                >
+                  {{ getClassificationSymbol(exp.classification) }}
+                </span>
+                <span class="font-accent text-xs sm:text-sm font-bold truncate text-[#222222] dark:text-[#F3F4F6]">
+                  @if (exp.isVariation) {
+                    @if (exp.isFollowUp) {
+                      <strong>Follow-Up</strong> line
+                    } @else if (exp.isBest) {
+                      <strong>{{ exp.san }}</strong> is best
+                    } @else {
+                      <strong>{{ exp.san }}</strong> variation
+                    }
+                  } @else {
+                    <strong>{{ exp.san }}</strong> is {{ exp.classification }}
+                  }
+                </span>
+              } @else {
+                <span class="badge-brutal bg-[#10B981] text-white text-xs !py-0.5 !px-1.5 font-bold">★</span>
+                <span class="font-accent text-xs sm:text-sm font-bold text-[#222222] dark:text-[#F3F4F6]">Game Review</span>
+              }
+            </div>
+
+            @if (currentExplanation()?.moveTime; as mTime) {
+              <span class="badge-brutal bg-[#ECECD8] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] text-[10px] sm:text-xs !py-0.5 !px-1.5 font-bold shrink-0">
+                ⏱ {{ mTime }}
               </span>
             }
-            <span 
-              class="badge-brutal text-xs sm:text-sm flex items-center gap-1 !py-0.5 !px-2 font-bold"
-              [ngClass]="getClassificationBadgeClass(exp.classification)"
-            >
-              <span>{{ getClassificationSymbol(exp.classification) }}</span>
-              <span>{{ exp.classification.toUpperCase() }}</span>
-            </span>
           </div>
-        } @else {
-          <span class="badge-brutal bg-white dark:bg-[#1E1F24] text-[#222222] dark:text-[#F3F4F6] text-xs sm:text-sm !py-1 !px-2 font-bold">
-            START POSITION
-          </span>
-        }
-      </div>
 
-      <!-- Coach Feedback Text -->
-      <p class="font-body text-xs sm:text-sm text-[#222222] dark:text-[#F3F4F6] leading-relaxed font-medium">
-        @if (currentExplanation()?.commentary; as comm) {
-          {{ comm }}
-        } @else if (game.isGameOver()) {
-          {{ game.gameOverReason() }}
-        } @else if (game.history().length === 0) {
-          Ready for move 1. Play your moves on the board, or import a match from Chess.com!
-        } @else {
-          Position evaluated. Step through moves using the controls below to review tactical choices.
-        }
-      </p>
+          <!-- Coach Text -->
+          <p class="font-body text-xs sm:text-sm text-gray-700 dark:text-gray-300 leading-relaxed font-medium">
+            @if (currentExplanation()?.commentary; as comm) {
+              {{ comm }}
+            } @else if (game.isGameOver()) {
+              {{ game.gameOverReason() }}
+            } @else if (game.history().length === 0) {
+              Ready for move 1. Play your moves on the board, or import a match from Chess.com!
+            } @else {
+              Review each move with tactical insights. Click Next to begin.
+            }
+          </p>
 
-      <!-- Best Move Hint & Follow-Up Action Button -->
-      @if (currentExplanation(); as exp) {
-        <div class="flex items-center justify-between pt-1 border-t border-gray-400 dark:border-gray-600 gap-2">
-          @if (exp.bestMoveSan && (exp.classification === 'blunder' || exp.classification === 'mistake' || exp.classification === 'inaccuracy' || exp.classification === 'miss')) {
-            <div class="flex items-center gap-1.5 text-xs sm:text-sm font-label font-bold text-[#0E4C92] dark:text-[#60A5FA]">
-              <app-icon name="sparkles" size="w-3.5 h-3.5"></app-icon>
-              <span>BEST: <u>{{ exp.bestMoveSan }}</u></span>
-            </div>
-          } @else {
-            <div></div>
-          }
-
-          @if (exp.followUpMoves && exp.followUpMoves.length > 0) {
+          <!-- Follow-Up Action Button inside bubble -->
+          <div class="pt-0.5">
             <button
               type="button"
               (click)="toggleFollowUp()"
-              class="badge-brutal bg-[#FF4F00] text-white text-xs !py-1 !px-2 font-bold flex items-center gap-1 cursor-pointer hover:bg-[#E04500] transition-colors"
-              title="Show follow-up line"
+              class="btn-brutal !py-1 !px-2.5 text-xs font-bold flex items-center gap-1.5 cursor-pointer bg-[#ECECD8] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] hover:bg-[#D9D9D9] dark:hover:bg-[#373A46] transition-colors"
+              [ngClass]="{'bg-[#10B981]/20 border-[#10B981] text-[#10B981] dark:text-[#34D399]': isFollowUpActive()}"
+              title="Show follow-up continuation line"
             >
-              <app-icon [name]="isPlayingFollowUp() ? 'pause' : 'play'" size="w-3 h-3"></app-icon>
-              <span>{{ isPlayingFollowUp() ? 'STOP LINE' : 'FOLLOW-UP' }}</span>
+              @if (isPlayingFollowUp()) {
+                <app-icon name="pause" size="w-3.5 h-3.5"></app-icon>
+                <span>Stop Follow-Up</span>
+              } @else if (isFollowUpActive()) {
+                <app-icon name="arrow-uturn-left" size="w-3.5 h-3.5"></app-icon>
+                <span>Hide Follow-Up</span>
+              } @else {
+                <app-icon name="sparkles" size="w-3.5 h-3.5"></app-icon>
+                <span>Show Follow-Up</span>
+              }
             </button>
-          }
+          </div>
         </div>
-      }
+      </div>
+
+      <!-- Action buttons row: Best, Retry, Next -->
+      <div class="grid grid-cols-3 gap-1.5 sm:gap-2">
+        <button
+          type="button"
+          (click)="playBestMove()"
+          [disabled]="!canPlayBest()"
+          class="btn-brutal !py-2 sm:!py-2.5 text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 bg-[#ECECD8] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] disabled:opacity-40 disabled:cursor-not-allowed hover:not-disabled:bg-[#D9D9D9] dark:hover:not-disabled:bg-[#373A46] cursor-pointer"
+          title="Play engine's best move"
+        >
+          <app-icon name="magnifying-glass" size="w-3.5 h-3.5"></app-icon>
+          <span>Best</span>
+        </button>
+
+        <button
+          type="button"
+          (click)="retryMove()"
+          [disabled]="!canRetry()"
+          class="btn-brutal !py-2 sm:!py-2.5 text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 bg-[#ECECD8] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] disabled:opacity-40 disabled:cursor-not-allowed hover:not-disabled:bg-[#D9D9D9] dark:hover:not-disabled:bg-[#373A46] cursor-pointer"
+          title="Retry this move"
+        >
+          <app-icon name="arrow-path" size="w-3.5 h-3.5"></app-icon>
+          <span>Retry</span>
+        </button>
+
+        <button
+          type="button"
+          (click)="nextMove()"
+          [disabled]="!canNext()"
+          class="btn-brutal btn-brutal-green !py-2 sm:!py-2.5 text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+          title="Next Move"
+        >
+          <span>Next</span>
+          <app-icon name="chevron-right" size="w-3.5 h-3.5"></app-icon>
+        </button>
+      </div>
     </div>
   </div>
 
@@ -262,6 +339,9 @@
       </div>
     </div>
   } @else {
+    <!-- Variation Active Banner -->
+    <app-variation-banner></app-variation-banner>
+
     <!-- Move List Table Card -->
     <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1F24] flex flex-col gap-2 flex-1 min-h-0">
       <div class="flex items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-2 shrink-0">
@@ -279,6 +359,37 @@
           <span>BLACK</span>
         </div>
 
+        <!-- Root Variations (branched from start position / ply -1) -->
+        @for (varItem of rootVariations(); track varItem.id) {
+          <div class="flex items-center justify-between gap-1.5 px-2 py-1.5 bg-[#00C0F9]/10 dark:bg-[#00C0F9]/15 border-l-4 border-[#00C0F9] border-b border-gray-100 dark:border-gray-800 text-xs font-label">
+            <span class="text-[#00C0F9] font-bold text-sm shrink-0 select-none">↳</span>
+            <div class="flex flex-wrap items-center gap-1.5 flex-1 min-w-0">
+              @for (varMove of varItem.moves; track varMove.plyIndex) {
+                <button
+                  type="button"
+                  (click)="jumpToVariation(varItem.id, varMove.plyIndex)"
+                  class="variation-move-pill cursor-pointer px-1.5 py-0.5 rounded text-xs font-bold font-mono transition-all flex items-center gap-1 border border-transparent"
+                  [ngClass]="varMove.isActive ? 'bg-[#00C0F9] !text-black shadow-[1px_1px_0_0_#222222] dark:shadow-[1px_1px_0_0_#000000] border-[#222222] dark:border-black font-extrabold' : 'bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] hover:bg-[#00C0F9]/30'"
+                >
+                  @if (varMove.label) {
+                    <span class="opacity-75 text-[10px]">{{ varMove.label }}</span>
+                  }
+                  <span>{{ varMove.san }}</span>
+                </button>
+              }
+            </div>
+            <button
+              type="button"
+              (click)="deleteVariation(varItem.id, $event)"
+              class="text-gray-400 hover:text-red-500 hover:bg-red-500/10 p-1 rounded transition-colors shrink-0 cursor-pointer"
+              title="Delete variation branch"
+              aria-label="Delete variation"
+            >
+              <app-icon name="trash" size="w-3.5 h-3.5"></app-icon>
+            </button>
+          </div>
+        }
+
         @for (pair of movePairs(); track pair.moveNumber) {
           <div class="grid grid-cols-[36px_1fr_1fr] text-xs sm:text-sm font-label px-2 py-1 border-b border-gray-100 dark:border-gray-800 hover:bg-[#D9D9D9]/50 dark:hover:bg-[#2A2B32]/50 items-center transition-colors">
             <span class="text-gray-500 dark:text-gray-400 font-bold text-xs">{{ pair.moveNumber }}.</span>
@@ -286,10 +397,10 @@
             <!-- White Move -->
             <div
               (click)="jumpTo(pair.whitePly)"
-              [attr.data-active-move]="game.currentPlyIndex() === pair.whitePly"
+              [attr.data-active-move]="isMainPlyActive(pair.whitePly)"
               class="flex items-center justify-between font-bold px-1.5 py-0.5 transition-colors cursor-pointer border border-transparent"
               [ngClass]="{
-                'bg-[#FF4F00] !text-white shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000] border-[#222222] dark:border-black': game.currentPlyIndex() === pair.whitePly
+                'bg-[#FF4F00] !text-white shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000] border-[#222222] dark:border-black': isMainPlyActive(pair.whitePly)
               }"
             >
               <div class="flex items-center gap-1 truncate">
@@ -312,10 +423,10 @@
             @if (pair.blackSan && pair.blackPly !== undefined) {
               <div
                 (click)="jumpTo(pair.blackPly)"
-                [attr.data-active-move]="game.currentPlyIndex() === pair.blackPly"
+                [attr.data-active-move]="isMainPlyActive(pair.blackPly)"
                 class="flex items-center justify-between font-bold px-1.5 py-0.5 transition-colors cursor-pointer border border-transparent"
                 [ngClass]="{
-                  'bg-[#0E4C92] !text-white shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000] border-[#222222] dark:border-black': game.currentPlyIndex() === pair.blackPly
+                  'bg-[#0E4C92] !text-white shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000] border-[#222222] dark:border-black': isMainPlyActive(pair.blackPly)
                 }"
               >
                 <div class="flex items-center gap-1 truncate">
@@ -337,6 +448,37 @@
               <span class="text-gray-400 px-1.5">...</span>
             }
           </div>
+
+          <!-- Variations branched after white's or black's move in this pair -->
+          @for (varItem of pair.variations; track varItem.id) {
+            <div class="flex items-center justify-between gap-1.5 px-2 py-1.5 bg-[#00C0F9]/10 dark:bg-[#00C0F9]/15 border-l-4 border-[#00C0F9] border-b border-gray-100 dark:border-gray-800 text-xs font-label">
+              <span class="text-[#00C0F9] font-bold text-sm shrink-0 select-none">↳</span>
+              <div class="flex flex-wrap items-center gap-1.5 flex-1 min-w-0">
+                @for (varMove of varItem.moves; track varMove.plyIndex) {
+                  <button
+                    type="button"
+                    (click)="jumpToVariation(varItem.id, varMove.plyIndex)"
+                    class="variation-move-pill cursor-pointer px-1.5 py-0.5 rounded text-xs font-bold font-mono transition-all flex items-center gap-1 border border-transparent"
+                    [ngClass]="varMove.isActive ? 'bg-[#00C0F9] !text-black shadow-[1px_1px_0_0_#222222] dark:shadow-[1px_1px_0_0_#000000] border-[#222222] dark:border-black font-extrabold' : 'bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] hover:bg-[#00C0F9]/30'"
+                  >
+                    @if (varMove.label) {
+                      <span class="opacity-75 text-[10px]">{{ varMove.label }}</span>
+                    }
+                    <span>{{ varMove.san }}</span>
+                  </button>
+                }
+              </div>
+              <button
+                type="button"
+                (click)="deleteVariation(varItem.id, $event)"
+                class="text-gray-400 hover:text-red-500 hover:bg-red-500/10 p-1 rounded transition-colors shrink-0 cursor-pointer"
+                title="Delete variation branch"
+                aria-label="Delete variation"
+              >
+                <app-icon name="trash" size="w-3.5 h-3.5"></app-icon>
+              </button>
+            </div>
+          }
         }
       </div>
     </div>

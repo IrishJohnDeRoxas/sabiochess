@@ -172,4 +172,99 @@ describe('ChessGameService', () => {
     service.heuristicEvalScore.set(-95);
     expect(service.whiteAdvantagePercentage()).toBe(0);
   });
+
+  it('should create an analysis variation branch without overwriting main line history', () => {
+    service.move('e4');
+    service.move('e5');
+    service.undo();
+    // Now we are at ply 0 (after e4). Main history has 2 elements (e4, e5).
+    expect(service.currentPlyIndex()).toBe(0);
+    expect(service.history().length).toBe(2);
+
+    // Play an alternate move (out of order): c5 (Sicilian) instead of e5
+    const success = service.move('c5');
+    expect(success).toBe(true);
+
+    // Main line history must NOT be overwritten!
+    expect(service.history().length).toBe(2);
+    expect(service.history()[0].san).toBe('e4');
+    expect(service.history()[1].san).toBe('e5');
+
+    // A variation branch should be active
+    expect(service.variations().length).toBe(1);
+    expect(service.isVariationActive()).toBe(true);
+    expect(service.activeVariation()?.plyIndex).toBe(0);
+    expect(service.lastMove()?.from).toBe('c7');
+    expect(service.lastMove()?.to).toBe('c5');
+
+    // Playing another move in the variation appends to the variation
+    service.move('Nf3');
+    expect(service.variations()[0].moves.length).toBe(2);
+    expect(service.activeVariation()?.plyIndex).toBe(1);
+
+    // Stepping back through variation with undo
+    service.undo();
+    expect(service.activeVariation()?.plyIndex).toBe(0);
+
+    // Stepping back past the first variation move returns to main line parent ply
+    service.undo();
+    expect(service.isVariationActive()).toBe(false);
+    expect(service.currentPlyIndex()).toBe(0);
+    expect(service.lastMove()?.from).toBe('e2');
+    expect(service.lastMove()?.to).toBe('e4');
+  });
+
+  it('should step forward on main line if user plays the same move that exists in history', () => {
+    service.move('e4');
+    service.move('e5');
+    service.undo();
+    expect(service.currentPlyIndex()).toBe(0);
+
+    // Play e5 again (same move as recorded in main line)
+    const success = service.move('e5');
+    expect(success).toBe(true);
+    expect(service.isVariationActive()).toBe(false);
+    expect(service.currentPlyIndex()).toBe(1);
+    expect(service.variations().length).toBe(0);
+  });
+
+  it('should navigate variations with firstPly and lastPly', () => {
+    service.move('e4');
+    service.move('e5');
+    service.undo();
+    service.move('c5');
+    service.move('Nf3');
+    service.move('d6');
+
+    expect(service.isVariationActive()).toBe(true);
+    expect(service.activeVariation()?.plyIndex).toBe(2);
+
+    service.firstPly();
+    expect(service.isVariationActive()).toBe(false);
+    expect(service.currentPlyIndex()).toBe(0);
+
+    // Re-enter variation
+    service.jumpToVariation(service.variations()[0].id, 1);
+    expect(service.isVariationActive()).toBe(true);
+    expect(service.activeVariation()?.plyIndex).toBe(1);
+
+    service.lastPly();
+    expect(service.activeVariation()?.plyIndex).toBe(2);
+  });
+
+  it('should delete variation cleanly', () => {
+    service.move('e4');
+    service.move('e5');
+    service.undo();
+    service.move('c5');
+
+    const varId = service.variations()[0].id;
+    expect(service.isVariationActive()).toBe(true);
+
+    service.deleteVariation(varId);
+    expect(service.variations().length).toBe(0);
+    expect(service.isVariationActive()).toBe(false);
+    expect(service.currentPlyIndex()).toBe(0);
+  });
 });
+

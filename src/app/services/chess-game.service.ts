@@ -18,6 +18,8 @@ export interface BoardSquareData {
   isLegalMove: boolean;
   isLegalCapture: boolean;
   isPreviousMove: boolean;
+  isVariationMove?: boolean;
+  isMoveFrom?: boolean;
   classification?: MoveClassification;
 }
 
@@ -171,6 +173,29 @@ export class ChessGameService {
   readonly variations = signal<MoveVariation[]>([]);
   readonly activeVariation = signal<ActiveVariationState | null>(null);
 
+  readonly isVariationActive = computed(() => this.activeVariation() !== null);
+
+  readonly currentVariation = computed(() => {
+    const active = this.activeVariation();
+    if (!active) return null;
+    return this.variations().find((v) => v.id === active.id) ?? null;
+  });
+
+  readonly canUndo = computed(() => {
+    return this.isVariationActive() || (this.currentPlyIndex() !== null && this.currentPlyIndex()! >= 0);
+  });
+
+  readonly canRedo = computed(() => {
+    const active = this.activeVariation();
+    if (active) {
+      const v = this.currentVariation();
+      return v ? active.plyIndex < v.moves.length - 1 : false;
+    }
+    const hist = this.history();
+    const ply = this.currentPlyIndex();
+    return ply !== null && ply < hist.length - 1;
+  });
+
   readonly isBrowsingHistory = computed(() => {
     const ply = this.currentPlyIndex();
     const hist = this.history();
@@ -227,6 +252,7 @@ export class ChessGameService {
   });
 
   readonly isAtFinalMove = computed<boolean>(() => {
+    if (this.isVariationActive()) return false;
     const hist = this.history();
     const ply = this.currentPlyIndex();
     if (hist.length === 0) return true;
@@ -395,6 +421,7 @@ export class ChessGameService {
     const last = this.lastMove();
     const flipped = this.isBoardFlipped();
     const activeChess = this.getActiveChess();
+    const isVariation = this.isVariationActive();
 
     const squares: BoardSquareData[] = [];
     const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
@@ -413,7 +440,10 @@ export class ChessGameService {
         const isSelected = selected === squareName;
         const isLegal = legalMoves.includes(squareName);
         const isLegalCapture = isLegal && !!pieceData && pieceData.color !== this.turn();
-        const isPreviousMove = last ? last.from === squareName || last.to === squareName : false;
+        const isPrev = last ? last.from === squareName || last.to === squareName : false;
+        const isPreviousMove = isPrev && !isVariation;
+        const isVariationMove = isPrev && isVariation;
+        const isMoveFrom = last ? last.from === squareName : false;
 
         squares.push({
           file,
@@ -425,6 +455,8 @@ export class ChessGameService {
           isLegalMove: isLegal,
           isLegalCapture,
           isPreviousMove,
+          isVariationMove,
+          isMoveFrom,
         });
       }
     }
@@ -552,6 +584,20 @@ export class ChessGameService {
     return this.displayChess;
   }
 
+  private playSoundForMove(move: any): void {
+    if (this.settings.moveSounds()) {
+      const isCheck = this.getActiveChess().inCheck();
+      const soundType = isCheck
+        ? 'check'
+        : (move.san && (move.san.startsWith('O-O') || move.san.startsWith('0-0')))
+        ? 'castle'
+        : (move.captured || (move.flags && (move.flags.includes('c') || move.flags.includes('e'))))
+        ? 'capture'
+        : 'move';
+      this.soundService.playChessMoveSound(soundType, this.settings.volume());
+    }
+  }
+
   handleSquareClick(square: Square): void {
     if (this.isAutoplaying()) {
       this.stopAutoplay();
@@ -569,17 +615,7 @@ export class ChessGameService {
     }
 
     if (currentSelected && this.legalMoveSquares().includes(square)) {
-      if (this.isBrowsingHistory()) {
-        const ply = this.currentPlyIndex();
-        if (ply !== null && ply >= 0) {
-          this.liveChess = new Chess(this.displayChess.fen());
-          this.history.update((h) => h.slice(0, ply + 1));
-        } else if (ply === -1) {
-          this.liveChess = new Chess();
-          this.history.set([]);
-        }
-      }
-      this.makeMove(currentSelected, square);
+      this.move({ from: currentSelected, to: square, promotion: 'q' });
       return;
     }
 
@@ -592,58 +628,139 @@ export class ChessGameService {
     }
   }
 
-  makeMove(from: Square, to: Square, promotion: string = 'q'): boolean {
-    try {
-      const move = this.liveChess.move({ from, to, promotion });
-      if (!move) {
-        this.clearSelection();
+  move(moveInput: string | { from: string; to: string; promotion?: string }): boolean {
+    const active = this.activeVariation();
+
+    // Case 1: Already inside an active variation branch
+    if (active) {
+      const variation = this.currentVariation();
+      if (!variation) return false;
+
+      try {
+        const result = this.displayChess.move(moveInput);
+        if (result) {
+          const truncatedMoves = variation.moves.slice(0, active.plyIndex + 1);
+          const newMoves = [...truncatedMoves, { move: result, fen: this.displayChess.fen() }];
+
+          this.variations.update((vars) =>
+            vars.map((v) => (v.id === active.id ? { ...v, moves: newMoves } : v))
+          );
+          this.activeVariation.set({ id: active.id, plyIndex: newMoves.length - 1 });
+          this.lastMove.set({ from: result.from, to: result.to });
+          this.clearSelection();
+          this.updateState();
+          this.updateEvalHeuristic();
+          this.playSoundForMove(result);
+          return true;
+        }
+      } catch {
         return false;
       }
-
-      this.lastMove.set({ from, to });
-      const record: MoveRecord = {
-        from,
-        to,
-        piece: move.piece,
-        san: move.san,
-        fen: this.liveChess.fen(),
-        turn: move.color,
-      };
-
-      this.history.update((prev) => [...prev, record]);
-      this.currentPlyIndex.set(this.history().length - 1);
-      this.syncDisplayChess();
-      this.clearSelection();
-      this.updateState();
-      this.updateEvalHeuristic();
-
-      // Trigger Audio Effects
-      if (this.settings.moveSounds()) {
-        const soundType = move.san.includes('#') || move.san.includes('+')
-          ? 'check'
-          : move.san.startsWith('O-O')
-          ? 'castle'
-          : move.captured
-          ? 'capture'
-          : 'move';
-        this.soundService.playChessMoveSound(soundType, this.settings.volume());
-      }
-
-      // Auto-run analysis
-      if (this.settings.autoEvaluation()) {
-        this.analysisService.runAnalysis(this.history());
-      }
-
-      return true;
-    } catch {
-      this.clearSelection();
       return false;
     }
+
+    const hist = this.history();
+    const ply = this.currentPlyIndex();
+
+    // Case 2: On the main line at the very end of recorded history (or free play from start)
+    if (ply === null || (hist.length > 0 && ply === hist.length - 1) || (hist.length === 0 && ply === -1)) {
+      try {
+        const result = this.liveChess.move(moveInput);
+        if (result) {
+          this.lastMove.set({ from: result.from, to: result.to });
+          const record: MoveRecord = {
+            from: result.from,
+            to: result.to,
+            piece: result.piece,
+            san: result.san,
+            fen: this.liveChess.fen(),
+            turn: result.color,
+          };
+
+          this.history.update((prev) => [...prev, record]);
+          this.currentPlyIndex.set(this.history().length - 1);
+          this.syncDisplayChess();
+          this.clearSelection();
+          this.updateState();
+          this.updateEvalHeuristic();
+          this.playSoundForMove(result);
+
+          if (this.settings.autoEvaluation()) {
+            this.analysisService.runAnalysis(this.history());
+          }
+
+          return true;
+        }
+      } catch {
+        return false;
+      }
+      return false;
+    }
+
+    // Case 3: On the main line at an earlier ply (stepping into moves "out of order")
+    const parentPly = ply;
+    const nextMainMove = parentPly === -1 ? hist[0] : hist[parentPly + 1];
+    const tempChess = new Chess(this.displayChess.fen());
+    let candidateMove: Move | null = null;
+    try {
+      candidateMove = tempChess.move(moveInput);
+    } catch {
+      return false;
+    }
+
+    if (!candidateMove) return false;
+
+    // Check if player played the same move that already exists in the main line
+    if (
+      nextMainMove &&
+      (candidateMove.san === nextMainMove.san ||
+        (candidateMove.from === nextMainMove.from && candidateMove.to === nextMainMove.to))
+    ) {
+      this.jumpToPly(parentPly + 1);
+      return true;
+    }
+
+    // Move is different from the main line -> Create or resume an inline analysis branch (variation)
+    const existingVariation = this.variations().find(
+      (v) =>
+        v.parentPly === parentPly &&
+        v.moves.length > 0 &&
+        (v.moves[0].move.san === candidateMove!.san ||
+          (v.moves[0].move.from === candidateMove!.from && v.moves[0].move.to === candidateMove!.to))
+    );
+
+    if (existingVariation) {
+      this.jumpToVariation(existingVariation.id, 0);
+      return true;
+    }
+
+    // Create a new variation branch
+    const newVarId = 'var_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
+    const newVariation: MoveVariation = {
+      id: newVarId,
+      parentPly,
+      moves: [{ move: candidateMove, fen: tempChess.fen() }],
+    };
+
+    this.variations.update((vars) => [...vars, newVariation]);
+    this.activeVariation.set({ id: newVarId, plyIndex: 0 });
+    this.displayChess.load(tempChess.fen());
+    this.lastMove.set({ from: candidateMove.from, to: candidateMove.to });
+    this.clearSelection();
+    this.updateState();
+    this.updateEvalHeuristic();
+    this.playSoundForMove(candidateMove);
+    return true;
+  }
+
+  makeMove(from: Square, to: Square, promotion: string = 'q'): boolean {
+    return this.move({ from, to, promotion });
   }
 
   jumpToMove(plyIndex: number): void {
     const hist = this.history();
     if (plyIndex < -1 || plyIndex >= hist.length) return;
+    this.activeVariation.set(null);
     this.currentPlyIndex.set(plyIndex);
     this.syncDisplayChess();
     this.clearSelection();
@@ -660,15 +777,50 @@ export class ChessGameService {
   }
 
   goToStart(): void {
+    if (this.isVariationActive()) {
+      const variation = this.currentVariation();
+      const parentPly = variation ? variation.parentPly : -1;
+      this.exitVariation();
+      this.jumpToPly(parentPly);
+      return;
+    }
     this.jumpToMove(-1);
   }
 
+  firstPly(): void {
+    this.goToStart();
+  }
+
   goToEnd(): void {
+    if (this.isVariationActive()) {
+      const variation = this.currentVariation();
+      if (variation && variation.moves.length > 0) {
+        this.jumpToVariation(variation.id, variation.moves.length - 1);
+      }
+      return;
+    }
     if (this.history().length === 0) return;
     this.jumpToMove(this.history().length - 1);
   }
 
+  lastPly(): void {
+    this.goToEnd();
+  }
+
   prevMove(): void {
+    if (this.isVariationActive()) {
+      const active = this.activeVariation()!;
+      if (active.plyIndex > 0) {
+        this.jumpToVariation(active.id, active.plyIndex - 1);
+      } else {
+        const variation = this.currentVariation();
+        const parentPly = variation ? variation.parentPly : -1;
+        this.exitVariation();
+        this.jumpToPly(parentPly);
+      }
+      return;
+    }
+
     const current = this.currentPlyIndex();
     const target = current === null ? this.history().length - 2 : current - 1;
     if (target >= -1) {
@@ -677,12 +829,29 @@ export class ChessGameService {
   }
 
   nextMove(): void {
+    if (this.isVariationActive()) {
+      const active = this.activeVariation()!;
+      const variation = this.currentVariation();
+      if (variation && active.plyIndex < variation.moves.length - 1) {
+        this.jumpToVariation(active.id, active.plyIndex + 1);
+      }
+      return;
+    }
+
     const current = this.currentPlyIndex();
     const hist = this.history();
     const target = current === null ? 0 : current + 1;
     if (target < hist.length) {
       this.jumpToMove(target);
     }
+  }
+
+  undo(): void {
+    this.prevMove();
+  }
+
+  redo(): void {
+    this.nextMove();
   }
 
   toggleAutoplay(): void {
@@ -724,6 +893,16 @@ export class ChessGameService {
 
   undoMove(): void {
     this.stopAutoplay();
+    if (this.isVariationActive()) {
+      this.prevMove();
+      return;
+    }
+
+    if (this.currentPlyIndex() !== null && this.currentPlyIndex()! < this.history().length - 1) {
+      this.prevMove();
+      return;
+    }
+
     const undone = this.liveChess.undo();
     if (undone) {
       this.history.update((prev) => prev.slice(0, -1));
@@ -932,26 +1111,33 @@ export class ChessGameService {
   }
 
   // Variation Methods
-  deleteVariation(varId: string): void {
-    this.variations.update((vars) => vars.filter((v) => v.id !== varId));
-    if (this.activeVariation()?.id === varId) {
-      this.activeVariation.set(null);
-      this.syncDisplayChess();
-      this.updateState();
-    }
-  }
-
   jumpToVariation(varId: string, plyIndex: number): void {
     const variation = this.variations().find((v) => v.id === varId);
     if (!variation || plyIndex < 0 || plyIndex >= variation.moves.length) return;
 
     this.activeVariation.set({ id: varId, plyIndex });
-    const targetFen = variation.moves[plyIndex].fen;
-    this.displayChess.load(targetFen);
-    const m = variation.moves[plyIndex].move;
-    this.lastMove.set({ from: m.from, to: m.to });
+    const target = variation.moves[plyIndex];
+    this.displayChess.load(target.fen);
+    this.lastMove.set({ from: target.move.from, to: target.move.to });
     this.clearSelection();
     this.updateState();
+    this.updateEvalHeuristic();
+    this.playSoundForMove(target.move);
+  }
+
+  exitVariation(): void {
+    const variation = this.currentVariation();
+    const parentPly = variation ? variation.parentPly : (this.currentPlyIndex() ?? -1);
+    this.activeVariation.set(null);
+    this.jumpToPly(parentPly);
+  }
+
+  deleteVariation(varId: string): void {
+    const active = this.activeVariation();
+    if (active && active.id === varId) {
+      this.exitVariation();
+    }
+    this.variations.update((vars) => vars.filter((v) => v.id !== varId));
   }
 
   private extractPgnTag(pgn: string, tag: string): string | undefined {

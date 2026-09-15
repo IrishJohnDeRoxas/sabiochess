@@ -1,5 +1,6 @@
 <div 
   class="chess-board-wrapper card-brutal-lg"
+  [class.variation-mode]="game.isVariationActive()"
   [style.--board-light]="settings.activeBoardThemeOption().light"
   [style.--board-dark]="settings.activeBoardThemeOption().dark"
 >
@@ -11,6 +12,8 @@
         [class.dark-square]="!square.isLight"
         [class.selected-square]="square.isSelected"
         [class.prev-move-square]="square.isPreviousMove"
+        [class.variation-move-square]="square.isVariationMove"
+        [class.move-from]="square.isMoveFrom"
         [class.capture-target]="square.isLegalCapture"
         (click)="onSquareClick(square)"
         [attr.aria-label]="square.square"
