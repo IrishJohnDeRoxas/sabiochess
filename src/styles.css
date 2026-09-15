@@ -182,6 +182,8 @@ body {
 .badge-brutal {
   display: inline-flex;
   align-items: center;
+  white-space: nowrap;
+  flex-shrink: 0;
   padding: 0.25rem 0.65rem;
   font-family: 'Space Mono', monospace;
   font-size: 0.8rem;

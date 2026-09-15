@@ -96,4 +96,9 @@ export class AuthModalComponent {
     this.auth.switchToGuest();
     this.close();
   }
+
+  openProModal(): void {
+    this.close();
+    this.auth.openProModal();
+  }
 }

@@ -59,16 +59,16 @@
         @if (auth.userAvatar()) {
           <img [src]="auth.userAvatar()" alt="User avatar" referrerpolicy="no-referrer" (error)="onAvatarError($event)" class="w-5 h-5 rounded-none border border-[#222222] object-cover bg-white shrink-0 shadow-[1px_1px_0_0_#222222]" />
         }
-        <span class="w-5 h-5 bg-white text-[#222222] font-bold text-[10px] flex items-center justify-center border border-[#222222] shrink-0 shadow-[1px_1px_0_0_#222222]" [ngClass]="{ 'hidden': !!auth.userAvatar() }">
+        <span class="w-5 h-5 bg-white text-[#222222] font-bold text-xs flex items-center justify-center border border-[#222222] shrink-0 shadow-[1px_1px_0_0_#222222]" [ngClass]="{ 'hidden': !!auth.userAvatar() }">
           {{ auth.displayName().charAt(0).toUpperCase() }}
         </span>
         <span class="font-accent font-bold truncate max-w-[100px] sm:max-w-[140px]">{{ auth.displayName() }}</span>
         @if (auth.isPro()) {
-          <span class="badge-brutal !py-0.5 !px-1.5 text-[9px] bg-black text-[#FF8A00] border border-amber-400/40 font-black shadow-[1px_1px_0_0_#000000]">
+          <span class="badge-brutal !py-0.5 !px-2 text-xs bg-[#FFE600] text-[#141519] border border-[#222222] font-black shadow-[1px_1px_0_0_#222222] tracking-wider">
             👑 LIFETIME
           </span>
         } @else {
-          <span class="badge-brutal !py-0.5 !px-1 text-[9px] bg-black text-white font-bold">
+          <span class="badge-brutal !py-0.5 !px-2 text-xs bg-white text-[#0E4C92] border border-[#222222] font-bold shadow-[1px_1px_0_0_#222222]">
             FREE
           </span>
         }
