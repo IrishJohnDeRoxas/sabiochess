@@ -32,11 +32,11 @@
     }
 
     <!-- Quick Action Buttons -->
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5 pt-1 p-0.5">
       <button 
         type="button" 
         (click)="game.flipBoard()" 
-        class="btn-brutal btn-brutal-silver !py-2 !px-2 text-xs sm:text-sm font-bold flex-1 flex items-center justify-center gap-1 cursor-pointer"
+        class="btn-brutal btn-brutal-silver !py-1.5 !px-1.5 text-xs font-bold flex-1 flex items-center justify-center gap-1 cursor-pointer"
         title="Flip the board view"
       >
         <app-icon name="arrow-path" size="w-3.5 h-3.5"></app-icon>
@@ -46,7 +46,7 @@
       <button 
         type="button" 
         (click)="game.undoMove()" 
-        class="btn-brutal btn-brutal-silver !py-2 !px-2 text-xs sm:text-sm font-bold flex-1 flex items-center justify-center gap-1 cursor-pointer"
+        class="btn-brutal btn-brutal-silver !py-1.5 !px-1.5 text-xs font-bold flex-1 flex items-center justify-center gap-1 cursor-pointer"
         [disabled]="game.history().length === 0"
         title="Undo last move"
       >
@@ -57,7 +57,7 @@
       <button 
         type="button" 
         (click)="game.resetGame()" 
-        class="btn-brutal btn-brutal-orange !py-2 !px-2 text-xs sm:text-sm font-bold flex-1 flex items-center justify-center gap-1 cursor-pointer"
+        class="btn-brutal btn-brutal-orange !py-1.5 !px-1.5 text-xs font-bold flex-1 flex items-center justify-center gap-1 cursor-pointer"
         title="Start a new game"
       >
         <app-icon name="plus" size="w-3.5 h-3.5"></app-icon>
@@ -67,7 +67,7 @@
       <button 
         type="button" 
         (click)="copyFen()" 
-        class="btn-brutal btn-brutal-blue !py-2 !px-2 text-xs sm:text-sm font-bold flex-1 flex items-center justify-center gap-1 cursor-pointer"
+        class="btn-brutal btn-brutal-blue !py-1.5 !px-1.5 text-xs font-bold flex-1 flex items-center justify-center gap-1 cursor-pointer"
         title="Copy current FEN string to clipboard"
       >
         <app-icon [name]="copiedFen() ? 'check' : 'clipboard-document'" size="w-3.5 h-3.5"></app-icon>

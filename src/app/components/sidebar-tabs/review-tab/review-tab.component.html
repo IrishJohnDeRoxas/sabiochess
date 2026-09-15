@@ -342,16 +342,16 @@
     </div>
 
     <!-- Timeline Stepper Bar -->
-    <div class="card-brutal p-2 bg-[#D9D9D9] dark:bg-[#2A2B32] flex items-center justify-between gap-1.5 shrink-0">
+    <div class="card-brutal p-1.5 bg-[#D9D9D9] dark:bg-[#2A2B32] flex items-center justify-between gap-1 shrink-0">
       <!-- First Move (Start Position) -->
       <button
         type="button"
         (click)="game.goToStart()"
         [disabled]="game.history().length === 0"
-        class="btn-brutal !py-2 !px-2.5 flex-1 text-xs sm:text-sm cursor-pointer"
+        class="btn-brutal !py-1.5 !px-2 flex-1 text-xs cursor-pointer"
         title="Go to Start (Move 0)"
       >
-        <app-icon name="chevron-double-left" size="w-4 h-4"></app-icon>
+        <app-icon name="chevron-double-left" size="w-3.5 h-3.5"></app-icon>
       </button>
 
       <!-- Prev Move -->
@@ -359,10 +359,10 @@
         type="button"
         (click)="game.prevMove()"
         [disabled]="game.history().length === 0"
-        class="btn-brutal !py-2 !px-2.5 flex-1 text-xs sm:text-sm cursor-pointer"
+        class="btn-brutal !py-1.5 !px-2 flex-1 text-xs cursor-pointer"
         title="Previous Move"
       >
-        <app-icon name="chevron-left" size="w-4 h-4"></app-icon>
+        <app-icon name="chevron-left" size="w-3.5 h-3.5"></app-icon>
       </button>
 
       <!-- Auto Play / Pause -->
@@ -370,10 +370,10 @@
         type="button"
         (click)="game.toggleAutoplay()"
         [disabled]="game.history().length === 0"
-        class="btn-brutal btn-brutal-orange !py-2 !px-3 flex-1 text-xs sm:text-sm flex items-center justify-center gap-1 cursor-pointer"
+        class="btn-brutal btn-brutal-orange !py-1.5 !px-2.5 flex-1 text-xs flex items-center justify-center gap-1 cursor-pointer"
         title="Autoplay Moves"
       >
-        <app-icon [name]="game.isAutoplaying() ? 'pause' : 'play'" size="w-4 h-4"></app-icon>
+        <app-icon [name]="game.isAutoplaying() ? 'pause' : 'play'" size="w-3.5 h-3.5"></app-icon>
       </button>
 
       <!-- Next Move -->
@@ -381,10 +381,10 @@
         type="button"
         (click)="game.nextMove()"
         [disabled]="game.history().length === 0"
-        class="btn-brutal !py-2 !px-2.5 flex-1 text-xs sm:text-sm cursor-pointer"
+        class="btn-brutal !py-1.5 !px-2 flex-1 text-xs cursor-pointer"
         title="Next Move"
       >
-        <app-icon name="chevron-right" size="w-4 h-4"></app-icon>
+        <app-icon name="chevron-right" size="w-3.5 h-3.5"></app-icon>
       </button>
 
       <!-- Last Move / Live -->
@@ -392,19 +392,19 @@
         type="button"
         (click)="game.goToEnd()"
         [disabled]="game.history().length === 0"
-        class="btn-brutal !py-2 !px-2.5 flex-1 text-xs sm:text-sm cursor-pointer"
+        class="btn-brutal !py-1.5 !px-2 flex-1 text-xs cursor-pointer"
         title="Go to Final Position"
       >
-        <app-icon name="chevron-double-right" size="w-4 h-4"></app-icon>
+        <app-icon name="chevron-double-right" size="w-3.5 h-3.5"></app-icon>
       </button>
     </div>
 
     <!-- Bottom Quick Controls -->
-    <div class="grid grid-cols-4 gap-1.5 shrink-0">
+    <div class="grid grid-cols-4 gap-1.5 shrink-0 p-0.5">
       <button
         type="button"
         (click)="game.flipBoard()"
-        class="btn-brutal btn-brutal-silver !py-2 !px-1.5 text-xs sm:text-sm font-bold flex items-center justify-center gap-1 cursor-pointer"
+        class="btn-brutal btn-brutal-silver !py-1.5 !px-1 text-xs font-bold flex items-center justify-center gap-1 cursor-pointer"
         title="Flip board orientation"
       >
         <app-icon name="arrow-path" size="w-3.5 h-3.5"></app-icon>
@@ -415,7 +415,7 @@
         type="button"
         (click)="game.undoMove()"
         [disabled]="game.history().length === 0"
-        class="btn-brutal btn-brutal-silver !py-2 !px-1.5 text-xs sm:text-sm font-bold flex items-center justify-center gap-1 cursor-pointer"
+        class="btn-brutal btn-brutal-silver !py-1.5 !px-1 text-xs font-bold flex items-center justify-center gap-1 cursor-pointer"
         title="Undo move"
       >
         <app-icon name="arrow-uturn-left" size="w-3.5 h-3.5"></app-icon>
@@ -425,7 +425,7 @@
       <button
         type="button"
         (click)="game.resetGame()"
-        class="btn-brutal btn-brutal-orange !py-2 !px-1.5 text-xs sm:text-sm font-bold flex items-center justify-center gap-1 cursor-pointer"
+        class="btn-brutal btn-brutal-orange !py-1.5 !px-1 text-xs font-bold flex items-center justify-center gap-1 cursor-pointer"
         title="Start new game"
       >
         <app-icon name="plus" size="w-3.5 h-3.5"></app-icon>
@@ -435,7 +435,7 @@
       <button
         type="button"
         (click)="copyFen()"
-        class="btn-brutal btn-brutal-blue !py-2 !px-1.5 text-xs sm:text-sm font-bold flex items-center justify-center gap-1 cursor-pointer"
+        class="btn-brutal btn-brutal-blue !py-1.5 !px-1 text-xs font-bold flex items-center justify-center gap-1 cursor-pointer"
         title="Copy FEN string"
       >
         <app-icon [name]="settings.toastMessage() === 'FEN COPIED' ? 'check' : 'clipboard-document'" size="w-3.5 h-3.5"></app-icon>
