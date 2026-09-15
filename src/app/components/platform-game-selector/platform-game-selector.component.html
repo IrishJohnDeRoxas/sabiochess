@@ -38,17 +38,27 @@
       <input
         type="text"
         [ngModel]="username()"
-        (ngModelChange)="username.set($event)"
+        (ngModelChange)="onUsernameChange($event)"
         name="username"
         placeholder="Chess.com Username (e.g. Hikaru)"
-        class="w-full h-9 bg-[#D9D9D9] dark:bg-[#2A2B32] border-2 border-[#222222] dark:border-[#373A46] px-3 text-xs sm:text-sm font-label text-[#222222] dark:text-[#F3F4F6] focus:bg-white dark:focus:bg-[#1E1F24] focus:outline-none focus:border-[#FF4F00] uppercase placeholder:normal-case box-border"
+        class="w-full h-9 bg-[#D9D9D9] dark:bg-[#2A2B32] border-2 border-[#222222] dark:border-[#373A46] pl-3 pr-8 text-xs sm:text-sm font-label text-[#222222] dark:text-[#F3F4F6] focus:bg-white dark:focus:bg-[#1E1F24] focus:outline-none focus:border-[#FF4F00] uppercase placeholder:normal-case box-border"
       />
+      @if (username()) {
+        <button
+          type="button"
+          (click)="clearUsername()"
+          title="Clear username"
+          class="absolute right-2 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center text-gray-500 hover:text-[#222222] dark:hover:text-white transition-colors cursor-pointer bg-transparent border-0"
+        >
+          <app-icon name="x-mark" size="w-3.5 h-3.5"></app-icon>
+        </button>
+      }
     </div>
 
     <button
       type="submit"
-      [disabled]="isLoading()"
-      class="btn-brutal btn-brutal-orange h-9 !py-0 !px-3.5 sm:!px-4 text-xs sm:text-sm flex items-center justify-center gap-1.5 whitespace-nowrap cursor-pointer box-border font-accent font-bold"
+      [disabled]="isLoading() || !username().trim()"
+      class="btn-brutal btn-brutal-orange h-9 !py-0 !px-3.5 sm:!px-4 text-xs sm:text-sm flex items-center justify-center gap-1.5 whitespace-nowrap cursor-pointer box-border font-accent font-bold disabled:opacity-50 disabled:cursor-not-allowed"
     >
       @if (isLoading()) {
         <app-icon name="arrow-path" size="w-4 h-4 animate-spin"></app-icon>
@@ -64,7 +74,15 @@
   @if (errorMessage()) {
     <div class="bg-[#EF4444] text-white text-xs sm:text-sm font-accent p-2.5 border-2 border-[#222222] dark:border-black shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000] flex items-center gap-2 font-bold">
       <app-icon name="exclamation-triangle" size="w-4 h-4 shrink-0"></app-icon>
-      <span>{{ errorMessage() }}</span>
+      <span class="flex-1">{{ errorMessage() }}</span>
+      <button
+        type="button"
+        (click)="errorMessage.set(null)"
+        class="text-white hover:text-gray-200 cursor-pointer p-0.5"
+        title="Dismiss"
+      >
+        <app-icon name="x-mark" size="w-3.5 h-3.5"></app-icon>
+      </button>
     </div>
   }
 
@@ -72,8 +90,19 @@
   @if (gamesList().length > 0) {
     <div class="flex flex-col gap-1.5 border-2 border-[#222222] dark:border-black bg-[#ECECD8] dark:bg-[#141519] p-2 max-h-[240px] overflow-y-auto select-none">
       <div class="flex items-center justify-between text-[11px] sm:text-xs font-label font-bold text-gray-700 dark:text-gray-300 px-1 border-b border-gray-300 dark:border-gray-700 pb-1">
-        <span>RECENT MATCHES ({{ gamesList().length }})</span>
-        <span>CLICK TO REVIEW</span>
+        <div class="flex items-center gap-2">
+          <span>RECENT MATCHES ({{ gamesList().length }})</span>
+          <button
+            type="button"
+            (click)="clearGames()"
+            title="Clear matches list and cache"
+            class="text-[10px] uppercase font-bold text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 cursor-pointer inline-flex items-center gap-0.5 px-1 py-0.5 bg-red-100 dark:bg-red-950/40 border border-red-300 dark:border-red-900 transition-colors"
+          >
+            <app-icon name="trash" size="w-3 h-3"></app-icon>
+            <span>CLEAR</span>
+          </button>
+        </div>
+        <span class="text-[10px] text-gray-500 dark:text-gray-400">CLICK TO REVIEW</span>
       </div>
 
       @for (g of gamesList(); track g.id) {

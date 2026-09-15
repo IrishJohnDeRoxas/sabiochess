@@ -54,18 +54,24 @@
       </button>
       } @else {
       <button type="button" (click)="toggleUserMenu()"
-        class="btn-brutal !py-1 sm:!py-1.5 !px-2.5 sm:!px-3 text-xs sm:text-sm flex items-center gap-2 cursor-pointer"
+        class="btn-brutal !py-1 sm:!py-1.5 !px-2.5 sm:!px-3 text-xs sm:text-sm flex items-center gap-2 cursor-pointer transition-transform"
         [ngClass]="auth.isPro() ? 'btn-brutal-orange' : 'btn-brutal-blue'">
         @if (auth.userAvatar()) {
-          <img [src]="auth.userAvatar()" alt="User avatar" referrerpolicy="no-referrer" (error)="onAvatarError($event)" class="w-5 h-5 rounded-none border border-[#222222] object-cover bg-white shrink-0" />
+          <img [src]="auth.userAvatar()" alt="User avatar" referrerpolicy="no-referrer" (error)="onAvatarError($event)" class="w-5 h-5 rounded-none border border-[#222222] object-cover bg-white shrink-0 shadow-[1px_1px_0_0_#222222]" />
         }
-        <span class="w-5 h-5 bg-white text-[#222222] font-bold text-[10px] flex items-center justify-center border border-[#222222] shrink-0" [ngClass]="{ 'hidden': !!auth.userAvatar() }">
+        <span class="w-5 h-5 bg-white text-[#222222] font-bold text-[10px] flex items-center justify-center border border-[#222222] shrink-0 shadow-[1px_1px_0_0_#222222]" [ngClass]="{ 'hidden': !!auth.userAvatar() }">
           {{ auth.displayName().charAt(0).toUpperCase() }}
         </span>
         <span class="font-accent font-bold truncate max-w-[100px] sm:max-w-[140px]">{{ auth.displayName() }}</span>
-        <span class="badge-brutal !py-0.5 !px-1 text-[9px] bg-black text-white font-bold">
-          {{ auth.isPro() ? '👑 PRO' : 'FREE' }}
-        </span>
+        @if (auth.isPro()) {
+          <span class="badge-brutal !py-0.5 !px-1.5 text-[9px] bg-black text-[#FF8A00] border border-amber-400/40 font-black shadow-[1px_1px_0_0_#000000]">
+            👑 LIFETIME
+          </span>
+        } @else {
+          <span class="badge-brutal !py-0.5 !px-1 text-[9px] bg-black text-white font-bold">
+            FREE
+          </span>
+        }
       </button>
       }
     </div>
@@ -75,25 +81,20 @@
   @if (auth.isUserMenuOpen()) {
   <div class="absolute right-4 sm:right-6 lg:right-8 top-full mt-2 w-72 sm:w-80 card-brutal p-0 bg-white dark:bg-[#1E1F24] border-4 border-[#222222] dark:border-black shadow-[6px_6px_0_0_#222222] dark:shadow-[6px_6px_0_0_#000000] z-50 animate-scale-up">
     
-    <!-- User Info Header -->
-    <div class="p-3.5 border-b-2 border-[#222222] dark:border-[#373A46] bg-[#ECECD8] dark:bg-[#2A2B32] flex items-center justify-between">
-      <div class="flex items-center gap-2.5 min-w-0">
+    <!-- User Info Header (Clean & spacious without redundant squishing badge) -->
+    <div class="p-3 sm:p-3.5 border-b-2 border-[#222222] dark:border-[#373A46] bg-[#ECECD8] dark:bg-[#2A2B32] flex items-center justify-between">
+      <div class="flex items-center gap-2.5 min-w-0 w-full">
         @if (auth.userAvatar()) {
-          <img [src]="auth.userAvatar()" alt="User Avatar" referrerpolicy="no-referrer" (error)="onAvatarError($event)" class="w-8 h-8 rounded-none border-2 border-[#222222] dark:border-black object-cover bg-white shrink-0" />
+          <img [src]="auth.userAvatar()" alt="User Avatar" referrerpolicy="no-referrer" (error)="onAvatarError($event)" class="w-8 h-8 rounded-none border-2 border-[#222222] dark:border-black object-cover bg-white shrink-0 shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000]" />
         }
-        <span class="w-8 h-8 bg-[#FF4F00] text-white font-bold text-sm flex items-center justify-center border-2 border-[#222222] dark:border-black shrink-0" [ngClass]="{ 'hidden': !!auth.userAvatar() }">
+        <span class="w-8 h-8 bg-[#FF4F00] text-white font-bold text-sm flex items-center justify-center border-2 border-[#222222] dark:border-black shrink-0 shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000]" [ngClass]="{ 'hidden': !!auth.userAvatar() }">
           {{ auth.displayName().charAt(0).toUpperCase() }}
         </span>
-        <div class="flex flex-col min-w-0">
+        <div class="flex flex-col min-w-0 flex-1">
           <span class="font-accent font-bold text-xs sm:text-sm text-[#222222] dark:text-[#F3F4F6] truncate">{{ auth.displayName() }}</span>
           <span class="font-label text-[10px] text-gray-600 dark:text-gray-400 truncate">{{ auth.currentUser()?.email || 'Guest Session' }}</span>
         </div>
       </div>
-
-      <span class="badge-brutal text-[10px] !py-0.5 !px-1.5 font-bold"
-        [ngClass]="auth.isPro() ? 'bg-[#FF4F00] text-white' : auth.isFreeUser() ? 'bg-[#0E4C92] text-white' : 'bg-[#222222] text-white'">
-        {{ auth.isPro() ? '👑 LIFETIME' : auth.isFreeUser() ? 'FREE TIER' : 'GUEST' }}
-      </span>
     </div>
 
     <!-- Energy Status Info Card -->

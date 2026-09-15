@@ -40,7 +40,7 @@ describe('HeaderComponent', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.textContent).toContain('UNLIMITED');
     expect(compiled.textContent).toContain('Grandmaster Tester');
-    expect(compiled.textContent).toContain('👑 PRO');
+    expect(compiled.textContent).toContain('👑 LIFETIME');
   });
 
   it('should toggle user account dropdown menu', () => {

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, inject, signal } from '@angular/core';
+import { Component, EventEmitter, Output, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FetchedGame, PlatformImporterService } from '../../services/platform-importer.service';
@@ -8,6 +8,16 @@ import { IconComponent } from '../icon/icon.component';
 
 export type PlatformType = 'chess.com' | 'lichess';
 
+const CACHE_PREFIX = 'sabiochess_cached_games_';
+const RECENT_CACHE_KEY = 'sabiochess_recent_cached_games';
+
+interface CachedPlatformGames {
+  platform: PlatformType;
+  username: string;
+  games: FetchedGame[];
+  timestamp: number;
+}
+
 @Component({
   selector: 'app-platform-game-selector',
   standalone: true,
@@ -15,7 +25,7 @@ export type PlatformType = 'chess.com' | 'lichess';
   templateUrl: './platform-game-selector.component.html',
   styleUrls: ['./platform-game-selector.component.css'],
 })
-export class PlatformGameSelectorComponent {
+export class PlatformGameSelectorComponent implements OnInit {
   private readonly platformService = inject(PlatformImporterService);
   private readonly gameService = inject(ChessGameService);
   readonly settings = inject(SettingsService);
@@ -28,13 +38,50 @@ export class PlatformGameSelectorComponent {
   readonly errorMessage = signal<string | null>(null);
   readonly gamesList = signal<FetchedGame[]>([]);
 
+  ngOnInit(): void {
+    this.restoreCachedGames();
+  }
+
   selectPlatform(platform: PlatformType): void {
     if (platform === 'lichess') {
       return;
     }
     this.activePlatform.set(platform);
     this.errorMessage.set(null);
-    this.username.set(this.settings.chesscomUsername() || 'Hikaru');
+    const storedUsername = this.settings.chesscomUsername() || 'Hikaru';
+    this.username.set(storedUsername);
+    this.restoreCachedGames(platform, storedUsername);
+  }
+
+  onUsernameChange(newUsername: string): void {
+    this.username.set(newUsername);
+    this.errorMessage.set(null);
+    if (newUsername.trim()) {
+      this.restoreCachedGames(this.activePlatform(), newUsername.trim());
+    }
+  }
+
+  clearUsername(): void {
+    this.username.set('');
+    this.errorMessage.set(null);
+  }
+
+  clearGames(): void {
+    this.gamesList.set([]);
+    this.errorMessage.set(null);
+
+    const user = this.username().trim().toLowerCase();
+    if (typeof localStorage !== 'undefined') {
+      try {
+        if (user) {
+          localStorage.removeItem(`${CACHE_PREFIX}${this.activePlatform()}_${user}`);
+        }
+        localStorage.removeItem(RECENT_CACHE_KEY);
+      } catch {
+        // Ignore storage removal errors
+      }
+    }
+    this.settings.flashToast('Recent games cleared');
   }
 
   async fetchGames(): Promise<void> {
@@ -57,6 +104,7 @@ export class PlatformGameSelectorComponent {
         games = await this.platformService.fetchLichessGames(user);
       }
       this.gamesList.set(games);
+      this.saveGamesToCache(this.activePlatform(), user, games);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Could not fetch games from platform';
       this.errorMessage.set(msg);
@@ -72,6 +120,55 @@ export class PlatformGameSelectorComponent {
       this.gameSelected.emit(game);
     } else {
       this.errorMessage.set('Failed to load selected game PGN.');
+    }
+  }
+
+  private saveGamesToCache(platform: PlatformType, username: string, games: FetchedGame[]): void {
+    if (typeof localStorage === 'undefined' || !games || games.length === 0) return;
+    try {
+      const cachePayload: CachedPlatformGames = {
+        platform,
+        username,
+        games,
+        timestamp: Date.now(),
+      };
+      const key = `${CACHE_PREFIX}${platform}_${username.toLowerCase()}`;
+      localStorage.setItem(key, JSON.stringify(cachePayload));
+      localStorage.setItem(RECENT_CACHE_KEY, JSON.stringify(cachePayload));
+    } catch {
+      // Ignore quota exceeded or serialization errors
+    }
+  }
+
+  private restoreCachedGames(platform?: PlatformType, targetUsername?: string): void {
+    if (typeof localStorage === 'undefined') return;
+    const plat = platform || this.activePlatform();
+    const user = (targetUsername !== undefined ? targetUsername : this.username()).trim().toLowerCase();
+
+    try {
+      if (user) {
+        const specificRaw = localStorage.getItem(`${CACHE_PREFIX}${plat}_${user}`);
+        if (specificRaw) {
+          const parsed = JSON.parse(specificRaw) as CachedPlatformGames;
+          if (parsed && Array.isArray(parsed.games) && parsed.games.length > 0) {
+            this.gamesList.set(parsed.games);
+            return;
+          }
+        }
+      }
+
+      // Check fallback recent cache
+      const recentRaw = localStorage.getItem(RECENT_CACHE_KEY);
+      if (recentRaw) {
+        const parsed = JSON.parse(recentRaw) as CachedPlatformGames;
+        if (parsed && parsed.platform === plat && Array.isArray(parsed.games) && parsed.games.length > 0) {
+          if (!user || parsed.username.toLowerCase() === user) {
+            this.gamesList.set(parsed.games);
+          }
+        }
+      }
+    } catch {
+      // Ignore parse errors
     }
   }
 }
