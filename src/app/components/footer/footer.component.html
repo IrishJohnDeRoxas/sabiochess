@@ -74,6 +74,12 @@
             </a>
           </li>
           <li>
+            <a [routerLink]="['/changelog']" (click)="scrollToTop()" class="hover:text-[#FF4F00] dark:hover:text-[#FF4F00] cursor-pointer transition-colors inline-flex items-center gap-2 no-underline text-inherit">
+              <app-icon name="sparkles" size="w-4 h-4 text-[#FF4F00]"></app-icon>
+              <span>Changelog & Updates</span>
+            </a>
+          </li>
+          <li>
             <span class="hover:text-[#FF4F00] dark:hover:text-[#FF4F00] cursor-pointer transition-colors inline-flex items-center gap-2">
               <app-icon name="lifebuoy" size="w-4 h-4 text-[#10B981]"></app-icon>
               <span>Support & Docs</span>
@@ -101,7 +107,7 @@
       <div class="flex items-center gap-4 text-gray-700 dark:text-gray-400 font-bold">
         <a [routerLink]="['/privacy']" (click)="scrollToTop()" class="hover:text-[#222222] dark:hover:text-white cursor-pointer transition-colors no-underline text-inherit">PRIVACY</a>
         <a [routerLink]="['/terms']" (click)="scrollToTop()" class="hover:text-[#222222] dark:hover:text-white cursor-pointer transition-colors no-underline text-inherit">TERMS</a>
-        <span class="hover:text-[#222222] dark:hover:text-white cursor-pointer transition-colors">CHANGELOG</span>
+        <a [routerLink]="['/changelog']" (click)="scrollToTop()" class="hover:text-[#222222] dark:hover:text-white cursor-pointer transition-colors no-underline text-inherit">CHANGELOG</a>
       </div>
     </div>
   </div>

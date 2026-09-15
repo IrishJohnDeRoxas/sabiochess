@@ -1,0 +1,143 @@
+<div class="changelog-page-container w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+  <!-- Breadcrumb Navigation -->
+  <nav class="mb-6" aria-label="Breadcrumb">
+    <a [routerLink]="['/']" class="btn-brutal btn-brutal-silver !py-1.5 !px-3 inline-flex items-center gap-2 text-xs sm:text-sm font-accent no-underline">
+      <app-icon name="arrow-left" size="w-4 h-4"></app-icon>
+      <span>BACK TO CHESS ANALYZER</span>
+    </a>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="text-center mb-10 pb-8 border-b-[3px] border-[#222222] dark:border-black">
+    <div class="flex justify-center mb-3">
+      <span class="badge-brutal bg-[#FF4F00] text-white text-xs sm:text-sm flex items-center gap-1.5 py-1 px-3.5 font-bold">
+        <app-icon name="sparkles" size="w-4 h-4"></app-icon>
+        <span>RELEASE CHANNEL & UPDATES</span>
+      </span>
+    </div>
+    <h1 class="changelog-title font-display text-3xl sm:text-4xl lg:text-5xl text-[#222222] dark:text-[#F3F4F6] uppercase tracking-tight mb-3">
+      SabioChess Changelog
+    </h1>
+    <p class="font-body text-sm sm:text-base lg:text-lg text-gray-700 dark:text-gray-300 max-w-2xl mx-auto font-medium leading-relaxed mb-4">
+      Stay up-to-date with new features, engine updates, soundscapes, and platform enhancements shipped to SabioChess.
+    </p>
+    <div class="meta-row flex items-center justify-center gap-2 font-label text-xs sm:text-sm text-gray-600 dark:text-gray-400 font-bold">
+      <span>Latest Release: {{ releases()[0].version }}</span>
+      <span>•</span>
+      <span>{{ releases()[0].date }}</span>
+    </div>
+  </header>
+
+  <!-- Filter Category Bar -->
+  <div class="filter-container mb-8 flex flex-wrap items-center justify-center gap-2 sm:gap-3" role="tablist" aria-label="Changelog filters">
+    @for (cat of filterCategories; track cat.id) {
+      <button
+        type="button"
+        class="btn-brutal !py-1.5 !px-3.5 text-xs sm:text-sm font-accent flex items-center gap-2 cursor-pointer transition-all duration-150"
+        [ngClass]="selectedFilter() === cat.id 
+          ? 'btn-brutal-orange shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]' 
+          : 'bg-white dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] hover:bg-gray-100 dark:hover:bg-[#373A46]'"
+        (click)="setFilter(cat.id)"
+        role="tab"
+        [attr.aria-selected]="selectedFilter() === cat.id"
+      >
+        <app-icon [name]="cat.icon" size="w-3.5 h-3.5"></app-icon>
+        <span>{{ cat.label }}</span>
+      </button>
+    }
+  </div>
+
+  <!-- Releases Timeline / Cards List -->
+  <main class="flex flex-col gap-8">
+    @if (filteredReleases().length === 0) {
+      <div class="card-brutal p-8 text-center flex flex-col items-center justify-center gap-4">
+        <app-icon name="information-circle" size="w-10 h-10 text-[#FF4F00]"></app-icon>
+        <h3 class="font-display text-lg sm:text-xl text-[#222222] dark:text-[#F3F4F6] uppercase">
+          No updates found for this category
+        </h3>
+        <p class="font-body text-sm sm:text-base text-gray-700 dark:text-gray-300 max-w-md">
+          There are no log entries matching the selected filter. Try switching back to all updates.
+        </p>
+        <button
+          type="button"
+          class="btn-brutal btn-brutal-orange font-accent text-xs sm:text-sm"
+          (click)="setFilter('all')"
+        >
+          SHOW ALL UPDATES
+        </button>
+      </div>
+    } @else {
+      @for (release of filteredReleases(); track release.version) {
+        <article class="release-card card-brutal-lg p-6 sm:p-8 flex flex-col gap-5">
+          <!-- Release Header -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b-2 border-[#222222] dark:border-black pb-4">
+            <div class="flex items-center gap-3 flex-wrap">
+              <span class="version-tag badge-brutal bg-[#222222] text-white dark:bg-[#F3F4F6] dark:text-[#222222] text-sm sm:text-base py-1 px-3 font-display">
+                {{ release.version }}
+              </span>
+              @if (release.isLatest) {
+                <span class="badge-brutal bg-[#10B981] text-white text-xs sm:text-sm py-0.5 px-2.5 font-bold flex items-center gap-1">
+                  <app-icon name="star" size="w-3.5 h-3.5"></app-icon>
+                  <span>{{ release.tag || 'LATEST RELEASE' }}</span>
+                </span>
+              }
+              <span class="font-label text-xs sm:text-sm text-gray-600 dark:text-gray-400 font-bold">
+                {{ release.date }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Release Title & Summary -->
+          <div class="flex flex-col gap-2">
+            <h2 class="font-display text-xl sm:text-2xl text-[#222222] dark:text-[#F3F4F6] uppercase tracking-tight">
+              {{ release.title }}
+            </h2>
+            <p class="font-body text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed font-medium">
+              {{ release.summary }}
+            </p>
+          </div>
+
+          <!-- Release Items List -->
+          <div class="flex flex-col gap-3.5 mt-2">
+            @for (item of release.items; track item.title) {
+              <div class="changelog-item bg-[#F8F9FA] dark:bg-[#25272F] border-2 border-[#222222] dark:border-black p-4 shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000] flex flex-col gap-2">
+                <div class="flex items-center gap-2.5 flex-wrap">
+                  <span class="item-type-badge badge-brutal text-[10px] sm:text-xs py-0.5 px-2 font-bold" [ngClass]="getItemBadgeClass(item.type)">
+                    {{ getItemBadgeLabel(item.type) }}
+                  </span>
+                  <h3 class="font-accent text-sm sm:text-base text-[#222222] dark:text-[#F3F4F6] font-bold">
+                    {{ item.title }}
+                  </h3>
+                </div>
+                <p class="font-body text-xs sm:text-sm text-gray-700 dark:text-gray-300 leading-relaxed pl-1">
+                  {{ item.description }}
+                </p>
+              </div>
+            }
+          </div>
+        </article>
+      }
+    }
+  </main>
+
+  <!-- Bottom Feedback & Contribution Box -->
+  <section class="mt-12 card-brutal bg-[#FFFFFF] dark:bg-[#1E1F24] p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6">
+    <div class="flex flex-col gap-2 text-center sm:text-left">
+      <div class="flex items-center justify-center sm:justify-start gap-2">
+        <app-icon name="bolt" size="w-5 h-5 text-[#FF4F00]"></app-icon>
+        <h3 class="font-display text-lg sm:text-xl text-[#222222] dark:text-[#F3F4F6] uppercase">
+          Have ideas or feedback?
+        </h3>
+      </div>
+      <p class="font-body text-xs sm:text-sm text-gray-700 dark:text-gray-300 max-w-xl">
+        We release regular updates, engine optimizations, and new features based on player feedback. Reach out to suggest new ideas or report issues.
+      </p>
+    </div>
+    <div class="flex items-center gap-3 shrink-0">
+      <a [routerLink]="['/']" class="btn-brutal btn-brutal-orange font-accent text-xs sm:text-sm no-underline">
+        <app-icon name="play" size="w-3.5 h-3.5"></app-icon>
+        <span>LAUNCH ANALYZER</span>
+      </a>
+    </div>
+  </section>
+</div>

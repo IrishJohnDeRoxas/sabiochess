@@ -20,6 +20,22 @@ export const routes: Routes = [
     title: 'Privacy Policy - SabioChess',
   },
   {
+    path: 'changelog',
+    loadComponent: () =>
+      import('./components/changelog/changelog.component').then((m) => m.ChangelogComponent),
+    title: 'Changelog & Release Notes - SabioChess',
+  },
+  {
+    path: 'channellog',
+    redirectTo: 'changelog',
+    pathMatch: 'full',
+  },
+  {
+    path: 'channel-logs',
+    redirectTo: 'changelog',
+    pathMatch: 'full',
+  },
+  {
     path: '**',
     redirectTo: '',
   },

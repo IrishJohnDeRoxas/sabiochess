@@ -1,0 +1,21 @@
+:host {
+  display: block;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.changelog-page-container {
+  box-sizing: border-box;
+}
+
+.release-card {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.release-card:hover {
+  transform: translateY(-2px);
+}
+
+.changelog-item {
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}

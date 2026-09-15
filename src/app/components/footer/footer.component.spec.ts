@@ -25,15 +25,17 @@ describe('FooterComponent', () => {
     expect(compiled.textContent).toContain(new Date().getFullYear().toString());
   });
 
-  it('should render Terms of Service and Privacy Policy links in footer', () => {
+  it('should render Terms of Service, Privacy Policy, and Changelog links in footer', () => {
     const fixture = TestBed.createComponent(FooterComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
     const links = Array.from(compiled.querySelectorAll('a'));
     const termsLink = links.find((l) => l.textContent?.trim().includes('TERMS') || l.textContent?.trim().includes('Terms of Service'));
     const privacyLink = links.find((l) => l.textContent?.trim().includes('PRIVACY') || l.textContent?.trim().includes('Privacy Policy'));
+    const changelogLink = links.find((l) => l.textContent?.trim().includes('CHANGELOG') || l.textContent?.trim().includes('Changelog'));
     expect(termsLink).toBeTruthy();
     expect(privacyLink).toBeTruthy();
+    expect(changelogLink).toBeTruthy();
   });
 
   it('should invoke scrollToTop without error', () => {
