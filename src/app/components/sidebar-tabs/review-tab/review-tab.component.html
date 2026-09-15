@@ -163,115 +163,78 @@
       </div>
     }
 
-    <!-- Coach Commentary & Move Explanation Card with Avatar -->
+    <!-- Coach Commentary & Move Explanation Card -->
     <div class="flex flex-col gap-2.5">
-      <div class="flex items-start gap-2.5">
-        <!-- Coach Avatar -->
-        <div class="shrink-0 w-11 h-14 sm:w-13 sm:h-16 flex items-center justify-center" aria-label="Chess Coach">
-          <svg class="w-full h-full filter drop-shadow-[2px_2px_0_#222222] dark:drop-shadow-[2px_2px_0_#000000]" viewBox="0 0 70 85" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="35" cy="40" r="32" fill="#242c38" />
-            <!-- Sweater -->
-            <path d="M12 85C12 66 22 60 35 60C48 60 58 66 58 85" fill="#1e293b" />
-            <!-- Shirt Collar -->
-            <path d="M27 60L35 68L43 60" fill="#ffffff" />
-            <path d="M35 68V78" stroke="#cbd5e1" stroke-width="2" />
-            <!-- Neck -->
-            <rect x="29" y="50" width="12" height="12" fill="#e2a87a" rx="2" />
-            <!-- Head -->
-            <ellipse cx="35" cy="37" rx="15" ry="17" fill="#f3be94" />
-            <!-- Hair -->
-            <path d="M20 32C20 20 26 15 35 15C44 15 50 20 50 32C47 28 44 26 40 26C35 26 32 28 28 28C24 28 21 30 20 32Z" fill="#5c3a21" />
-            <!-- Ears -->
-            <circle cx="19" cy="37" r="3" fill="#e2a87a" />
-            <circle cx="51" cy="37" r="3" fill="#e2a87a" />
-            <!-- Beard -->
-            <path d="M23 38C23 52 28 56 35 56C42 56 47 52 47 38C45 40 42 41 35 41C28 41 25 40 23 38Z" fill="#5c3a21" />
-            <!-- Mouth / Smile -->
-            <path d="M31 47Q35 50 39 47" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" />
-            <!-- Glasses -->
-            <rect x="23" y="31" width="10" height="8" rx="2" stroke="#0f172a" stroke-width="1.8" fill="rgba(255,255,255,0.25)" />
-            <rect x="37" y="31" width="10" height="8" rx="2" stroke="#0f172a" stroke-width="1.8" fill="rgba(255,255,255,0.25)" />
-            <line x1="33" y1="35" x2="37" y2="35" stroke="#0f172a" stroke-width="1.8" />
-            <!-- Eyes -->
-            <circle cx="28" cy="35" r="1.5" fill="#0f172a" />
-            <circle cx="42" cy="35" r="1.5" fill="#0f172a" />
-            <!-- Eyebrows -->
-            <path d="M24 28Q28 26 32 28" stroke="#3d2616" stroke-width="1.5" stroke-linecap="round" />
-            <path d="M38 28Q42 26 46 28" stroke="#3d2616" stroke-width="1.5" stroke-linecap="round" />
-          </svg>
+      <!-- Commentary Card -->
+      <div class="bg-white dark:bg-[#1E1F24] border-2 border-[#222222] dark:border-black p-2.5 sm:p-3 flex flex-col gap-2 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000] min-w-0">
+        <div class="flex items-center justify-between gap-1.5">
+          <div class="flex items-center gap-1.5 min-w-0">
+            @if (currentExplanation(); as exp) {
+              <span 
+                class="badge-brutal text-xs !py-0.5 !px-1.5 font-bold shrink-0"
+                [ngClass]="getClassificationBadgeClass(exp.classification)"
+              >
+                {{ getClassificationSymbol(exp.classification) }}
+              </span>
+              <span class="font-accent text-xs sm:text-sm font-bold truncate text-[#222222] dark:text-[#F3F4F6]">
+                @if (exp.isVariation) {
+                  @if (exp.isFollowUp) {
+                    <strong>Follow-Up</strong> line
+                  } @else if (exp.isBest) {
+                    <strong>{{ exp.san }}</strong> is best
+                  } @else {
+                    <strong>{{ exp.san }}</strong> variation
+                  }
+                } @else {
+                  <strong>{{ exp.san }}</strong> is {{ exp.classification }}
+                }
+              </span>
+            } @else {
+              <span class="badge-brutal bg-[#10B981] text-white text-xs !py-0.5 !px-1.5 font-bold">★</span>
+              <span class="font-accent text-xs sm:text-sm font-bold text-[#222222] dark:text-[#F3F4F6]">Game Review</span>
+            }
+          </div>
+
+          @if (currentExplanation()?.moveTime; as mTime) {
+            <span class="badge-brutal bg-[#ECECD8] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] text-[10px] sm:text-xs !py-0.5 !px-1.5 font-bold shrink-0">
+              ⏱ {{ mTime }}
+            </span>
+          }
         </div>
 
-        <!-- Speech Bubble Card -->
-        <div class="flex-1 bg-white dark:bg-[#1E1F24] border-2 border-[#222222] dark:border-black p-2.5 sm:p-3 flex flex-col gap-2 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000] min-w-0">
-          <div class="flex items-center justify-between gap-1.5">
-            <div class="flex items-center gap-1.5 min-w-0">
-              @if (currentExplanation(); as exp) {
-                <span 
-                  class="badge-brutal text-xs !py-0.5 !px-1.5 font-bold shrink-0"
-                  [ngClass]="getClassificationBadgeClass(exp.classification)"
-                >
-                  {{ getClassificationSymbol(exp.classification) }}
-                </span>
-                <span class="font-accent text-xs sm:text-sm font-bold truncate text-[#222222] dark:text-[#F3F4F6]">
-                  @if (exp.isVariation) {
-                    @if (exp.isFollowUp) {
-                      <strong>Follow-Up</strong> line
-                    } @else if (exp.isBest) {
-                      <strong>{{ exp.san }}</strong> is best
-                    } @else {
-                      <strong>{{ exp.san }}</strong> variation
-                    }
-                  } @else {
-                    <strong>{{ exp.san }}</strong> is {{ exp.classification }}
-                  }
-                </span>
-              } @else {
-                <span class="badge-brutal bg-[#10B981] text-white text-xs !py-0.5 !px-1.5 font-bold">★</span>
-                <span class="font-accent text-xs sm:text-sm font-bold text-[#222222] dark:text-[#F3F4F6]">Game Review</span>
-              }
-            </div>
+        <!-- Commentary Text -->
+        <p class="font-body text-xs sm:text-sm text-gray-700 dark:text-gray-300 leading-relaxed font-medium">
+          @if (currentExplanation()?.commentary; as comm) {
+            {{ comm }}
+          } @else if (game.isGameOver()) {
+            {{ game.gameOverReason() }}
+          } @else if (game.history().length === 0) {
+            Ready for move 1. Play your moves on the board, or import a match from Chess.com!
+          } @else {
+            Review each move with tactical insights. Click Next to begin.
+          }
+        </p>
 
-            @if (currentExplanation()?.moveTime; as mTime) {
-              <span class="badge-brutal bg-[#ECECD8] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] text-[10px] sm:text-xs !py-0.5 !px-1.5 font-bold shrink-0">
-                ⏱ {{ mTime }}
-              </span>
-            }
-          </div>
-
-          <!-- Coach Text -->
-          <p class="font-body text-xs sm:text-sm text-gray-700 dark:text-gray-300 leading-relaxed font-medium">
-            @if (currentExplanation()?.commentary; as comm) {
-              {{ comm }}
-            } @else if (game.isGameOver()) {
-              {{ game.gameOverReason() }}
-            } @else if (game.history().length === 0) {
-              Ready for move 1. Play your moves on the board, or import a match from Chess.com!
+        <!-- Follow-Up Action Button inside card -->
+        <div class="pt-0.5">
+          <button
+            type="button"
+            (click)="toggleFollowUp()"
+            class="btn-brutal !py-1 !px-2.5 text-xs font-bold flex items-center gap-1.5 cursor-pointer bg-[#ECECD8] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] hover:bg-[#D9D9D9] dark:hover:bg-[#373A46] transition-colors"
+            [ngClass]="{'bg-[#10B981]/20 border-[#10B981] text-[#10B981] dark:text-[#34D399]': isFollowUpActive()}"
+            title="Show follow-up continuation line"
+          >
+            @if (isPlayingFollowUp()) {
+              <app-icon name="pause" size="w-3.5 h-3.5"></app-icon>
+              <span>Stop Follow-Up</span>
+            } @else if (isFollowUpActive()) {
+              <app-icon name="arrow-uturn-left" size="w-3.5 h-3.5"></app-icon>
+              <span>Hide Follow-Up</span>
             } @else {
-              Review each move with tactical insights. Click Next to begin.
+              <app-icon name="sparkles" size="w-3.5 h-3.5"></app-icon>
+              <span>Show Follow-Up</span>
             }
-          </p>
-
-          <!-- Follow-Up Action Button inside bubble -->
-          <div class="pt-0.5">
-            <button
-              type="button"
-              (click)="toggleFollowUp()"
-              class="btn-brutal !py-1 !px-2.5 text-xs font-bold flex items-center gap-1.5 cursor-pointer bg-[#ECECD8] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] hover:bg-[#D9D9D9] dark:hover:bg-[#373A46] transition-colors"
-              [ngClass]="{'bg-[#10B981]/20 border-[#10B981] text-[#10B981] dark:text-[#34D399]': isFollowUpActive()}"
-              title="Show follow-up continuation line"
-            >
-              @if (isPlayingFollowUp()) {
-                <app-icon name="pause" size="w-3.5 h-3.5"></app-icon>
-                <span>Stop Follow-Up</span>
-              } @else if (isFollowUpActive()) {
-                <app-icon name="arrow-uturn-left" size="w-3.5 h-3.5"></app-icon>
-                <span>Hide Follow-Up</span>
-              } @else {
-                <app-icon name="sparkles" size="w-3.5 h-3.5"></app-icon>
-                <span>Show Follow-Up</span>
-              }
-            </button>
-          </div>
+          </button>
         </div>
       </div>
 
