@@ -3,68 +3,9 @@
   <!-- Neubrutalist Header -->
   <app-header></app-header>
 
-  <!-- Main Game Arena (Fills initial viewport cleanly) -->
-  <main
-    class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 flex flex-col justify-center min-h-[calc(100vh-64px)]">
+  <!-- Main Routed Content (Chess Analyzer, Terms, etc.) -->
+  <router-outlet></router-outlet>
 
-    <!-- Arena Grid Layout -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start lg:items-stretch my-auto">
-
-
-
-      <!-- Board Area: Top Player + [Eval Bar + Chess Board] + Bottom Player (lg:col-span-7) -->
-      <div class="lg:col-span-7 flex flex-col gap-2.5 sm:gap-3 w-full max-w-[640px] mx-auto lg:max-w-none">
-
-        <!-- Top Player Card -->
-        <app-player-card
-          class="block"
-          [player]="game.topPlayer()"
-          [color]="game.topColor()"
-          [isTurn]="game.isTopTurn()"
-          [clock]="game.topClock()"
-          [outcome]="game.topOutcome()"
-        ></app-player-card>
-
-        <!-- Board Row: Eval Bar + Chess Board (matching exact height) -->
-        <div class="grid gap-2.5 sm:gap-3 items-stretch w-full"
-          [ngClass]="settings.showEvalBar() ? 'grid-cols-[36px_1fr] sm:grid-cols-[44px_1fr]' : 'grid-cols-1'">
-          <!-- Eval Bar Column -->
-          @if (settings.showEvalBar()) {
-          <div class="w-full h-full min-h-0 relative">
-            <app-eval-bar class="w-full h-full block"></app-eval-bar>
-          </div>
-          }
-
-          <!-- Main Chess Board -->
-          <div class="w-full min-w-0">
-            <app-chess-board></app-chess-board>
-          </div>
-        </div>
-
-        <!-- Bottom Player Card -->
-        <app-player-card
-          class="block"
-          [player]="game.bottomPlayer()"
-          [color]="game.bottomColor()"
-          [isTurn]="game.isBottomTurn()"
-          [clock]="game.bottomClock()"
-          [outcome]="game.bottomOutcome()"
-        ></app-player-card>
-
-      </div>
-
-      <!-- Sidebar Tabs (lg:col-span-5): Review, Analysis, Settings -->
-      <div class="lg:col-span-5 w-full max-w-[640px] mx-auto lg:max-w-none relative h-[580px] sm:h-[620px] lg:h-auto">
-        <div class="lg:absolute lg:inset-0 flex flex-col min-h-0 relative h-full">
-
-          <app-sidebar-tabs class="w-full h-full min-h-0 flex flex-col"></app-sidebar-tabs>
-        </div>
-      </div>
-
-    </div>
-
-  </main>
-
-  <!-- Neubrutalist Footer (Pushed down below the first screen fold) -->
-  <app-footer class="block"></app-footer>
+  <!-- Neubrutalist Footer (Pushed down below the screen fold) -->
+  <app-footer class="block mt-auto"></app-footer>
 </div>

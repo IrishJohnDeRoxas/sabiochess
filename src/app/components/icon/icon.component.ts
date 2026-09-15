@@ -44,7 +44,9 @@ export type IconName =
   | 'question-mark-circle'
   | 'exclamation-circle'
   | 'x-mark'
-  | 'hand-thumb-up';
+  | 'hand-thumb-up'
+  | 'arrow-left'
+  | 'arrow-right';
 
 @Component({
   selector: 'app-icon',
@@ -358,6 +360,18 @@ export class IconComponent {
         return [
           {
             d: 'M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z',
+          },
+        ];
+      case 'arrow-left':
+        return [
+          {
+            d: 'M9.707 14.707a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 0-1.414l4-4a1 1 0 0 1 1.414 1.414L7.414 9H15a1 1 0 1 1 0 2H7.414l2.293 2.293a1 1 0 0 1 0 1.414Z',
+          },
+        ];
+      case 'arrow-right':
+        return [
+          {
+            d: 'M10.293 5.293a1 1 0 0 1 1.414 0l4 4a1 1 0 0 1 0 1.414l-4 4a1 1 0 0 1-1.414-1.414L12.586 11H5a1 1 0 1 1 0-2h7.586l-2.293-2.293a1 1 0 0 1 0-1.414Z',
           },
         ];
       default:

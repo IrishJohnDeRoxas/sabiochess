@@ -1,0 +1,263 @@
+<div class="legal-page-container w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+  <!-- Breadcrumb Navigation -->
+  <nav class="mb-6" aria-label="Breadcrumb">
+    <a [routerLink]="['/']" class="btn-brutal btn-brutal-silver !py-1.5 !px-3 inline-flex items-center gap-2 text-xs sm:text-sm font-accent no-underline">
+      <app-icon name="arrow-left" size="w-4 h-4"></app-icon>
+      <span>BACK TO CHESS ANALYZER</span>
+    </a>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="text-center mb-10 pb-8 border-b-[3px] border-[#222222] dark:border-black">
+    <div class="flex justify-center mb-3">
+      <span class="badge-brutal bg-[#FF4F00] text-white text-xs sm:text-sm flex items-center gap-1.5 py-1 px-3.5 font-bold">
+        <app-icon name="shield-check" size="w-4 h-4"></app-icon>
+        <span>LEGAL COMPLIANCE</span>
+      </span>
+    </div>
+    <h1 class="legal-title font-display text-3xl sm:text-4xl lg:text-5xl text-[#222222] dark:text-[#F3F4F6] uppercase tracking-tight mb-3">
+      Terms of Service
+    </h1>
+    <p class="font-body text-sm sm:text-base lg:text-lg text-gray-700 dark:text-gray-300 max-w-2xl mx-auto font-medium leading-relaxed mb-4">
+      Please review the terms and conditions governing your usage of the SabioChess platform, local engine analysis, and related services.
+    </p>
+    <div class="meta-row flex items-center justify-center gap-2 font-label text-xs sm:text-sm text-gray-600 dark:text-gray-400 font-bold">
+      <span>Effective Date: {{ lastUpdated() }}</span>
+      <span>•</span>
+      <span>Version {{ version() }}</span>
+    </div>
+  </header>
+
+  <!-- Legal Main Layout -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+    <!-- Table of Contents Sidebar (lg:col-span-4) -->
+    <aside class="lg:col-span-4 lg:sticky lg:top-6" aria-label="Table of Contents">
+      <div class="card-brutal p-5 sm:p-6 flex flex-col gap-4">
+        <div class="flex items-center justify-between border-b-2 border-[#222222] dark:border-black pb-3">
+          <h2 class="font-display text-sm sm:text-base uppercase tracking-wider text-[#222222] dark:text-[#F3F4F6]">
+            Quick Navigation
+          </h2>
+          <app-icon name="document-text" size="w-4 h-4 text-[#FF4F00]"></app-icon>
+        </div>
+
+        <ul class="flex flex-col gap-2 font-accent text-xs sm:text-sm">
+          <li>
+            <button
+              type="button"
+              class="w-full text-left py-2 px-3 border-2 transition-all duration-150 font-bold uppercase tracking-wide flex items-center justify-between cursor-pointer"
+              [ngClass]="activeSection() === 'acceptance' 
+                ? 'bg-[#FF4F00] text-white border-[#222222] dark:border-black shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]' 
+                : 'bg-white dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] border-[#222222] dark:border-black hover:bg-gray-100 dark:hover:bg-[#373A46]'"
+              (click)="scrollToSection('acceptance')"
+            >
+              <span>1. Acceptance of Terms</span>
+              <app-icon name="chevron-right" size="w-3.5 h-3.5"></app-icon>
+            </button>
+          </li>
+          <li>
+            <button
+              type="button"
+              class="w-full text-left py-2 px-3 border-2 transition-all duration-150 font-bold uppercase tracking-wide flex items-center justify-between cursor-pointer"
+              [ngClass]="activeSection() === 'fair-play' 
+                ? 'bg-[#FF4F00] text-white border-[#222222] dark:border-black shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]' 
+                : 'bg-white dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] border-[#222222] dark:border-black hover:bg-gray-100 dark:hover:bg-[#373A46]'"
+              (click)="scrollToSection('fair-play')"
+            >
+              <span>2. Fair Play & Anti-Cheating</span>
+              <app-icon name="chevron-right" size="w-3.5 h-3.5"></app-icon>
+            </button>
+          </li>
+          <li>
+            <button
+              type="button"
+              class="w-full text-left py-2 px-3 border-2 transition-all duration-150 font-bold uppercase tracking-wide flex items-center justify-between cursor-pointer"
+              [ngClass]="activeSection() === 'subscriptions' 
+                ? 'bg-[#FF4F00] text-white border-[#222222] dark:border-black shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]' 
+                : 'bg-white dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] border-[#222222] dark:border-black hover:bg-gray-100 dark:hover:bg-[#373A46]'"
+              (click)="scrollToSection('subscriptions')"
+            >
+              <span>3. Energy & Subscriptions</span>
+              <app-icon name="chevron-right" size="w-3.5 h-3.5"></app-icon>
+            </button>
+          </li>
+          <li>
+            <button
+              type="button"
+              class="w-full text-left py-2 px-3 border-2 transition-all duration-150 font-bold uppercase tracking-wide flex items-center justify-between cursor-pointer"
+              [ngClass]="activeSection() === 'ip-licenses' 
+                ? 'bg-[#FF4F00] text-white border-[#222222] dark:border-black shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]' 
+                : 'bg-white dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] border-[#222222] dark:border-black hover:bg-gray-100 dark:hover:bg-[#373A46]'"
+              (click)="scrollToSection('ip-licenses')"
+            >
+              <span>4. Engine Licenses & IP</span>
+              <app-icon name="chevron-right" size="w-3.5 h-3.5"></app-icon>
+            </button>
+          </li>
+          <li>
+            <button
+              type="button"
+              class="w-full text-left py-2 px-3 border-2 transition-all duration-150 font-bold uppercase tracking-wide flex items-center justify-between cursor-pointer"
+              [ngClass]="activeSection() === 'liability' 
+                ? 'bg-[#FF4F00] text-white border-[#222222] dark:border-black shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]' 
+                : 'bg-white dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] border-[#222222] dark:border-black hover:bg-gray-100 dark:hover:bg-[#373A46]'"
+              (click)="scrollToSection('liability')"
+            >
+              <span>5. Limitation of Liability</span>
+              <app-icon name="chevron-right" size="w-3.5 h-3.5"></app-icon>
+            </button>
+          </li>
+        </ul>
+
+        <!-- Info CTA Box -->
+        <div class="mt-2 pt-4 border-t-2 border-[#222222] dark:border-black flex flex-col gap-2">
+          <p class="font-body text-xs text-gray-700 dark:text-gray-300 font-medium">
+            Have questions regarding energy refills, engine licenses, or subscriptions?
+          </p>
+          <a [routerLink]="['/']" class="btn-brutal btn-brutal-orange !py-1.5 !px-3 text-xs flex items-center justify-center gap-1.5 font-accent no-underline">
+            <app-icon name="star" size="w-3.5 h-3.5"></app-icon>
+            <span>EXPLORE SABIOCHESS PRO</span>
+          </a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area (lg:col-span-8) -->
+    <main class="lg:col-span-8 flex flex-col gap-6">
+      <!-- Section 1: Acceptance of Terms -->
+      <section id="acceptance" class="card-brutal p-6 sm:p-8 relative scroll-mt-24">
+        <div class="section-watermark select-none absolute top-4 right-6 font-display text-4xl sm:text-5xl text-[#222222]/10 dark:text-white/10 font-black pointer-events-none">
+          01
+        </div>
+        <h2 class="font-display text-xl sm:text-2xl text-[#222222] dark:text-[#F3F4F6] uppercase mb-4 tracking-tight">
+          1. Acceptance of Terms
+        </h2>
+        <div class="font-body text-sm sm:text-base text-gray-800 dark:text-gray-200 leading-relaxed space-y-3 font-medium">
+          <p>
+            By creating an account, accessing, or using SabioChess (the "Service"), you agree to be bound by these Terms of Service ("Terms") and our Privacy Policy. If you disagree with any portion of these Terms, you may not access or use our services.
+          </p>
+          <p>
+            We reserve the right to modify these Terms at any time. Material updates will be communicated through in-app platform notifications or via registered user emails prior to taking effect. Continued use of SabioChess following any modifications constitutes your acknowledgment and acceptance of the revised Terms.
+          </p>
+        </div>
+      </section>
+
+      <!-- Section 2: Fair Play & Chess Anti-Cheating -->
+      <section id="fair-play" class="card-brutal p-6 sm:p-8 relative scroll-mt-24 border-l-[6px] border-l-[#FF4F00]">
+        <div class="section-watermark select-none absolute top-4 right-6 font-display text-4xl sm:text-5xl text-[#FF4F00]/20 font-black pointer-events-none">
+          02
+        </div>
+        <h2 class="font-display text-xl sm:text-2xl text-[#222222] dark:text-[#F3F4F6] uppercase mb-4 tracking-tight">
+          2. Fair Play & Chess Anti-Cheating Policy
+        </h2>
+
+        <!-- Warning Callout -->
+        <div class="border-[3px] border-[#FF4F00] bg-[#FF4F00]/10 dark:bg-[#FF4F00]/20 p-4 sm:p-5 mb-5 flex items-start gap-3.5">
+          <app-icon name="exclamation-triangle" size="w-6 h-6 text-[#FF4F00] shrink-0 mt-0.5"></app-icon>
+          <div class="font-body text-xs sm:text-sm text-[#222222] dark:text-[#F3F4F6]">
+            <strong class="font-accent text-sm sm:text-base block mb-1 text-[#FF4F00] uppercase tracking-wide">
+              Zero Tolerance for Live Cheating:
+            </strong>
+            SabioChess is designed exclusively for post-game review, self-study, tactical puzzle calculations, and educational chess improvement.
+          </div>
+        </div>
+
+        <div class="font-body text-sm sm:text-base text-gray-800 dark:text-gray-200 leading-relaxed space-y-3 font-medium">
+          <p>
+            You strictly agree <strong>NOT</strong> to use SabioChess's real-time evaluation bar, Stockfish engine calculations, move suggestions, or opening book explorer during any active, live rated chess game on external platforms (including Chess.com, Lichess.org, FIDE Online Arena, or in-person competitive tournaments).
+          </p>
+          <p>
+            Any violation of fair play guidelines, attempts to inject bot assistance into live external games, or automated scraping/abuse of our services will result in immediate permanent suspension or termination of your SabioChess account without refund.
+          </p>
+        </div>
+      </section>
+
+      <!-- Section 3: Energy System, Subscriptions & Billing -->
+      <section id="subscriptions" class="card-brutal p-6 sm:p-8 relative scroll-mt-24">
+        <div class="section-watermark select-none absolute top-4 right-6 font-display text-4xl sm:text-5xl text-[#222222]/10 dark:text-white/10 font-black pointer-events-none">
+          03
+        </div>
+        <h2 class="font-display text-xl sm:text-2xl text-[#222222] dark:text-[#F3F4F6] uppercase mb-4 tracking-tight">
+          3. Energy System, Subscriptions & Billing
+        </h2>
+        <div class="font-body text-sm sm:text-base text-gray-800 dark:text-gray-200 leading-relaxed space-y-3 font-medium">
+          <p>
+            SabioChess provides free tier features powered by our energy refill system alongside optional lifetime and premium upgrades ("Founder Lifetime VIP Pass"):
+          </p>
+          <ul class="list-disc pl-5 space-y-2 text-sm sm:text-base">
+            <li>
+              <strong class="text-[#222222] dark:text-white">Energy System:</strong> Free tier users receive daily energy refills allowing complimentary high-depth game reviews and analyses. Energy replenishes automatically at the start of each daily cycle.
+            </li>
+            <li>
+              <strong class="text-[#222222] dark:text-white">Lifetime Access & Pro:</strong> Founder Lifetime Pass involves a one-time purchase with no recurring subscription fees, granting permanent unlimited energy and prioritized cloud calculations.
+            </li>
+            <li>
+              <strong class="text-[#222222] dark:text-white">Payment Processing:</strong> All transactions are processed securely through PCI-DSS certified payment gateways. SabioChess does not store or process raw credit card numbers directly.
+            </li>
+            <li>
+              <strong class="text-[#222222] dark:text-white">Refund Policy:</strong> We offer a 14-day refund window for eligible purchases where verified technical faults prevented access to the service.
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Section 4: Open-Source Engine Licenses & IP -->
+      <section id="ip-licenses" class="card-brutal p-6 sm:p-8 relative scroll-mt-24">
+        <div class="section-watermark select-none absolute top-4 right-6 font-display text-4xl sm:text-5xl text-[#222222]/10 dark:text-white/10 font-black pointer-events-none">
+          04
+        </div>
+        <h2 class="font-display text-xl sm:text-2xl text-[#222222] dark:text-[#F3F4F6] uppercase mb-4 tracking-tight">
+          4. Open-Source Engine Licenses & Intellectual Property
+        </h2>
+        <div class="font-body text-sm sm:text-base text-gray-800 dark:text-gray-200 leading-relaxed space-y-3 font-medium">
+          <p>
+            SabioChess incorporates the world-renowned open-source 
+            <a href="https://stockfishchess.org" target="_blank" rel="noopener noreferrer" class="text-[#FF4F00] hover:underline font-bold">Stockfish</a> 
+            chess engine in compliance with the 
+            <a href="https://github.com/nmrugg/stockfish.js?tab=GPL-3.0-1-ov-file" target="_blank" rel="noopener noreferrer" class="text-[#0E4C92] dark:text-[#60A5FA] hover:underline font-bold">GNU General Public License v3 (GPLv3)</a>.
+          </p>
+          <p>
+            Stockfish is developed and maintained by the 
+            <a href="https://github.com/official-stockfish/Stockfish" target="_blank" rel="noopener noreferrer" class="text-[#FF4F00] hover:underline font-bold">Stockfish Community</a> 
+            and ported to JavaScript and WebAssembly (WASM) via 
+            <a href="https://github.com/nmrugg/stockfish.js" target="_blank" rel="noopener noreferrer" class="text-[#0E4C92] dark:text-[#60A5FA] hover:underline font-bold">stockfish.js (nmrugg)</a>. 
+            You can inspect and obtain the original engine source code at the 
+            <a href="https://github.com/nmrugg/stockfish.js" target="_blank" rel="noopener noreferrer" class="text-[#0E4C92] dark:text-[#60A5FA] hover:underline font-bold">stockfish.js GitHub repository</a> 
+            and the official 
+            <a href="https://github.com/official-stockfish/Stockfish" target="_blank" rel="noopener noreferrer" class="text-[#FF4F00] hover:underline font-bold">Stockfish project repository</a>.
+          </p>
+          <p>
+            All proprietary user interface designs, custom evaluation graphs, tactical classification algorithms, dynamic coach commentary components, custom audio soundscapes, logos, and branding remain the exclusive intellectual property of SabioChess.
+          </p>
+        </div>
+      </section>
+
+      <!-- Section 5: Disclaimer & Limitation of Liability -->
+      <section id="liability" class="card-brutal p-6 sm:p-8 relative scroll-mt-24">
+        <div class="section-watermark select-none absolute top-4 right-6 font-display text-4xl sm:text-5xl text-[#222222]/10 dark:text-white/10 font-black pointer-events-none">
+          05
+        </div>
+        <h2 class="font-display text-xl sm:text-2xl text-[#222222] dark:text-[#F3F4F6] uppercase mb-4 tracking-tight">
+          5. Disclaimer & Limitation of Liability
+        </h2>
+        <div class="font-body text-sm sm:text-base text-gray-800 dark:text-gray-200 leading-relaxed space-y-3 font-medium">
+          <p>
+            The service is provided on an <strong>"AS IS"</strong> and <strong>"AS AVAILABLE"</strong> basis. Engine analyses run in-browser via WebAssembly (WASM) using your local device hardware resources. SabioChess is not liable for hardware performance variances, battery consumption, third-party platform API changes, or calculation discrepancies.
+          </p>
+          <p>
+            Under no circumstances shall SabioChess or its maintainers be held liable for any indirect, incidental, consequential, special, or exemplary damages arising out of your access or inability to access the platform.
+          </p>
+        </div>
+
+        <div class="mt-8 pt-6 border-t-2 border-[#222222] dark:border-black flex items-center justify-between flex-wrap gap-4">
+          <a [routerLink]="['/']" class="btn-brutal btn-brutal-orange !py-2 !px-4 text-xs sm:text-sm inline-flex items-center gap-2 font-accent no-underline">
+            <app-icon name="arrow-left" size="w-4 h-4"></app-icon>
+            <span>RETURN TO CHESS WORKBENCH</span>
+          </a>
+          <span class="font-label text-xs text-gray-500 dark:text-gray-400 font-bold">
+            SABIOCHESS COMPLIANCE 2026
+          </span>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>

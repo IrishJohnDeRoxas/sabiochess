@@ -1,5 +1,7 @@
 import { TestBed } from '@angular/core/testing';
+import { provideRouter, Router } from '@angular/router';
 import { App } from './app';
+import { routes } from './app.routes';
 import { ChessGameService } from './services/chess-game.service';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
@@ -8,6 +10,9 @@ import { PlayerCardComponent } from './components/player-card/player-card.compon
 import { EvalBarComponent } from './components/eval-bar/eval-bar.component';
 import { SidebarTabsComponent } from './components/sidebar-tabs/sidebar-tabs.component';
 import { LogoComponent } from './components/logo/logo.component';
+import { AnalyzerComponent } from './components/analyzer/analyzer.component';
+import { TermsComponent } from './components/legal/terms.component';
+import { PrivacyComponent } from './components/legal/privacy.component';
 import { SettingsService } from './services/settings.service';
 import { SoundService } from './services/sound.service';
 import { GameAnalysisService } from './services/game-analysis.service';
@@ -25,8 +30,17 @@ describe('SabioChess Neubrutalist Suite', () => {
         EvalBarComponent,
         SidebarTabsComponent,
         LogoComponent,
+        AnalyzerComponent,
+        TermsComponent,
+        PrivacyComponent,
       ],
-      providers: [ChessGameService, SettingsService, SoundService, GameAnalysisService],
+      providers: [
+        provideRouter(routes),
+        ChessGameService,
+        SettingsService,
+        SoundService,
+        GameAnalysisService,
+      ],
     }).compileComponents();
   });
 
@@ -36,10 +50,14 @@ describe('SabioChess Neubrutalist Suite', () => {
     expect(app).toBeTruthy();
   });
 
-  it('should render player cards with username and rating', () => {
+  it('should render player cards with username and rating', async () => {
     const fixture = TestBed.createComponent(App);
+    const router = TestBed.inject(Router);
     const service = TestBed.inject(ChessGameService);
     service.loadSampleGame('opera');
+    await router.navigateByUrl('/');
+    fixture.detectChanges();
+    await fixture.whenStable();
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
@@ -47,6 +65,34 @@ describe('SabioChess Neubrutalist Suite', () => {
     expect(compiled.textContent).toContain('2600');
     expect(compiled.textContent).toContain('Duke Karl / Count Isouard');
     expect(compiled.textContent).toContain('2100');
+  });
+
+  it('should navigate to terms of service page', async () => {
+    const fixture = TestBed.createComponent(App);
+    const router = TestBed.inject(Router);
+    await router.navigateByUrl('/terms');
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.textContent).toContain('Terms of Service');
+    expect(compiled.textContent).toContain('Zero Tolerance for Live Cheating');
+    expect(compiled.textContent).toContain('Stockfish');
+  });
+
+  it('should navigate to privacy policy page', async () => {
+    const fixture = TestBed.createComponent(App);
+    const router = TestBed.inject(Router);
+    await router.navigateByUrl('/privacy');
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.textContent).toContain('Privacy Policy');
+    expect(compiled.textContent).toContain('DATA PRIVACY & GDPR');
+    expect(compiled.textContent).toContain('GDPR & CCPA Compliant');
   });
 
   it('should render the brand header with SabioChess title', () => {
@@ -107,4 +153,3 @@ describe('SabioChess Neubrutalist Suite', () => {
     expect(compiled.textContent).toContain('Chess');
   });
 });
-

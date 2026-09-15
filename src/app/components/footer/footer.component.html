@@ -4,7 +4,9 @@
     <div class="grid grid-cols-1 md:grid-cols-4 gap-8 items-start">
       <!-- Col 1: Brand & Bio -->
       <div class="md:col-span-2 flex flex-col gap-3.5">
-        <app-logo size="sm" [showSubtitle]="true"></app-logo>
+        <a [routerLink]="['/']" (click)="scrollToTop()" class="inline-block no-underline">
+          <app-logo size="sm" [showSubtitle]="true"></app-logo>
+        </a>
         <p class="font-body text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed max-w-md font-medium">
           Tactile neubrutalist chess analysis engine with instant CAPS review, dynamic eval graph momentum, opening book lookup, and customizable soundscapes.
         </p>
@@ -29,22 +31,22 @@
         <h3 class="font-display text-sm sm:text-base uppercase tracking-wider text-[#222222] dark:text-[#F3F4F6]">Platform</h3>
         <ul class="flex flex-col gap-2.5 font-body text-sm sm:text-base text-gray-700 dark:text-gray-300 font-medium">
           <li>
-            <span class="hover:text-[#FF4F00] dark:hover:text-[#FF4F00] cursor-pointer transition-colors inline-flex items-center gap-2">
+            <a [routerLink]="['/']" (click)="scrollToTop()" class="hover:text-[#FF4F00] dark:hover:text-[#FF4F00] cursor-pointer transition-colors inline-flex items-center gap-2 no-underline text-inherit">
               <app-icon name="chart-bar" size="w-4 h-4 text-[#0E4C92] dark:text-[#60A5FA]"></app-icon>
               <span>Game Review & CAPS</span>
-            </span>
+            </a>
           </li>
           <li>
-            <span class="hover:text-[#FF4F00] dark:hover:text-[#FF4F00] cursor-pointer transition-colors inline-flex items-center gap-2">
+            <a [routerLink]="['/']" (click)="scrollToTop()" class="hover:text-[#FF4F00] dark:hover:text-[#FF4F00] cursor-pointer transition-colors inline-flex items-center gap-2 no-underline text-inherit">
               <app-icon name="arrow-trending-up" size="w-4 h-4 text-[#FF4F00]"></app-icon>
               <span>Eval Graph Momentum</span>
-            </span>
+            </a>
           </li>
           <li>
-            <span class="hover:text-[#FF4F00] dark:hover:text-[#FF4F00] cursor-pointer transition-colors inline-flex items-center gap-2">
+            <a [routerLink]="['/']" (click)="scrollToTop()" class="hover:text-[#FF4F00] dark:hover:text-[#FF4F00] cursor-pointer transition-colors inline-flex items-center gap-2 no-underline text-inherit">
               <app-icon name="book-open" size="w-4 h-4 text-[#10B981]"></app-icon>
               <span>Opening Theory Explorer</span>
-            </span>
+            </a>
           </li>
           <li>
             <span class="hover:text-[#FF4F00] dark:hover:text-[#FF4F00] cursor-pointer transition-colors inline-flex items-center gap-2">
@@ -55,21 +57,21 @@
         </ul>
       </div>
 
-      <!-- Col 3: Resources & Community -->
+      <!-- Col 3: Resources & Legal -->
       <div class="flex flex-col gap-3">
         <h3 class="font-display text-sm sm:text-base uppercase tracking-wider text-[#222222] dark:text-[#F3F4F6]">Resources</h3>
         <ul class="flex flex-col gap-2.5 font-body text-sm sm:text-base text-gray-700 dark:text-gray-300 font-medium">
           <li>
-            <span class="hover:text-[#FF4F00] dark:hover:text-[#FF4F00] cursor-pointer transition-colors inline-flex items-center gap-2">
-              <app-icon name="speaker-wave" size="w-4 h-4 text-[#FF4F00]"></app-icon>
-              <span>Audio Sound Packs</span>
-            </span>
+            <a [routerLink]="['/terms']" (click)="scrollToTop()" class="hover:text-[#FF4F00] dark:hover:text-[#FF4F00] cursor-pointer transition-colors inline-flex items-center gap-2 no-underline text-inherit">
+              <app-icon name="document-text" size="w-4 h-4 text-[#FF4F00]"></app-icon>
+              <span>Terms of Service</span>
+            </a>
           </li>
           <li>
-            <span class="hover:text-[#FF4F00] dark:hover:text-[#FF4F00] cursor-pointer transition-colors inline-flex items-center gap-2">
-              <app-icon name="swatch" size="w-4 h-4 text-[#0E4C92] dark:text-[#60A5FA]"></app-icon>
-              <span>Neubrutalist Themes</span>
-            </span>
+            <a [routerLink]="['/privacy']" (click)="scrollToTop()" class="hover:text-[#FF4F00] dark:hover:text-[#FF4F00] cursor-pointer transition-colors inline-flex items-center gap-2 no-underline text-inherit">
+              <app-icon name="shield-check" size="w-4 h-4 text-[#0E4C92] dark:text-[#60A5FA]"></app-icon>
+              <span>Privacy Policy</span>
+            </a>
           </li>
           <li>
             <span class="hover:text-[#FF4F00] dark:hover:text-[#FF4F00] cursor-pointer transition-colors inline-flex items-center gap-2">
@@ -97,8 +99,8 @@
         <span>ALL RIGHTS RESERVED</span>
       </div>
       <div class="flex items-center gap-4 text-gray-700 dark:text-gray-400 font-bold">
-        <span class="hover:text-[#222222] dark:hover:text-white cursor-pointer transition-colors">PRIVACY</span>
-        <span class="hover:text-[#222222] dark:hover:text-white cursor-pointer transition-colors">TERMS</span>
+        <a [routerLink]="['/privacy']" (click)="scrollToTop()" class="hover:text-[#222222] dark:hover:text-white cursor-pointer transition-colors no-underline text-inherit">PRIVACY</a>
+        <a [routerLink]="['/terms']" (click)="scrollToTop()" class="hover:text-[#222222] dark:hover:text-white cursor-pointer transition-colors no-underline text-inherit">TERMS</a>
         <span class="hover:text-[#222222] dark:hover:text-white cursor-pointer transition-colors">CHANGELOG</span>
       </div>
     </div>
