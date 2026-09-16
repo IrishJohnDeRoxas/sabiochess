@@ -281,6 +281,33 @@ html.dark {
   box-shadow: 2px 2px 0 0 #000000 !important;
 }
 
+.dark .btn-brutal-orange {
+  background-color: #FF4F00;
+  color: #FFFFFF;
+}
+
+.dark .btn-brutal-orange:hover {
+  background-color: #e04500;
+}
+
+.dark .btn-brutal-green {
+  background-color: #10B981;
+  color: #FFFFFF;
+}
+
+.dark .btn-brutal-green:hover {
+  background-color: #059669;
+}
+
+.dark .btn-brutal-blue {
+  background-color: #0E4C92;
+  color: #FFFFFF;
+}
+
+.dark .btn-brutal-blue:hover {
+  background-color: #0b3d75;
+}
+
 .dark .btn-brutal-yellow {
   background-color: #FFDD00;
   color: #141519 !important;
