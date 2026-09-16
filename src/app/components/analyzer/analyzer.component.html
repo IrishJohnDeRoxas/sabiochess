@@ -1,8 +1,7 @@
-<main
-  class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 flex flex-col justify-center min-h-[calc(100vh-64px)]">
+<main class="analyzer-main flex-1 flex flex-col justify-center">
 
   <!-- Arena Grid Layout -->
-  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start lg:items-stretch my-auto">
+  <div class="arena-grid grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 items-start lg:items-stretch my-auto w-full">
 
     <!-- Board Area: Top Player + [Eval Bar + Chess Board] + Bottom Player (lg:col-span-7) -->
     <div class="lg:col-span-7 flex flex-col gap-2.5 sm:gap-3 w-full max-w-[640px] mx-auto lg:max-w-none animate-drop-in-tl-delay-1">
@@ -42,6 +41,81 @@
         [clock]="game.bottomClock()"
         [outcome]="game.bottomOutcome()"
       ></app-player-card>
+
+      <!-- Mobile Quick Move Navigation Bar (Easy thumb reach on mobile screens) -->
+      @if (game.history().length > 0) {
+      <div class="grid grid-cols-6 lg:hidden gap-1.5 p-1.5 bg-white dark:bg-[#1E1F24] border-2 border-[#222222] dark:border-black shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000] w-full">
+        <!-- First Move -->
+        <button
+          type="button"
+          (click)="game.goToStart()"
+          [disabled]="!game.canUndo()"
+          class="btn-brutal !py-2 !px-0 text-xs font-bold flex items-center justify-center bg-[#ECECD8] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+          title="First Move"
+          aria-label="First Move"
+        >
+          <app-icon name="chevron-double-left" size="w-4 h-4"></app-icon>
+        </button>
+
+        <!-- Previous Move -->
+        <button
+          type="button"
+          (click)="game.prevMove()"
+          [disabled]="!game.canUndo()"
+          class="btn-brutal !py-2 !px-0 text-xs font-bold flex items-center justify-center bg-[#ECECD8] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+          title="Previous Move"
+          aria-label="Previous Move"
+        >
+          <app-icon name="chevron-left" size="w-4 h-4"></app-icon>
+        </button>
+
+        <!-- Flip Board -->
+        <button
+          type="button"
+          (click)="game.flipBoard()"
+          class="btn-brutal !py-2 !px-0 text-xs font-bold flex items-center justify-center bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] cursor-pointer"
+          title="Flip Board"
+          aria-label="Flip Board"
+        >
+          <app-icon name="arrow-path" size="w-4 h-4"></app-icon>
+        </button>
+
+        <!-- Autoplay / Play-Pause -->
+        <button
+          type="button"
+          (click)="game.toggleAutoplay()"
+          class="btn-brutal !py-2 !px-0 text-xs font-bold flex items-center justify-center bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] cursor-pointer"
+          [title]="game.isAutoplaying() ? 'Pause Autoplay' : 'Play Moves'"
+          [attr.aria-label]="game.isAutoplaying() ? 'Pause Autoplay' : 'Play Moves'"
+        >
+          <app-icon [name]="game.isAutoplaying() ? 'pause' : 'play'" size="w-4 h-4"></app-icon>
+        </button>
+
+        <!-- Next Move -->
+        <button
+          type="button"
+          (click)="game.nextMove()"
+          [disabled]="!game.canRedo()"
+          class="btn-brutal btn-brutal-green !py-2 !px-0 text-xs font-bold flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000]"
+          title="Next Move"
+          aria-label="Next Move"
+        >
+          <app-icon name="chevron-right" size="w-4 h-4"></app-icon>
+        </button>
+
+        <!-- Last Move -->
+        <button
+          type="button"
+          (click)="game.goToEnd()"
+          [disabled]="!game.canRedo()"
+          class="btn-brutal !py-2 !px-0 text-xs font-bold flex items-center justify-center bg-[#ECECD8] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+          title="Last Move"
+          aria-label="Last Move"
+        >
+          <app-icon name="chevron-double-right" size="w-4 h-4"></app-icon>
+        </button>
+      </div>
+      }
 
     </div>
 

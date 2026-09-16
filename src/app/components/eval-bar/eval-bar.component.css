@@ -62,6 +62,13 @@
   white-space: nowrap;
 }
 
+@media (max-width: 640px) {
+  .eval-score-badge {
+    font-size: 0.7rem;
+    padding: 2px 1px;
+  }
+}
+
 /* Base without flip */
 .eval-bar-wrapper:not(.flipped) .eval-score-badge.white-adv {
   bottom: 4px;

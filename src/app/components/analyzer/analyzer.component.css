@@ -1,4 +1,41 @@
 :host {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0%;
+  min-height: 0;
   width: 100%;
+}
+
+.analyzer-main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  max-width: 80rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0.75rem 1rem;
+  min-height: calc(100dvh - 64px);
+}
+
+@media (min-width: 640px) {
+  .analyzer-main {
+    padding: 1rem 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .analyzer-main {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    height: calc(100dvh - 64px);
+    max-height: calc(100dvh - 64px);
+    box-sizing: border-box;
+  }
+
+  .arena-grid {
+    max-width: min(100%, min(1280px, calc((100dvh - 180px) * 1.68)));
+  }
 }

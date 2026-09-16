@@ -1,6 +1,6 @@
 <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1F24] flex flex-col gap-2.5 w-full text-[#222222] dark:text-[#F3F4F6]">
   <!-- Header -->
-  <div class="flex items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-2">
+  <div class="flex flex-wrap items-center justify-between gap-1.5 border-b-2 border-[#222222] dark:border-[#373A46] pb-2">
     <div class="flex items-center gap-1.5">
       <span class="p-1 bg-[#10B981] text-white inline-flex border border-[#222222] dark:border-black">
         <app-icon name="arrow-down-tray" size="w-3.5 h-3.5"></app-icon>
@@ -13,7 +13,7 @@
       <button
         type="button"
         (click)="selectPlatform('chess.com')"
-        class="badge-brutal cursor-pointer text-[11px] sm:text-xs !px-2 !py-1 transition-colors font-bold"
+        class="badge-brutal cursor-pointer text-[10px] sm:text-xs !px-1.5 sm:!px-2 !py-0.5 sm:!py-1 transition-colors font-bold"
         [ngClass]="activePlatform() === 'chess.com' ? 'bg-[#10B981] text-white' : 'bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6]'"
       >
         CHESS.COM
@@ -23,11 +23,11 @@
         type="button"
         disabled
         title="Lichess feature is currently in development"
-        class="badge-brutal opacity-50 cursor-not-allowed text-[11px] sm:text-xs !px-2 !py-1 font-bold bg-[#D9D9D9] dark:bg-[#2A2B32] text-gray-500 dark:text-gray-400 flex items-center gap-1 select-none"
+        class="badge-brutal opacity-50 cursor-not-allowed text-[10px] sm:text-xs !px-1.5 sm:!px-2 !py-0.5 sm:!py-1 font-bold bg-[#D9D9D9] dark:bg-[#2A2B32] text-gray-500 dark:text-gray-400 flex items-center gap-1 select-none"
       >
-        <app-icon name="lock-closed" size="w-3 h-3"></app-icon>
+        <app-icon name="lock-closed" size="w-2.5 h-2.5 sm:w-3 sm:h-3"></app-icon>
         <span>LICHESS</span>
-        <span class="text-[9px] bg-amber-500 text-black px-1 py-0.5 leading-none font-mono font-bold uppercase">DEV</span>
+        <span class="text-[8px] sm:text-[9px] bg-amber-500 text-black px-1 py-0.2 leading-none font-mono font-bold uppercase">DEV</span>
       </button>
     </div>
   </div>

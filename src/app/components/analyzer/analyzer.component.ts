@@ -7,6 +7,8 @@ import { SidebarTabsComponent } from '../sidebar-tabs/sidebar-tabs.component';
 import { SettingsService } from '../../services/settings.service';
 import { ChessGameService } from '../../services/chess-game.service';
 
+import { IconComponent } from '../icon/icon.component';
+
 @Component({
   selector: 'app-analyzer',
   standalone: true,
@@ -16,6 +18,7 @@ import { ChessGameService } from '../../services/chess-game.service';
     PlayerCardComponent,
     EvalBarComponent,
     SidebarTabsComponent,
+    IconComponent,
   ],
   templateUrl: './analyzer.component.html',
   styleUrls: ['./analyzer.component.css'],

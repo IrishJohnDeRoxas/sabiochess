@@ -48,7 +48,8 @@ export type IconName =
   | 'hand-thumb-up'
   | 'heart'
   | 'arrow-left'
-  | 'arrow-right';
+  | 'arrow-right'
+  | 'bars-3';
 
 @Component({
   selector: 'app-icon',
@@ -386,6 +387,12 @@ export class IconComponent {
         return [
           {
             d: 'M10.293 5.293a1 1 0 0 1 1.414 0l4 4a1 1 0 0 1 0 1.414l-4 4a1 1 0 0 1-1.414-1.414L12.586 11H5a1 1 0 1 1 0-2h7.586l-2.293-2.293a1 1 0 0 1 0-1.414Z',
+          },
+        ];
+      case 'bars-3':
+        return [
+          {
+            d: 'M2 4.75A.75.75 0 0 1 2.75 4h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 4.75ZM2 10a.75.75 0 0 1 .75-.75h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 10Zm0 5.25a.75.75 0 0 1 .75-.75h14.5a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1-.75-.75Z',
           },
         ];
       default:
