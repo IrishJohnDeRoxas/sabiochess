@@ -12,25 +12,25 @@
     <div class="flex justify-center mb-3">
       <span class="badge-brutal bg-[#0E4C92] text-white text-xs sm:text-sm flex items-center gap-1.5 py-1 px-3.5 font-bold">
         <app-icon name="shield-check" size="w-4 h-4"></app-icon>
-        <span>DATA PRIVACY & GDPR</span>
+        <span>DATA PRIVACY</span>
       </span>
     </div>
     <h1 class="legal-title font-display text-3xl sm:text-4xl lg:text-5xl text-[#222222] dark:text-[#F3F4F6] uppercase tracking-tight mb-3">
       Privacy Policy
     </h1>
     <p class="font-body text-sm sm:text-base lg:text-lg text-gray-700 dark:text-gray-300 max-w-2xl mx-auto font-medium leading-relaxed mb-4">
-      Learn how SabioChess safeguards your personal information, game archives, PGN data, and account details.
+      SabioChess is a fully local, account-free tool. Your games never leave your browser — here's exactly what that means for your privacy.
     </p>
     <div class="meta-row flex items-center justify-center gap-2 font-label text-xs sm:text-sm text-gray-600 dark:text-gray-400 font-bold">
       <span>Last Revised: {{ lastUpdated() }}</span>
       <span>•</span>
-      <span>GDPR & CCPA Compliant</span>
+      <span>No Accounts · No Tracking</span>
     </div>
   </header>
 
   <!-- Legal Main Layout -->
   <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-    <!-- Table of Contents Sidebar (lg:col-span-4) -->
+    <!-- Table of Contents Sidebar -->
     <aside class="lg:col-span-4 lg:sticky lg:top-6" aria-label="Table of Contents">
       <div class="card-brutal p-5 sm:p-6 flex flex-col gap-4">
         <div class="flex items-center justify-between border-b-2 border-[#222222] dark:border-black pb-3">
@@ -45,12 +45,12 @@
             <button
               type="button"
               class="w-full text-left py-2 px-3 border-2 transition-all duration-150 font-bold uppercase tracking-wide flex items-center justify-between cursor-pointer"
-              [ngClass]="activeSection() === 'collection' 
-                ? 'bg-[#0E4C92] text-white border-[#222222] dark:border-black shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]' 
+              [ngClass]="activeSection() === 'collection'
+                ? 'bg-[#0E4C92] text-white border-[#222222] dark:border-black shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]'
                 : 'bg-white dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] border-[#222222] dark:border-black hover:bg-gray-100 dark:hover:bg-[#373A46]'"
               (click)="scrollToSection('collection')"
             >
-              <span>1. Information We Collect</span>
+              <span>1. What We Collect</span>
               <app-icon name="chevron-right" size="w-3.5 h-3.5"></app-icon>
             </button>
           </li>
@@ -58,12 +58,12 @@
             <button
               type="button"
               class="w-full text-left py-2 px-3 border-2 transition-all duration-150 font-bold uppercase tracking-wide flex items-center justify-between cursor-pointer"
-              [ngClass]="activeSection() === 'usage' 
-                ? 'bg-[#0E4C92] text-white border-[#222222] dark:border-black shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]' 
+              [ngClass]="activeSection() === 'local-storage'
+                ? 'bg-[#0E4C92] text-white border-[#222222] dark:border-black shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]'
                 : 'bg-white dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] border-[#222222] dark:border-black hover:bg-gray-100 dark:hover:bg-[#373A46]'"
-              (click)="scrollToSection('usage')"
+              (click)="scrollToSection('local-storage')"
             >
-              <span>2. How We Use Data</span>
+              <span>2. Local Storage</span>
               <app-icon name="chevron-right" size="w-3.5 h-3.5"></app-icon>
             </button>
           </li>
@@ -71,25 +71,12 @@
             <button
               type="button"
               class="w-full text-left py-2 px-3 border-2 transition-all duration-150 font-bold uppercase tracking-wide flex items-center justify-between cursor-pointer"
-              [ngClass]="activeSection() === 'storage' 
-                ? 'bg-[#0E4C92] text-white border-[#222222] dark:border-black shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]' 
-                : 'bg-white dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] border-[#222222] dark:border-black hover:bg-gray-100 dark:hover:bg-[#373A46]'"
-              (click)="scrollToSection('storage')"
-            >
-              <span>3. Storage & Security</span>
-              <app-icon name="chevron-right" size="w-3.5 h-3.5"></app-icon>
-            </button>
-          </li>
-          <li>
-            <button
-              type="button"
-              class="w-full text-left py-2 px-3 border-2 transition-all duration-150 font-bold uppercase tracking-wide flex items-center justify-between cursor-pointer"
-              [ngClass]="activeSection() === 'third-parties' 
-                ? 'bg-[#0E4C92] text-white border-[#222222] dark:border-black shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]' 
+              [ngClass]="activeSection() === 'third-parties'
+                ? 'bg-[#0E4C92] text-white border-[#222222] dark:border-black shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]'
                 : 'bg-white dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] border-[#222222] dark:border-black hover:bg-gray-100 dark:hover:bg-[#373A46]'"
               (click)="scrollToSection('third-parties')"
             >
-              <span>4. Third-Party Services</span>
+              <span>3. Third-Party APIs</span>
               <app-icon name="chevron-right" size="w-3.5 h-3.5"></app-icon>
             </button>
           </li>
@@ -97,12 +84,25 @@
             <button
               type="button"
               class="w-full text-left py-2 px-3 border-2 transition-all duration-150 font-bold uppercase tracking-wide flex items-center justify-between cursor-pointer"
-              [ngClass]="activeSection() === 'rights' 
-                ? 'bg-[#0E4C92] text-white border-[#222222] dark:border-black shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]' 
+              [ngClass]="activeSection() === 'engine'
+                ? 'bg-[#0E4C92] text-white border-[#222222] dark:border-black shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]'
                 : 'bg-white dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] border-[#222222] dark:border-black hover:bg-gray-100 dark:hover:bg-[#373A46]'"
-              (click)="scrollToSection('rights')"
+              (click)="scrollToSection('engine')"
             >
-              <span>5. Your GDPR & CCPA Rights</span>
+              <span>4. Local Engine &amp; Analysis</span>
+              <app-icon name="chevron-right" size="w-3.5 h-3.5"></app-icon>
+            </button>
+          </li>
+          <li>
+            <button
+              type="button"
+              class="w-full text-left py-2 px-3 border-2 transition-all duration-150 font-bold uppercase tracking-wide flex items-center justify-between cursor-pointer"
+              [ngClass]="activeSection() === 'your-control'
+                ? 'bg-[#0E4C92] text-white border-[#222222] dark:border-black shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]'
+                : 'bg-white dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] border-[#222222] dark:border-black hover:bg-gray-100 dark:hover:bg-[#373A46]'"
+              (click)="scrollToSection('your-control')"
+            >
+              <span>5. Your Control</span>
               <app-icon name="chevron-right" size="w-3.5 h-3.5"></app-icon>
             </button>
           </li>
@@ -111,7 +111,7 @@
         <!-- Related Legal Link -->
         <div class="mt-2 pt-4 border-t-2 border-[#222222] dark:border-black flex flex-col gap-2">
           <p class="font-body text-xs text-gray-700 dark:text-gray-300 font-medium">
-            Looking for platform rules and engine licenses?
+            Looking for platform rules and engine license info?
           </p>
           <a [routerLink]="['/terms']" class="btn-brutal btn-brutal-orange !py-1.5 !px-3 text-xs flex items-center justify-center gap-1.5 font-accent no-underline">
             <app-icon name="document-text" size="w-3.5 h-3.5"></app-icon>
@@ -121,110 +121,140 @@
       </div>
     </aside>
 
-    <!-- Main Content Area (lg:col-span-8) -->
+    <!-- Main Content Area -->
     <main class="lg:col-span-8 flex flex-col gap-6">
-      <!-- Section 1: Information We Collect -->
+      <!-- Section 1: What We Collect -->
       <section id="collection" class="card-brutal p-6 sm:p-8 relative scroll-mt-24">
         <div class="section-watermark select-none absolute top-4 right-6 font-display text-4xl sm:text-5xl text-[#222222]/10 dark:text-white/10 font-black pointer-events-none">
           01
         </div>
         <h2 class="font-display text-xl sm:text-2xl text-[#222222] dark:text-[#F3F4F6] uppercase mb-4 tracking-tight">
-          1. Information We Collect
+          1. What We Collect
         </h2>
         <div class="font-body text-sm sm:text-base text-gray-800 dark:text-gray-200 leading-relaxed space-y-3 font-medium">
           <p>
-            We collect minimal information necessary to deliver high-performance chess analysis:
+            SabioChess collects <strong>almost no data at all</strong>. There are no accounts, no emails, no passwords, no profiles, and no tracking.
           </p>
           <ul class="list-disc pl-5 space-y-2 text-sm sm:text-base">
             <li>
-              <strong class="text-[#222222] dark:text-white">Local Preferences:</strong> Board theme, sound settings, analysis depth, and platform usernames stored securely in your browser's LocalStorage.
+              <strong class="text-[#222222] dark:text-white">Your preferences only:</strong> Board theme, sound pack, volume, analysis depth, dark/light mode, auto-evaluation toggle, and platform usernames (Chess.com / Lichess) are saved locally in your browser's <code>localStorage</code>. Nothing is sent to any server.
             </li>
             <li>
-              <strong class="text-[#222222] dark:text-white">Chess &amp; PGN Data:</strong> Portable Game Notation (PGN) text and move evaluations computed locally in your browser via Stockfish WebAssembly.
+              <strong class="text-[#222222] dark:text-white">No game storage:</strong> PGN data you paste or import is processed in-memory only. It is never stored, uploaded, or retained after you close the tab.
             </li>
             <li>
-              <strong class="text-[#222222] dark:text-white">Zero Mandatory Accounts:</strong> No passwords or private profiles required to analyze unlimited chess games.
+              <strong class="text-[#222222] dark:text-white">No analytics or tracking:</strong> SabioChess does not use cookies, tracking pixels, analytics SDKs, or any fingerprinting technology.
             </li>
           </ul>
         </div>
       </section>
 
-      <!-- Section 2: How We Use Data -->
-      <section id="usage" class="card-brutal p-6 sm:p-8 relative scroll-mt-24">
-        <div class="section-watermark select-none absolute top-4 right-6 font-display text-4xl sm:text-5xl text-[#222222]/10 dark:text-white/10 font-black pointer-events-none">
+      <!-- Section 2: Local Storage -->
+      <section id="local-storage" class="card-brutal p-6 sm:p-8 relative scroll-mt-24 border-l-[6px] border-l-[#0E4C92]">
+        <div class="section-watermark select-none absolute top-4 right-6 font-display text-4xl sm:text-5xl text-[#0E4C92]/20 font-black pointer-events-none">
           02
         </div>
         <h2 class="font-display text-xl sm:text-2xl text-[#222222] dark:text-[#F3F4F6] uppercase mb-4 tracking-tight">
-          2. How We Use Your Information
+          2. Local Storage &amp; Settings
         </h2>
         <div class="font-body text-sm sm:text-base text-gray-800 dark:text-gray-200 leading-relaxed space-y-3 font-medium">
           <p>
-            Your data is used strictly to:
+            The only data persisted between sessions is your <strong>settings configuration</strong>, stored under the key <code>sabiochess_settings_v2</code> in your browser's <code>localStorage</code>. This includes:
           </p>
           <ul class="list-disc pl-5 space-y-2 text-sm sm:text-base">
-            <li>Compute move evaluations, blunders, and accuracy scores via Stockfish 18 WASM.</li>
-            <li>Persist your custom board themes and sound settings across visits.</li>
-            <li>Fetch public games from Chess.com when requested.</li>
+            <li>App theme (dark / light)</li>
+            <li>Board theme selection</li>
+            <li>Sound pack choice and volume level</li>
+            <li>Analysis depth (10–22 plies)</li>
+            <li>Auto-evaluation and auto-queen promotion toggles</li>
+            <li>Chess.com and Lichess usernames (for game fetch convenience)</li>
           </ul>
+          <p>
+            This data never leaves your device. You can clear it at any time by clearing your browser's site data or using the "Reset to Defaults" button in the Settings tab.
+          </p>
         </div>
       </section>
 
-
-      <!-- Section 3: Storage & Security -->
-      <section id="storage" class="card-brutal p-6 sm:p-8 relative scroll-mt-24 border-l-[6px] border-l-[#0E4C92]">
-        <div class="section-watermark select-none absolute top-4 right-6 font-display text-4xl sm:text-5xl text-[#0E4C92]/20 font-black pointer-events-none">
+      <!-- Section 3: Third-Party APIs -->
+      <section id="third-parties" class="card-brutal p-6 sm:p-8 relative scroll-mt-24">
+        <div class="section-watermark select-none absolute top-4 right-6 font-display text-4xl sm:text-5xl text-[#222222]/10 dark:text-white/10 font-black pointer-events-none">
           03
         </div>
         <h2 class="font-display text-xl sm:text-2xl text-[#222222] dark:text-[#F3F4F6] uppercase mb-4 tracking-tight">
-          3. Data Storage & Security Standards
+          3. Third-Party APIs
         </h2>
         <div class="font-body text-sm sm:text-base text-gray-800 dark:text-gray-200 leading-relaxed space-y-3 font-medium">
           <p>
-            All communication between your browser and our backend is encrypted via <strong>TLS 1.3</strong>. User sessions and access tokens are secured using cryptographic signatures and timed expiration.
+            When you choose to import games by entering a Chess.com or Lichess username, SabioChess makes a direct read-only request to those platforms' <strong>public APIs</strong>:
+          </p>
+          <ul class="list-disc pl-5 space-y-2 text-sm sm:text-base">
+            <li>
+              <strong class="text-[#222222] dark:text-white">Chess.com Public API:</strong> Fetches publicly available game archives for the provided username. No authentication or Chess.com account is required.
+            </li>
+            <li>
+              <strong class="text-[#222222] dark:text-white">Lichess Public API:</strong> Fetches publicly available PGN game exports for the provided username. No authentication or Lichess account is required.
+            </li>
+          </ul>
+          <p>
+            These requests are made from your browser directly to Chess.com and Lichess. SabioChess does not proxy, store, or log any game data retrieved from these APIs. Your username is used only to form the API request URL and is not transmitted to any SabioChess server.
           </p>
           <p>
-            Game analysis is executed entirely on your client device in a sandbox Web Worker, ensuring your games remain completely private.
+            By using the game import feature, you acknowledge that the data is subject to
+            <a href="https://www.chess.com/legal/privacy" target="_blank" rel="noopener noreferrer" class="text-[#0E4C92] dark:text-[#60A5FA] hover:underline font-bold">Chess.com's Privacy Policy</a>
+            and
+            <a href="https://lichess.org/privacy" target="_blank" rel="noopener noreferrer" class="text-[#0E4C92] dark:text-[#60A5FA] hover:underline font-bold">Lichess's Privacy Policy</a>
+            respectively.
           </p>
         </div>
       </section>
 
-      <!-- Section 4: Third-Party Services -->
-      <section id="third-parties" class="card-brutal p-6 sm:p-8 relative scroll-mt-24">
+      <!-- Section 4: Local Engine & Analysis -->
+      <section id="engine" class="card-brutal p-6 sm:p-8 relative scroll-mt-24">
         <div class="section-watermark select-none absolute top-4 right-6 font-display text-4xl sm:text-5xl text-[#222222]/10 dark:text-white/10 font-black pointer-events-none">
           04
         </div>
         <h2 class="font-display text-xl sm:text-2xl text-[#222222] dark:text-[#F3F4F6] uppercase mb-4 tracking-tight">
-          4. Third-Party Service Providers
+          4. Local Engine &amp; Analysis Privacy
         </h2>
         <div class="font-body text-sm sm:text-base text-gray-800 dark:text-gray-200 leading-relaxed space-y-3 font-medium">
           <p>
-            We partner with vetted industry-leading providers for essential infrastructure:
+            All chess analysis — move evaluation, CAPS score calculation, blunder detection, and opening book lookups — runs <strong>entirely inside your browser</strong> using Stockfish 18 compiled to WebAssembly (WASM).
           </p>
-          <ul class="list-disc pl-5 space-y-2 text-sm sm:text-base">
-            <li><strong class="text-[#222222] dark:text-white">Payment Processors:</strong> PCI-DSS compliant payment processing.</li>
-            <li><strong class="text-[#222222] dark:text-white">Google Identity Services:</strong> Optional single-sign-on OAuth authentication.</li>
-            <li><strong class="text-[#222222] dark:text-white">Lichess & Chess.com Public APIs:</strong> Optional read-only import of user's public games.</li>
-          </ul>
+          <p>
+            Engine computation runs in an isolated Web Worker thread on your own device. No moves, positions, FEN strings, or PGN data are sent to any external server at any point during analysis.
+          </p>
+          <p>
+            Opening book lookups use locally bundled data. No external API calls are made for opening theory data.
+          </p>
         </div>
       </section>
 
-      <!-- Section 5: Your GDPR & CCPA Rights -->
-      <section id="rights" class="card-brutal p-6 sm:p-8 relative scroll-mt-24">
+      <!-- Section 5: Your Control -->
+      <section id="your-control" class="card-brutal p-6 sm:p-8 relative scroll-mt-24">
         <div class="section-watermark select-none absolute top-4 right-6 font-display text-4xl sm:text-5xl text-[#222222]/10 dark:text-white/10 font-black pointer-events-none">
           05
         </div>
         <h2 class="font-display text-xl sm:text-2xl text-[#222222] dark:text-[#F3F4F6] uppercase mb-4 tracking-tight">
-          5. Your Data Rights (GDPR & CCPA)
+          5. Your Control
         </h2>
         <div class="font-body text-sm sm:text-base text-gray-800 dark:text-gray-200 leading-relaxed space-y-3 font-medium">
           <p>
-            Regardless of your physical location, SabioChess extends the following rights:
+            Because SabioChess stores nothing on any server, you are always in complete control of your data:
           </p>
           <ul class="list-disc pl-5 space-y-2 text-sm sm:text-base">
-            <li><strong class="text-[#222222] dark:text-white">Right to Access & Portability:</strong> Export all saved games in PGN format at any time.</li>
-            <li><strong class="text-[#222222] dark:text-white">Right to Erasure (Right to be Forgotten):</strong> Request permanent deletion of your account and associated game records.</li>
-            <li><strong class="text-[#222222] dark:text-white">Right to Rectification:</strong> Edit your profile information, email, or connected platform usernames directly.</li>
+            <li>
+              <strong class="text-[#222222] dark:text-white">Clear settings:</strong> Use "Reset to Defaults" in the Settings tab, or clear your browser's site data for sabiochess.
+            </li>
+            <li>
+              <strong class="text-[#222222] dark:text-white">No account to delete:</strong> There is no account, profile, or server-side record associated with your use of SabioChess. Nothing to request deletion of.
+            </li>
+            <li>
+              <strong class="text-[#222222] dark:text-white">No opt-in required:</strong> No cookies, no consent banners, no marketing lists. You simply open the app and use it.
+            </li>
           </ul>
+          <p>
+            If you have any privacy concerns or questions, please reach out via our support channel.
+          </p>
         </div>
 
         <div class="mt-8 pt-6 border-t-2 border-[#222222] dark:border-black flex items-center justify-between flex-wrap gap-4">
@@ -233,7 +263,7 @@
             <span>RETURN TO CHESS WORKBENCH</span>
           </a>
           <span class="font-label text-xs text-gray-500 dark:text-gray-400 font-bold">
-            SABIOCHESS PRIVACY 2026
+            SABIOCHESS PRIVACY · SEP 2026
           </span>
         </div>
       </section>

@@ -42,136 +42,200 @@ export class ChangelogComponent implements OnInit {
 
   readonly releases = signal<ReleaseVersion[]>([
     {
-      version: 'v1.3.0',
+      version: 'v1.4.0',
       date: 'September 2026',
-      title: 'Board Annotations, Custom Sound Packs & Enhanced Evaluation Bar',
+      title: 'Skeleton Loaders, Always-Visible Review Panel & Legal Docs',
       summary:
-        'Empowering tactical depth with visual board annotation arrows, tournament audio soundscapes, dynamic evaluation bar momentum, and expanded legal compliance documentation.',
+        'A focused quality-of-life release delivering faster perceived load times, a permanently visible CAPS review panel, accurate legal documentation, and a suite of UI polish fixes.',
       isLatest: true,
       tag: 'Latest Release',
       items: [
         {
           type: 'feature',
-          title: 'Interactive Board Annotations',
+          title: 'Skeleton Loading Screens',
           description:
-            'Draw tactical arrows and highlight key squares directly on the analysis board with right-click drag, enabling clear strategic planning and variation visualization.',
+            'Neubrutalist shimmer skeleton placeholders now appear for the board, eval bar, player cards, and sidebar tabs on initial load — eliminating layout shifts and giving instant visual feedback.',
         },
         {
-          type: 'audio',
-          title: 'Customizable Audio Suites & Sound Packs',
+          type: 'feature',
+          title: 'Always-Visible Game Review Panel',
           description:
-            'Introduced customizable audio presets including Classic Wooden, Modern Synth, 8-Bit Arcade, and DMCA-safe tournament soundscapes.',
-        },
-        {
-          type: 'engine',
-          title: 'Dynamic Eval Bar Momentum & Winning Percentages',
-          description:
-            'Upgraded the real-time evaluation bar with smooth winning-chance momentum calculations, responsive clamp thresholds, and instant mate indicator badges.',
+            'The CAPS analysis and move classification panel is now permanently surfaced during analysis mode, keeping blunder counts, accuracy scores, and phase summaries always in view.',
         },
         {
           type: 'improvement',
-          title: 'Terms of Service & Privacy Compliance Hub',
+          title: 'Configurable Engine Depth Presets',
           description:
-            'Added comprehensive legal documentation, fair-play guidelines, and Stockfish GPLv3 open-source licensing references accessible across the platform.',
+            'Settings tab now shows named depth presets — Fast (10), Quick (12), Standard (14), Deep (16), Master (18), GM (20), Ultra (22) — with descriptions to help balance speed vs. thoroughness on any device.',
         },
         {
           type: 'fix',
-          title: 'Evaluation Bar Render Stability',
+          title: 'Hover Flicker on Sidebar Tabs',
           description:
-            'Resolved edge-case calculation glitches during forced checkmate lines and sudden board orientation flips.',
+            'Resolved a CSS transition conflict causing a visible flicker on sidebar tab hover states when switching between shadow animations.',
+        },
+        {
+          type: 'improvement',
+          title: 'Accurate Legal Documentation',
+          description:
+            'Terms of Service and Privacy Policy completely rewritten to reflect the actual app: no accounts, no subscriptions, no server-side storage. All fictional features removed.',
+        },
+        {
+          type: 'improvement',
+          title: 'Footer Cleanup',
+          description:
+            'Removed the placeholder Browser Extension link from the Platform section of the footer until the extension is ready to ship.',
+        },
+      ],
+    },
+    {
+      version: 'v1.3.0',
+      date: 'August 2026',
+      title: 'Eval Bar Momentum, Sound Packs & CAPS Review',
+      summary:
+        'Overhauled evaluation bar with smooth momentum curves, introduced multiple audio sound packs, and delivered the full post-game CAPS accuracy review workflow.',
+      isLatest: false,
+      items: [
+        {
+          type: 'engine',
+          title: 'Dynamic Eval Bar with Momentum Curve',
+          description:
+            'Upgraded the evaluation bar with a smooth SVG momentum chart showing winning-chance shifts across all plies, clickable to jump to any move, with blunder/brilliant pin markers.',
+        },
+        {
+          type: 'audio',
+          title: 'Multiple Sound Packs',
+          description:
+            'Added selectable audio packs (Classic Wood, Futuristic, Meme Pack, and more) with per-pack preview, volume slider, and mute toggle. All sounds play locally with no external requests.',
+        },
+        {
+          type: 'feature',
+          title: 'CAPS Accuracy Score & Move Report',
+          description:
+            'Post-analysis report now shows Computer Accuracy Percentage (CAPS) for both players, with per-phase (opening/middlegame/endgame) quality breakdown and coach verdict badges.',
+        },
+        {
+          type: 'improvement',
+          title: 'Neubrutalist UI Redesign',
+          description:
+            'Comprehensive visual refresh across all panels — bold borders, tactile button shadows, high-contrast dark/light palettes, and consistent font hierarchy using display/body/label font roles.',
+        },
+        {
+          type: 'fix',
+          title: 'Eval Bar Render Stability',
+          description:
+            'Fixed edge-case rendering glitches on forced checkmate lines and board orientation flips that caused the eval bar to flash or reset incorrectly.',
         },
       ],
     },
     {
       version: 'v1.2.0',
-      date: 'August 2026',
-      title: 'Full Game Review, CAPS Accuracy Scores & Opening Explorer',
+      date: 'July 2026',
+      title: 'Full Game Review, Move Classification & Opening Explorer',
       summary:
-        'A major update introducing comprehensive post-game analysis, Computer Accuracy Percentage (CAPS), move classification badges, and opening theory lookups.',
+        'Introduced full post-game analysis with per-move classification badges, opening book lookup, and the Chess.com / Lichess username-based game importer.',
       items: [
         {
           type: 'feature',
-          title: 'Post-Game Review & Move Classification',
+          title: 'Post-Game Move Classification',
           description:
-            'Classify every move in your games with Brilliant, Great, Best, Excellent, Good, Inaccuracy, Mistake, Miss, and Blunder badges alongside centipawn loss calculations.',
+            'Every move in your game is classified as Brilliant (!!) , Great (!), Best (★), Inaccuracy (?!), Mistake (?), Miss (✕), or Blunder (??) with centipawn loss values calculated by Stockfish.',
         },
         {
           type: 'feature',
           title: 'Opening Theory & Book Lookup',
           description:
-            'Explore master games, win/draw/loss distribution rates, and ECO opening codes dynamically as you play moves on the board.',
+            'Opening name, ECO code, and master-game statistics are displayed as you play through moves, sourced from a locally bundled opening book.',
         },
         {
-          type: 'engine',
-          title: 'Multi-PV Depth Control & Thread Scaling',
+          type: 'feature',
+          title: 'Chess.com & Lichess Game Importer',
           description:
-            'Configurable analysis depth up to 35 plies with multi-line calculation (Multi-PV 1-5) and multi-threaded Stockfish WebAssembly execution.',
+            'Enter your Chess.com or Lichess username to fetch and browse your most recent games directly — no manual PGN downloads required.',
         },
         {
           type: 'improvement',
-          title: 'Tactile Neubrutalist Dark Theme',
+          title: 'Analysis Depth Control',
           description:
-            'Redesigned high-contrast neubrutalist UI theme with bold borders, tactile buttons, and optimized midnight palette for long analysis sessions.',
+            'Added a configurable engine depth slider (10–22 plies) so players can tune analysis speed vs. depth based on their device capability.',
         },
         {
           type: 'fix',
-          title: 'PGN Parsing for Nested Variations',
+          title: 'PGN Header Parsing Robustness',
           description:
-            'Fixed an issue where deeply nested sub-variations in complex PGN files caused parser timeouts.',
+            'Improved PGN parser to reliably extract ECO codes, opening names, ratings, and time controls from Chess.com and Lichess PGN formats.',
         },
       ],
     },
     {
       version: 'v1.1.0',
-      date: 'July 2026',
-      title: 'Cross-Device Tab Synchronization & Multi-Platform PGN Importer',
+      date: 'June 2026',
+      title: 'Board Themes, Dark Mode & Settings Persistence',
       summary:
-        'Seamlessly sync your analysis across multiple browser tabs and devices, with instant one-click import from Chess.com and Lichess archives.',
-    items: [
+        'Added a full settings system with board theme selection, dark/light mode toggle, auto-evaluation, sound controls, and LocalStorage persistence across sessions.',
+      items: [
         {
           type: 'feature',
-          title: 'Multi-Tab State Synchronization',
+          title: 'Board Theme Selector',
           description:
-            'Leverages native BroadcastChannel and real-time state sharing so changes in one tab instantly propagate to other open SabioChess tabs.',
+            'Choose from multiple board themes (Classic, Walnut, Ice, Night, etc.) with live preview. Selection persists across browser sessions via localStorage.',
         },
         {
           type: 'feature',
-          title: 'Chess.com & Lichess One-Click Archive Importer',
+          title: 'Dark & Light Mode',
           description:
-            'Import your recent games directly by username without needing manual PGN file downloads.',
+            'Full dark/light theme toggle applied globally via a CSS class on the HTML root element, with smooth 150ms transitions across all components.',
         },
         {
-          type: 'engine',
-          title: 'Stockfish 18 WebAssembly Local Engine',
+          type: 'feature',
+          title: 'Settings Persistence',
           description:
-            '100% client-side privacy-first engine analysis with zero server roundtrips, running at peak native speed in modern browsers.',
+            'All preferences — theme, board, sound, depth, usernames, auto-evaluation — are saved to localStorage under a versioned key and restored on next visit.',
+        },
+        {
+          type: 'improvement',
+          title: 'Auto-Evaluation Toggle',
+          description:
+            'Added an option to enable or disable automatic engine evaluation after each move, useful when analysing on lower-powered devices.',
         },
         {
           type: 'fix',
-          title: 'En Passant & Castling FEN State Transitions',
+          title: 'Auto-Queen Promotion',
           description:
-            'Fixed subtle FEN serialization bugs when importing manual position setups with custom castling rights.',
+            'Added auto-queen pawn promotion option to avoid the promotion picker dialog interrupting fast move navigation.',
         },
       ],
     },
     {
       version: 'v1.0.0',
-      date: 'June 2026',
+      date: 'May 2026',
       title: 'SabioChess Official Launch',
       summary:
-        'The debut of SabioChess: the modern, privacy-first, neubrutalist chess analysis workbench for competitive and casual chess players.',
+        'The debut of SabioChess: a free, account-free, privacy-first neubrutalist chess analysis workbench powered entirely by Stockfish 18 in your browser.',
       items: [
         {
           type: 'feature',
-          title: 'Interactive Chessboard & Move History Workbench',
+          title: 'Interactive Chessboard',
           description:
-            'Full interactive chessboard with piece drag-and-drop, keyboard navigation, FEN/PGN import/export, and live move history tree.',
+            'Full drag-and-drop interactive chessboard with keyboard navigation, FEN/PGN import, move history tree, and legal move highlighting.',
         },
         {
           type: 'engine',
-          title: 'Local Engine Evaluation',
+          title: 'Stockfish 18 WebAssembly Engine',
           description:
-            'Real-time position evaluation, best move recommendation arrows, and depth calculation indicator.',
+            '100% client-side chess analysis powered by Stockfish 18 compiled to WASM, running in a dedicated Web Worker with zero server roundtrips. Your games never leave your browser.',
+        },
+        {
+          type: 'feature',
+          title: 'Player Cards & Match Metadata',
+          description:
+            'Display player names, ratings, platform, result, and time control in styled player cards above and below the board.',
+        },
+        {
+          type: 'feature',
+          title: 'Evaluation Bar',
+          description:
+            'Live evaluation bar showing centipawn advantage and forced mate detection, with smooth animation between positions.',
         },
       ],
     },

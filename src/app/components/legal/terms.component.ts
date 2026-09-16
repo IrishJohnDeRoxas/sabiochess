@@ -12,8 +12,8 @@ import { IconComponent } from '../icon/icon.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TermsComponent implements OnInit {
-  readonly lastUpdated = signal<string>('September 1, 2026');
-  readonly version = signal<string>('1.0.0');
+  readonly lastUpdated = signal<string>('September 16, 2026');
+  readonly version = signal<string>('1.3.0');
   readonly activeSection = signal<string>('acceptance');
 
   ngOnInit(): void {

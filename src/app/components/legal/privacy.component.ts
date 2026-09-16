@@ -12,7 +12,7 @@ import { IconComponent } from '../icon/icon.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PrivacyComponent implements OnInit {
-  readonly lastUpdated = signal<string>('September 1, 2026');
+  readonly lastUpdated = signal<string>('September 16, 2026');
   readonly activeSection = signal<string>('collection');
 
   ngOnInit(): void {
