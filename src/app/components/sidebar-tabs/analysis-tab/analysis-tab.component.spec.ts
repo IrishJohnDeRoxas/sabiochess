@@ -60,4 +60,23 @@ describe('AnalysisTabComponent', () => {
     component.startReviewWalkthrough();
     expect(emitted).toBe(true);
   });
+
+  it('should jump to move on jumpFromMomentum and seekMomentum', () => {
+    gameService.loadSampleGame('opera');
+    fixture.detectChanges();
+
+    component.jumpFromMomentum(3);
+    expect(gameService.currentPlyIndex()).toBe(2);
+
+    const mockSvg = {
+      getBoundingClientRect: () => ({ left: 0, width: 500, top: 0, height: 120 }),
+    } as unknown as SVGElement;
+    const mockEvent = {
+      currentTarget: mockSvg,
+      clientX: 100,
+    } as unknown as MouseEvent;
+
+    component.seekMomentum(mockEvent);
+    expect(gameService.currentPlyIndex()).toBeGreaterThanOrEqual(0);
+  });
 });

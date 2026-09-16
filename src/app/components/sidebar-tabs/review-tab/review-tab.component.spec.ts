@@ -124,6 +124,27 @@ describe('ReviewTabComponent', () => {
     expect(component.isSoundMenuOpen()).toBe(false);
   });
 
+  it('should jump to move on jumpFromMomentum and seekMomentum', () => {
+    gameService.loadSampleGame('opera');
+    fixture.detectChanges();
+
+    component.jumpFromMomentum(3);
+    expect(component.isReportView()).toBe(false);
+    expect(gameService.currentPlyIndex()).toBe(2);
+
+    const mockSvg = {
+      getBoundingClientRect: () => ({ left: 0, width: 500, top: 0, height: 120 }),
+    } as unknown as SVGElement;
+    const mockEvent = {
+      currentTarget: mockSvg,
+      clientX: 50,
+    } as unknown as MouseEvent;
+
+    component.seekMomentum(mockEvent);
+    expect(component.isReportView()).toBe(false);
+    expect(gameService.currentPlyIndex()).toBeGreaterThanOrEqual(0);
+  });
+
   it('should reset game and return to initial state when loadNewGame is called', () => {
     gameService.loadSampleGame('opera');
     fixture.detectChanges();

@@ -227,8 +227,36 @@ export class AnalysisTabComponent {
     });
   }
 
+  readonly Math = Math;
+
   jumpFromMomentum(ply: number): void {
     this.game.jumpToPly(ply - 1);
+  }
+
+  seekMomentum(event: MouseEvent): void {
+    const data = this.momentumData();
+    if (!data.mappedPoints || data.mappedPoints.length === 0) return;
+
+    const target = event.currentTarget as SVGElement;
+    const rect = target.getBoundingClientRect();
+    if (rect.width <= 0) return;
+
+    const clickSvgX = ((event.clientX - rect.left) / rect.width) * 500;
+
+    let closestPoint = data.mappedPoints[0];
+    let minDiff = Math.abs(data.mappedPoints[0].x - clickSvgX);
+
+    for (let i = 1; i < data.mappedPoints.length; i++) {
+      const diff = Math.abs(data.mappedPoints[i].x - clickSvgX);
+      if (diff < minDiff) {
+        minDiff = diff;
+        closestPoint = data.mappedPoints[i];
+      }
+    }
+
+    if (closestPoint) {
+      this.jumpFromMomentum(closestPoint.ply);
+    }
   }
 
   startReviewWalkthrough(): void {

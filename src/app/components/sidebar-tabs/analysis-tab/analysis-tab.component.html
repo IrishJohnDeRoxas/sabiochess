@@ -65,7 +65,12 @@
 
       <!-- SVG Interactive Area Momentum Curve -->
       <div class="relative bg-[#D9D9D9] dark:bg-[#141519] border-2 border-[#222222] dark:border-black p-1 rounded-sm overflow-hidden select-none">
-        <svg viewBox="0 0 500 120" class="w-full h-24 sm:h-28 overflow-visible block" preserveAspectRatio="none">
+        <svg
+          viewBox="0 0 500 120"
+          class="w-full h-24 sm:h-28 overflow-visible block cursor-pointer"
+          preserveAspectRatio="none"
+          (click)="seekMomentum($event)"
+        >
           <defs>
             <linearGradient id="whiteMomentumGradAnalysis" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stop-color="#0E4C92" stop-opacity="0.85" />
@@ -92,7 +97,16 @@
 
           <!-- Move Key Marker Pins -->
           @for (pin of momentumData().markerPins; track pin.ply) {
-            <g (click)="jumpFromMomentum(pin.ply)" class="cursor-pointer group">
+            <g (click)="jumpFromMomentum(pin.ply); $event.stopPropagation()" class="cursor-pointer group">
+              <title>{{ pin.label }}: {{ pin.san }} (Move {{ Math.ceil(pin.ply / 2) }})</title>
+              <!-- Hit area to prevent edge flutter -->
+              <circle
+                [attr.cx]="pin.x"
+                [attr.cy]="pin.y"
+                r="14"
+                fill="transparent"
+              />
+              <!-- Visual circle with transform-box and transform-origin to prevent SVG (0,0) jumps -->
               <circle
                 [attr.cx]="pin.x"
                 [attr.cy]="pin.y"
@@ -100,7 +114,8 @@
                 [attr.fill]="pin.color"
                 stroke="#222222"
                 stroke-width="1.5"
-                class="transition-transform group-hover:scale-125"
+                class="transition-transform duration-150 group-hover:scale-125"
+                style="transform-box: fill-box; transform-origin: center;"
               />
               <text
                 [attr.x]="pin.x"
