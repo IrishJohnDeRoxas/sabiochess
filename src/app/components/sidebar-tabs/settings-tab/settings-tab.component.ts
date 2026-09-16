@@ -1,12 +1,10 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SettingsService } from '../../../services/settings.service';
 import { SoundService } from '../../../services/sound.service';
-import { AuthService } from '../../../services/auth.service';
 import { AppTheme, BOARD_THEMES, BoardTheme, MEME_SOUND_PACKS, MemeSoundPack } from '../../../models/settings.model';
 import { IconComponent } from '../../icon/icon.component';
-import { VALID_PROMO_CODES } from '../../../models/auth.model';
 
 @Component({
   selector: 'app-settings-tab',
@@ -18,16 +16,9 @@ import { VALID_PROMO_CODES } from '../../../models/auth.model';
 export class SettingsTabComponent {
   readonly settings = inject(SettingsService);
   readonly soundService = inject(SoundService);
-  readonly auth = inject(AuthService);
 
   readonly boardThemes = BOARD_THEMES;
   readonly soundPacks = MEME_SOUND_PACKS;
-  readonly samplePromoCodes = VALID_PROMO_CODES.slice(0, 3);
-
-  readonly promoCodeInput = signal<string>('');
-  readonly promoStatusMessage = signal<string | null>(null);
-  readonly promoStatusIsError = signal<boolean>(false);
-  readonly isRedeemingPromo = signal<boolean>(false);
 
   readonly depthPresets = [
     { depth: 10, label: '10', name: 'Fast' },
@@ -96,36 +87,8 @@ export class SettingsTabComponent {
     }
   }
 
-  applyPromoPreset(code: string): void {
-    this.promoCodeInput.set(code);
-    this.promoStatusMessage.set(null);
-  }
-
-  async redeemPromoCode(): Promise<void> {
-    const code = this.promoCodeInput().trim();
-    if (!code) {
-      this.promoStatusIsError.set(true);
-      this.promoStatusMessage.set('Please enter a promo code before redeeming.');
-      return;
-    }
-
-    this.isRedeemingPromo.set(true);
-    this.promoStatusMessage.set(null);
-
-    try {
-      const result = await this.auth.redeemPromoCode(code);
-      this.promoStatusIsError.set(!result.success);
-      this.promoStatusMessage.set(result.message);
-      if (result.success) {
-        this.promoCodeInput.set('');
-      }
-    } finally {
-      this.isRedeemingPromo.set(false);
-    }
-  }
-
-  openAuthModal(): void {
-    this.auth.openAuthModal();
+  openSupportModal(): void {
+    this.settings.openSupportModal();
   }
 
   resetDefaults(): void {

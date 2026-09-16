@@ -1,0 +1,76 @@
+@if (settings.isSupportModalOpen()) {
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in" (click)="onBackdropClick($event)">
+  <div class="card-brutal w-full max-w-lg bg-white dark:bg-[#1E1F24] p-0 overflow-hidden shadow-[8px_8px_0_0_#222222] dark:shadow-[8px_8px_0_0_#000000] border-4 border-[#222222] dark:border-black animate-scale-up" (click)="$event.stopPropagation()">
+    
+    <!-- Modal Header -->
+    <div class="flex items-center justify-between p-4 bg-[#FFDD00] text-[#141519] border-b-4 border-[#222222] dark:border-black">
+      <div class="flex items-center gap-2">
+        <span class="p-1 bg-[#141519] text-[#FFDD00] inline-flex border-2 border-[#222222] font-black text-sm">
+          ☕
+        </span>
+        <h2 class="font-display text-lg sm:text-xl uppercase font-extrabold tracking-tight text-[#141519]">SUPPORT SABIOCHESS</h2>
+      </div>
+      <button type="button" (click)="close()" class="btn-brutal !p-1.5 bg-white text-black border-2 border-[#222222] hover:bg-red-500 hover:text-white cursor-pointer" title="Close modal">
+        <app-icon name="x-mark" size="w-5 h-5"></app-icon>
+      </button>
+    </div>
+
+    <!-- Modal Content -->
+    <div class="p-5 flex flex-col gap-4 text-[#222222] dark:text-[#F3F4F6] max-h-[80vh] overflow-y-auto">
+      
+      <!-- Philosophy Banner -->
+      <div class="p-3.5 border-2 border-[#222222] dark:border-[#373A46] bg-[#ECECD8] dark:bg-[#2A2B32] flex flex-col gap-1.5">
+        <div class="flex items-center gap-2 font-accent text-xs font-bold text-[#FF4F00] uppercase">
+          <app-icon name="heart" size="w-4 h-4"></app-icon>
+          <span>100% Free & Open For All Chess Lovers</span>
+        </div>
+        <p class="font-body text-xs text-gray-700 dark:text-gray-300 leading-relaxed">
+          SabioChess is built to give every player <strong>unlimited, paywall-free game review</strong> powered by client-side Stockfish 18. No subscriptions. No artificial energy caps.
+        </p>
+      </div>
+
+      <!-- Quick Donation Option Cards -->
+      <div class="flex flex-col gap-2">
+        <span class="font-label text-xs uppercase font-bold text-gray-600 dark:text-gray-400">Choose a tip amount:</span>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+          @for (option of coffeeAmounts; track option.amount) {
+            <button type="button" (click)="openCoffee(option.amount)"
+              class="card-brutal !p-3 bg-white dark:bg-[#2A2B32] hover:bg-[#FFDD00] hover:text-[#141519] border-2 border-[#222222] dark:border-[#373A46] hover:border-[#222222] text-left flex flex-col justify-between gap-1.5 cursor-pointer transition-transform hover:-translate-y-0.5 active:translate-y-0 shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000]">
+              <div class="flex items-center justify-between">
+                <span class="text-xl">{{ option.icon }}</span>
+                <span class="font-display font-extrabold text-sm px-2 py-0.5 bg-[#FF4F00] text-white border border-[#222222]">${{ option.amount }}</span>
+              </div>
+              <div>
+                <strong class="font-accent text-xs block font-bold">{{ option.label }}</strong>
+                <span class="font-body text-[11px] opacity-80 leading-tight block">{{ option.desc }}</span>
+              </div>
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Custom Amount or Direct Buy Me a Coffee Action -->
+      <div class="flex flex-col sm:flex-row gap-2.5 pt-1">
+        <button type="button" (click)="openCoffee()"
+          class="btn-brutal btn-brutal-orange flex-1 !py-2.5 text-xs font-accent uppercase flex items-center justify-center gap-2 cursor-pointer shadow-[3px_3px_0_0_#222222]">
+          <span class="text-sm">☕</span>
+          <span>Open Buy Me a Coffee</span>
+        </button>
+
+        <button type="button" (click)="copyDonationLink()"
+          class="btn-brutal btn-brutal-silver !py-2.5 text-xs font-accent uppercase flex items-center justify-center gap-1.5 cursor-pointer shadow-[3px_3px_0_0_#222222]">
+          <app-icon [name]="copiedUrl() ? 'check' : 'clipboard-document'" size="w-4 h-4"></app-icon>
+          <span>{{ copiedUrl() ? 'COPIED LINK' : 'SHARE LINK' }}</span>
+        </button>
+      </div>
+
+      <div class="text-center pt-1 border-t border-[#222222]/15 dark:border-white/10">
+        <span class="font-label text-[11px] text-gray-500 dark:text-gray-400">
+          Thank you for keeping independent chess software alive! ❤️
+        </span>
+      </div>
+
+    </div>
+  </div>
+</div>
+}

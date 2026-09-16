@@ -4,145 +4,37 @@
     <!-- Brand / Logo Area -->
     <app-logo size="md"></app-logo>
 
-    <!-- Center / Status (Energy & Mode) -->
+    <!-- Center / Status (Unlimited & Engine) -->
     <div class="hidden md:flex items-center gap-3">
-      <!-- Energy Badge (Pro Unlimited or Count) -->
-      @if (auth.isUnlimitedEnergy() || auth.isPro()) {
-      <div class="badge-brutal bg-[#FF4F00] text-white flex items-center gap-1.5 py-1.5 px-3 font-label text-xs sm:text-sm font-bold shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000]">
-        <app-icon name="star" size="w-4 h-4"></app-icon>
-        <span>LIFETIME PRO: <strong>UNLIMITED</strong></span>
+      <!-- 100% Free Unlimited Badge -->
+      <div class="badge-brutal bg-[#00D084] text-[#141519] flex items-center gap-1.5 py-1.5 px-3 font-label text-xs sm:text-sm font-bold shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000]">
+        <app-icon name="bolt" size="w-4 h-4"></app-icon>
+        <span>100% FREE &amp; UNLIMITED</span>
       </div>
-      } @else {
-      <div class="badge-brutal bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] flex items-center gap-2 py-1.5 px-3">
-        <app-icon name="bolt" size="w-4 h-4" class="text-[#FF4F00] animate-pulse"></app-icon>
-        <span class="font-label text-xs sm:text-sm tracking-wide">
-          ENERGY: <strong class="text-[#0E4C92] dark:text-[#60A5FA] font-bold">{{ auth.energy() }}/{{ auth.maxEnergy() }}</strong>
-        </span>
-      </div>
-      }
 
       <!-- Stockfish Version Badge -->
-      <div class="badge-brutal bg-[#C0C0C0] dark:bg-[#373A46] text-[#222222] dark:text-[#F3F4F6] flex items-center gap-1.5 py-1.5 px-3 font-label text-xs sm:text-sm font-bold">
+      <div class="badge-brutal bg-[#D9D9D9] dark:bg-[#373A46] text-[#222222] dark:text-[#F3F4F6] flex items-center gap-1.5 py-1.5 px-3 font-label text-xs sm:text-sm font-bold">
         <app-icon name="cpu-chip" size="w-4 h-4"></app-icon>
-        <span>STOCKFISH 18</span>
+        <span>STOCKFISH 18 WASM</span>
       </div>
     </div>
 
     <!-- Actions Area -->
     <div class="flex items-center gap-2 sm:gap-3">
-      <!-- Support Button -->
-      <button type="button" class="btn-brutal btn-brutal-silver !py-1.5 sm:!py-2 !px-3 sm:!px-3.5 text-xs sm:text-sm hidden lg:inline-flex items-center gap-1.5 font-accent cursor-pointer">
-        <app-icon name="lifebuoy" size="w-4 h-4"></app-icon>
-        <span>SUPPORT</span>
+      <!-- Theme Toggle Button -->
+      <button type="button" (click)="toggleTheme()"
+        class="btn-brutal btn-brutal-silver !py-1.5 sm:!py-2 !px-2.5 sm:!px-3 text-xs sm:text-sm flex items-center justify-center cursor-pointer"
+        [title]="settings.isDarkMode() ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
+        aria-label="Toggle Theme">
+        <app-icon [name]="settings.isDarkMode() ? 'sun' : 'moon'" size="w-4 h-4"></app-icon>
       </button>
 
-      <!-- Pro Upgrade Button (Visible only when logged in and not already Lifetime Pro) -->
-      @if (auth.isAuthenticated() && !auth.isPro()) {
-      <button type="button" (click)="openProModal()"
-        class="btn-brutal btn-brutal-orange !py-1.5 sm:!py-2 !px-3.5 sm:!px-4 text-xs sm:text-sm flex items-center gap-1.5 font-accent cursor-pointer animate-pulse hover:animate-none">
-        <app-icon name="star" size="w-4 h-4"></app-icon>
-        <span>PRO</span>
+      <!-- Buy Me a Coffee Button (Neubrutalist Yellow) -->
+      <button type="button" (click)="openSupportModal()"
+        class="btn-brutal !bg-[#FFDD00] hover:!bg-[#FFE600] text-[#141519] !py-1.5 sm:!py-2 !px-3.5 sm:!px-4 text-xs sm:text-sm flex items-center gap-1.5 font-accent font-black cursor-pointer shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000] active:translate-x-0.5 active:translate-y-0.5 transition-all">
+        <span class="text-sm">☕</span>
+        <span>BUY ME A COFFEE</span>
       </button>
-      }
-
-      <!-- Account Button / User Chip Area -->
-      @if (auth.isGuest()) {
-      <button type="button" (click)="toggleUserMenu()"
-        class="btn-brutal btn-brutal-blue !py-1.5 sm:!py-2 !px-3 sm:!px-3.5 text-xs sm:text-sm flex items-center gap-1.5 font-accent cursor-pointer">
-        <app-icon name="user" size="w-4 h-4"></app-icon>
-        <span>SIGN IN</span>
-      </button>
-      } @else {
-      <button type="button" (click)="toggleUserMenu()"
-        class="btn-brutal !py-1 sm:!py-1.5 !px-2.5 sm:!px-3 text-xs sm:text-sm flex items-center gap-2 cursor-pointer transition-transform"
-        [ngClass]="auth.isPro() ? 'btn-brutal-orange' : 'btn-brutal-blue'">
-        @if (auth.userAvatar()) {
-          <img [src]="auth.userAvatar()" alt="User avatar" referrerpolicy="no-referrer" (error)="onAvatarError($event)" class="w-5 h-5 rounded-none border border-[#222222] object-cover bg-white shrink-0 shadow-[1px_1px_0_0_#222222]" />
-        }
-        <span class="w-5 h-5 bg-white text-[#222222] font-bold text-xs flex items-center justify-center border border-[#222222] shrink-0 shadow-[1px_1px_0_0_#222222]" [ngClass]="{ 'hidden': !!auth.userAvatar() }">
-          {{ auth.displayName().charAt(0).toUpperCase() }}
-        </span>
-        <span class="font-accent font-bold truncate max-w-[100px] sm:max-w-[140px]">{{ auth.displayName() }}</span>
-        @if (auth.isPro()) {
-          <span class="badge-brutal !py-0.5 !px-2 text-xs bg-[#FFE600] text-[#141519] border border-[#222222] font-black shadow-[1px_1px_0_0_#222222] tracking-wider">
-            👑 LIFETIME
-          </span>
-        } @else {
-          <span class="badge-brutal !py-0.5 !px-2 text-xs bg-white text-[#0E4C92] border border-[#222222] font-bold shadow-[1px_1px_0_0_#222222]">
-            FREE
-          </span>
-        }
-      </button>
-      }
     </div>
   </div>
-
-  <!-- User Account Dropdown Menu Popover -->
-  @if (auth.isUserMenuOpen()) {
-  <div class="absolute right-4 sm:right-6 lg:right-8 top-full mt-2 w-72 sm:w-80 card-brutal p-0 bg-white dark:bg-[#1E1F24] border-4 border-[#222222] dark:border-black shadow-[6px_6px_0_0_#222222] dark:shadow-[6px_6px_0_0_#000000] z-50 animate-scale-up">
-    
-    <!-- User Info Header (Clean & spacious without redundant squishing badge) -->
-    <div class="p-3 sm:p-3.5 border-b-2 border-[#222222] dark:border-[#373A46] bg-[#ECECD8] dark:bg-[#2A2B32] flex items-center justify-between">
-      <div class="flex items-center gap-2.5 min-w-0 w-full">
-        @if (auth.userAvatar()) {
-          <img [src]="auth.userAvatar()" alt="User Avatar" referrerpolicy="no-referrer" (error)="onAvatarError($event)" class="w-8 h-8 rounded-none border-2 border-[#222222] dark:border-black object-cover bg-white shrink-0 shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000]" />
-        }
-        <span class="w-8 h-8 bg-[#FF4F00] text-white font-bold text-sm flex items-center justify-center border-2 border-[#222222] dark:border-black shrink-0 shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000]" [ngClass]="{ 'hidden': !!auth.userAvatar() }">
-          {{ auth.displayName().charAt(0).toUpperCase() }}
-        </span>
-        <div class="flex flex-col min-w-0 flex-1">
-          <span class="font-accent font-bold text-xs sm:text-sm text-[#222222] dark:text-[#F3F4F6] truncate">{{ auth.displayName() }}</span>
-          <span class="font-label text-[10px] text-gray-600 dark:text-gray-400 truncate">{{ auth.currentUser()?.email || 'Guest Session' }}</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Energy Status Info Card -->
-    <div class="p-3 border-b-2 border-[#222222] dark:border-[#373A46] flex flex-col gap-1.5 bg-white dark:bg-[#1E1F24]">
-      <div class="flex items-center justify-between font-accent text-xs">
-        <span class="font-bold text-gray-700 dark:text-gray-300">ANALYSIS ENERGY:</span>
-        <span class="font-bold text-[#FF4F00]">
-          {{ auth.isUnlimitedEnergy() || auth.isPro() ? '⚡ UNLIMITED' : (auth.energy() + '/' + auth.maxEnergy()) }}
-        </span>
-      </div>
-
-      @if (!auth.isPro()) {
-      <div class="w-full bg-[#D9D9D9] dark:bg-[#373A46] h-2 border border-[#222222] dark:border-black">
-        <div class="bg-[#FF4F00] h-full transition-all" [style.width.%]="(auth.energy() / auth.maxEnergy()) * 100"></div>
-      </div>
-      <span class="font-label text-[10px] text-gray-500 dark:text-gray-400">
-        {{ auth.isFreeUser() ? 'Refills 5 analyses daily at midnight UTC.' : '5 free starter analyses for guests.' }}
-      </span>
-      }
-    </div>
-
-    <!-- Quick Actions Menu -->
-    <div class="p-2.5 flex flex-col gap-1.5 bg-white dark:bg-[#1E1F24]">
-      @if (auth.isGuest()) {
-      <button type="button" (click)="openAuthModal()"
-        class="btn-brutal btn-brutal-blue w-full !py-2 text-xs flex items-center justify-center gap-1.5 cursor-pointer">
-        <app-icon name="user" size="w-3.5 h-3.5"></app-icon>
-        <span>SIGN IN WITH GOOGLE</span>
-      </button>
-      }
-
-      @if (auth.isAuthenticated() && !auth.isPro()) {
-      <button type="button" (click)="openProModal()"
-        class="btn-brutal btn-brutal-orange w-full !py-2 text-xs flex items-center justify-center gap-1.5 cursor-pointer">
-        <app-icon name="star" size="w-3.5 h-3.5"></app-icon>
-        <span>UPGRADE / ENTER PROMO CODE</span>
-      </button>
-      }
-
-      @if (auth.isAuthenticated()) {
-      <button type="button" (click)="logout()"
-        class="btn-brutal btn-brutal-silver w-full !py-1.5 text-xs flex items-center justify-center gap-1.5 cursor-pointer text-red-600 dark:text-red-400">
-        <app-icon name="arrow-path" size="w-3.5 h-3.5"></app-icon>
-        <span>SIGN OUT</span>
-      </button>
-      }
-    </div>
-
-  </div>
-  }
 </header>

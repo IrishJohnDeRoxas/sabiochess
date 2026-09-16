@@ -9,7 +9,6 @@ import {
 import { OpeningBookService } from './opening-book.service';
 import { getCoachCommentary } from '../utils/coach-commentary.util';
 import { SettingsService } from './settings.service';
-import { AuthService } from './auth.service';
 
 export interface MoveRecordInput {
   from: string;
@@ -34,7 +33,6 @@ interface PositionEval {
 export class GameAnalysisService implements OnDestroy {
   private readonly openingBook = inject(OpeningBookService);
   private readonly settings = inject(SettingsService);
-  private readonly auth = inject(AuthService);
   private readonly zone = inject(NgZone);
 
   private worker: Worker | null = null;
@@ -279,10 +277,6 @@ export class GameAnalysisService implements OnDestroy {
    */
   async runAnalysis(history: MoveRecordInput[], initialFen?: string): Promise<void> {
     if (!history || history.length === 0) return;
-
-    if (history.length >= 4 && !this.auth.isUnlimitedEnergy() && !this.auth.isPro()) {
-      void this.auth.consumeEnergy(1);
-    }
 
     this.isAnalyzing.set(true);
     this.progress.set(5);

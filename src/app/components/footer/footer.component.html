@@ -80,16 +80,16 @@
             </a>
           </li>
           <li>
-            <span class="hover:text-[#FF4F00] dark:hover:text-[#FF4F00] cursor-pointer transition-colors inline-flex items-center gap-2">
+            <button type="button" (click)="openSupport()" class="hover:text-[#FF4F00] dark:hover:text-[#FF4F00] cursor-pointer transition-colors inline-flex items-center gap-2 bg-transparent border-0 p-0 text-inherit font-inherit text-left">
               <app-icon name="lifebuoy" size="w-4 h-4 text-[#10B981]"></app-icon>
-              <span>Support & Docs</span>
-            </span>
+              <span>Support &amp; Community</span>
+            </button>
           </li>
           <li>
-            <span class="hover:text-[#FF4F00] dark:hover:text-[#FF4F00] cursor-pointer transition-colors inline-flex items-center gap-2">
-              <app-icon name="star" size="w-4 h-4 text-[#F59E0B]"></app-icon>
-              <span>SabioChess Pro</span>
-            </span>
+            <button type="button" (click)="openSupport()" class="hover:text-[#FF4F00] dark:hover:text-[#FF4F00] cursor-pointer transition-colors inline-flex items-center gap-2 bg-transparent border-0 p-0 text-inherit font-inherit text-left font-bold text-[#FFDD00] dark:text-[#FFDD00]">
+              <span class="text-sm">☕</span>
+              <span>Buy Me a Coffee</span>
+            </button>
           </li>
         </ul>
       </div>

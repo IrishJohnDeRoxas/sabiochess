@@ -137,16 +137,13 @@
           </p>
           <ul class="list-disc pl-5 space-y-2 text-sm sm:text-base">
             <li>
-              <strong class="text-[#222222] dark:text-white">Account Data:</strong> Email address, username, display name, and avatar preference when you create an account or sign in with Google OAuth.
+              <strong class="text-[#222222] dark:text-white">Local Preferences:</strong> Board theme, sound settings, analysis depth, and platform usernames stored securely in your browser's LocalStorage.
             </li>
             <li>
-              <strong class="text-[#222222] dark:text-white">Chess & PGN Data:</strong> Portable Game Notation (PGN) text, move sequences, evaluations, and game metadata you upload or import for analysis.
+              <strong class="text-[#222222] dark:text-white">Chess &amp; PGN Data:</strong> Portable Game Notation (PGN) text and move evaluations computed locally in your browser via Stockfish WebAssembly.
             </li>
             <li>
-              <strong class="text-[#222222] dark:text-white">Payment Identifiers:</strong> Transaction IDs and purchase status. We <strong>NEVER</strong> store full credit card numbers or CVC codes on our servers; all payment transactions are handled directly by PCI-DSS compliant payment processors.
-            </li>
-            <li>
-              <strong class="text-[#222222] dark:text-white">Technical Diagnostics:</strong> Browser type, engine calculation speeds (knodes/sec), and anonymous error logs to improve Stockfish reliability.
+              <strong class="text-[#222222] dark:text-white">Zero Mandatory Accounts:</strong> No passwords or private profiles required to analyze unlimited chess games.
             </li>
           </ul>
         </div>
@@ -165,13 +162,13 @@
             Your data is used strictly to:
           </p>
           <ul class="list-disc pl-5 space-y-2 text-sm sm:text-base">
-            <li>Compute move evaluations, blunders, and accuracy scores via Stockfish 18 NNUE.</li>
-            <li>Synchronize your custom opening books and board preferences across devices.</li>
-            <li>Authenticate your energy and lifetime pass entitlements.</li>
-            <li>Communicate critical account notices, billing invoices, and security alerts.</li>
+            <li>Compute move evaluations, blunders, and accuracy scores via Stockfish 18 WASM.</li>
+            <li>Persist your custom board themes and sound settings across visits.</li>
+            <li>Fetch public games from Chess.com when requested.</li>
           </ul>
         </div>
       </section>
+
 
       <!-- Section 3: Storage & Security -->
       <section id="storage" class="card-brutal p-6 sm:p-8 relative scroll-mt-24 border-l-[6px] border-l-[#0E4C92]">
