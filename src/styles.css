@@ -154,6 +154,15 @@ body {
   background-color: #059669;
 }
 
+.btn-brutal-yellow {
+  background-color: #FFDD00;
+  color: #141519 !important;
+}
+
+.btn-brutal-yellow:hover {
+  background-color: #FFE600;
+}
+
 .btn-brutal-silver {
   background-color: #C0C0C0;
   color: #222222;
@@ -270,6 +279,15 @@ html.dark {
 .dark .btn-brutal:disabled,
 .dark .btn-brutal[disabled] {
   box-shadow: 2px 2px 0 0 #000000 !important;
+}
+
+.dark .btn-brutal-yellow {
+  background-color: #FFDD00;
+  color: #141519 !important;
+}
+
+.dark .btn-brutal-yellow:hover {
+  background-color: #FFE600;
 }
 
 .dark .btn-brutal-silver {
