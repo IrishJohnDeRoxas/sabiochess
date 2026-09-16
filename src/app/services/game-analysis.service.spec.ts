@@ -79,4 +79,37 @@ describe('GameAnalysisService', () => {
     const classification = svc.classifyMove(0, 250, true, 90, isSacrifice, 90);
     expect(classification).toBe('best');
   });
+
+  it('should not treat defended normal piece trades as sacrifices', () => {
+    const svc = service as any;
+    // Position where White plays Nxd4 capturing on d4 with Queen defending d4
+    const fenBefore = 'r1bqkbnr/pppp1ppp/2n5/4p3/3P4/5N2/PPP1PPPP/RNBQKB1R w KQkq - 0 3';
+    const fenAfter = 'r1bqkbnr/pppp1ppp/2n5/4p3/3N4/8/PPP1PPPP/RNBQKB1R b KQkq - 0 3';
+    const isSacrifice = svc.isSacrificeMove(fenBefore, fenAfter, 'f3', 'd4', 'n', 'p');
+    expect(isSacrifice).toBe(false);
+
+    const classification = svc.classifyMove(0, 0, true, 50, isSacrifice, 50);
+    expect(classification).toBe('best');
+  });
+
+  it('should award brilliant to a genuine piece sacrifice that maintains a win', () => {
+    const svc = service as any;
+    // Classical Greek Gift or bishop sacrifice on f7
+    const fenBefore = 'r1bqk2r/pppp1ppp/2n2n2/2b1p3/2B1P3/3P1N2/PPP2PPP/RNBQK2R w KQkq - 0 5';
+    // Bxf7+
+    const fenAfter = 'r1bqk2r/pppp1Bpp/2n2n2/2b1p3/4P3/3P1N2/PPP2PPP/RNBQK2R b KQkq - 0 5';
+    const isSacrifice = svc.isSacrificeMove(fenBefore, fenAfter, 'c4', 'f7', 'b', 'p');
+    expect(isSacrifice).toBe(true);
+
+    const classification = svc.classifyMove(0, 200, true, 60, isSacrifice, 70, 100);
+    expect(classification).toBe('brilliant');
+  });
+
+  it('should not award brilliant in overwhelming blowout positions', () => {
+    const svc = service as any;
+    // Up 98% win chance / +900 cp, sacrificing a piece is not a brilliancy
+    const classification = svc.classifyMove(0, -50, true, 98, true, 96, 900);
+    expect(classification).toBe('best');
+  });
 });
+
