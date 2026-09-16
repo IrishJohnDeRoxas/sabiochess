@@ -14,6 +14,7 @@ export interface MoveRecordInput {
   from: string;
   to: string;
   piece?: string;
+  captured?: string;
   san: string;
   fen: string;
   turn: 'w' | 'b';
@@ -499,6 +500,7 @@ export class GameAnalysisService implements OnDestroy {
       const isWhiteTurn = item.turn === 'w' || i % 2 === 0;
       sanList.push(item.san);
 
+      const previousFen = i === 0 ? this.initialFen : this.currentHistory[i - 1].fen;
       const evalBefore = this.currentEvals[i];
       const evalAfter = this.currentEvals[i + 1];
 
@@ -543,7 +545,22 @@ export class GameAnalysisService implements OnDestroy {
         classification = 'book';
       } else {
         bookStillActive = false;
-        classification = this.classifyMove(deltaWin, evalGain, isEngineBest, playerWinBefore);
+        const isSacrifice = this.isSacrificeMove(
+          previousFen,
+          item.fen,
+          item.from,
+          item.to,
+          item.piece,
+          item.captured
+        );
+        classification = this.classifyMove(
+          deltaWin,
+          evalGain,
+          isEngineBest,
+          playerWinBefore,
+          isSacrifice,
+          playerWinAfter
+        );
       }
 
       const accuracy = classification === 'book' ? 100 : this.calculateCaps2Accuracy(deltaWin, isEngineBest, classification);
@@ -572,7 +589,6 @@ export class GameAnalysisService implements OnDestroy {
       }
 
       // Best move in SAN & best move PV
-      const previousFen = i === 0 ? this.initialFen : this.currentHistory[i - 1].fen;
       const boardBefore = new Chess(previousFen);
       let bestMoveSan: string | null = null;
       const bestMovePv: string[] = [];
@@ -651,12 +667,14 @@ export class GameAnalysisService implements OnDestroy {
     deltaWin: number,
     evalGain: number | null,
     isEngineBest: boolean,
-    playerWinBefore: number
+    playerWinBefore: number,
+    isSacrifice: boolean = false,
+    playerWinAfter: number = 50
   ): MoveClassification {
     if (isEngineBest || deltaWin <= 0.5) {
-      if (evalGain !== null) {
-        if (evalGain >= 200) return 'brilliant';
-        if (evalGain >= 100) return 'great';
+      // Brilliant move: A piece sacrifice that maintains winning or advantageous position
+      if (isSacrifice && playerWinAfter >= 40) {
+        return 'brilliant';
       }
       return 'best';
     }
@@ -674,6 +692,99 @@ export class GameAnalysisService implements OnDestroy {
     return 'blunder';
   }
 
+  private isSacrificeMove(
+    fenBefore: string,
+    fenAfter: string,
+    from?: string,
+    to?: string,
+    piece?: string,
+    captured?: string
+  ): boolean {
+    if (!piece || piece.toLowerCase() === 'k') return false; // King move is never a piece sacrifice
+
+    const pieceValues: Record<string, number> = {
+      p: 1,
+      n: 3,
+      b: 3,
+      r: 5,
+      q: 9,
+      k: 0,
+    };
+
+    const movedPieceType = piece.toLowerCase();
+    const movedPieceValue = pieceValues[movedPieceType] || 0;
+    const capturedValue = captured ? (pieceValues[captured.toLowerCase()] || 0) : 0;
+
+    let boardBefore: Chess;
+    let boardAfter: Chess;
+    try {
+      boardBefore = new Chess(fenBefore);
+      boardAfter = new Chess(fenAfter);
+    } catch {
+      return false;
+    }
+
+    const oppMoves = boardAfter.moves({ verbose: true });
+    let hasSacrifice = false;
+
+    // 1. Direct piece sacrifice: moved piece is placed on square 'to' where it can be captured
+    if (to) {
+      for (const oppMove of oppMoves) {
+        if (oppMove.to === to && oppMove.captured) {
+          const attackerValue = pieceValues[oppMove.piece.toLowerCase()] || 0;
+          const victimValue = pieceValues[oppMove.captured.toLowerCase()] || movedPieceValue;
+          const netLost = victimValue - capturedValue;
+
+          // Sacrificed higher value piece to lower value attacker (e.g. pawn takes minor/rook/queen, minor takes rook/queen)
+          // with net material loss >= 2 (e.g. knight for pawn or nothing, rook for minor, queen for rook/minor)
+          if (attackerValue < victimValue && netLost >= 2) {
+            hasSacrifice = true;
+            break;
+          }
+
+          // Or if captured on equal/higher value piece, check if the square 'to' is undefended (pure sacrifice)
+          if (netLost >= 3) {
+            const testBoard = new Chess(fenAfter);
+            try {
+              testBoard.move({ from: oppMove.from, to: oppMove.to, promotion: oppMove.promotion });
+              const playerRecaptures = testBoard.moves({ verbose: true }).filter((m) => m.to === to && m.captured);
+              if (playerRecaptures.length === 0) {
+                hasSacrifice = true;
+                break;
+              }
+            } catch {
+              // ignore simulation error
+            }
+          }
+        }
+      }
+    }
+
+    // 2. Discovered/uncovered sacrifice: moving the piece left another major/minor piece (Knight, Bishop, Rook, Queen) hanging
+    if (!hasSacrifice) {
+      for (const oppMove of oppMoves) {
+        if (oppMove.captured) {
+          const victimValue = pieceValues[oppMove.captured.toLowerCase()] || 0;
+          const attackerValue = pieceValues[oppMove.piece.toLowerCase()] || 0;
+          const netLost = victimValue - capturedValue;
+
+          if (victimValue >= 3 && attackerValue < victimValue && netLost >= 2) {
+            const beforeOppMoves = boardBefore.moves({ verbose: true });
+            const wasHangingBefore = beforeOppMoves.some(
+              (m) => m.to === oppMove.to && m.piece === oppMove.piece && m.captured === oppMove.captured
+            );
+            if (!wasHangingBefore) {
+              hasSacrifice = true;
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    return hasSacrifice;
+  }
+
   private async runHeuristicAnalysis(
     history: MoveRecordInput[],
     opening: { eco: string; name: string } | null
@@ -689,7 +800,6 @@ export class GameAnalysisService implements OnDestroy {
       const isWhiteTurn = item.turn === 'w';
 
       const legalMovesBefore = tempChess.moves({ verbose: true });
-      const pieceCountBefore = this.countPieces(tempChess);
 
       tempChess.move({ from: item.from, to: item.to, promotion: item.promotion || 'q' });
       const fenAfter = tempChess.fen();
@@ -711,8 +821,6 @@ export class GameAnalysisService implements OnDestroy {
 
       if (isBook && i < 16) {
         classification = 'book';
-      } else if (tempChess.isCheckmate()) {
-        classification = 'brilliant';
       } else if (deltaWin > 20 || cpDelta > 250) {
         classification = 'blunder';
       } else if (scoreBeforePlayer > 150 && deltaWin > 15) {
@@ -722,12 +830,16 @@ export class GameAnalysisService implements OnDestroy {
       } else if (deltaWin > 5 || cpDelta > 60) {
         classification = 'inaccuracy';
       } else if (cpDelta < 15) {
-        const pieceCountAfter = this.countPieces(tempChess);
-        const sacrificedMaterial = isWhiteTurn
-          ? pieceCountBefore.white - pieceCountAfter.white > pieceCountBefore.black - pieceCountAfter.black
-          : pieceCountBefore.black - pieceCountAfter.black > pieceCountBefore.white - pieceCountAfter.white;
+        const isSacrifice = this.isSacrificeMove(
+          fenBefore,
+          fenAfter,
+          item.from,
+          item.to,
+          item.piece,
+          item.captured
+        );
 
-        if (sacrificedMaterial && scoreAfterPlayer > 150) {
+        if (isSacrifice && scoreAfterPlayer > 50) {
           classification = 'brilliant';
         } else if (cpDelta < 5) {
           classification = 'best';

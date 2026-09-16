@@ -67,4 +67,16 @@ describe('GameAnalysisService', () => {
     expect(service.playerRatings().white).toBe(2400);
     expect(service.playerRatings().black).toBe(2350);
   });
+
+  it('should not award brilliant to quiet King moves', () => {
+    const fenBefore = 'r6r/pk1qR1pp/3P4/2p4p/5Bn1/2Q5/PPP2PPP/4R1K1 w - - 0 25';
+    const fenAfter = 'r6r/pk1qR1pp/3P4/2p4p/5Bn1/2Q5/PPP2PPP/4R1K1 b - - 1 25';
+    // Access private methods for test verification
+    const svc = service as any;
+    const isSacrifice = svc.isSacrificeMove(fenBefore, fenAfter, 'g1', 'g1', 'k', undefined);
+    expect(isSacrifice).toBe(false);
+
+    const classification = svc.classifyMove(0, 250, true, 90, isSacrifice, 90);
+    expect(classification).toBe('best');
+  });
 });
