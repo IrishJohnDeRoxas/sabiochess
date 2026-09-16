@@ -25,16 +25,18 @@
           </button>
         }
 
-        <!-- Import Trigger Button -->
-        <button
-          type="button"
-          (click)="toggleImporter()"
-          class="badge-brutal cursor-pointer transition-colors flex items-center gap-1 text-[11px] sm:text-xs !py-1 !px-2 font-bold bg-[#ECECD8] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] hover:bg-[#D9D9D9]"
-          title="Import Chess.com, Lichess or PGN"
-        >
-          <app-icon name="arrow-down-tray" size="w-3.5 h-3.5"></app-icon>
-          <span>IMPORT</span>
-        </button>
+        <!-- Load Game Button (Visible only when a game is loaded) -->
+        @if (game.history().length > 0) {
+          <button
+            type="button"
+            (click)="loadNewGame()"
+            class="badge-brutal cursor-pointer transition-all flex items-center gap-1 text-[11px] sm:text-xs !py-1 !px-2 font-bold bg-[#10B981] text-white hover:bg-[#059669] shadow-[1px_1px_0_0_#222222] dark:shadow-[1px_1px_0_0_#000000] active:translate-x-[1px] active:translate-y-[1px]"
+            title="Clear loaded game and fetch or load a new game"
+          >
+            <app-icon name="arrow-down-tray" size="w-3.5 h-3.5"></app-icon>
+            <span>LOAD GAME</span>
+          </button>
+        }
 
         <!-- Quick Sound Menu Trigger -->
         <button
@@ -99,84 +101,7 @@
       </div>
     </div>
 
-    <!-- Collapsible Import Drawer (Online Chess.com / Lichess, Samples, PGN) -->
-    @if (isImporterOpen()) {
-      <div class="bg-[#ECECD8] dark:bg-[#18191E] border-2 border-[#222222] dark:border-black p-2.5 flex flex-col gap-2 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]">
-        <!-- Importer Sub-Tabs Strip -->
-        <div class="grid grid-cols-3 gap-1 bg-[#D9D9D9] dark:bg-[#2A2B32] p-1 border border-[#222222] dark:border-black">
-          <button
-            type="button"
-            (click)="setImporterTab('online')"
-            class="text-xs sm:text-sm font-accent uppercase py-1.5 font-bold transition-colors cursor-pointer"
-            [ngClass]="importerTab() === 'online' ? 'bg-[#10B981] text-white border border-[#222222] dark:border-black' : 'hover:bg-white dark:hover:bg-[#373A46] text-[#222222] dark:text-[#F3F4F6]'"
-          >
-            CHESS.COM
-          </button>
-          <button
-            type="button"
-            (click)="setImporterTab('samples')"
-            class="text-xs sm:text-sm font-accent uppercase py-1.5 font-bold transition-colors cursor-pointer"
-            [ngClass]="importerTab() === 'samples' ? 'bg-[#0E4C92] text-white border border-[#222222] dark:border-black' : 'hover:bg-white dark:hover:bg-[#373A46] text-[#222222] dark:text-[#F3F4F6]'"
-          >
-            SAMPLES
-          </button>
-          <button
-            type="button"
-            (click)="setImporterTab('pgn')"
-            class="text-xs sm:text-sm font-accent uppercase py-1.5 font-bold transition-colors cursor-pointer"
-            [ngClass]="importerTab() === 'pgn' ? 'bg-[#222222] dark:bg-[#373A46] text-white border border-[#222222] dark:border-black' : 'hover:bg-white dark:hover:bg-[#373A46] text-[#222222] dark:text-[#F3F4F6]'"
-          >
-            PGN
-          </button>
-        </div>
 
-        <!-- SubTab 1: Live Chess.com / Lichess Importer -->
-        @if (importerTab() === 'online') {
-          <app-platform-game-selector (gameSelected)="onOnlineGameSelected($event)"></app-platform-game-selector>
-        }
-
-        <!-- SubTab 2: Grandmaster Classic Samples -->
-        @if (importerTab() === 'samples') {
-          <div class="flex flex-col gap-1.5">
-            <div class="grid grid-cols-2 gap-1.5">
-              @for (sample of sampleGames; track sample.id) {
-                <button
-                  type="button"
-                  (click)="loadSample(sample.id)"
-                  class="btn-brutal !p-2 text-left text-xs sm:text-sm font-accent flex flex-col bg-white dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] hover:bg-[#FF4F00] dark:hover:bg-[#FF4F00] hover:text-white dark:hover:text-white transition-colors cursor-pointer"
-                >
-                  <span class="font-bold truncate">{{ sample.title }}</span>
-                  <span class="text-[10px] sm:text-[11px] font-label opacity-80 truncate text-gray-600 dark:text-gray-300">{{ sample.result }} • {{ sample.event }}</span>
-                </button>
-              }
-            </div>
-          </div>
-        }
-
-        <!-- SubTab 3: Paste Custom PGN -->
-        @if (importerTab() === 'pgn') {
-          <div class="flex flex-col gap-1.5">
-            <label class="font-label text-xs uppercase text-[#222222] dark:text-[#F3F4F6] font-bold">Paste PGN Text:</label>
-            <textarea
-              [ngModel]="pgnInputText()"
-              (ngModelChange)="pgnInputText.set($event)"
-              rows="3"
-              placeholder="1. e4 e5 2. Nf3 Nc6..."
-              class="w-full bg-white dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] border-2 border-[#222222] dark:border-[#373A46] p-2 text-xs sm:text-sm font-label focus:outline-none focus:border-[#FF4F00]"
-            ></textarea>
-            <div class="flex justify-end gap-1.5 pt-1">
-              <button
-                type="button"
-                (click)="importPgn()"
-                class="btn-brutal btn-brutal-orange !py-1.5 !px-3.5 text-xs sm:text-sm font-bold cursor-pointer"
-              >
-                LOAD PGN
-              </button>
-            </div>
-          </div>
-        }
-      </div>
-    }
 
     <!-- Coach Commentary & Move Explanation Card (Walkthrough Mode Only) -->
     @if (!isReportView() && game.history().length > 0) {
@@ -294,7 +219,7 @@
   </div>
 
   <!-- STATE 1: When 0 moves are played, show Online Fetcher & Samples -->
-  @if (game.history().length === 0 && !isImporterOpen()) {
+  @if (game.history().length === 0) {
     <div class="flex flex-col gap-2 flex-1 min-h-0 overflow-y-auto pr-1 pb-1">
       <app-platform-game-selector (gameSelected)="onOnlineGameSelected($event)"></app-platform-game-selector>
       
@@ -401,6 +326,18 @@
         </div>
       </div>
 
+      <!-- START REVIEW ACTION BUTTON (Under Evaluation Momentum) -->
+      <button
+        type="button"
+        (click)="startReviewWalkthrough()"
+        class="btn-brutal btn-brutal-green w-full !py-2.5 sm:!py-3 text-sm sm:text-base font-accent font-extrabold flex items-center justify-center gap-2 cursor-pointer shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000] hover:scale-[1.005] active:scale-[0.99] transition-all shrink-0"
+        title="Start move-by-move game review walkthrough"
+      >
+        <app-icon name="play" size="w-4 h-4"></app-icon>
+        <span class="tracking-wider uppercase">START REVIEW</span>
+        <app-icon name="chevron-right" size="w-4 h-4"></app-icon>
+      </button>
+
       <!-- 2. PLAYER & ACCURACY CARD -->
       <div class="card-brutal p-3 bg-white dark:bg-[#1E1F24] flex flex-col gap-2.5 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]">
         <!-- Player Badges Header -->
@@ -469,13 +406,6 @@
                 <div class="h-full bg-[#FF4F00]" [style.width]="sum.blackAccuracy + '%'"></div>
               </div>
             </div>
-          </div>
-        } @else if (analysisService.isAnalyzing()) {
-          <div class="p-3 bg-[#ECECD8] dark:bg-[#2A2B32] border border-[#222222] dark:border-black flex flex-col gap-1 items-center justify-center text-center">
-            <span class="font-accent text-xs uppercase font-bold flex items-center gap-1.5">
-              <app-icon name="arrow-path" size="w-3.5 h-3.5" class="animate-spin"></app-icon>
-              <span>Analyzing Game Accuracy ({{ analysisService.progress() }}%)...</span>
-            </span>
           </div>
         }
       </div>
@@ -589,20 +519,6 @@
             </div>
           </div>
         }
-      </div>
-
-      <!-- 5. BOTTOM FIXED ACTION BUTTON: START REVIEW -->
-      <div class="pt-1 shrink-0">
-        <button
-          type="button"
-          (click)="startReviewWalkthrough()"
-          class="btn-brutal btn-brutal-green w-full !py-3 text-sm sm:text-base font-accent font-extrabold flex items-center justify-center gap-2 cursor-pointer shadow-[4px_4px_0_0_#222222] dark:shadow-[4px_4px_0_0_#000000] hover:scale-[1.01] active:scale-[0.99] transition-all"
-          title="Start move-by-move game review walkthrough"
-        >
-          <app-icon name="play" size="w-4 h-4"></app-icon>
-          <span class="tracking-wider uppercase">START REVIEW</span>
-          <app-icon name="chevron-right" size="w-4 h-4"></app-icon>
-        </button>
       </div>
     </div>
   }

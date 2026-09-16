@@ -514,8 +514,19 @@ export class ReviewTabComponent {
     }
   }
 
+  loadNewGame(): void {
+    this.stopFollowUp();
+    this.game.resetGame();
+    this.isImporterOpen.set(false);
+    this.isReportView.set(true);
+    this.settings.flashToast('READY TO LOAD GAME');
+  }
+
   toggleImporter(): void {
     this.isImporterOpen.update((o) => !o);
+    if (this.isImporterOpen()) {
+      this.importerTab.set('online');
+    }
   }
 
   setImporterTab(tab: ImporterSubTab): void {
@@ -524,6 +535,7 @@ export class ReviewTabComponent {
 
   onOnlineGameSelected(_game: FetchedGame): void {
     this.isImporterOpen.set(false);
+    this.isReportView.set(true);
     this.settings.flashToast('ONLINE GAME LOADED');
   }
 
@@ -531,6 +543,7 @@ export class ReviewTabComponent {
     const success = this.game.loadSampleGame(gameId);
     if (success) {
       this.isImporterOpen.set(false);
+      this.isReportView.set(true);
       this.settings.flashToast('SAMPLE LOADED');
     }
   }
@@ -541,6 +554,7 @@ export class ReviewTabComponent {
     const success = this.game.loadPgn(text);
     if (success) {
       this.isImporterOpen.set(false);
+      this.isReportView.set(true);
       this.pgnInputText.set('');
       this.settings.flashToast('PGN IMPORTED');
     } else {

@@ -123,5 +123,17 @@ describe('ReviewTabComponent', () => {
     component.onEscape();
     expect(component.isSoundMenuOpen()).toBe(false);
   });
+
+  it('should reset game and return to initial state when loadNewGame is called', () => {
+    gameService.loadSampleGame('opera');
+    fixture.detectChanges();
+    expect(gameService.history().length).toBeGreaterThan(0);
+
+    component.loadNewGame();
+    fixture.detectChanges();
+
+    expect(gameService.history().length).toBe(0);
+    expect(component.isReportView()).toBe(true);
+  });
 });
 
