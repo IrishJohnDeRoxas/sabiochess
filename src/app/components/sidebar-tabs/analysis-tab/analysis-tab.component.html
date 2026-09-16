@@ -1,166 +1,460 @@
-<div class="flex flex-col gap-3 w-full text-[#222222] dark:text-[#F3F4F6]">
-  <!-- Analysis Status & Accuracy Card -->
-  <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1F24] flex flex-col gap-2.5">
-    <div class="flex items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-2">
-      <div class="flex items-center gap-1.5">
-        <span class="p-1 bg-[#0E4C92] text-white inline-flex border border-[#222222] dark:border-black">
-          <app-icon name="chart-bar" size="w-4 h-4"></app-icon>
+<div class="flex flex-col gap-2.5 w-full text-[#222222] dark:text-[#F3F4F6]">
+  <!-- Real-time Analysis Progress Banner (if active) -->
+  @if (analysisService.isAnalyzing()) {
+    <div class="card-brutal p-3 bg-white dark:bg-[#1E1F24] flex flex-col gap-2 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]">
+      <div class="flex items-center justify-between text-xs sm:text-sm font-accent uppercase font-bold text-[#222222] dark:text-[#F3F4F6]">
+        <span class="flex items-center gap-1.5">
+          <app-icon name="arrow-path" size="w-4 h-4 animate-spin text-[#FF4F00]"></app-icon>
+          <span>ANALYZING MOVES...</span>
         </span>
-        <span class="font-display text-sm sm:text-base uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6]">GAME ACCURACY</span>
+        <span class="font-label font-bold text-xs sm:text-sm text-[#0E4C92] dark:text-[#60A5FA]">{{ analysisService.progress() }}%</span>
       </div>
-
-      <div class="flex items-center gap-1">
-        <span class="badge-brutal bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] text-xs sm:text-sm font-bold">
-          DEPTH: {{ settings.analysisDepth() }}
-        </span>
+      <div class="w-full h-3 bg-[#D9D9D9] dark:bg-[#141519] border border-[#222222] dark:border-black overflow-hidden">
+        <div
+          class="h-full bg-[#FF4F00] transition-all duration-150"
+          [style.width]="analysisService.progress() + '%'"
+        ></div>
       </div>
     </div>
+  }
 
-    <!-- Accuracy Comparison Split -->
-    @if (analysisService.summary(); as sum) {
-      <div class="grid grid-cols-2 gap-2.5">
-        <!-- White Accuracy Card -->
-        <div class="border-2 border-[#222222] dark:border-black bg-[#FFFFFF] dark:bg-[#2A2B32] p-2.5 flex flex-col items-center justify-center gap-1.5 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]">
-          <span class="font-label text-xs sm:text-sm uppercase font-bold text-gray-700 dark:text-gray-300">WHITE ACCURACY</span>
-          <span class="font-display text-3xl sm:text-4xl tracking-tight text-[#222222] dark:text-[#F3F4F6]">{{ sum.whiteAccuracy }}%</span>
-          <div class="w-full h-2 bg-[#D9D9D9] dark:bg-[#141519] border border-[#222222] dark:border-black overflow-hidden">
-            <div class="h-full bg-[#10B981]" [style.width]="sum.whiteAccuracy + '%'"></div>
-          </div>
-        </div>
-
-        <!-- Black Accuracy Card -->
-        <div class="border-2 border-[#222222] dark:border-black bg-[#222222] dark:bg-[#141519] text-white p-2.5 flex flex-col items-center justify-center gap-1.5 shadow-[3px_3px_0_0_#FF4F00]">
-          <span class="font-label text-xs sm:text-sm uppercase font-bold text-gray-300">BLACK ACCURACY</span>
-          <span class="font-display text-3xl sm:text-4xl tracking-tight text-white">{{ sum.blackAccuracy }}%</span>
-          <div class="w-full h-2 bg-[#444444] border border-white dark:border-gray-500 overflow-hidden">
-            <div class="h-full bg-[#FF4F00]" [style.width]="sum.blackAccuracy + '%'"></div>
-          </div>
-        </div>
+  @if (game.history().length === 0) {
+    <!-- Empty State: No Moves Yet -->
+    <div class="card-brutal p-5 bg-white dark:bg-[#1E1F24] text-center flex flex-col items-center gap-3 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]">
+      <div class="w-12 h-12 bg-[#FFDD00] text-[#141519] border-2 border-[#222222] dark:border-black flex items-center justify-center font-black text-xl shadow-[2px_2px_0_0_#222222]">
+        ♟
       </div>
-    } @else {
-      <div class="bg-[#ECECD8] dark:bg-[#2A2B32] border-2 border-[#222222] dark:border-black p-3.5 text-center flex flex-col items-center gap-2 shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000]">
-        <app-icon name="sparkles" size="w-5 h-5" class="text-[#0E4C92] dark:text-[#60A5FA]"></app-icon>
-        <div class="font-accent text-sm sm:text-base uppercase text-[#222222] dark:text-[#F3F4F6] font-bold">
-          {{ game.history().length > 0 ? 'Full Analysis Available' : 'No Moves Recorded Yet' }}
-        </div>
-        <p class="font-body text-xs sm:text-sm text-gray-600 dark:text-gray-400 max-w-[280px] leading-relaxed">
-          {{ game.history().length > 0 ? 'Run full engine evaluation to calculate CAPS accuracy and mistake breakdown.' : 'Play moves or load a game to view accuracy statistics.' }}
-        </p>
+      <div class="font-display text-sm sm:text-base uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6]">
+        NO MOVES RECORDED YET
       </div>
-    }
-
-    <!-- Run Analysis Button / Progress Indicator -->
-    @if (analysisService.isAnalyzing()) {
-      <div class="flex flex-col gap-1 border-2 border-[#222222] dark:border-black p-2.5 bg-[#D9D9D9] dark:bg-[#2A2B32]">
-        <div class="flex items-center justify-between text-xs sm:text-sm font-accent uppercase font-bold text-[#222222] dark:text-[#F3F4F6]">
-          <span class="flex items-center gap-1.5">
-            <app-icon name="arrow-path" size="w-4 h-4 animate-spin"></app-icon>
-            <span>ANALYZING MOVES...</span>
-          </span>
-          <span class="font-label font-bold text-xs sm:text-sm">{{ analysisService.progress() }}%</span>
-        </div>
-        <div class="w-full h-3.5 bg-white dark:bg-[#141519] border border-[#222222] dark:border-black overflow-hidden">
-          <div 
-            class="h-full bg-[#FF4F00] transition-all duration-150"
-            [style.width]="analysisService.progress() + '%'"
-          ></div>
-        </div>
+      <p class="font-body text-xs text-gray-600 dark:text-gray-400 max-w-[260px] leading-relaxed">
+        Play moves on the board or load a PGN game to view full calculation, accuracy, and move breakdown.
+      </p>
+    </div>
+  } @else if (!analysisService.summary() && !analysisService.isAnalyzing()) {
+    <!-- Ready to Analyze State -->
+    <div class="card-brutal p-4 bg-white dark:bg-[#1E1F24] flex flex-col items-center gap-3 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000] text-center">
+      <span class="p-2 bg-[#0E4C92] text-white inline-flex border border-[#222222] dark:border-black shadow-[2px_2px_0_0_#222222]">
+        <app-icon name="chart-bar" size="w-5 h-5"></app-icon>
+      </span>
+      <div class="font-display text-sm sm:text-base uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6]">
+        FULL ANALYSIS AVAILABLE
       </div>
-    } @else {
+      <p class="font-body text-xs text-gray-600 dark:text-gray-400 max-w-[280px] leading-relaxed">
+        Run Stockfish evaluation to calculate CAPS win-probability accuracy, momentum curve, and tactical classifications.
+      </p>
       <button
         type="button"
         (click)="triggerFullAnalysis()"
-        [disabled]="game.history().length === 0"
         class="btn-brutal btn-brutal-orange w-full !py-2.5 text-xs sm:text-sm flex items-center justify-center gap-1.5 font-accent font-bold cursor-pointer"
       >
         <app-icon name="bolt" size="w-4 h-4"></app-icon>
         <span>RUN FULL DEEP ANALYSIS</span>
       </button>
-    }
-  </div>
-
-  <!-- Opening Theory Banner -->
-  @if (analysisService.detectedOpening(); as opening) {
-    <div class="card-brutal p-2.5 sm:p-3 bg-[#D9D9D9] dark:bg-[#2A2B32] flex items-center justify-between gap-2 text-[#222222] dark:text-[#F3F4F6]">
-      <div class="flex items-center gap-2 sm:gap-2.5 min-w-0">
-        <span class="badge-brutal bg-[#222222] dark:bg-[#141519] text-white text-xs sm:text-sm font-bold shrink-0">
-          {{ opening.eco }}
-        </span>
-        <div class="flex flex-col min-w-0">
-          <span class="font-accent text-xs sm:text-sm uppercase font-bold truncate max-w-[220px] text-[#222222] dark:text-[#F3F4F6]">{{ opening.name }}</span>
-          <span class="font-label text-[10px] sm:text-xs text-gray-600 dark:text-gray-400 uppercase font-medium">THEORETICAL OPENING</span>
-        </div>
-      </div>
-      <app-icon name="book-open" size="w-4 h-4" class="text-[#0E4C92] dark:text-[#60A5FA] shrink-0"></app-icon>
     </div>
-  }
-
-  <!-- Interactive Advantage Momentum Graph -->
-  @if (analysisService.evalGraphPoints().length > 0) {
-    <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1F24] flex flex-col gap-2.5">
+  } @else {
+    <!-- 1. EVALUATION MOMENTUM CARD -->
+    <div class="card-brutal p-3 bg-white dark:bg-[#1E1F24] flex flex-col gap-2 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]">
       <div class="flex items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-1.5">
         <div class="flex items-center gap-1.5">
-          <app-icon name="arrow-trending-up" size="w-4 h-4 text-[#FF4F00]"></app-icon>
+          <app-icon name="arrow-trending-up" size="w-4 h-4" class="text-[#FF4F00]"></app-icon>
           <span class="font-display text-xs sm:text-sm uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6]">EVALUATION MOMENTUM</span>
         </div>
-        <span class="font-label text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 font-bold">CLICK BAR TO SEEK</span>
+        <span class="font-label text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 font-bold">CLICK TO SEEK</span>
       </div>
 
-      <!-- Graph Container -->
-      <div class="h-24 bg-[#D9D9D9] dark:bg-[#141519] border-2 border-[#222222] dark:border-black p-1 flex items-stretch gap-0.5 overflow-x-auto relative">
-        <!-- 0.0 Centerline -->
-        <div class="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-[1px] bg-[#222222] dark:bg-white opacity-40 pointer-events-none z-0"></div>
+      <!-- SVG Interactive Area Momentum Curve -->
+      <div class="relative bg-[#D9D9D9] dark:bg-[#141519] border-2 border-[#222222] dark:border-black p-1 rounded-sm overflow-hidden select-none">
+        <svg viewBox="0 0 500 120" class="w-full h-24 sm:h-28 overflow-visible block" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="whiteMomentumGradAnalysis" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#0E4C92" stop-opacity="0.85" />
+              <stop offset="100%" stop-color="#0E4C92" stop-opacity="0.15" />
+            </linearGradient>
+          </defs>
 
-        @for (pt of analysisService.evalGraphPoints(); track pt.ply; let idx = $index) {
-          <div
-            (click)="jumpToPly(idx)"
-            class="flex-1 min-w-[6px] h-full flex flex-col justify-center items-center cursor-pointer hover:opacity-80 transition-opacity relative group z-10"
-            [title]="'Ply ' + pt.ply + ' (' + pt.san + '): ' + (pt.evalScore > 0 ? '+' : '') + pt.evalScore.toFixed(1)"
-          >
-            <!-- Vertical Advantage Bar -->
-            <div
-              class="w-full transition-all"
-              [ngClass]="pt.evalScore >= 0 ? 'bg-[#0E4C92] dark:bg-[#3B82F6]' : 'bg-[#FF4F00]'"
-              [style.height]="getBarHeightPercentage(pt.evalScore) + '%'"
-              [class.ring-2]="game.currentPlyIndex() === idx"
-              [class.ring-black]="game.currentPlyIndex() === idx"
-            ></div>
+          <!-- Zero baseline -->
+          <line x1="15" y1="60" x2="485" y2="60" stroke="#888888" stroke-width="1" stroke-dasharray="3,3" opacity="0.6" />
+
+          <!-- Shaded advantage area -->
+          <path [attr.d]="momentumData().whiteAreaPath" fill="url(#whiteMomentumGradAnalysis)" />
+
+          <!-- Main momentum curve line -->
+          <path
+            [attr.d]="momentumData().linePath"
+            fill="none"
+            stroke="#0E4C92"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="dark:stroke-[#3B82F6]"
+          />
+
+          <!-- Move Key Marker Pins -->
+          @for (pin of momentumData().markerPins; track pin.ply) {
+            <g (click)="jumpFromMomentum(pin.ply)" class="cursor-pointer group">
+              <circle
+                [attr.cx]="pin.x"
+                [attr.cy]="pin.y"
+                r="7"
+                [attr.fill]="pin.color"
+                stroke="#222222"
+                stroke-width="1.5"
+                class="transition-transform group-hover:scale-125"
+              />
+              <text
+                [attr.x]="pin.x"
+                [attr.y]="pin.y + 3"
+                text-anchor="middle"
+                fill="#ffffff"
+                font-size="8"
+                font-weight="bold"
+                font-family="sans-serif"
+                pointer-events="none"
+              >
+                {{ pin.label }}
+              </text>
+            </g>
+          }
+
+          <!-- Current move position ring if seeking -->
+          @if (momentumData().currentPin; as cur) {
+            <circle
+              [attr.cx]="cur.x"
+              [attr.cy]="cur.y"
+              r="6"
+              fill="#FF4F00"
+              stroke="#ffffff"
+              stroke-width="2"
+            />
+          }
+        </svg>
+      </div>
+    </div>
+
+    <!-- START REVIEW ACTION BUTTON (Under Evaluation Momentum) -->
+    <button
+      type="button"
+      (click)="startReviewWalkthrough()"
+      class="w-full py-2.5 sm:py-3 px-4 bg-[#222222] dark:bg-[#1E1F24] hover:bg-[#333333] dark:hover:bg-[#2A2B32] text-white border-2 border-[#222222] dark:border-black shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000] active:translate-x-0.5 active:translate-y-0.5 text-xs sm:text-sm font-accent font-extrabold flex items-center justify-center gap-2 cursor-pointer transition-all shrink-0"
+      title="Start move-by-move game review walkthrough"
+    >
+      <span class="text-xs">►</span>
+      <span class="tracking-wider uppercase">START REVIEW</span>
+      <span class="text-xs">❯</span>
+    </button>
+
+    <!-- 2. PLAYER & ACCURACY CARD -->
+    <div class="card-brutal p-3 bg-white dark:bg-[#1E1F24] flex flex-col gap-2.5 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]">
+      <!-- Player Badges Header -->
+      <div class="grid grid-cols-2 gap-2">
+        <!-- White Player -->
+        <div class="flex items-center gap-2 p-1.5 border border-[#222222] dark:border-[#373A46] bg-[#FFFFFF] dark:bg-[#2A2B32] min-w-0">
+          <div class="w-7 h-7 bg-[#ECECD8] dark:bg-[#373A46] border border-[#222222] dark:border-black flex items-center justify-center font-display font-bold text-xs shrink-0 text-[#222222] dark:text-[#F3F4F6]">
+            {{ getPlayerInitial(game.matchMetadata().white.name) }}
           </div>
-        }
-      </div>
-    </div>
-  }
-
-  <!-- Move Quality Breakdown Grid -->
-  <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1F24] flex flex-col gap-2.5 flex-1">
-    <div class="flex items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-2">
-      <span class="font-display text-xs sm:text-sm uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6]">MOVE CLASSIFICATION</span>
-      <div class="flex items-center gap-4 font-label text-xs sm:text-sm font-bold">
-        <span class="text-[#222222] dark:text-[#F3F4F6]">WHITE</span>
-        <span class="text-[#222222] dark:text-[#F3F4F6]">BLACK</span>
-      </div>
-    </div>
-
-    <!-- Rows List -->
-    <div class="flex flex-col gap-1">
-      @for (row of classificationRows(); track row.key) {
-        <div class="flex items-center justify-between p-1.5 border-b border-gray-100 dark:border-gray-800 hover:bg-[#D9D9D9] dark:hover:bg-[#2A2B32] text-xs sm:text-sm font-accent transition-colors">
-          <div class="flex items-center gap-2">
-            <span 
-              class="badge-brutal text-[11px] sm:text-xs !px-1.5 !py-0.5 w-6 sm:w-7 text-center justify-center font-bold"
-              [ngClass]="row.badgeClass"
-            >
-              {{ row.symbol }}
+          <div class="flex flex-col min-w-0">
+            <span class="font-accent text-xs font-bold truncate text-[#222222] dark:text-[#F3F4F6]">
+              {{ game.matchMetadata().white.name || 'White' }}
             </span>
-            <span class="font-bold uppercase text-xs sm:text-sm text-[#222222] dark:text-[#F3F4F6]">{{ row.label }}</span>
+            @if (game.matchMetadata().white.rating) {
+              <span class="font-label text-[10px] text-gray-500 dark:text-gray-400">
+                {{ game.matchMetadata().white.rating }}
+              </span>
+            }
+          </div>
+        </div>
+
+        <!-- Black Player -->
+        <div class="flex items-center gap-2 p-1.5 border border-[#222222] dark:border-[#373A46] bg-[#222222] dark:bg-[#141519] min-w-0">
+          <div class="w-7 h-7 bg-[#373A46] border border-white dark:border-gray-600 flex items-center justify-center font-display font-bold text-xs shrink-0 text-white">
+            {{ getPlayerInitial(game.matchMetadata().black.name) }}
+          </div>
+          <div class="flex flex-col min-w-0">
+            <span class="font-accent text-xs font-bold truncate text-white">
+              {{ game.matchMetadata().black.name || 'Black' }}
+            </span>
+            @if (game.matchMetadata().black.rating) {
+              <span class="font-label text-[10px] text-gray-300">
+                {{ game.matchMetadata().black.rating }}
+              </span>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Accuracy Split Row: 60.0 ACCURACY 59.9 -->
+      @if (analysisService.summary(); as sum) {
+        <div class="border-2 border-[#222222] dark:border-black bg-[#ECECD8] dark:bg-[#141519] p-2.5 flex items-center justify-between gap-2 shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000]">
+          <!-- White Accuracy -->
+          <div class="flex flex-col items-center flex-1">
+            <span class="font-display text-2xl sm:text-3xl font-bold tracking-tight text-[#0E4C92] dark:text-[#60A5FA]">
+              {{ sum.whiteAccuracy.toFixed(1) }}
+            </span>
+            <div class="w-full h-1.5 bg-[#D9D9D9] dark:bg-[#2A2B32] border border-[#222222] dark:border-black mt-1 overflow-hidden">
+              <div class="h-full bg-[#0E4C92] dark:bg-[#60A5FA]" [style.width]="sum.whiteAccuracy + '%'"></div>
+            </div>
           </div>
 
-          <div class="flex items-center gap-6 font-label text-xs sm:text-sm font-bold pr-1 text-[#222222] dark:text-[#F3F4F6]">
-            <span class="w-4 sm:w-5 text-center" [class.text-gray-300]="row.whiteCount === 0" [class.dark:text-gray-600]="row.whiteCount === 0">{{ row.whiteCount }}</span>
-            <span class="w-4 sm:w-5 text-center" [class.text-gray-300]="row.blackCount === 0" [class.dark:text-gray-600]="row.blackCount === 0">{{ row.blackCount }}</span>
+          <!-- Center Label -->
+          <div class="flex flex-col items-center justify-center px-2">
+            <span class="font-label text-xs uppercase font-extrabold tracking-wider text-gray-700 dark:text-gray-300">
+              ACCURACY
+            </span>
+          </div>
+
+          <!-- Black Accuracy -->
+          <div class="flex flex-col items-center flex-1">
+            <span class="font-display text-2xl sm:text-3xl font-bold tracking-tight text-[#FF4F00]">
+              {{ sum.blackAccuracy.toFixed(1) }}
+            </span>
+            <div class="w-full h-1.5 bg-[#D9D9D9] dark:bg-[#2A2B32] border border-[#222222] dark:border-black mt-1 overflow-hidden">
+              <div class="h-full bg-[#FF4F00]" [style.width]="sum.blackAccuracy + '%'"></div>
+            </div>
           </div>
         </div>
       }
     </div>
-  </div>
+
+    <!-- 3. MOVE BREAKDOWN CARD -->
+    <div class="card-brutal p-3 bg-white dark:bg-[#1E1F24] flex flex-col gap-2 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]">
+      <!-- Title bar -->
+      <div class="flex items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-1.5">
+        <div class="flex items-center gap-1.5">
+          <app-icon name="chart-bar" size="w-4 h-4" class="text-[#0E4C92] dark:text-[#60A5FA]"></app-icon>
+          <span class="font-display text-xs sm:text-sm uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6]">MOVE BREAKDOWN</span>
+        </div>
+        <span class="badge-brutal bg-[#D9D9D9] dark:bg-[#2A2B32] text-[10px] sm:text-xs font-bold text-[#222222] dark:text-[#F3F4F6]">
+          {{ game.history().length }} PLY
+        </span>
+      </div>
+
+      <!-- Aligned Column Headers -->
+      <div class="grid grid-cols-[48px_1fr_48px] items-center text-xs font-label font-extrabold uppercase bg-[#ECECD8] dark:bg-[#2A2B32] border border-[#222222] dark:border-black py-1 px-1.5 text-[#222222] dark:text-[#F3F4F6]">
+        <span class="text-center text-[#0E4C92] dark:text-[#60A5FA]">WHITE</span>
+        <span class="text-center text-gray-600 dark:text-gray-300">CLASSIFICATION</span>
+        <span class="text-center text-[#FF4F00]">BLACK</span>
+      </div>
+
+      <!-- 7 Classic Classification Rows -->
+      <div class="flex flex-col divide-y divide-gray-100 dark:divide-gray-800 text-xs sm:text-sm">
+        @for (row of reportClassificationRows(); track row.key) {
+          <div class="grid grid-cols-[48px_1fr_48px] items-center py-1.5 px-1.5 hover:bg-[#D9D9D9]/40 dark:hover:bg-[#2A2B32]/40 transition-colors">
+            <!-- White Count -->
+            <span
+              class="text-center font-label font-extrabold text-xs sm:text-sm"
+              [ngClass]="row.whiteCount > 0 ? 'text-[#222222] dark:text-[#F3F4F6]' : 'text-gray-300 dark:text-gray-600 font-normal'"
+            >
+              {{ row.whiteCount }}
+            </span>
+
+            <!-- Centered Classification Column -->
+            <div class="flex items-center justify-center min-w-0">
+              <div class="flex items-center gap-2 w-[142px] sm:w-[155px] min-w-0">
+                <span
+                  class="badge-brutal text-[10px] sm:text-xs !py-0.5 !px-1 font-bold shrink-0 w-[26px] h-[20px] flex items-center justify-center text-center shadow-[1px_1px_0_0_#222222] dark:shadow-[1px_1px_0_0_#000000]"
+                  [ngClass]="row.badgeClass"
+                >
+                  @if (row.key === 'best') {
+                    <app-icon name="star" size="w-3 h-3"></app-icon>
+                  } @else {
+                    <span>{{ row.symbol }}</span>
+                  }
+                </span>
+                <span class="font-accent font-bold uppercase text-xs text-[#222222] dark:text-[#F3F4F6] truncate">
+                  {{ row.label }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Black Count -->
+            <span
+              class="text-center font-label font-extrabold text-xs sm:text-sm"
+              [ngClass]="row.blackCount > 0 ? 'text-[#222222] dark:text-[#F3F4F6]' : 'text-gray-300 dark:text-gray-600 font-normal'"
+            >
+              {{ row.blackCount }}
+            </span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- 4. GAME RATING ROW & COACH REVIEW & PHASES CARD -->
+    <div class="card-brutal p-3 bg-white dark:bg-[#1E1F24] flex flex-col gap-2 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]">
+      @if (analysisService.summary(); as sum) {
+        <!-- Game Rating Row -->
+        <div class="flex items-center justify-between p-2 bg-[#ECECD8] dark:bg-[#141519] border border-[#222222] dark:border-black text-xs sm:text-sm">
+          <span class="font-display text-base sm:text-lg font-bold text-[#0E4C92] dark:text-[#60A5FA]">
+            {{ sum.whitePerformanceRating }}
+          </span>
+          <span class="font-label uppercase font-extrabold text-xs text-gray-700 dark:text-gray-300">
+            GAME RATING
+          </span>
+          <span class="font-display text-base sm:text-lg font-bold text-[#FF4F00]">
+            {{ sum.blackPerformanceRating }}
+          </span>
+        </div>
+
+        <!-- Coach Review Verdict Row -->
+        <div class="flex items-center justify-between p-2 bg-[#FFFFFF] dark:bg-[#2A2B32] border border-[#222222] dark:border-black text-xs sm:text-sm">
+          <span class="badge-brutal text-[10px] sm:text-xs !py-0.5 !px-2 font-bold uppercase" [ngClass]="getCoachVerdictBadgeClass(sum.whiteCoachVerdict)">
+            {{ sum.whiteCoachVerdict }}
+          </span>
+          <span class="font-label uppercase font-extrabold text-xs text-gray-700 dark:text-gray-300">
+            COACH REVIEW
+          </span>
+          <span class="badge-brutal text-[10px] sm:text-xs !py-0.5 !px-2 font-bold uppercase" [ngClass]="getCoachVerdictBadgeClass(sum.blackCoachVerdict)">
+            {{ sum.blackCoachVerdict }}
+          </span>
+        </div>
+
+        <!-- Game Phases Breakdown (Opening, Middlegame, Endgame) -->
+        <div class="flex flex-col gap-1.5 pt-2 border-t border-gray-200 dark:border-gray-700">
+          <!-- Opening -->
+          @let opW = getPhaseBadgeInfo(sum.phases.opening.white);
+          @let opB = getPhaseBadgeInfo(sum.phases.opening.black);
+          <div class="grid grid-cols-[1fr_84px_1fr] items-center py-1 px-1.5 text-xs font-accent bg-[#ECECD8]/50 dark:bg-[#2A2B32]/50 border border-[#222222]/20 dark:border-black/40">
+            <!-- White -->
+            <div class="flex items-center gap-1.5 min-w-0 justify-start">
+              @if (!opW.isEmpty) {
+                <span
+                  class="badge-brutal text-[10px] sm:text-xs !py-0.5 !px-1 font-bold shrink-0 w-[24px] h-[19px] flex items-center justify-center text-center shadow-[1px_1px_0_0_#222222] dark:shadow-[1px_1px_0_0_#000000]"
+                  [ngClass]="opW.badgeClass"
+                >
+                  @if (opW.symbol === '★') {
+                    <app-icon name="star" size="w-3 h-3"></app-icon>
+                  } @else {
+                    <span>{{ opW.symbol }}</span>
+                  }
+                </span>
+                <span class="font-accent font-bold uppercase text-xs truncate text-[#222222] dark:text-[#F3F4F6]">{{ opW.label }}</span>
+              } @else {
+                <span class="text-gray-400 font-bold pl-1">—</span>
+              }
+            </div>
+
+            <!-- Phase Title -->
+            <span class="font-label uppercase font-extrabold text-gray-700 dark:text-gray-300 text-[11px] text-center tracking-wider">
+              OPENING
+            </span>
+
+            <!-- Black -->
+            <div class="flex items-center gap-1.5 min-w-0 justify-end">
+              @if (!opB.isEmpty) {
+                <span class="font-accent font-bold uppercase text-xs truncate text-[#222222] dark:text-[#F3F4F6]">{{ opB.label }}</span>
+                <span
+                  class="badge-brutal text-[10px] sm:text-xs !py-0.5 !px-1 font-bold shrink-0 w-[24px] h-[19px] flex items-center justify-center text-center shadow-[1px_1px_0_0_#222222] dark:shadow-[1px_1px_0_0_#000000]"
+                  [ngClass]="opB.badgeClass"
+                >
+                  @if (opB.symbol === '★') {
+                    <app-icon name="star" size="w-3 h-3"></app-icon>
+                  } @else {
+                    <span>{{ opB.symbol }}</span>
+                  }
+                </span>
+              } @else {
+                <span class="text-gray-400 font-bold pr-1">—</span>
+              }
+            </div>
+          </div>
+
+          <!-- Middlegame -->
+          @let midW = getPhaseBadgeInfo(sum.phases.middlegame.white);
+          @let midB = getPhaseBadgeInfo(sum.phases.middlegame.black);
+          <div class="grid grid-cols-[1fr_84px_1fr] items-center py-1 px-1.5 text-xs font-accent bg-[#ECECD8]/50 dark:bg-[#2A2B32]/50 border border-[#222222]/20 dark:border-black/40">
+            <!-- White -->
+            <div class="flex items-center gap-1.5 min-w-0 justify-start">
+              @if (!midW.isEmpty) {
+                <span
+                  class="badge-brutal text-[10px] sm:text-xs !py-0.5 !px-1 font-bold shrink-0 w-[24px] h-[19px] flex items-center justify-center text-center shadow-[1px_1px_0_0_#222222] dark:shadow-[1px_1px_0_0_#000000]"
+                  [ngClass]="midW.badgeClass"
+                >
+                  @if (midW.symbol === '★') {
+                    <app-icon name="star" size="w-3 h-3"></app-icon>
+                  } @else {
+                    <span>{{ midW.symbol }}</span>
+                  }
+                </span>
+                <span class="font-accent font-bold uppercase text-xs truncate text-[#222222] dark:text-[#F3F4F6]">{{ midW.label }}</span>
+              } @else {
+                <span class="text-gray-400 font-bold pl-1">—</span>
+              }
+            </div>
+
+            <!-- Phase Title -->
+            <span class="font-label uppercase font-extrabold text-gray-700 dark:text-gray-300 text-[11px] text-center tracking-wider">
+              MIDDLEGAME
+            </span>
+
+            <!-- Black -->
+            <div class="flex items-center gap-1.5 min-w-0 justify-end">
+              @if (!midB.isEmpty) {
+                <span class="font-accent font-bold uppercase text-xs truncate text-[#222222] dark:text-[#F3F4F6]">{{ midB.label }}</span>
+                <span
+                  class="badge-brutal text-[10px] sm:text-xs !py-0.5 !px-1 font-bold shrink-0 w-[24px] h-[19px] flex items-center justify-center text-center shadow-[1px_1px_0_0_#222222] dark:shadow-[1px_1px_0_0_#000000]"
+                  [ngClass]="midB.badgeClass"
+                >
+                  @if (midB.symbol === '★') {
+                    <app-icon name="star" size="w-3 h-3"></app-icon>
+                  } @else {
+                    <span>{{ midB.symbol }}</span>
+                  }
+                </span>
+              } @else {
+                <span class="text-gray-400 font-bold pr-1">—</span>
+              }
+            </div>
+          </div>
+
+          <!-- Endgame -->
+          @let endW = getPhaseBadgeInfo(sum.phases.endgame.white);
+          @let endB = getPhaseBadgeInfo(sum.phases.endgame.black);
+          <div class="grid grid-cols-[1fr_84px_1fr] items-center py-1 px-1.5 text-xs font-accent bg-[#ECECD8]/50 dark:bg-[#2A2B32]/50 border border-[#222222]/20 dark:border-black/40">
+            <!-- White -->
+            <div class="flex items-center gap-1.5 min-w-0 justify-start">
+              @if (!endW.isEmpty) {
+                <span
+                  class="badge-brutal text-[10px] sm:text-xs !py-0.5 !px-1 font-bold shrink-0 w-[24px] h-[19px] flex items-center justify-center text-center shadow-[1px_1px_0_0_#222222] dark:shadow-[1px_1px_0_0_#000000]"
+                  [ngClass]="endW.badgeClass"
+                >
+                  @if (endW.symbol === '★') {
+                    <app-icon name="star" size="w-3 h-3"></app-icon>
+                  } @else {
+                    <span>{{ endW.symbol }}</span>
+                  }
+                </span>
+                <span class="font-accent font-bold uppercase text-xs truncate text-[#222222] dark:text-[#F3F4F6]">{{ endW.label }}</span>
+              } @else {
+                <span class="text-gray-400 font-bold pl-1">—</span>
+              }
+            </div>
+
+            <!-- Phase Title -->
+            <span class="font-label uppercase font-extrabold text-gray-700 dark:text-gray-300 text-[11px] text-center tracking-wider">
+              ENDGAME
+            </span>
+
+            <!-- Black -->
+            <div class="flex items-center gap-1.5 min-w-0 justify-end">
+              @if (!endB.isEmpty) {
+                <span class="font-accent font-bold uppercase text-xs truncate text-[#222222] dark:text-[#F3F4F6]">{{ endB.label }}</span>
+                <span
+                  class="badge-brutal text-[10px] sm:text-xs !py-0.5 !px-1 font-bold shrink-0 w-[24px] h-[19px] flex items-center justify-center text-center shadow-[1px_1px_0_0_#222222] dark:shadow-[1px_1px_0_0_#000000]"
+                  [ngClass]="endB.badgeClass"
+                >
+                  @if (endB.symbol === '★') {
+                    <app-icon name="star" size="w-3 h-3"></app-icon>
+                  } @else {
+                    <span>{{ endB.symbol }}</span>
+                  }
+                </span>
+              } @else {
+                <span class="text-gray-400 font-bold pr-1">—</span>
+              }
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
 </div>

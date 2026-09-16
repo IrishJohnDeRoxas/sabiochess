@@ -49,7 +49,7 @@
     }
     @case ('analysis') {
     <div class="w-full h-full min-h-0 overflow-y-auto pr-1 pb-1">
-      <app-analysis-tab></app-analysis-tab>
+      <app-analysis-tab (startReview)="setTab('review')"></app-analysis-tab>
     </div>
     }
     @case ('settings') {

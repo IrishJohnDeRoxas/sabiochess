@@ -19,6 +19,7 @@ describe('SettingsService', () => {
     expect(service.moveSounds()).toBe(true);
     expect(service.memeSounds()).toBe(true);
     expect(service.memePack()).toBe('meme');
+    expect(service.analysisDepth()).toBe(14);
   });
 
   it('should update app theme and toggle dark mode', () => {

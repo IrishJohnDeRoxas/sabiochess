@@ -34,10 +34,10 @@ describe('GameAnalysisService', () => {
     // Zero loss or best move = 100%
     expect(service.calculateCaps2Accuracy(0, true)).toBe(100);
     expect(service.calculateCaps2Accuracy(0, false)).toBe(100);
-    // 10% deltaWin gives ~62% accuracy
+    // 10% deltaWin gives ~35% accuracy (mistake territory in Chess.com)
     const acc10 = service.calculateCaps2Accuracy(10, false);
-    expect(acc10).toBeGreaterThan(50);
-    expect(acc10).toBeLessThan(75);
+    expect(acc10).toBeGreaterThan(25);
+    expect(acc10).toBeLessThan(50);
   });
 
   it('should analyze a move history and compute summary accuracy with opening detection', async () => {

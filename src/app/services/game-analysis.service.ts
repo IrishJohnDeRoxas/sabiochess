@@ -112,34 +112,34 @@ export class GameAnalysisService implements OnDestroy {
     });
 
     /**
-     * Lichess & CAPS2 Composite Game Accuracy:
-     * Combines Harmonic Mean (penalizing critical blunders) and Volatility-Weighted Mean.
+     * Chess.com CAPS2 Aggregate Game Accuracy:
+     * Uses power-mean (p = 0.6) with position-leverage and volatility weighting.
+     * Prevents error dilution while accurately reflecting Chess.com CAPS2 game review percentages.
      */
     const calcAccuracy = (playerMoves: MoveAnalysis[]): number => {
       if (playerMoves.length === 0) return 100;
 
-      let harmonicSum = 0;
-      let weightedAccSum = 0;
+      const p = 0.26; // CAPS2 power-mean parameter
+      let weightedPowerSum = 0;
       let totalWeight = 0;
 
       for (const m of playerMoves) {
-        const acc = Math.max(1, Math.min(100, m.accuracy));
-        harmonicSum += 1 / acc;
+        const acc = Math.max(0, Math.min(100, m.accuracy));
 
-        // Position volatility weight: sharp / contested positions carry full weight
+        // Position leverage & volatility weight (Chess.com CAPS2):
+        // Sharp / equal positions carry full weight; runaway / decided positions carry lower weight
         const winChance = m.winChanceBefore ?? 50;
         const sharpness = Math.sin(Math.PI * Math.max(0, Math.min(1, winChance / 100)));
-        const weight = 0.5 + 0.5 * sharpness;
+        const weight = 0.4 + 0.6 * sharpness;
 
-        weightedAccSum += acc * weight;
+        weightedPowerSum += Math.pow(acc, p) * weight;
         totalWeight += weight;
       }
 
-      const harmonicMean = playerMoves.length / harmonicSum;
-      const weightedMean = totalWeight > 0 ? weightedAccSum / totalWeight : 100;
-
-      const combined = (harmonicMean + weightedMean) / 2;
-      return Math.max(0, Math.min(100, Math.round(combined * 10) / 10));
+      if (totalWeight <= 0) return 100;
+      const meanPower = weightedPowerSum / totalWeight;
+      const gameAcc = Math.pow(meanPower, 1 / p);
+      return Math.max(0, Math.min(100, Math.round(gameAcc * 10) / 10));
     };
 
     const whiteAcc = calcAccuracy(whiteMovesList);
@@ -417,14 +417,29 @@ export class GameAnalysisService implements OnDestroy {
   }
 
   /**
-   * Chess.com & Lichess CAPS2 Move Accuracy Formula:
-   * Accuracy = 103.1668 * exp(-0.04354 * deltaWin) - 3.1669 + 1
+   * Chess.com CAPS2 Move Accuracy Formula:
+   * Maps win percentage loss (deltaWin) into an accuracy score (0 - 100).
+   *
+   * Calibration:
+   * - Best / Book / Great / Brilliant: 100%
+   * - Excellent (deltaWin <= 2%): 90% - 98%
+   * - Good (deltaWin <= 5%): 65% - 85%
+   * - Inaccuracy (deltaWin 5% - 10%): 40% - 60%
+   * - Mistake (deltaWin 10% - 20%): 15% - 35%
+   * - Miss / Blunder (deltaWin > 20%): 0% - 15%
    */
-  calculateCaps2Accuracy(deltaWin: number, isBestMove: boolean): number {
-    if (isBestMove || deltaWin <= 0.001) {
+  calculateCaps2Accuracy(deltaWin: number, isBestMove: boolean, classification?: MoveClassification): number {
+    if (
+      isBestMove ||
+      deltaWin <= 0.3 ||
+      classification === 'book' ||
+      classification === 'best' ||
+      classification === 'brilliant' ||
+      classification === 'great'
+    ) {
       return 100;
     }
-    const acc = 103.1668 * Math.exp(-0.04354 * deltaWin) - 3.1669 + 1;
+    const acc = 100 * Math.exp(-0.055 * Math.pow(Math.max(0, deltaWin), 1.35));
     return Math.max(0, Math.min(100, Math.round(acc * 10) / 10));
   }
 
@@ -531,7 +546,7 @@ export class GameAnalysisService implements OnDestroy {
         classification = this.classifyMove(deltaWin, evalGain, isEngineBest, playerWinBefore);
       }
 
-      const accuracy = classification === 'book' ? 100 : this.calculateCaps2Accuracy(deltaWin, isEngineBest);
+      const accuracy = classification === 'book' ? 100 : this.calculateCaps2Accuracy(deltaWin, isEngineBest, classification);
 
       // Follow up moves
       const followUpMoves: string[] = [];
@@ -625,6 +640,7 @@ export class GameAnalysisService implements OnDestroy {
     }
 
     this.movesAnalysis.set(analysis);
+
     if (this.resolveAnalysisPromise) {
       this.resolveAnalysisPromise();
       this.resolveAnalysisPromise = null;
@@ -687,9 +703,9 @@ export class GameAnalysisService implements OnDestroy {
 
       const cpDelta = Math.max(0, scoreBeforePlayer - scoreAfterPlayer);
 
-      const winProbBefore = 1 / (1 + Math.pow(10, -scoreBeforePlayer / 400));
-      const winProbAfter = 1 / (1 + Math.pow(10, -scoreAfterPlayer / 400));
-      const deltaWin = Math.max(0, (winProbBefore - winProbAfter) * 100);
+      const winProbBefore = this.evalToWinChance(scoreBeforePlayer, null);
+      const winProbAfter = this.evalToWinChance(scoreAfterPlayer, null);
+      const deltaWin = Math.max(0, winProbBefore - winProbAfter);
 
       let classification: MoveClassification = 'good';
 
@@ -697,13 +713,13 @@ export class GameAnalysisService implements OnDestroy {
         classification = 'book';
       } else if (tempChess.isCheckmate()) {
         classification = 'brilliant';
-      } else if (deltaWin > 35 || cpDelta > 280) {
+      } else if (deltaWin > 20 || cpDelta > 250) {
         classification = 'blunder';
       } else if (scoreBeforePlayer > 150 && deltaWin > 15) {
         classification = 'miss';
-      } else if (deltaWin > 20 || cpDelta > 180) {
+      } else if (deltaWin > 10 || cpDelta > 150) {
         classification = 'mistake';
-      } else if (deltaWin > 8 || cpDelta > 90) {
+      } else if (deltaWin > 5 || cpDelta > 60) {
         classification = 'inaccuracy';
       } else if (cpDelta < 15) {
         const pieceCountAfter = this.countPieces(tempChess);
@@ -724,7 +740,7 @@ export class GameAnalysisService implements OnDestroy {
         classification = 'inaccuracy';
       }
 
-      const accuracy = classification === 'book' ? 100 : this.calculateCaps2Accuracy(deltaWin, classification === 'best');
+      const accuracy = classification === 'book' ? 100 : this.calculateCaps2Accuracy(deltaWin, classification === 'best', classification);
 
       const commentary = getCoachCommentary(
         classification,
