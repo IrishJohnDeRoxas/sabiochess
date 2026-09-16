@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { HeaderComponent } from './header.component';
 import { SettingsService } from '../../services/settings.service';
 
@@ -10,7 +11,7 @@ describe('HeaderComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [HeaderComponent],
-      providers: [SettingsService],
+      providers: [SettingsService, provideRouter([])],
     }).compileComponents();
 
     fixture = TestBed.createComponent(HeaderComponent);

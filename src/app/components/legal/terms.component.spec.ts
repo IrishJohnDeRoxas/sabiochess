@@ -25,10 +25,10 @@ describe('TermsComponent', () => {
   it('should render terms headings and version', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('.legal-title')?.textContent).toContain('Terms of Service');
-    expect(compiled.querySelector('.meta-row')?.textContent).toContain('Version 1.0.0');
-    expect(compiled.querySelector('#fair-play')).toBeTruthy();
+    expect(compiled.querySelector('.meta-row')?.textContent).toContain('Version 1.3.0');
     expect(compiled.querySelector('#acceptance')).toBeTruthy();
-    expect(compiled.querySelector('#subscriptions')).toBeTruthy();
+    expect(compiled.querySelector('#fair-play')).toBeTruthy();
+    expect(compiled.querySelector('#permitted-use')).toBeTruthy();
     expect(compiled.querySelector('#ip-licenses')).toBeTruthy();
     expect(compiled.querySelector('#liability')).toBeTruthy();
   });

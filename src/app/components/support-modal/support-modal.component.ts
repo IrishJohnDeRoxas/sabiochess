@@ -16,9 +16,9 @@ export class SupportModalComponent {
 
   readonly buyMeCoffeeUrl = 'https://buymeacoffee.com/sabiochess';
   readonly coffeeAmounts = [
-    { amount: 3, label: '1 Coffee', icon: '☕', desc: 'Keeps domain & hosting alive' },
-    { amount: 5, label: '2 Coffees', icon: '⚡', desc: 'Powers Stockfish WASM updates' },
-    { amount: 15, label: 'Grandmaster Tip', icon: '👑', desc: 'Huge supporter of open chess tools' },
+    { amount: 5, label: '1 Coffee', icon: '☕', desc: 'Keeps domain & hosting alive' },
+    { amount: 10, label: '2 Coffees', icon: '⚡', desc: 'Powers Stockfish WASM updates' },
+    { amount: 25, label: 'Grandmaster Tip', icon: '👑', desc: 'Huge supporter of open chess tools' },
   ];
 
   @HostListener('document:keydown.escape')
@@ -38,11 +38,8 @@ export class SupportModalComponent {
     this.settings.closeSupportModal();
   }
 
-  openCoffee(amount?: number): void {
-    const url = amount
-      ? `${this.buyMeCoffeeUrl}?amount=${amount}`
-      : this.buyMeCoffeeUrl;
-    window.open(url, '_blank', 'noopener,noreferrer');
+  openCoffee(): void {
+    window.open(this.buyMeCoffeeUrl, '_blank', 'noopener,noreferrer');
   }
 
   copyDonationLink(): void {

@@ -26,14 +26,14 @@ describe('PrivacyComponent', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('.legal-title')?.textContent).toContain('Privacy Policy');
     expect(compiled.querySelector('#collection')).toBeTruthy();
-    expect(compiled.querySelector('#usage')).toBeTruthy();
-    expect(compiled.querySelector('#storage')).toBeTruthy();
+    expect(compiled.querySelector('#local-storage')).toBeTruthy();
     expect(compiled.querySelector('#third-parties')).toBeTruthy();
-    expect(compiled.querySelector('#rights')).toBeTruthy();
+    expect(compiled.querySelector('#engine')).toBeTruthy();
+    expect(compiled.querySelector('#your-control')).toBeTruthy();
   });
 
   it('should change active section on scrollToSection', () => {
-    component.scrollToSection('rights');
-    expect(component.activeSection()).toBe('rights');
+    component.scrollToSection('your-control');
+    expect(component.activeSection()).toBe('your-control');
   });
 });

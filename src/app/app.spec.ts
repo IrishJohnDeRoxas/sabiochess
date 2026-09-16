@@ -91,8 +91,8 @@ describe('SabioChess Neubrutalist Suite', () => {
 
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.textContent).toContain('Privacy Policy');
-    expect(compiled.textContent).toContain('DATA PRIVACY & GDPR');
-    expect(compiled.textContent).toContain('GDPR & CCPA Compliant');
+    expect(compiled.textContent).toContain('DATA PRIVACY');
+    expect(compiled.textContent).toContain('What We Collect');
   });
 
   it('should render the brand header with SabioChess title', () => {

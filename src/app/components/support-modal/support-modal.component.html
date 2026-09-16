@@ -1,6 +1,6 @@
 @if (settings.isSupportModalOpen()) {
 <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in" (click)="onBackdropClick($event)">
-  <div class="card-brutal w-full max-w-lg bg-white dark:bg-[#1E1F24] p-0 overflow-hidden shadow-[8px_8px_0_0_#222222] dark:shadow-[8px_8px_0_0_#000000] border-4 border-[#222222] dark:border-black animate-scale-up" (click)="$event.stopPropagation()">
+  <div class="card-brutal w-full max-w-xl bg-white dark:bg-[#1E1F24] p-0 overflow-hidden shadow-[8px_8px_0_0_#222222] dark:shadow-[8px_8px_0_0_#000000] border-4 border-[#222222] dark:border-black animate-scale-up" (click)="$event.stopPropagation()">
     
     <!-- Modal Header -->
     <div class="flex items-center justify-between p-4 bg-[#FFDD00] text-[#141519] border-b-4 border-[#222222] dark:border-black">
@@ -16,7 +16,7 @@
     </div>
 
     <!-- Modal Content -->
-    <div class="p-5 flex flex-col gap-4 text-[#222222] dark:text-[#F3F4F6] max-h-[80vh] overflow-y-auto">
+    <div class="p-5 flex flex-col gap-4 text-[#222222] dark:text-[#F3F4F6] max-h-[85vh] overflow-y-auto">
       
       <!-- Philosophy Banner -->
       <div class="p-3.5 border-2 border-[#222222] dark:border-[#373A46] bg-[#ECECD8] dark:bg-[#2A2B32] flex flex-col gap-1.5">
@@ -29,13 +29,16 @@
         </p>
       </div>
 
-      <!-- Quick Donation Option Cards -->
+      <!-- Suggested Support Tiers -->
       <div class="flex flex-col gap-2">
-        <span class="font-label text-xs uppercase font-bold text-gray-600 dark:text-gray-400">Choose a tip amount:</span>
+        <div class="flex items-center justify-between">
+          <span class="font-label text-xs uppercase font-bold text-gray-600 dark:text-gray-400">Suggested support tiers:</span>
+          <span class="font-label text-[11px] text-gray-500 dark:text-gray-400">Choose on BMC</span>
+        </div>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
           @for (option of coffeeAmounts; track option.amount) {
-            <button type="button" (click)="openCoffee(option.amount)"
-              class="card-brutal !p-3 bg-white dark:bg-[#2A2B32] hover:bg-[#FFDD00] hover:text-[#141519] border-2 border-[#222222] dark:border-[#373A46] hover:border-[#222222] text-left flex flex-col justify-between gap-1.5 cursor-pointer transition-transform hover:-translate-y-0.5 active:translate-y-0 shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000]">
+            <div
+              class="card-brutal !p-3 bg-white dark:bg-[#2A2B32] border-2 border-[#222222] dark:border-[#373A46] text-left flex flex-col justify-between gap-1.5 shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000] select-none">
               <div class="flex items-center justify-between">
                 <span class="text-xl">{{ option.icon }}</span>
                 <span class="font-display font-extrabold text-sm px-2 py-0.5 bg-[#FF4F00] text-white border border-[#222222]">${{ option.amount }}</span>
@@ -44,21 +47,44 @@
                 <strong class="font-accent text-xs block font-bold">{{ option.label }}</strong>
                 <span class="font-body text-[11px] opacity-80 leading-tight block">{{ option.desc }}</span>
               </div>
-            </button>
+            </div>
           }
         </div>
       </div>
 
-      <!-- Custom Amount or Direct Buy Me a Coffee Action -->
+      <!-- QR Code Mobile Scan Card -->
+      <div class="p-3.5 border-2 border-[#222222] dark:border-[#373A46] bg-[#F7F7F2] dark:bg-[#26272E] flex flex-col sm:flex-row items-center gap-4 shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000]">
+        <div class="p-2 bg-white border-2 border-[#222222] dark:border-black shrink-0 shadow-[2px_2px_0_0_#222222]">
+          <img src="/qr-code.png" alt="Buy Me a Coffee QR Code - SabioChess" class="w-28 h-28 object-contain block select-none" />
+        </div>
+        <div class="flex flex-col gap-1.5 text-center sm:text-left flex-1 min-w-0">
+          <div class="flex items-center justify-center sm:justify-start gap-1.5 font-accent text-xs font-bold text-[#141519] dark:text-white uppercase tracking-wider">
+            <span>📱</span>
+            <span>SCAN TO TIP VIA MOBILE</span>
+          </div>
+          <p class="font-body text-xs text-gray-700 dark:text-gray-300 leading-snug">
+            Scan with your phone camera or e-wallet to support via <strong>GCash, Maya, Apple Pay, Google Pay, or Card</strong>.
+          </p>
+          <div class="pt-0.5">
+            <a [href]="buyMeCoffeeUrl" target="_blank" rel="noopener noreferrer" class="font-accent text-xs text-[#FF4F00] hover:underline font-bold inline-flex items-center gap-1">
+              <span>buymeacoffee.com/sabiochess</span>
+              <span aria-hidden="true">↗</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Action Buttons -->
       <div class="flex flex-col sm:flex-row gap-2.5 pt-1">
         <button type="button" (click)="openCoffee()"
-          class="btn-brutal btn-brutal-orange flex-1 !py-2.5 text-xs font-accent uppercase flex items-center justify-center gap-2 cursor-pointer shadow-[3px_3px_0_0_#222222]">
-          <span class="text-sm">☕</span>
-          <span>Open Buy Me a Coffee</span>
+          class="btn-brutal btn-brutal-orange flex-1 !py-3 text-xs sm:text-sm font-accent uppercase flex items-center justify-center gap-2 cursor-pointer shadow-[3px_3px_0_0_#222222]">
+          <span class="text-base">☕</span>
+          <span>Open Buy Me a Coffee Page</span>
+          <span aria-hidden="true">↗</span>
         </button>
 
         <button type="button" (click)="copyDonationLink()"
-          class="btn-brutal btn-brutal-silver !py-2.5 text-xs font-accent uppercase flex items-center justify-center gap-1.5 cursor-pointer shadow-[3px_3px_0_0_#222222]">
+          class="btn-brutal btn-brutal-silver !py-3 text-xs sm:text-sm font-accent uppercase flex items-center justify-center gap-1.5 cursor-pointer shadow-[3px_3px_0_0_#222222]">
           <app-icon [name]="copiedUrl() ? 'check' : 'clipboard-document'" size="w-4 h-4"></app-icon>
           <span>{{ copiedUrl() ? 'COPIED LINK' : 'SHARE LINK' }}</span>
         </button>
