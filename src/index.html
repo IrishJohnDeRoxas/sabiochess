@@ -12,9 +12,364 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-  <script src="https://accounts.google.com/gsi/client?hl=en" async defer></script>
+  <script>
+    (function () {
+      try {
+        var raw = localStorage.getItem('sabiochess_settings_v2');
+        if (raw) {
+          var data = JSON.parse(raw);
+          if (data && data.appTheme === 'dark') {
+            document.documentElement.classList.add('dark');
+          }
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <style>
+    :root {
+      --sk-bg-page: #d9d9d9;
+      --sk-bg-card: #ffffff;
+      --sk-border: #222222;
+      --sk-shadow: #222222;
+      --sk-block: #e5e7eb;
+      --sk-shimmer: rgba(255, 255, 255, 0.7);
+    }
+    html.dark {
+      --sk-bg-page: #141519;
+      --sk-bg-card: #1e1f24;
+      --sk-border: #000000;
+      --sk-shadow: #000000;
+      --sk-block: #2a2c35;
+      --sk-shimmer: rgba(255, 255, 255, 0.08);
+    }
+    body {
+      background-color: var(--sk-bg-page);
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    *, *::before, *::after {
+      box-sizing: inherit;
+    }
+    @keyframes sk-drop-in-tl {
+      0% {
+        opacity: 0;
+        transform: translate3d(-18px, -18px, 0) scale(0.98);
+      }
+      100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+      }
+    }
+    @keyframes sk-cascade-glow {
+      0%, 100% {
+        opacity: 0.92;
+        transform: translateY(0);
+      }
+      22% {
+        opacity: 1;
+        transform: translateY(-3px);
+      }
+      44% {
+        opacity: 0.92;
+        transform: translateY(0);
+      }
+    }
+    @keyframes sk-shimmer-anim {
+      0% {
+        transform: translateX(-100%);
+      }
+      100% {
+        transform: translateX(100%);
+      }
+    }
+    .sk-pulse {
+      position: relative;
+      overflow: hidden;
+      background-color: var(--sk-block);
+    }
+    .sk-pulse::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        var(--sk-shimmer) 50%,
+        transparent 100%
+      );
+      transform: translateX(-100%);
+      animation: sk-shimmer-anim 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
+    .sk-cascade-card {
+      animation: sk-cascade-glow 2s ease-in-out infinite;
+    }
+    .sk-step-1 { animation-delay: 0s !important; }
+    .sk-step-1.sk-pulse::after, .sk-step-1 .sk-pulse::after { animation-delay: 0s !important; }
+
+    .sk-step-2 { animation-delay: 0.25s !important; }
+    .sk-step-2.sk-pulse::after, .sk-step-2 .sk-pulse::after { animation-delay: 0.25s !important; }
+
+    .sk-step-3 { animation-delay: 0.5s !important; }
+    .sk-step-3.sk-pulse::after, .sk-step-3 .sk-pulse::after { animation-delay: 0.5s !important; }
+
+    .sk-step-4 { animation-delay: 0.75s !important; }
+    .sk-step-4.sk-pulse::after, .sk-step-4 .sk-pulse::after { animation-delay: 0.75s !important; }
+
+    .sk-step-5 { animation-delay: 1.0s !important; }
+    .sk-step-5.sk-pulse::after, .sk-step-5 .sk-pulse::after { animation-delay: 1.0s !important; }
+
+    .sk-step-6 { animation-delay: 1.25s !important; }
+    .sk-step-6.sk-pulse::after, .sk-step-6 .sk-pulse::after { animation-delay: 1.25s !important; }
+
+    .sk-app-wrap {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-color: var(--sk-bg-page);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    .sk-header {
+      width: 100%;
+      height: 64px;
+      background-color: var(--sk-bg-card);
+      border-bottom: 4px solid var(--sk-border);
+      box-shadow: 0 4px 0 0 var(--sk-shadow);
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      animation: sk-drop-in-tl 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    .sk-header-inner {
+      max-width: 1280px;
+      width: 100%;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .sk-main {
+      flex: 1;
+      max-width: 1280px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .sk-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+      width: 100%;
+      align-items: stretch;
+    }
+    @media (min-width: 1024px) {
+      .sk-grid {
+        grid-template-columns: 7fr 5fr;
+      }
+      .sk-header {
+        padding: 0 32px;
+      }
+      .sk-main {
+        padding: 32px;
+      }
+    }
+    .sk-board-col {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+      max-width: 640px;
+      margin: 0 auto;
+      animation: sk-drop-in-tl 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.08s both;
+    }
+    @media (min-width: 1024px) {
+      .sk-board-col {
+        max-width: none;
+      }
+    }
+    .sk-player-card {
+      height: 48px;
+      background-color: var(--sk-bg-card);
+      border: 3px solid var(--sk-border);
+      box-shadow: 3px 3px 0 0 var(--sk-shadow);
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-radius: 4px;
+    }
+    .sk-board-row {
+      display: grid;
+      grid-template-columns: 40px 1fr;
+      gap: 12px;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      max-height: 600px;
+    }
+    @media (max-width: 640px) {
+      .sk-board-row {
+        grid-template-columns: 34px 1fr;
+        gap: 8px;
+      }
+    }
+    .sk-eval-bar {
+      height: 100%;
+      background-color: var(--sk-bg-card);
+      border: 3px solid var(--sk-border);
+      box-shadow: 3px 3px 0 0 var(--sk-shadow);
+      border-radius: 4px;
+    }
+    .sk-board-square {
+      width: 100%;
+      height: 100%;
+      background-color: var(--sk-bg-card);
+      border: 4px solid var(--sk-border);
+      box-shadow: 4px 4px 0 0 var(--sk-shadow);
+      border-radius: 4px;
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      grid-template-rows: repeat(8, 1fr);
+      overflow: hidden;
+    }
+    .sk-board-cell {
+      border: 0.5px solid rgba(0, 0, 0, 0.05);
+    }
+    .sk-board-cell:nth-child(even) {
+      background-color: rgba(0, 0, 0, 0.03);
+    }
+    html.dark .sk-board-cell:nth-child(even) {
+      background-color: rgba(255, 255, 255, 0.03);
+    }
+    .sk-sidebar-col {
+      width: 100%;
+      max-width: 640px;
+      margin: 0 auto;
+      min-height: 540px;
+      display: flex;
+      flex-direction: column;
+      animation: sk-drop-in-tl 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.16s both;
+    }
+    @media (min-width: 1024px) {
+      .sk-sidebar-col {
+        max-width: none;
+        min-height: 100%;
+      }
+    }
+    .sk-sidebar-card {
+      flex: 1;
+      background-color: var(--sk-bg-card);
+      border: 4px solid var(--sk-border);
+      box-shadow: 4px 4px 0 0 var(--sk-shadow);
+      border-radius: 4px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .sk-tab-header {
+      height: 44px;
+      background-color: var(--sk-bg-card);
+      border-bottom: 3px solid var(--sk-border);
+      display: flex;
+      align-items: stretch;
+      padding: 4px;
+      gap: 4px;
+    }
+    .sk-tab-item {
+      flex: 1;
+      border-radius: 3px;
+    }
+    .sk-sidebar-body {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      flex: 1;
+    }
+  </style>
 </head>
 <body class="bg-[#D9D9D9] text-[#222222] min-h-screen font-body antialiased selection:bg-[#FF4F00] selection:text-white">
-  <app-root></app-root>
+  <app-root>
+    <div class="sk-app-wrap" aria-hidden="true">
+      <!-- Header Skeleton (Step 1) -->
+      <header class="sk-header sk-cascade-card sk-step-1">
+        <div class="sk-header-inner">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div class="sk-pulse sk-step-1" style="width: 38px; height: 38px; border: 3px solid var(--sk-border); box-shadow: 2px 2px 0 var(--sk-shadow); border-radius: 4px;"></div>
+            <div class="sk-pulse sk-step-1" style="width: 120px; height: 24px; border: 2px solid var(--sk-border); border-radius: 3px;"></div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <div class="sk-pulse sk-step-1" style="width: 38px; height: 38px; border: 2px solid var(--sk-border); box-shadow: 2px 2px 0 var(--sk-shadow); border-radius: 4px;"></div>
+            <div class="sk-pulse sk-step-1" style="width: 140px; height: 38px; border: 2px solid var(--sk-border); box-shadow: 3px 3px 0 var(--sk-shadow); border-radius: 4px;"></div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Skeleton Area -->
+      <main class="sk-main">
+        <div class="sk-grid">
+          <!-- Left: Board + Players -->
+          <div class="sk-board-col">
+            <!-- Top Player (Step 2) -->
+            <div class="sk-player-card sk-cascade-card sk-step-2">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <div class="sk-pulse sk-step-2" style="width: 24px; height: 24px; border-radius: 50%;"></div>
+                <div class="sk-pulse sk-step-2" style="width: 100px; height: 16px; border-radius: 2px;"></div>
+              </div>
+              <div class="sk-pulse sk-step-2" style="width: 60px; height: 24px; border: 2px solid var(--sk-border); border-radius: 3px;"></div>
+            </div>
+
+            <!-- Eval Bar + Chess Board (Step 3) -->
+            <div class="sk-board-row sk-cascade-card sk-step-3">
+              <div class="sk-eval-bar sk-pulse sk-step-3"></div>
+              <div class="sk-board-square sk-pulse sk-step-3">
+                <div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div>
+                <div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div>
+                <div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div>
+                <div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div>
+                <div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div>
+                <div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div>
+                <div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div>
+                <div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div><div class="sk-board-cell"></div>
+              </div>
+            </div>
+
+            <!-- Bottom Player (Step 4) -->
+            <div class="sk-player-card sk-cascade-card sk-step-4">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <div class="sk-pulse sk-step-4" style="width: 24px; height: 24px; border-radius: 50%;"></div>
+                <div class="sk-pulse sk-step-4" style="width: 110px; height: 16px; border-radius: 2px;"></div>
+              </div>
+              <div class="sk-pulse sk-step-4" style="width: 60px; height: 24px; border: 2px solid var(--sk-border); border-radius: 3px;"></div>
+            </div>
+          </div>
+
+          <!-- Right: Sidebar Tabs (Step 5 & 6) -->
+          <div class="sk-sidebar-col">
+            <div class="sk-sidebar-card">
+              <div class="sk-tab-header sk-cascade-card sk-step-5">
+                <div class="sk-tab-item sk-pulse sk-step-5" style="background-color: var(--sk-border); opacity: 0.15;"></div>
+                <div class="sk-tab-item sk-pulse sk-step-5"></div>
+                <div class="sk-tab-item sk-pulse sk-step-5"></div>
+              </div>
+              <div class="sk-sidebar-body sk-cascade-card sk-step-6">
+                <div class="sk-pulse sk-step-6" style="height: 48px; border: 3px solid var(--sk-border); box-shadow: 2px 2px 0 var(--sk-shadow); border-radius: 4px;"></div>
+                <div class="sk-pulse sk-step-6" style="height: 120px; border: 3px solid var(--sk-border); box-shadow: 2px 2px 0 var(--sk-shadow); border-radius: 4px;"></div>
+                <div class="sk-pulse sk-step-6" style="flex: 1; min-height: 160px; border: 3px solid var(--sk-border); box-shadow: 2px 2px 0 var(--sk-shadow); border-radius: 4px;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </app-root>
 </body>
 </html>
+

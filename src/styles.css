@@ -326,3 +326,28 @@ html.dark {
   animation: toast-enter-exit 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+/* Neubrutalist Drop In from Top-Left Animation */
+@keyframes drop-in-tl {
+  0% {
+    opacity: 0;
+    transform: translate3d(-18px, -18px, 0) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+.animate-drop-in-tl {
+  animation: drop-in-tl 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.animate-drop-in-tl-delay-1 {
+  animation: drop-in-tl 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.08s both;
+}
+
+.animate-drop-in-tl-delay-2 {
+  animation: drop-in-tl 0.45s cubic-bezier(0.16, 1, 0.3, 1) 0.16s both;
+}
+
+
