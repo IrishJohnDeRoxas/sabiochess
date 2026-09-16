@@ -112,10 +112,14 @@
             <div class="flex items-center gap-1.5 min-w-0">
               @if (currentExplanation(); as exp) {
                 <span 
-                  class="badge-brutal text-xs !py-0.5 !px-1.5 font-bold shrink-0"
+                  class="badge-brutal text-xs !py-0.5 !px-1.5 font-bold shrink-0 flex items-center justify-center"
                   [ngClass]="getClassificationBadgeClass(exp.classification)"
                 >
-                  {{ getClassificationSymbol(exp.classification) }}
+                  @if (exp.classification === 'best' || exp.classification === 'book') {
+                    <app-icon name="star" size="w-3 h-3"></app-icon>
+                  } @else {
+                    <span>{{ getClassificationSymbol(exp.classification) }}</span>
+                  }
                 </span>
                 <span class="font-accent text-xs sm:text-sm font-bold truncate text-[#222222] dark:text-[#F3F4F6]">
                   @if (exp.isVariation) {
@@ -411,36 +415,61 @@
       </div>
 
       <!-- 3. MOVE CLASSIFICATION BREAKDOWN CARD -->
-      <div class="card-brutal p-3 bg-white dark:bg-[#1E1F24] flex flex-col gap-1.5 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]">
+      <div class="card-brutal p-3 bg-white dark:bg-[#1E1F24] flex flex-col gap-2 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]">
+        <!-- Title bar -->
         <div class="flex items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-1.5">
-          <span class="font-display text-xs sm:text-sm uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6]">MOVE BREAKDOWN</span>
-          <div class="flex items-center gap-8 font-label text-xs font-bold text-[#222222] dark:text-[#F3F4F6]">
-            <span>WHITE</span>
-            <span>BLACK</span>
+          <div class="flex items-center gap-1.5">
+            <app-icon name="chart-bar" size="w-4 h-4" class="text-[#0E4C92] dark:text-[#60A5FA]"></app-icon>
+            <span class="font-display text-xs sm:text-sm uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6]">MOVE BREAKDOWN</span>
           </div>
+          <span class="badge-brutal bg-[#D9D9D9] dark:bg-[#2A2B32] text-[10px] sm:text-xs font-bold text-[#222222] dark:text-[#F3F4F6]">
+            {{ game.history().length }} PLY
+          </span>
+        </div>
+
+        <!-- Aligned Column Headers -->
+        <div class="grid grid-cols-[48px_1fr_48px] items-center text-xs font-label font-extrabold uppercase bg-[#ECECD8] dark:bg-[#2A2B32] border border-[#222222] dark:border-black py-1 px-1.5 text-[#222222] dark:text-[#F3F4F6]">
+          <span class="text-center text-[#0E4C92] dark:text-[#60A5FA]">WHITE</span>
+          <span class="text-center text-gray-600 dark:text-gray-300">CLASSIFICATION</span>
+          <span class="text-center text-[#FF4F00]">BLACK</span>
         </div>
 
         <!-- 7 Classic Classification Rows -->
         <div class="flex flex-col divide-y divide-gray-100 dark:divide-gray-800 text-xs sm:text-sm">
           @for (row of reportClassificationRows(); track row.key) {
-            <div class="flex items-center justify-between py-1.5 px-1 hover:bg-[#D9D9D9]/40 dark:hover:bg-[#2A2B32]/40 transition-colors">
+            <div class="grid grid-cols-[48px_1fr_48px] items-center py-1.5 px-1.5 hover:bg-[#D9D9D9]/40 dark:hover:bg-[#2A2B32]/40 transition-colors">
               <!-- White Count -->
-              <span class="w-6 text-center font-label font-bold text-xs sm:text-sm" [class.opacity-40]="row.whiteCount === 0">
+              <span
+                class="text-center font-label font-extrabold text-xs sm:text-sm"
+                [ngClass]="row.whiteCount > 0 ? 'text-[#222222] dark:text-[#F3F4F6]' : 'text-gray-300 dark:text-gray-600 font-normal'"
+              >
                 {{ row.whiteCount }}
               </span>
 
-              <!-- Label & Badge -->
-              <div class="flex items-center gap-2 flex-1 justify-center">
-                <span class="badge-brutal text-[10px] !py-0 !px-1.5 font-bold shrink-0" [ngClass]="row.badgeClass">
-                  {{ row.symbol }}
-                </span>
-                <span class="font-accent font-bold uppercase text-xs text-[#222222] dark:text-[#F3F4F6] truncate max-w-[140px] sm:max-w-[180px]">
-                  {{ row.label }}
-                </span>
+              <!-- Centered Classification Column (Badges straight, block centered) -->
+              <div class="flex items-center justify-center min-w-0">
+                <div class="flex items-center gap-2 w-[142px] sm:w-[155px] min-w-0">
+                  <span
+                    class="badge-brutal text-[10px] sm:text-xs !py-0.5 !px-1 font-bold shrink-0 w-[26px] h-[20px] flex items-center justify-center text-center shadow-[1px_1px_0_0_#222222] dark:shadow-[1px_1px_0_0_#000000]"
+                    [ngClass]="row.badgeClass"
+                  >
+                    @if (row.key === 'best') {
+                      <app-icon name="star" size="w-3 h-3"></app-icon>
+                    } @else {
+                      <span>{{ row.symbol }}</span>
+                    }
+                  </span>
+                  <span class="font-accent font-bold uppercase text-xs text-[#222222] dark:text-[#F3F4F6] truncate">
+                    {{ row.label }}
+                  </span>
+                </div>
               </div>
 
               <!-- Black Count -->
-              <span class="w-6 text-center font-label font-bold text-xs sm:text-sm" [class.opacity-40]="row.blackCount === 0">
+              <span
+                class="text-center font-label font-extrabold text-xs sm:text-sm"
+                [ngClass]="row.blackCount > 0 ? 'text-[#222222] dark:text-[#F3F4F6]' : 'text-gray-300 dark:text-gray-600 font-normal'"
+              >
                 {{ row.blackCount }}
               </span>
             </div>
@@ -478,44 +507,149 @@
           </div>
 
           <!-- Game Phases Breakdown (Opening, Middlegame, Endgame) -->
-          <div class="flex flex-col gap-1 pt-1 border-t border-gray-200 dark:border-gray-700">
+          <div class="flex flex-col gap-1.5 pt-2 border-t border-gray-200 dark:border-gray-700">
             <!-- Opening -->
-            <div class="flex items-center justify-between py-1 px-1.5 text-xs font-accent">
-              <span class="font-bold text-[#0E4C92] dark:text-[#60A5FA] w-24 text-left truncate">
-                {{ sum.phases.opening.white }}
-              </span>
-              <span class="font-label uppercase font-extrabold text-gray-500 dark:text-gray-400 text-[11px]">
+            @let opW = getPhaseBadgeInfo(sum.phases.opening.white);
+            @let opB = getPhaseBadgeInfo(sum.phases.opening.black);
+            <div class="grid grid-cols-[1fr_84px_1fr] items-center py-1 px-1.5 text-xs font-accent bg-[#ECECD8]/50 dark:bg-[#2A2B32]/50 border border-[#222222]/20 dark:border-black/40">
+              <!-- White -->
+              <div class="flex items-center gap-1.5 min-w-0 justify-start">
+                @if (!opW.isEmpty) {
+                  <span
+                    class="badge-brutal text-[10px] sm:text-xs !py-0.5 !px-1 font-bold shrink-0 w-[24px] h-[19px] flex items-center justify-center text-center shadow-[1px_1px_0_0_#222222] dark:shadow-[1px_1px_0_0_#000000]"
+                    [ngClass]="opW.badgeClass"
+                  >
+                    @if (opW.symbol === '★') {
+                      <app-icon name="star" size="w-3 h-3"></app-icon>
+                    } @else {
+                      <span>{{ opW.symbol }}</span>
+                    }
+                  </span>
+                  <span class="font-accent font-bold uppercase text-xs truncate text-[#222222] dark:text-[#F3F4F6]">{{ opW.label }}</span>
+                } @else {
+                  <span class="text-gray-400 font-bold pl-1">—</span>
+                }
+              </div>
+
+              <!-- Phase Title -->
+              <span class="font-label uppercase font-extrabold text-gray-700 dark:text-gray-300 text-[11px] text-center tracking-wider">
                 Opening
               </span>
-              <span class="font-bold text-[#FF4F00] w-24 text-right truncate">
-                {{ sum.phases.opening.black }}
-              </span>
+
+              <!-- Black -->
+              <div class="flex items-center gap-1.5 min-w-0 justify-end">
+                @if (!opB.isEmpty) {
+                  <span class="font-accent font-bold uppercase text-xs truncate text-[#222222] dark:text-[#F3F4F6]">{{ opB.label }}</span>
+                  <span
+                    class="badge-brutal text-[10px] sm:text-xs !py-0.5 !px-1 font-bold shrink-0 w-[24px] h-[19px] flex items-center justify-center text-center shadow-[1px_1px_0_0_#222222] dark:shadow-[1px_1px_0_0_#000000]"
+                    [ngClass]="opB.badgeClass"
+                  >
+                    @if (opB.symbol === '★') {
+                      <app-icon name="star" size="w-3 h-3"></app-icon>
+                    } @else {
+                      <span>{{ opB.symbol }}</span>
+                    }
+                  </span>
+                } @else {
+                  <span class="text-gray-400 font-bold pr-1">—</span>
+                }
+              </div>
             </div>
 
             <!-- Middlegame -->
-            <div class="flex items-center justify-between py-1 px-1.5 text-xs font-accent border-t border-gray-100 dark:border-gray-800">
-              <span class="font-bold text-[#0E4C92] dark:text-[#60A5FA] w-24 text-left truncate">
-                {{ sum.phases.middlegame.white }}
-              </span>
-              <span class="font-label uppercase font-extrabold text-gray-500 dark:text-gray-400 text-[11px]">
+            @let midW = getPhaseBadgeInfo(sum.phases.middlegame.white);
+            @let midB = getPhaseBadgeInfo(sum.phases.middlegame.black);
+            <div class="grid grid-cols-[1fr_84px_1fr] items-center py-1 px-1.5 text-xs font-accent bg-[#ECECD8]/50 dark:bg-[#2A2B32]/50 border border-[#222222]/20 dark:border-black/40">
+              <!-- White -->
+              <div class="flex items-center gap-1.5 min-w-0 justify-start">
+                @if (!midW.isEmpty) {
+                  <span
+                    class="badge-brutal text-[10px] sm:text-xs !py-0.5 !px-1 font-bold shrink-0 w-[24px] h-[19px] flex items-center justify-center text-center shadow-[1px_1px_0_0_#222222] dark:shadow-[1px_1px_0_0_#000000]"
+                    [ngClass]="midW.badgeClass"
+                  >
+                    @if (midW.symbol === '★') {
+                      <app-icon name="star" size="w-3 h-3"></app-icon>
+                    } @else {
+                      <span>{{ midW.symbol }}</span>
+                    }
+                  </span>
+                  <span class="font-accent font-bold uppercase text-xs truncate text-[#222222] dark:text-[#F3F4F6]">{{ midW.label }}</span>
+                } @else {
+                  <span class="text-gray-400 font-bold pl-1">—</span>
+                }
+              </div>
+
+              <!-- Phase Title -->
+              <span class="font-label uppercase font-extrabold text-gray-700 dark:text-gray-300 text-[11px] text-center tracking-wider">
                 Middlegame
               </span>
-              <span class="font-bold text-[#FF4F00] w-24 text-right truncate">
-                {{ sum.phases.middlegame.black }}
-              </span>
+
+              <!-- Black -->
+              <div class="flex items-center gap-1.5 min-w-0 justify-end">
+                @if (!midB.isEmpty) {
+                  <span class="font-accent font-bold uppercase text-xs truncate text-[#222222] dark:text-[#F3F4F6]">{{ midB.label }}</span>
+                  <span
+                    class="badge-brutal text-[10px] sm:text-xs !py-0.5 !px-1 font-bold shrink-0 w-[24px] h-[19px] flex items-center justify-center text-center shadow-[1px_1px_0_0_#222222] dark:shadow-[1px_1px_0_0_#000000]"
+                    [ngClass]="midB.badgeClass"
+                  >
+                    @if (midB.symbol === '★') {
+                      <app-icon name="star" size="w-3 h-3"></app-icon>
+                    } @else {
+                      <span>{{ midB.symbol }}</span>
+                    }
+                  </span>
+                } @else {
+                  <span class="text-gray-400 font-bold pr-1">—</span>
+                }
+              </div>
             </div>
 
             <!-- Endgame -->
-            <div class="flex items-center justify-between py-1 px-1.5 text-xs font-accent border-t border-gray-100 dark:border-gray-800">
-              <span class="font-bold text-[#0E4C92] dark:text-[#60A5FA] w-24 text-left truncate">
-                {{ sum.phases.endgame.white }}
-              </span>
-              <span class="font-label uppercase font-extrabold text-gray-500 dark:text-gray-400 text-[11px]">
+            @let endW = getPhaseBadgeInfo(sum.phases.endgame.white);
+            @let endB = getPhaseBadgeInfo(sum.phases.endgame.black);
+            <div class="grid grid-cols-[1fr_84px_1fr] items-center py-1 px-1.5 text-xs font-accent bg-[#ECECD8]/50 dark:bg-[#2A2B32]/50 border border-[#222222]/20 dark:border-black/40">
+              <!-- White -->
+              <div class="flex items-center gap-1.5 min-w-0 justify-start">
+                @if (!endW.isEmpty) {
+                  <span
+                    class="badge-brutal text-[10px] sm:text-xs !py-0.5 !px-1 font-bold shrink-0 w-[24px] h-[19px] flex items-center justify-center text-center shadow-[1px_1px_0_0_#222222] dark:shadow-[1px_1px_0_0_#000000]"
+                    [ngClass]="endW.badgeClass"
+                  >
+                    @if (endW.symbol === '★') {
+                      <app-icon name="star" size="w-3 h-3"></app-icon>
+                    } @else {
+                      <span>{{ endW.symbol }}</span>
+                    }
+                  </span>
+                  <span class="font-accent font-bold uppercase text-xs truncate text-[#222222] dark:text-[#F3F4F6]">{{ endW.label }}</span>
+                } @else {
+                  <span class="text-gray-400 font-bold pl-1">—</span>
+                }
+              </div>
+
+              <!-- Phase Title -->
+              <span class="font-label uppercase font-extrabold text-gray-700 dark:text-gray-300 text-[11px] text-center tracking-wider">
                 Endgame
               </span>
-              <span class="font-bold text-[#FF4F00] w-24 text-right truncate">
-                {{ sum.phases.endgame.black }}
-              </span>
+
+              <!-- Black -->
+              <div class="flex items-center gap-1.5 min-w-0 justify-end">
+                @if (!endB.isEmpty) {
+                  <span class="font-accent font-bold uppercase text-xs truncate text-[#222222] dark:text-[#F3F4F6]">{{ endB.label }}</span>
+                  <span
+                    class="badge-brutal text-[10px] sm:text-xs !py-0.5 !px-1 font-bold shrink-0 w-[24px] h-[19px] flex items-center justify-center text-center shadow-[1px_1px_0_0_#222222] dark:shadow-[1px_1px_0_0_#000000]"
+                    [ngClass]="endB.badgeClass"
+                  >
+                    @if (endB.symbol === '★') {
+                      <app-icon name="star" size="w-3 h-3"></app-icon>
+                    } @else {
+                      <span>{{ endB.symbol }}</span>
+                    }
+                  </span>
+                } @else {
+                  <span class="text-gray-400 font-bold pr-1">—</span>
+                }
+              </div>
             </div>
           </div>
         }
@@ -599,8 +733,12 @@
               </div>
 
               @if (pair.whiteClass) {
-                <span class="badge-brutal text-[9px] !py-0 !px-1 font-bold shrink-0" [ngClass]="getClassificationBadgeClass(pair.whiteClass)">
-                  {{ getClassificationSymbol(pair.whiteClass) }}
+                <span class="badge-brutal text-[9px] !py-0 !px-1 font-bold shrink-0 min-w-[18px] h-[16px] flex items-center justify-center" [ngClass]="getClassificationBadgeClass(pair.whiteClass)">
+                  @if (pair.whiteClass === 'best' || pair.whiteClass === 'book') {
+                    <app-icon name="star" size="w-2.5 h-2.5"></app-icon>
+                  } @else {
+                    <span>{{ getClassificationSymbol(pair.whiteClass) }}</span>
+                  }
                 </span>
               }
             </div>
@@ -625,8 +763,12 @@
                 </div>
 
                 @if (pair.blackClass) {
-                  <span class="badge-brutal text-[9px] !py-0 !px-1 font-bold shrink-0" [ngClass]="getClassificationBadgeClass(pair.blackClass)">
-                    {{ getClassificationSymbol(pair.blackClass) }}
+                  <span class="badge-brutal text-[9px] !py-0 !px-1 font-bold shrink-0 min-w-[18px] h-[16px] flex items-center justify-center" [ngClass]="getClassificationBadgeClass(pair.blackClass)">
+                    @if (pair.blackClass === 'best' || pair.blackClass === 'book') {
+                      <app-icon name="star" size="w-2.5 h-2.5"></app-icon>
+                    } @else {
+                      <span>{{ getClassificationSymbol(pair.blackClass) }}</span>
+                    }
                   </span>
                 }
               </div>

@@ -799,4 +799,42 @@ export class ReviewTabComponent {
         return 'bg-[#DC2626] text-white border-[#222222] dark:border-black';
     }
   }
+
+  getPhaseBadgeInfo(quality?: string): { icon: IconName; symbol: string; badgeClass: string; label: string; isEmpty: boolean } {
+    if (!quality || quality === '-' || quality === '—') {
+      return {
+        icon: 'check',
+        symbol: '—',
+        badgeClass: 'bg-transparent text-gray-400 border-none',
+        label: '—',
+        isEmpty: true,
+      };
+    }
+    const q = quality.toLowerCase();
+    if (q.includes('brilliant')) {
+      return { icon: 'sparkles', symbol: '!!', badgeClass: 'bg-[#00C0F9] text-black border-[#222222]', label: 'Brilliant', isEmpty: false };
+    }
+    if (q.includes('great')) {
+      return { icon: 'arrow-trending-up', symbol: '!', badgeClass: 'bg-[#0E4C92] text-white border-[#222222]', label: 'Great', isEmpty: false };
+    }
+    if (q.includes('best')) {
+      return { icon: 'star', symbol: '★', badgeClass: 'bg-[#10B981] text-white border-[#222222]', label: 'Best', isEmpty: false };
+    }
+    if (q.includes('inaccuracy')) {
+      return { icon: 'exclamation-circle', symbol: '?!', badgeClass: 'bg-[#F59E0B] text-black border-[#222222]', label: 'Inaccuracy', isEmpty: false };
+    }
+    if (q.includes('mistake')) {
+      return { icon: 'question-mark-circle', symbol: '?', badgeClass: 'bg-[#F97316] text-white border-[#222222]', label: 'Mistake', isEmpty: false };
+    }
+    if (q.includes('miss')) {
+      return { icon: 'x-mark', symbol: '✕', badgeClass: 'bg-[#EA580C] text-white border-[#222222]', label: 'Miss', isEmpty: false };
+    }
+    if (q.includes('blunder')) {
+      return { icon: 'exclamation-triangle', symbol: '??', badgeClass: 'bg-[#DC2626] text-white border-[#222222]', label: 'Blunder', isEmpty: false };
+    }
+    if (q.includes('good') || q.includes('excellent')) {
+      return { icon: 'check', symbol: '✓', badgeClass: 'bg-[#10B981] text-white border-[#222222]', label: 'Good', isEmpty: false };
+    }
+    return { icon: 'star', symbol: '•', badgeClass: 'bg-[#D9D9D9] text-[#222222] border-[#222222]', label: quality, isEmpty: false };
+  }
 }
