@@ -775,7 +775,11 @@ export class ReviewTabComponent {
       fen: h.fen,
       turn: h.turn,
     }));
-    this.analysisService.runAnalysis(moveInputs);
+    const meta = this.game.matchMetadata();
+    this.analysisService.runAnalysis(moveInputs, undefined, {
+      white: meta.white.rating,
+      black: meta.black.rating,
+    });
   }
 
   getPlayerInitial(name?: string): string {

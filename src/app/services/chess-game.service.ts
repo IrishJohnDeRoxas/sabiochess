@@ -716,7 +716,11 @@ export class ChessGameService {
           this.playSoundForMove(result);
 
           if (this.settings.autoEvaluation()) {
-            this.analysisService.runAnalysis(this.history());
+            const meta = this.matchMetadata();
+            this.analysisService.runAnalysis(this.history(), undefined, {
+              white: meta.white.rating,
+              black: meta.black.rating,
+            });
           }
 
           return true;
@@ -945,7 +949,11 @@ export class ChessGameService {
       this.updateEvalHeuristic();
 
       if (this.settings.autoEvaluation() && hist.length > 0) {
-        this.analysisService.runAnalysis(hist);
+        const meta = this.matchMetadata();
+        this.analysisService.runAnalysis(hist, undefined, {
+          white: meta.white.rating,
+          black: meta.black.rating,
+        });
       } else if (hist.length === 0) {
         this.analysisService.clearAnalysis();
       }
@@ -1063,7 +1071,10 @@ export class ChessGameService {
       this.updateEvalHeuristic();
 
       // Trigger analysis automatically in background
-      this.analysisService.runAnalysis(fullHistory);
+      this.analysisService.runAnalysis(fullHistory, undefined, {
+        white: whiteRating,
+        black: blackRating,
+      });
       return true;
     } catch {
       return false;

@@ -48,12 +48,23 @@ describe('GameAnalysisService', () => {
       { from: 'b8', to: 'c6', piece: 'n', san: 'Nc6', fen: 'r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3', turn: 'b' as const },
     ];
 
-    await service.runAnalysis(history);
+    await service.runAnalysis(history, undefined, { white: 1800, black: 1750 });
 
     expect(service.movesAnalysis().length).toBe(4);
-    expect(service.summary()).not.toBeNull();
-    expect(service.summary()?.whiteAccuracy).toBeGreaterThan(0);
-    expect(service.summary()?.blackAccuracy).toBeGreaterThan(0);
+    const summary = service.summary();
+    expect(summary).not.toBeNull();
+    expect(summary?.whiteAccuracy).toBeGreaterThanOrEqual(80);
+    expect(summary?.blackAccuracy).toBeGreaterThanOrEqual(80);
+    expect(summary?.whitePerformanceRating).toBeGreaterThan(1000);
+    expect(summary?.whitePerformanceRating).toBeLessThanOrEqual(3500);
+    expect(summary?.blackPerformanceRating).toBeGreaterThan(1000);
+    expect(summary?.blackPerformanceRating).toBeLessThanOrEqual(3500);
     expect(service.evalGraphPoints().length).toBe(4);
+  });
+
+  it('should handle playerRatings correctly and anchor estimated game rating', async () => {
+    service.setPlayerRatings({ white: 2400, black: 2350 });
+    expect(service.playerRatings().white).toBe(2400);
+    expect(service.playerRatings().black).toBe(2350);
   });
 });

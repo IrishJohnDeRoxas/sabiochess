@@ -50,7 +50,11 @@ export class AnalysisTabComponent {
   });
 
   triggerFullAnalysis(): void {
-    this.analysisService.runAnalysis(this.game.history());
+    const meta = this.game.matchMetadata();
+    this.analysisService.runAnalysis(this.game.history(), undefined, {
+      white: meta.white.rating,
+      black: meta.black.rating,
+    });
   }
 
   jumpToPly(plyIndex: number): void {
