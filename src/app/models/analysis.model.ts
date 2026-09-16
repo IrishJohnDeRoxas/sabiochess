@@ -38,11 +38,27 @@ export interface MoveAnalysis {
   commentary?: string;
 }
 
+export interface PhaseReview {
+  white: string;
+  black: string;
+}
+
+export interface GamePhasesSummary {
+  opening: PhaseReview;
+  middlegame: PhaseReview;
+  endgame: PhaseReview;
+}
+
 export interface GameAnalysisSummary {
   whiteAccuracy: number;
   blackAccuracy: number;
   whiteCounts: Record<MoveClassification, number>;
   blackCounts: Record<MoveClassification, number>;
+  whitePerformanceRating: number;
+  blackPerformanceRating: number;
+  whiteCoachVerdict: string;
+  blackCoachVerdict: string;
+  phases: GamePhasesSummary;
   openingEco?: string;
   openingName?: string;
 }

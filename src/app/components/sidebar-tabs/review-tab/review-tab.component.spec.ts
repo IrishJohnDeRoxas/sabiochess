@@ -54,8 +54,9 @@ describe('ReviewTabComponent', () => {
     expect(exp?.san).toBe('e4');
   });
 
-  it('should render variation rows and allow jumping to variation from review tab', () => {
+  it('should render variation rows and allow jumping to variation from review tab in walkthrough mode', () => {
     gameService.loadSampleGame('opera');
+    component.startReviewWalkthrough();
     gameService.jumpToPly(0); // after 1. e4
     // Make alternate move 1... c5
     gameService.move('c5');
@@ -77,6 +78,33 @@ describe('ReviewTabComponent', () => {
     component.deleteVariation(pairs[0].variations[0].id);
     expect(gameService.isVariationActive()).toBe(false);
     expect(gameService.variations().length).toBe(0);
+  });
+
+  it('should render game report screen and transition to review walkthrough on start review', () => {
+    gameService.loadSampleGame('opera');
+    fixture.detectChanges();
+
+    expect(component.isReportView()).toBe(true);
+    const momentum = component.momentumData();
+    expect(momentum).toBeTruthy();
+
+    const classificationRows = component.reportClassificationRows();
+    expect(classificationRows.length).toBe(7);
+    expect(classificationRows[0].label).toBe('Brilliant Move');
+    expect(classificationRows[1].label).toBe('Great Move');
+    expect(classificationRows[2].label).toBe('Best Move');
+    expect(classificationRows[3].label).toBe('Inaccuracy');
+    expect(classificationRows[4].label).toBe('Mistake');
+    expect(classificationRows[5].label).toBe('Miss');
+    expect(classificationRows[6].label).toBe('Blunder');
+
+    // Start Review
+    component.startReviewWalkthrough();
+    expect(component.isReportView()).toBe(false);
+
+    // Return to Report
+    component.returnToReport();
+    expect(component.isReportView()).toBe(true);
   });
 
   it('should toggle sound menu and close on outside click or escape', () => {

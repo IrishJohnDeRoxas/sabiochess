@@ -1,20 +1,35 @@
-<div class="flex flex-col gap-3 w-full h-full min-h-0 text-[#222222] dark:text-[#F3F4F6]">
+<div class="flex flex-col gap-2.5 w-full h-full min-h-0 text-[#222222] dark:text-[#F3F4F6]">
   <!-- Review Header & Sound / Import Bar -->
-  <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1F24] flex flex-col gap-2.5 shrink-0">
+  <div class="card-brutal p-2.5 sm:p-3 bg-white dark:bg-[#1E1F24] flex flex-col gap-2 shrink-0">
     <div class="flex items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-2">
-      <div class="flex items-center gap-1.5">
+      <div class="flex items-center gap-1.5 min-w-0">
         <span class="p-1 bg-[#FF4F00] text-white inline-flex border border-[#222222] dark:border-black shadow-[1px_1px_0_0_#222222]">
-          <app-icon name="star" size="w-4 h-4"></app-icon>
+          <app-icon name="star" size="w-3.5 h-3.5"></app-icon>
         </span>
-        <span class="font-display text-sm sm:text-base uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6]">GAME REVIEW</span>
+        <span class="font-display text-xs sm:text-sm uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6] truncate">
+          {{ isReportView() && game.history().length > 0 ? 'GAME REPORT' : 'GAME REVIEW' }}
+        </span>
       </div>
 
       <div class="flex items-center gap-1.5 relative" #soundMenuContainer>
+        <!-- If in walkthrough mode, show "BACK TO REPORT" button -->
+        @if (!isReportView() && game.history().length > 0) {
+          <button
+            type="button"
+            (click)="returnToReport()"
+            class="badge-brutal btn-brutal-orange cursor-pointer flex items-center gap-1 text-[11px] sm:text-xs !py-1 !px-2 font-bold"
+            title="Back to Game Report summary"
+          >
+            <app-icon name="arrow-left" size="w-3 h-3"></app-icon>
+            <span>REPORT</span>
+          </button>
+        }
+
         <!-- Import Trigger Button -->
         <button
           type="button"
           (click)="toggleImporter()"
-          class="badge-brutal cursor-pointer transition-colors flex items-center gap-1 text-xs sm:text-sm !py-1 !px-2 font-bold bg-[#ECECD8] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] hover:bg-[#D9D9D9]"
+          class="badge-brutal cursor-pointer transition-colors flex items-center gap-1 text-[11px] sm:text-xs !py-1 !px-2 font-bold bg-[#ECECD8] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] hover:bg-[#D9D9D9]"
           title="Import Chess.com, Lichess or PGN"
         >
           <app-icon name="arrow-down-tray" size="w-3.5 h-3.5"></app-icon>
@@ -25,7 +40,7 @@
         <button
           type="button"
           (click)="toggleSoundMenu()"
-          class="badge-brutal cursor-pointer transition-colors flex items-center gap-1 text-xs sm:text-sm !py-1 !px-2 font-bold"
+          class="badge-brutal cursor-pointer transition-colors flex items-center gap-1 text-[11px] sm:text-xs !py-1 !px-2 font-bold"
           [ngClass]="soundService.isMuted() ? 'bg-[#222222] dark:bg-[#373A46] text-white' : 'bg-[#0E4C92] text-white'"
           title="Sound FX Pack Selector"
         >
@@ -128,7 +143,7 @@
                 <button
                   type="button"
                   (click)="loadSample(sample.id)"
-                  class="btn-brutal !p-2 text-left text-xs sm:text-sm font-accent flex flex-col bg-white dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] hover:bg-[#FF4F00] dark:hover:bg-[#FF4F00] hover:text-white dark:hover:text-white transition-colors"
+                  class="btn-brutal !p-2 text-left text-xs sm:text-sm font-accent flex flex-col bg-white dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] hover:bg-[#FF4F00] dark:hover:bg-[#FF4F00] hover:text-white dark:hover:text-white transition-colors cursor-pointer"
                 >
                   <span class="font-bold truncate">{{ sample.title }}</span>
                   <span class="text-[10px] sm:text-[11px] font-label opacity-80 truncate text-gray-600 dark:text-gray-300">{{ sample.result }} • {{ sample.event }}</span>
@@ -153,7 +168,7 @@
               <button
                 type="button"
                 (click)="importPgn()"
-                class="btn-brutal btn-brutal-orange !py-1.5 !px-3.5 text-xs sm:text-sm font-bold"
+                class="btn-brutal btn-brutal-orange !py-1.5 !px-3.5 text-xs sm:text-sm font-bold cursor-pointer"
               >
                 LOAD PGN
               </button>
@@ -163,121 +178,122 @@
       </div>
     }
 
-    <!-- Coach Commentary & Move Explanation Card -->
-    <div class="flex flex-col gap-2.5">
-      <!-- Commentary Card -->
-      <div class="bg-white dark:bg-[#1E1F24] border-2 border-[#222222] dark:border-black p-2.5 sm:p-3 flex flex-col gap-2 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000] min-w-0">
-        <div class="flex items-center justify-between gap-1.5">
-          <div class="flex items-center gap-1.5 min-w-0">
-            @if (currentExplanation(); as exp) {
-              <span 
-                class="badge-brutal text-xs !py-0.5 !px-1.5 font-bold shrink-0"
-                [ngClass]="getClassificationBadgeClass(exp.classification)"
-              >
-                {{ getClassificationSymbol(exp.classification) }}
-              </span>
-              <span class="font-accent text-xs sm:text-sm font-bold truncate text-[#222222] dark:text-[#F3F4F6]">
-                @if (exp.isVariation) {
-                  @if (exp.isFollowUp) {
-                    <strong>Follow-Up</strong> line
-                  } @else if (exp.isBest) {
-                    <strong>{{ exp.san }}</strong> is best
+    <!-- Coach Commentary & Move Explanation Card (Walkthrough Mode Only) -->
+    @if (!isReportView() && game.history().length > 0) {
+      <div class="flex flex-col gap-2.5">
+        <!-- Commentary Card -->
+        <div class="bg-white dark:bg-[#1E1F24] border-2 border-[#222222] dark:border-black p-2.5 sm:p-3 flex flex-col gap-2 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000] min-w-0">
+          <div class="flex items-center justify-between gap-1.5">
+            <div class="flex items-center gap-1.5 min-w-0">
+              @if (currentExplanation(); as exp) {
+                <span 
+                  class="badge-brutal text-xs !py-0.5 !px-1.5 font-bold shrink-0"
+                  [ngClass]="getClassificationBadgeClass(exp.classification)"
+                >
+                  {{ getClassificationSymbol(exp.classification) }}
+                </span>
+                <span class="font-accent text-xs sm:text-sm font-bold truncate text-[#222222] dark:text-[#F3F4F6]">
+                  @if (exp.isVariation) {
+                    @if (exp.isFollowUp) {
+                      <strong>Follow-Up</strong> line
+                    } @else if (exp.isBest) {
+                      <strong>{{ exp.san }}</strong> is best
+                    } @else {
+                      <strong>{{ exp.san }}</strong> variation
+                    }
                   } @else {
-                    <strong>{{ exp.san }}</strong> variation
+                    <strong>{{ exp.san }}</strong> is {{ exp.classification }}
                   }
-                } @else {
-                  <strong>{{ exp.san }}</strong> is {{ exp.classification }}
-                }
+                </span>
+              } @else {
+                <span class="badge-brutal bg-[#10B981] text-white text-xs !py-0.5 !px-1.5 font-bold">★</span>
+                <span class="font-accent text-xs sm:text-sm font-bold text-[#222222] dark:text-[#F3F4F6]">Game Review</span>
+              }
+            </div>
+
+            @if (currentExplanation()?.moveTime; as mTime) {
+              <span class="badge-brutal bg-[#ECECD8] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] text-[10px] sm:text-xs !py-0.5 !px-1.5 font-bold shrink-0">
+                ⏱ {{ mTime }}
               </span>
-            } @else {
-              <span class="badge-brutal bg-[#10B981] text-white text-xs !py-0.5 !px-1.5 font-bold">★</span>
-              <span class="font-accent text-xs sm:text-sm font-bold text-[#222222] dark:text-[#F3F4F6]">Game Review</span>
             }
           </div>
 
-          @if (currentExplanation()?.moveTime; as mTime) {
-            <span class="badge-brutal bg-[#ECECD8] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] text-[10px] sm:text-xs !py-0.5 !px-1.5 font-bold shrink-0">
-              ⏱ {{ mTime }}
-            </span>
-          }
+          <!-- Commentary Text -->
+          <p class="font-body text-xs sm:text-sm text-gray-700 dark:text-gray-300 leading-relaxed font-medium">
+            @if (currentExplanation()?.commentary; as comm) {
+              {{ comm }}
+            } @else if (game.isGameOver()) {
+              {{ game.gameOverReason() }}
+            } @else if (game.history().length === 0) {
+              Ready for move 1. Play your moves on the board, or import a match from Chess.com!
+            } @else {
+              Review each move with tactical insights. Click Next to begin.
+            }
+          </p>
+
+          <!-- Follow-Up Action Button inside card -->
+          <div class="pt-0.5">
+            <button
+              type="button"
+              (click)="toggleFollowUp()"
+              class="btn-brutal !py-1 !px-2.5 text-xs font-bold flex items-center gap-1.5 cursor-pointer bg-[#ECECD8] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] hover:bg-[#D9D9D9] dark:hover:bg-[#373A46] transition-colors"
+              [ngClass]="{'bg-[#10B981]/20 border-[#10B981] text-[#10B981] dark:text-[#34D399]': isFollowUpActive()}"
+              title="Show follow-up continuation line"
+            >
+              @if (isPlayingFollowUp()) {
+                <app-icon name="pause" size="w-3.5 h-3.5"></app-icon>
+                <span>Stop Follow-Up</span>
+              } @else if (isFollowUpActive()) {
+                <app-icon name="arrow-uturn-left" size="w-3.5 h-3.5"></app-icon>
+                <span>Hide Follow-Up</span>
+              } @else {
+                <app-icon name="sparkles" size="w-3.5 h-3.5"></app-icon>
+                <span>Show Follow-Up</span>
+              }
+            </button>
+          </div>
         </div>
 
-        <!-- Commentary Text -->
-        <p class="font-body text-xs sm:text-sm text-gray-700 dark:text-gray-300 leading-relaxed font-medium">
-          @if (currentExplanation()?.commentary; as comm) {
-            {{ comm }}
-          } @else if (game.isGameOver()) {
-            {{ game.gameOverReason() }}
-          } @else if (game.history().length === 0) {
-            Ready for move 1. Play your moves on the board, or import a match from Chess.com!
-          } @else {
-            Review each move with tactical insights. Click Next to begin.
-          }
-        </p>
-
-        <!-- Follow-Up Action Button inside card -->
-        <div class="pt-0.5">
+        <!-- Action buttons row: Best, Retry, Next -->
+        <div class="grid grid-cols-3 gap-1.5 sm:gap-2">
           <button
             type="button"
-            (click)="toggleFollowUp()"
-            class="btn-brutal !py-1 !px-2.5 text-xs font-bold flex items-center gap-1.5 cursor-pointer bg-[#ECECD8] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] hover:bg-[#D9D9D9] dark:hover:bg-[#373A46] transition-colors"
-            [ngClass]="{'bg-[#10B981]/20 border-[#10B981] text-[#10B981] dark:text-[#34D399]': isFollowUpActive()}"
-            title="Show follow-up continuation line"
+            (click)="playBestMove()"
+            [disabled]="!canPlayBest()"
+            class="btn-brutal !py-2 sm:!py-2.5 text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 bg-[#ECECD8] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] disabled:opacity-40 disabled:cursor-not-allowed hover:not-disabled:bg-[#D9D9D9] dark:hover:not-disabled:bg-[#373A46] cursor-pointer"
+            title="Play engine's best move"
           >
-            @if (isPlayingFollowUp()) {
-              <app-icon name="pause" size="w-3.5 h-3.5"></app-icon>
-              <span>Stop Follow-Up</span>
-            } @else if (isFollowUpActive()) {
-              <app-icon name="arrow-uturn-left" size="w-3.5 h-3.5"></app-icon>
-              <span>Hide Follow-Up</span>
-            } @else {
-              <app-icon name="sparkles" size="w-3.5 h-3.5"></app-icon>
-              <span>Show Follow-Up</span>
-            }
+            <app-icon name="magnifying-glass" size="w-3.5 h-3.5"></app-icon>
+            <span>Best</span>
+          </button>
+
+          <button
+            type="button"
+            (click)="retryMove()"
+            [disabled]="!canRetry()"
+            class="btn-brutal !py-2 sm:!py-2.5 text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 bg-[#ECECD8] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] disabled:opacity-40 disabled:cursor-not-allowed hover:not-disabled:bg-[#D9D9D9] dark:hover:not-disabled:bg-[#373A46] cursor-pointer"
+            title="Retry this move"
+          >
+            <app-icon name="arrow-path" size="w-3.5 h-3.5"></app-icon>
+            <span>Retry</span>
+          </button>
+
+          <button
+            type="button"
+            (click)="nextMove()"
+            [disabled]="!canNext()"
+            class="btn-brutal btn-brutal-green !py-2 sm:!py-2.5 text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+            title="Next Move"
+          >
+            <span>Next</span>
+            <app-icon name="chevron-right" size="w-3.5 h-3.5"></app-icon>
           </button>
         </div>
       </div>
-
-      <!-- Action buttons row: Best, Retry, Next -->
-      <div class="grid grid-cols-3 gap-1.5 sm:gap-2">
-        <button
-          type="button"
-          (click)="playBestMove()"
-          [disabled]="!canPlayBest()"
-          class="btn-brutal !py-2 sm:!py-2.5 text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 bg-[#ECECD8] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] disabled:opacity-40 disabled:cursor-not-allowed hover:not-disabled:bg-[#D9D9D9] dark:hover:not-disabled:bg-[#373A46] cursor-pointer"
-          title="Play engine's best move"
-        >
-          <app-icon name="magnifying-glass" size="w-3.5 h-3.5"></app-icon>
-          <span>Best</span>
-        </button>
-
-        <button
-          type="button"
-          (click)="retryMove()"
-          [disabled]="!canRetry()"
-          class="btn-brutal !py-2 sm:!py-2.5 text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 bg-[#ECECD8] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] disabled:opacity-40 disabled:cursor-not-allowed hover:not-disabled:bg-[#D9D9D9] dark:hover:not-disabled:bg-[#373A46] cursor-pointer"
-          title="Retry this move"
-        >
-          <app-icon name="arrow-path" size="w-3.5 h-3.5"></app-icon>
-          <span>Retry</span>
-        </button>
-
-        <button
-          type="button"
-          (click)="nextMove()"
-          [disabled]="!canNext()"
-          class="btn-brutal btn-brutal-green !py-2 sm:!py-2.5 text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
-          title="Next Move"
-        >
-          <span>Next</span>
-          <app-icon name="chevron-right" size="w-3.5 h-3.5"></app-icon>
-        </button>
-      </div>
-    </div>
+    }
   </div>
 
-
-  <!-- Main Review Body: When 0 moves are played, show Online Fetcher & Samples; otherwise Move List -->
+  <!-- STATE 1: When 0 moves are played, show Online Fetcher & Samples -->
   @if (game.history().length === 0 && !isImporterOpen()) {
     <div class="flex flex-col gap-2 flex-1 min-h-0 overflow-y-auto pr-1 pb-1">
       <app-platform-game-selector (gameSelected)="onOnlineGameSelected($event)"></app-platform-game-selector>
@@ -301,7 +317,298 @@
         </div>
       </div>
     </div>
-  } @else {
+  }
+
+  <!-- STATE 2: Full Game Review Report Screen (when game has moves and isReportView() is true) -->
+  @else if (isReportView()) {
+    <div class="flex flex-col gap-2.5 flex-1 min-h-0 overflow-y-auto pr-1 pb-1">
+      <!-- 1. EVALUATION MOMENTUM CARD -->
+      <div class="card-brutal p-3 bg-white dark:bg-[#1E1F24] flex flex-col gap-2 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]">
+        <div class="flex items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-1.5">
+          <div class="flex items-center gap-1.5">
+            <app-icon name="arrow-trending-up" size="w-4 h-4" class="text-[#FF4F00]"></app-icon>
+            <span class="font-display text-xs sm:text-sm uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6]">EVALUATION MOMENTUM</span>
+          </div>
+          <span class="font-label text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 font-bold">CLICK TO SEEK</span>
+        </div>
+
+        <!-- SVG Interactive Area Momentum Curve -->
+        <div class="relative bg-[#D9D9D9] dark:bg-[#141519] border-2 border-[#222222] dark:border-black p-1 rounded-sm overflow-hidden select-none">
+          <svg viewBox="0 0 500 120" class="w-full h-24 sm:h-28 overflow-visible block" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="whiteMomentumGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#0E4C92" stop-opacity="0.85" />
+                <stop offset="100%" stop-color="#0E4C92" stop-opacity="0.15" />
+              </linearGradient>
+            </defs>
+
+            <!-- Zero baseline -->
+            <line x1="15" y1="60" x2="485" y2="60" stroke="#888888" stroke-width="1" stroke-dasharray="3,3" opacity="0.6" />
+
+            <!-- Shaded advantage area -->
+            <path [attr.d]="momentumData().whiteAreaPath" fill="url(#whiteMomentumGrad)" />
+
+            <!-- Main momentum curve line -->
+            <path
+              [attr.d]="momentumData().linePath"
+              fill="none"
+              stroke="#0E4C92"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="dark:stroke-[#3B82F6]"
+            />
+
+            <!-- Move Key Marker Pins -->
+            @for (pin of momentumData().markerPins; track pin.ply) {
+              <g (click)="jumpFromMomentum(pin.ply)" class="cursor-pointer group">
+                <circle
+                  [attr.cx]="pin.x"
+                  [attr.cy]="pin.y"
+                  r="7"
+                  [attr.fill]="pin.color"
+                  stroke="#222222"
+                  stroke-width="1.5"
+                  class="transition-transform group-hover:scale-125"
+                />
+                <text
+                  [attr.x]="pin.x"
+                  [attr.y]="pin.y + 3"
+                  text-anchor="middle"
+                  fill="#ffffff"
+                  font-size="8"
+                  font-weight="bold"
+                  font-family="sans-serif"
+                  pointer-events="none"
+                >
+                  {{ pin.label }}
+                </text>
+              </g>
+            }
+
+            <!-- Current move position ring if seeking -->
+            @if (momentumData().currentPin; as cur) {
+              <circle
+                [attr.cx]="cur.x"
+                [attr.cy]="cur.y"
+                r="6"
+                fill="#FF4F00"
+                stroke="#ffffff"
+                stroke-width="2"
+              />
+            }
+          </svg>
+        </div>
+      </div>
+
+      <!-- 2. PLAYER & ACCURACY CARD -->
+      <div class="card-brutal p-3 bg-white dark:bg-[#1E1F24] flex flex-col gap-2.5 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]">
+        <!-- Player Badges Header -->
+        <div class="grid grid-cols-2 gap-2">
+          <!-- White Player -->
+          <div class="flex items-center gap-2 p-1.5 border border-[#222222] dark:border-[#373A46] bg-[#FFFFFF] dark:bg-[#2A2B32] min-w-0">
+            <div class="w-7 h-7 bg-[#ECECD8] dark:bg-[#373A46] border border-[#222222] dark:border-black flex items-center justify-center font-display font-bold text-xs shrink-0 text-[#222222] dark:text-[#F3F4F6]">
+              {{ getPlayerInitial(game.matchMetadata().white.name) }}
+            </div>
+            <div class="flex flex-col min-w-0">
+              <span class="font-accent text-xs font-bold truncate text-[#222222] dark:text-[#F3F4F6]">
+                {{ game.matchMetadata().white.name || 'White' }}
+              </span>
+              @if (game.matchMetadata().white.rating) {
+                <span class="font-label text-[10px] text-gray-500 dark:text-gray-400">
+                  {{ game.matchMetadata().white.rating }}
+                </span>
+              }
+            </div>
+          </div>
+
+          <!-- Black Player -->
+          <div class="flex items-center gap-2 p-1.5 border border-[#222222] dark:border-[#373A46] bg-[#222222] dark:bg-[#141519] min-w-0">
+            <div class="w-7 h-7 bg-[#373A46] border border-white dark:border-gray-600 flex items-center justify-center font-display font-bold text-xs shrink-0 text-white">
+              {{ getPlayerInitial(game.matchMetadata().black.name) }}
+            </div>
+            <div class="flex flex-col min-w-0">
+              <span class="font-accent text-xs font-bold truncate text-white">
+                {{ game.matchMetadata().black.name || 'Black' }}
+              </span>
+              @if (game.matchMetadata().black.rating) {
+                <span class="font-label text-[10px] text-gray-300">
+                  {{ game.matchMetadata().black.rating }}
+                </span>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- Accuracy Split Row: 88.0 Accuracy 66.6 -->
+        @if (analysisService.summary(); as sum) {
+          <div class="border-2 border-[#222222] dark:border-black bg-[#ECECD8] dark:bg-[#141519] p-2.5 flex items-center justify-between gap-2 shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000]">
+            <!-- White Accuracy -->
+            <div class="flex flex-col items-center flex-1">
+              <span class="font-display text-2xl sm:text-3xl tracking-tight text-[#0E4C92] dark:text-[#60A5FA]">
+                {{ sum.whiteAccuracy.toFixed(1) }}
+              </span>
+              <div class="w-full h-1.5 bg-[#D9D9D9] dark:bg-[#2A2B32] border border-[#222222] dark:border-black mt-1 overflow-hidden">
+                <div class="h-full bg-[#0E4C92] dark:bg-[#60A5FA]" [style.width]="sum.whiteAccuracy + '%'"></div>
+              </div>
+            </div>
+
+            <!-- Center Label -->
+            <div class="flex flex-col items-center justify-center px-2">
+              <span class="font-label text-xs uppercase font-extrabold tracking-wider text-gray-700 dark:text-gray-300">
+                Accuracy
+              </span>
+            </div>
+
+            <!-- Black Accuracy -->
+            <div class="flex flex-col items-center flex-1">
+              <span class="font-display text-2xl sm:text-3xl tracking-tight text-[#FF4F00]">
+                {{ sum.blackAccuracy.toFixed(1) }}
+              </span>
+              <div class="w-full h-1.5 bg-[#D9D9D9] dark:bg-[#2A2B32] border border-[#222222] dark:border-black mt-1 overflow-hidden">
+                <div class="h-full bg-[#FF4F00]" [style.width]="sum.blackAccuracy + '%'"></div>
+              </div>
+            </div>
+          </div>
+        } @else if (analysisService.isAnalyzing()) {
+          <div class="p-3 bg-[#ECECD8] dark:bg-[#2A2B32] border border-[#222222] dark:border-black flex flex-col gap-1 items-center justify-center text-center">
+            <span class="font-accent text-xs uppercase font-bold flex items-center gap-1.5">
+              <app-icon name="arrow-path" size="w-3.5 h-3.5" class="animate-spin"></app-icon>
+              <span>Analyzing Game Accuracy ({{ analysisService.progress() }}%)...</span>
+            </span>
+          </div>
+        }
+      </div>
+
+      <!-- 3. MOVE CLASSIFICATION BREAKDOWN CARD -->
+      <div class="card-brutal p-3 bg-white dark:bg-[#1E1F24] flex flex-col gap-1.5 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]">
+        <div class="flex items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-1.5">
+          <span class="font-display text-xs sm:text-sm uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6]">MOVE BREAKDOWN</span>
+          <div class="flex items-center gap-8 font-label text-xs font-bold text-[#222222] dark:text-[#F3F4F6]">
+            <span>WHITE</span>
+            <span>BLACK</span>
+          </div>
+        </div>
+
+        <!-- 7 Classic Classification Rows -->
+        <div class="flex flex-col divide-y divide-gray-100 dark:divide-gray-800 text-xs sm:text-sm">
+          @for (row of reportClassificationRows(); track row.key) {
+            <div class="flex items-center justify-between py-1.5 px-1 hover:bg-[#D9D9D9]/40 dark:hover:bg-[#2A2B32]/40 transition-colors">
+              <!-- White Count -->
+              <span class="w-6 text-center font-label font-bold text-xs sm:text-sm" [class.opacity-40]="row.whiteCount === 0">
+                {{ row.whiteCount }}
+              </span>
+
+              <!-- Label & Badge -->
+              <div class="flex items-center gap-2 flex-1 justify-center">
+                <span class="badge-brutal text-[10px] !py-0 !px-1.5 font-bold shrink-0" [ngClass]="row.badgeClass">
+                  {{ row.symbol }}
+                </span>
+                <span class="font-accent font-bold uppercase text-xs text-[#222222] dark:text-[#F3F4F6] truncate max-w-[140px] sm:max-w-[180px]">
+                  {{ row.label }}
+                </span>
+              </div>
+
+              <!-- Black Count -->
+              <span class="w-6 text-center font-label font-bold text-xs sm:text-sm" [class.opacity-40]="row.blackCount === 0">
+                {{ row.blackCount }}
+              </span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- 4. GAME RATING ROW & COACH REVIEW & PHASES CARD -->
+      <div class="card-brutal p-3 bg-white dark:bg-[#1E1F24] flex flex-col gap-2 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]">
+        @if (analysisService.summary(); as sum) {
+          <!-- Game Rating Row -->
+          <div class="flex items-center justify-between p-2 bg-[#ECECD8] dark:bg-[#141519] border border-[#222222] dark:border-black text-xs sm:text-sm">
+            <span class="font-display text-base sm:text-lg font-bold text-[#0E4C92] dark:text-[#60A5FA]">
+              {{ sum.whitePerformanceRating }}
+            </span>
+            <span class="font-label uppercase font-extrabold text-xs text-gray-700 dark:text-gray-300">
+              Game rating
+            </span>
+            <span class="font-display text-base sm:text-lg font-bold text-[#FF4F00]">
+              {{ sum.blackPerformanceRating }}
+            </span>
+          </div>
+
+          <!-- Coach Review Verdict Row -->
+          <div class="flex items-center justify-between p-2 bg-[#FFFFFF] dark:bg-[#2A2B32] border border-[#222222] dark:border-black text-xs sm:text-sm">
+            <span class="badge-brutal text-[10px] sm:text-xs !py-0.5 !px-2 font-bold uppercase" [ngClass]="getCoachVerdictBadgeClass(sum.whiteCoachVerdict)">
+              {{ sum.whiteCoachVerdict }}
+            </span>
+            <span class="font-label uppercase font-extrabold text-xs text-gray-700 dark:text-gray-300">
+              Coach Review
+            </span>
+            <span class="badge-brutal text-[10px] sm:text-xs !py-0.5 !px-2 font-bold uppercase" [ngClass]="getCoachVerdictBadgeClass(sum.blackCoachVerdict)">
+              {{ sum.blackCoachVerdict }}
+            </span>
+          </div>
+
+          <!-- Game Phases Breakdown (Opening, Middlegame, Endgame) -->
+          <div class="flex flex-col gap-1 pt-1 border-t border-gray-200 dark:border-gray-700">
+            <!-- Opening -->
+            <div class="flex items-center justify-between py-1 px-1.5 text-xs font-accent">
+              <span class="font-bold text-[#0E4C92] dark:text-[#60A5FA] w-24 text-left truncate">
+                {{ sum.phases.opening.white }}
+              </span>
+              <span class="font-label uppercase font-extrabold text-gray-500 dark:text-gray-400 text-[11px]">
+                Opening
+              </span>
+              <span class="font-bold text-[#FF4F00] w-24 text-right truncate">
+                {{ sum.phases.opening.black }}
+              </span>
+            </div>
+
+            <!-- Middlegame -->
+            <div class="flex items-center justify-between py-1 px-1.5 text-xs font-accent border-t border-gray-100 dark:border-gray-800">
+              <span class="font-bold text-[#0E4C92] dark:text-[#60A5FA] w-24 text-left truncate">
+                {{ sum.phases.middlegame.white }}
+              </span>
+              <span class="font-label uppercase font-extrabold text-gray-500 dark:text-gray-400 text-[11px]">
+                Middlegame
+              </span>
+              <span class="font-bold text-[#FF4F00] w-24 text-right truncate">
+                {{ sum.phases.middlegame.black }}
+              </span>
+            </div>
+
+            <!-- Endgame -->
+            <div class="flex items-center justify-between py-1 px-1.5 text-xs font-accent border-t border-gray-100 dark:border-gray-800">
+              <span class="font-bold text-[#0E4C92] dark:text-[#60A5FA] w-24 text-left truncate">
+                {{ sum.phases.endgame.white }}
+              </span>
+              <span class="font-label uppercase font-extrabold text-gray-500 dark:text-gray-400 text-[11px]">
+                Endgame
+              </span>
+              <span class="font-bold text-[#FF4F00] w-24 text-right truncate">
+                {{ sum.phases.endgame.black }}
+              </span>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- 5. BOTTOM FIXED ACTION BUTTON: START REVIEW -->
+      <div class="pt-1 shrink-0">
+        <button
+          type="button"
+          (click)="startReviewWalkthrough()"
+          class="btn-brutal btn-brutal-green w-full !py-3 text-sm sm:text-base font-accent font-extrabold flex items-center justify-center gap-2 cursor-pointer shadow-[4px_4px_0_0_#222222] dark:shadow-[4px_4px_0_0_#000000] hover:scale-[1.01] active:scale-[0.99] transition-all"
+          title="Start move-by-move game review walkthrough"
+        >
+          <app-icon name="play" size="w-4 h-4"></app-icon>
+          <span class="tracking-wider uppercase">START REVIEW</span>
+          <app-icon name="chevron-right" size="w-4 h-4"></app-icon>
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- STATE 3: Move-by-Move Interactive Review Walkthrough -->
+  @else {
     <!-- Variation Active Banner -->
     <app-variation-banner></app-variation-banner>
 

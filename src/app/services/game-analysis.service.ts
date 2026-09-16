@@ -103,13 +103,75 @@ export class GameAnalysisService implements OnDestroy {
       return Math.round(curved * 10) / 10;
     };
 
+    const whiteAcc = calcAccuracy(whiteTotalAcc, whiteMoves);
+    const blackAcc = calcAccuracy(blackTotalAcc, blackMoves);
+
+    const calcRating = (acc: number): number => {
+      if (acc <= 0) return 400;
+      if (acc >= 99) return 3500;
+      const norm = acc / 100;
+      const rating = 400 + Math.pow(norm, 2.3) * 3100;
+      return Math.min(3500, Math.max(400, Math.round(rating / 50) * 50));
+    };
+
+    const getCoachVerdict = (acc: number, blunders: number): string => {
+      if (acc >= 90) return 'EXCEPTIONAL';
+      if (acc >= 80 && blunders === 0) return 'GREAT';
+      if (acc >= 70 && blunders <= 1) return 'SOLID';
+      if (acc >= 55 && blunders <= 2) return 'MEDIOCRE';
+      return 'BAD';
+    };
+
+    const calcPhaseQuality = (phaseMoves: MoveAnalysis[], isWhiteTurn: boolean): string => {
+      const filtered = phaseMoves.filter((m) => (m.plyIndex % 2 === 0) === isWhiteTurn);
+      if (filtered.length === 0) return '-';
+
+      const blunders = filtered.filter((m) => m.classification === 'blunder').length;
+      const misses = filtered.filter((m) => m.classification === 'miss').length;
+      const mistakes = filtered.filter((m) => m.classification === 'mistake').length;
+      const inaccuracies = filtered.filter((m) => m.classification === 'inaccuracy').length;
+      const brilliancies = filtered.filter((m) => m.classification === 'brilliant').length;
+      const bestOrGreat = filtered.filter((m) => m.classification === 'best' || m.classification === 'great').length;
+
+      if (blunders > 0 || misses > 0) return 'Mistake';
+      if (mistakes > 0) return 'Mistake';
+      if (inaccuracies > 0) return 'Inaccuracy';
+      if (brilliancies > 0) return 'Brilliant Move';
+      if (bestOrGreat >= filtered.length * 0.4) return 'Best Move';
+      return 'Good Move';
+    };
+
+    const openingMoves = moves.filter((m) => m.plyIndex < 20); // Plies 0-19 (moves 1-10)
+    const middlegameMoves = moves.filter((m) => m.plyIndex >= 20 && m.plyIndex < 50); // Plies 20-49 (moves 11-25)
+    const endgameMoves = moves.filter((m) => m.plyIndex >= 50); // Plies 50+ (moves 26+)
+
+    const phases = {
+      opening: {
+        white: calcPhaseQuality(openingMoves, true),
+        black: calcPhaseQuality(openingMoves, false),
+      },
+      middlegame: {
+        white: calcPhaseQuality(middlegameMoves, true),
+        black: calcPhaseQuality(middlegameMoves, false),
+      },
+      endgame: {
+        white: calcPhaseQuality(endgameMoves, true),
+        black: calcPhaseQuality(endgameMoves, false),
+      },
+    };
+
     const opening = this.detectedOpening();
 
     return {
-      whiteAccuracy: calcAccuracy(whiteTotalAcc, whiteMoves),
-      blackAccuracy: calcAccuracy(blackTotalAcc, blackMoves),
+      whiteAccuracy: whiteAcc,
+      blackAccuracy: blackAcc,
       whiteCounts,
       blackCounts,
+      whitePerformanceRating: calcRating(whiteAcc),
+      blackPerformanceRating: calcRating(blackAcc),
+      whiteCoachVerdict: getCoachVerdict(whiteAcc, whiteCounts.blunder),
+      blackCoachVerdict: getCoachVerdict(blackAcc, blackCounts.blunder),
+      phases,
       openingEco: opening?.eco,
       openingName: opening?.name,
     };
