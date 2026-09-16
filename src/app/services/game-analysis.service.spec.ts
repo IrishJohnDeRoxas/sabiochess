@@ -92,6 +92,27 @@ describe('GameAnalysisService', () => {
     expect(classification).toBe('best');
   });
 
+  it('should not treat equal minor piece trades (like Bxb5) as sacrifices', () => {
+    const svc = service as any;
+    // White plays Bb5, Black plays Bxb5 (bishop takes bishop)
+    const fenBefore = 'r1bqk1nr/pppp1ppp/2n5/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 1 3';
+    const fenAfter = 'r1bqk1nr/pppp1ppp/2n5/1b2p3/4P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 0 4';
+    const isSacrifice = svc.isSacrificeMove(fenBefore, fenAfter, 'f8', 'b5', 'b', 'b');
+    expect(isSacrifice).toBe(false);
+
+    const classification = svc.classifyMove(0, 0, true, 50, isSacrifice, 50);
+    expect(classification).toBe('best');
+  });
+
+  it('should not classify queen pawn grabs as sacrifices when a pre-existing threat exists elsewhere', () => {
+    const svc = service as any;
+    // Black plays Qxb2 capturing a pawn while Black has c6 knight attacked by d5 pawn
+    const fenBefore = 'r4rk1/pp3p1p/2n1p1pQ/3pP3/8/5P2/PqP3PP/R3K1NR b KQ - 1 15';
+    const fenAfter = 'r4rk1/pp3p1p/2n1p1pQ/3pP3/8/5P2/P1P3PP/1q2K1NR w K - 0 16';
+    const isSacrifice = svc.isSacrificeMove(fenBefore, fenAfter, 'b2', 'b1', 'q', 'r');
+    expect(isSacrifice).toBe(false);
+  });
+
   it('should award brilliant to a genuine piece sacrifice that maintains a win', () => {
     const svc = service as any;
     // Classical Greek Gift or bishop sacrifice on f7

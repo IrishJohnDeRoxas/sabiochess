@@ -799,6 +799,7 @@ export class ReviewTabComponent {
       from: h.from,
       to: h.to,
       piece: h.piece,
+      captured: h.captured,
       san: h.san,
       fen: h.fen,
       turn: h.turn,

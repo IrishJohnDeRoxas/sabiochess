@@ -559,7 +559,9 @@ export class GameAnalysisService implements OnDestroy {
           isEngineBest,
           playerWinBefore,
           isSacrifice,
-          playerWinAfter
+          playerWinAfter,
+          evalBefore?.score ?? null,
+          evalBefore?.mate ?? null
         );
       }
 
@@ -670,15 +672,22 @@ export class GameAnalysisService implements OnDestroy {
     playerWinBefore: number,
     isSacrifice: boolean = false,
     playerWinAfter: number = 50,
-    evalBeforeScore: number | null = null
+    evalBeforeScore: number | null = null,
+    mateBefore: number | null = null
   ): MoveClassification {
     if (isEngineBest || deltaWin <= 0.2) {
-      // Brilliant move: A piece sacrifice that maintains winning or advantageous position
-      // Must not be in an already completely overwhelming blowout (>95% win chance or eval > 700 cp)
-      const isBlowout = playerWinBefore > 95 || (evalBeforeScore !== null && Math.abs(evalBeforeScore) > 700);
-      const holdsAdvantage = playerWinAfter >= 50 || (playerWinBefore < 50 && playerWinAfter >= playerWinBefore + 10);
+      // Brilliant move: strictly engine best move, piece sacrifice that maintains winning or advantageous position
+      // Must not be in an already overwhelming blowout (>90% win chance, eval > 500 cp, or mate already in hand)
+      const isBlowout =
+        playerWinBefore > 90 ||
+        (evalBeforeScore !== null && Math.abs(evalBeforeScore) > 500) ||
+        (mateBefore !== null && Math.abs(mateBefore) <= 5);
 
-      if (isSacrifice && !isBlowout && holdsAdvantage) {
+      const holdsAdvantage =
+        (playerWinAfter >= 50 && deltaWin <= 0.5) ||
+        (playerWinBefore < 50 && playerWinAfter >= playerWinBefore + 10);
+
+      if (isEngineBest && isSacrifice && !isBlowout && holdsAdvantage) {
         return 'brilliant';
       }
       return 'best';
@@ -705,7 +714,10 @@ export class GameAnalysisService implements OnDestroy {
     piece?: string,
     captured?: string
   ): boolean {
-    if (!piece || piece.toLowerCase() === 'k') return false; // King move is never a piece sacrifice
+    if (!piece) return false;
+    const movedPieceType = piece.toLowerCase();
+    // King and pawn moves are never piece sacrifices
+    if (movedPieceType === 'k' || movedPieceType === 'p') return false;
 
     const pieceValues: Record<string, number> = {
       p: 1,
@@ -716,10 +728,6 @@ export class GameAnalysisService implements OnDestroy {
       k: 0,
     };
 
-    const movedPieceType = piece.toLowerCase();
-    const movedPieceValue = pieceValues[movedPieceType] || 0;
-    const capturedValue = captured ? (pieceValues[captured.toLowerCase()] || 0) : 0;
-
     let boardBefore: Chess;
     let boardAfter: Chess;
     try {
@@ -729,84 +737,78 @@ export class GameAnalysisService implements OnDestroy {
       return false;
     }
 
-    const oppMoves = boardAfter.moves({ verbose: true });
-    let hasSacrifice = false;
+    const targetPieceBefore = to ? boardBefore.get(to as any) : null;
+    const actualCaptured = captured || (targetPieceBefore ? targetPieceBefore.type : undefined);
+    const movedPieceValue = pieceValues[movedPieceType] || 0;
+    const capturedValue = actualCaptured ? (pieceValues[actualCaptured.toLowerCase()] || 0) : 0;
 
-    // 1. Direct piece sacrifice: moved piece is placed on square 'to' where it can be captured
-    // Only consider minor pieces (N, B), Rooks (R), or Queens (Q)
-    if (to && movedPieceValue >= 3) {
+    const oppMoves = boardAfter.moves({ verbose: true });
+
+    // Helper: calculate net material gain for opponent if they play oppMove
+    const calculateOpponentGain = (
+      boardState: Chess,
+      oppMove: { from: string; to: string; piece: string; captured?: string; promotion?: string },
+      initialMoveCapturedVal: number
+    ): number => {
+      const victimType = oppMove.captured?.toLowerCase();
+      if (!victimType) return 0;
+      const victimVal = pieceValues[victimType] || 0;
+      const attackerVal = pieceValues[oppMove.piece.toLowerCase()] || 0;
+
+      const simBoard = new Chess(boardState.fen());
+      try {
+        simBoard.move({ from: oppMove.from, to: oppMove.to, promotion: oppMove.promotion });
+      } catch {
+        return 0;
+      }
+
+      // Check player's immediate recaptures on target square
+      const recaptures = simBoard.moves({ verbose: true }).filter((m) => m.to === oppMove.to && m.captured);
+      if (recaptures.length === 0) {
+        // Player cannot recapture: opponent wins victimVal, player only had initialMoveCapturedVal
+        return victimVal - initialMoveCapturedVal;
+      }
+
+      // Player can recapture, winning attackerVal
+      return victimVal - attackerVal - initialMoveCapturedVal;
+    };
+
+    // 1. Direct piece sacrifice: moved piece (N, B, R, Q) is placed on square 'to'
+    // where opponent can capture it for a net material gain of >= 2
+    if (to && movedPieceValue >= 3 && movedPieceValue - capturedValue >= 2) {
       for (const oppMove of oppMoves) {
         if (oppMove.to === to && oppMove.captured) {
-          const attackerValue = pieceValues[oppMove.piece.toLowerCase()] || 0;
-          const victimValue = pieceValues[oppMove.captured.toLowerCase()] || movedPieceValue;
-
-          const testBoard = new Chess(fenAfter);
-          try {
-            testBoard.move({ from: oppMove.from, to: oppMove.to, promotion: oppMove.promotion });
-            const playerRecaptures = testBoard.moves({ verbose: true }).filter((m) => m.to === to && m.captured);
-
-            if (playerRecaptures.length === 0) {
-              const netSacrifice = victimValue - capturedValue;
-              if (netSacrifice >= 2) {
-                hasSacrifice = true;
-                break;
-              }
-            } else {
-              const netMaterialLost = victimValue - attackerValue - capturedValue;
-              if (netMaterialLost >= 2) {
-                hasSacrifice = true;
-                break;
-              }
-            }
-          } catch {
-            // ignore simulation error
+          const gain = calculateOpponentGain(boardAfter, oppMove, capturedValue);
+          if (gain >= 2) {
+            return true;
           }
         }
       }
     }
 
-    // 2. Discovered/uncovered sacrifice: moving the piece left another major/minor piece (Knight, Bishop, Rook, Queen) hanging
-    if (!hasSacrifice) {
-      for (const oppMove of oppMoves) {
-        if (oppMove.captured && oppMove.to !== to) {
-          const victimValue = pieceValues[oppMove.captured.toLowerCase()] || 0;
-          const attackerValue = pieceValues[oppMove.piece.toLowerCase()] || 0;
+    // 2. Discovered / uncovered piece sacrifice:
+    // Moving this piece left ANOTHER major/minor piece (Knight, Bishop, Rook, Queen) hanging to an opponent capture
+    // that was NOT profitably capturable before this move
+    const playerColor = boardBefore.turn();
+    const oppColor = playerColor === 'w' ? 'b' : 'w';
 
-          if (victimValue >= 3) {
-            const beforeOppMoves = boardBefore.moves({ verbose: true });
-            const wasHangingBefore = beforeOppMoves.some(
-              (m) => m.to === oppMove.to && m.piece === oppMove.piece && m.captured === oppMove.captured
-            );
-
-            if (!wasHangingBefore) {
-              const testBoard = new Chess(fenAfter);
-              try {
-                testBoard.move({ from: oppMove.from, to: oppMove.to, promotion: oppMove.promotion });
-                const playerRecaptures = testBoard.moves({ verbose: true }).filter((m) => m.to === oppMove.to && m.captured);
-
-                if (playerRecaptures.length === 0) {
-                  const netSacrifice = victimValue - capturedValue;
-                  if (netSacrifice >= 2) {
-                    hasSacrifice = true;
-                    break;
-                  }
-                } else {
-                  const netMaterialLost = victimValue - attackerValue - capturedValue;
-                  if (netMaterialLost >= 2) {
-                    hasSacrifice = true;
-                    break;
-                  }
-                }
-              } catch {
-                // ignore
-              }
+    for (const oppMove of oppMoves) {
+      if (oppMove.captured && oppMove.to !== to) {
+        const victimVal = pieceValues[oppMove.captured.toLowerCase()] || 0;
+        if (victimVal >= 3) {
+          const gainAfter = calculateOpponentGain(boardAfter, oppMove, capturedValue);
+          if (gainAfter >= 2) {
+            // Check if this square was already under attack before player's move
+            const wasAlreadyAttacked = boardBefore.isAttacked(oppMove.to as any, oppColor);
+            if (!wasAlreadyAttacked) {
+              return true;
             }
           }
         }
       }
     }
 
-    return hasSacrifice;
+    return false;
   }
 
   private async runHeuristicAnalysis(
@@ -865,9 +867,10 @@ export class GameAnalysisService implements OnDestroy {
 
         if (
           isSacrifice &&
+          cpDelta < 5 &&
           scoreAfterPlayer >= 50 &&
-          scoreBeforePlayer < 700 &&
-          winProbBefore <= 95
+          scoreBeforePlayer < 500 &&
+          winProbBefore <= 90
         ) {
           classification = 'brilliant';
         } else if (cpDelta < 5) {

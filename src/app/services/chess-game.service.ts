@@ -27,6 +27,7 @@ export interface MoveRecord {
   from: string;
   to: string;
   piece: string;
+  captured?: string;
   san: string;
   fen: string;
   turn: 'w' | 'b';
@@ -702,6 +703,7 @@ export class ChessGameService {
             from: result.from,
             to: result.to,
             piece: result.piece,
+            captured: result.captured,
             san: result.san,
             fen: this.liveChess.fen(),
             turn: result.color,
@@ -1050,6 +1052,7 @@ export class ChessGameService {
           from: m.from,
           to: m.to,
           piece: m.piece,
+          captured: m.captured,
           san: m.san,
           fen: this.liveChess.fen(),
           turn: m.color,
