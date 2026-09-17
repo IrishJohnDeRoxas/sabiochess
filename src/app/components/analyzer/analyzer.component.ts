@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ChessGameService } from '../../services/chess-game.service';
 import { SettingsService } from '../../services/settings.service';
@@ -26,6 +26,7 @@ import { SidebarTabsComponent } from '../sidebar-tabs/sidebar-tabs.component';
 })
 export class AnalyzerComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute, { optional: true });
+  private readonly router = inject(Router, { optional: true });
   readonly settings = inject(SettingsService);
   readonly game = inject(ChessGameService);
 
@@ -84,6 +85,7 @@ export class AnalyzerComponent implements OnInit, OnDestroy {
     const rawFen = params['fen'];
     const sample = params['sample'];
     const flip = params['flip'];
+    let loaded = false;
 
     if (rawPgn) {
       const pgnToLoad = this.cleanPgnString(rawPgn);
@@ -94,6 +96,7 @@ export class AnalyzerComponent implements OnInit, OnDestroy {
       if (success) {
         this.lastLoadedPgn = pgnToLoad;
         this.settings.flashToast('GAME LOADED FOR ANALYSIS');
+        loaded = true;
       }
     } else if (rawFen) {
       let fenToLoad = rawFen.trim();
@@ -104,12 +107,29 @@ export class AnalyzerComponent implements OnInit, OnDestroy {
       } catch {}
       this.game.loadFen(fenToLoad);
       this.settings.flashToast('POSITION LOADED');
+      loaded = true;
     } else if (sample) {
       this.game.loadSampleGame(sample);
+      loaded = true;
     }
 
     const targetUser = params['user'] || params['username'] || params['player'];
     this.applyBoardOrientation(flip, targetUser);
+
+    if (loaded && (rawPgn || rawFen || sample)) {
+      this.clearQueryParams();
+    }
+  }
+
+  private clearQueryParams(): void {
+    if (this.router) {
+      this.router.navigate([], {
+        queryParams: {},
+        replaceUrl: true,
+      });
+    } else if (typeof window !== 'undefined' && window.history?.replaceState) {
+      window.history.replaceState({}, '', window.location.pathname);
+    }
   }
 
   private applyBoardOrientation(flip?: string | boolean, targetUser?: string): void {

@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ChessGameService } from '../../services/chess-game.service';
 import { GameAnalysisService } from '../../services/game-analysis.service';
 import { SettingsService } from '../../services/settings.service';
@@ -97,5 +97,19 @@ describe('AnalyzerComponent', () => {
     expect(game.matchMetadata()?.white.name).toBe('Magnus');
     expect(game.matchMetadata()?.black.name).toBe('Hikaru');
     expect(game.isBoardFlipped()).toBe(true);
+  });
+
+  it('should clear query params after successfully loading PGN', () => {
+    const fixture = TestBed.createComponent(AnalyzerComponent);
+    const component = fixture.componentInstance;
+    const game = TestBed.inject(ChessGameService);
+    const clearSpy = vi.spyOn(component as any, 'clearQueryParams');
+
+    (component as any).handleQueryParams({
+      pgn: '1. e4 e5 2. Nf3 Nc6',
+    });
+
+    expect(game.history().length).toBe(4);
+    expect(clearSpy).toHaveBeenCalled();
   });
 });
