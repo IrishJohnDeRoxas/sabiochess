@@ -16,10 +16,11 @@
         <app-icon [name]="settings.isDarkMode() ? 'sun' : 'moon'" size="w-4 h-4"></app-icon>
       </button>
 
-      <!-- Buy Me a Coffee Button (Refined Muted Gold / Neubrutalist Outline) -->
+      <!-- Support SabioChess Button -->
       <button type="button" (click)="openSupportModal()"
-        class="btn-brutal bg-[#FEF3C7] dark:bg-[#262626] text-[#92400E] dark:text-[#FBBF24] border-2 border-[#222222] dark:border-[#F59E0B]/60 hover:bg-[#FDE68A] dark:hover:bg-[#333333] !py-2 !px-4 text-xs sm:text-sm flex items-center justify-center font-accent font-black cursor-pointer shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000] active:translate-x-0.5 active:translate-y-0.5 transition-all shrink-0">
-        <span class="tracking-wider">☕ BUY ME A COFFEE</span>
+        class="btn-brutal bg-[#FEF3C7] dark:bg-[#262626] text-[#92400E] dark:text-[#FBBF24] border-2 border-[#222222] dark:border-[#F59E0B]/60 hover:bg-[#FDE68A] dark:hover:bg-[#333333] !py-2 !px-4 text-xs sm:text-sm flex items-center justify-center gap-1.5 font-accent font-black cursor-pointer shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000] active:translate-x-0.5 active:translate-y-0.5 transition-all shrink-0">
+        <app-icon name="heart" size="w-4 h-4 text-[#FF4F00]"></app-icon>
+        <span class="tracking-wider">SUPPORT SABIOCHESS</span>
       </button>
     </div>
 
@@ -43,13 +44,14 @@
 
         <!-- Dropdown Container -->
         <div class="fixed md:absolute right-3 top-[60px] md:top-[calc(100%+8px)] z-50 w-[calc(100vw-1.5rem)] max-w-xs bg-white dark:bg-[#1E1E1E] border-[3px] border-[#222222] dark:border-black shadow-[6px_6px_0_0_#222222] dark:shadow-[6px_6px_0_0_#000000] p-3.5 flex flex-col gap-2.5 animate-scale-up">
-          <!-- Buy Me a Coffee Button (Full Width Muted Gold) -->
+          <!-- Support SabioChess Button (Full Width) -->
           <button
             type="button"
             (click)="openSupportModal()"
-            class="btn-brutal bg-[#FEF3C7] dark:bg-[#262626] text-[#92400E] dark:text-[#FBBF24] border-2 border-[#222222] dark:border-[#F59E0B]/60 hover:bg-[#FDE68A] dark:hover:bg-[#333333] w-full !py-2.5 !px-3 text-xs font-accent font-black flex items-center justify-center cursor-pointer shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]"
+            class="btn-brutal bg-[#FEF3C7] dark:bg-[#262626] text-[#92400E] dark:text-[#FBBF24] border-2 border-[#222222] dark:border-[#F59E0B]/60 hover:bg-[#FDE68A] dark:hover:bg-[#333333] w-full !py-2.5 !px-3 text-xs font-accent font-black flex items-center justify-center gap-1.5 cursor-pointer shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]"
           >
-            <span class="tracking-wider uppercase">☕ BUY ME A COFFEE</span>
+            <app-icon name="heart" size="w-4 h-4 text-[#FF4F00]"></app-icon>
+            <span class="tracking-wider uppercase">SUPPORT SABIOCHESS</span>
           </button>
 
           <!-- Theme Toggle Row -->

@@ -88,7 +88,7 @@ export const MEME_SOUND_PACKS: MemePackOption[] = [
   {
     id: 'meme',
     name: 'Meme Vault',
-    badge: 'Popular',
+    badge: 'Viral',
     description: 'Vine Boom, FAHHH, Brother Eww, Bruh, Anime Wow, MLG Airhorn',
   },
   {

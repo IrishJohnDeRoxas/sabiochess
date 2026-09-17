@@ -4,7 +4,10 @@
     
     <!-- Modal Header -->
     <div class="flex items-center justify-between p-4 bg-[#FEF3C7] dark:bg-[#262626] text-[#92400E] dark:text-[#FBBF24] border-b-4 border-[#222222] dark:border-black">
-      <h2 class="font-display text-lg sm:text-xl uppercase font-extrabold tracking-tight">☕ SUPPORT SABIOCHESS</h2>
+      <h2 class="font-display text-lg sm:text-xl uppercase font-extrabold tracking-tight flex items-center gap-2">
+        <app-icon name="heart" size="w-5 h-5 text-[#FF4F00]"></app-icon>
+        <span>SUPPORT SABIOCHESS</span>
+      </h2>
       <button type="button" (click)="close()" class="btn-brutal !p-1.5 bg-white dark:bg-[#1E1E1E] text-black dark:text-white border-2 border-[#222222] dark:border-black hover:bg-red-500 hover:text-white cursor-pointer" title="Close modal">
         <app-icon name="x-mark" size="w-5 h-5"></app-icon>
       </button>
@@ -73,8 +76,8 @@
       <div class="flex flex-col sm:flex-row gap-2.5 pt-1">
         <button type="button" (click)="openCoffee()"
           class="btn-brutal btn-brutal-orange flex-1 !py-3 text-xs sm:text-sm font-accent uppercase flex items-center justify-center gap-2 cursor-pointer shadow-[3px_3px_0_0_#222222]">
-          <span class="text-base">☕</span>
-          <span>Open Buy Me a Coffee Page</span>
+          <app-icon name="heart" size="w-4 h-4"></app-icon>
+          <span>Open Support Page</span>
           <span aria-hidden="true">↗</span>
         </button>
 

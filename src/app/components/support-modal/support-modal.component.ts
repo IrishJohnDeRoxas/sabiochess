@@ -16,8 +16,8 @@ export class SupportModalComponent {
 
   readonly buyMeCoffeeUrl = 'https://buymeacoffee.com/sabiochess';
   readonly coffeeAmounts = [
-    { amount: 5, label: '1 Coffee', icon: '☕', desc: 'Keeps domain & hosting alive' },
-    { amount: 10, label: '2 Coffees', icon: '⚡', desc: 'Powers Stockfish WASM updates' },
+    { amount: 5, label: 'Starter Tip', icon: '⭐', desc: 'Keeps domain & hosting alive' },
+    { amount: 10, label: 'Booster Tip', icon: '⚡', desc: 'Powers Stockfish WASM updates' },
     { amount: 25, label: 'Grandmaster Tip', icon: '👑', desc: 'Huge supporter of open chess tools' },
   ];
 

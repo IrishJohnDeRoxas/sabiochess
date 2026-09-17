@@ -203,6 +203,54 @@ body {
   text-transform: uppercase;
 }
 
+/* Neubrutalist Custom Checkbox */
+.checkbox-brutal {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  min-width: 1.25rem;
+  min-height: 1.25rem;
+  background-color: #FFFFFF;
+  border: 2px solid #222222;
+  border-radius: 0px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  transition: background-color 0.1s ease, border-color 0.1s ease;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.dark .checkbox-brutal {
+  background-color: #1E1E1E;
+  border-color: #000000;
+}
+
+.checkbox-brutal:hover {
+  border-color: #FF4F00;
+}
+
+.checkbox-brutal:checked {
+  background-color: #FF4F00 !important;
+  border-color: #222222 !important;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 20 20' fill='%23ffffff' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z'/%3E%3C/svg%3E");
+  background-size: 14px 14px;
+}
+
+.dark .checkbox-brutal:checked {
+  background-color: #FF4F00 !important;
+  border-color: #000000 !important;
+}
+
+.checkbox-brutal:focus-visible {
+  outline: 2px solid #FF4F00;
+  outline-offset: 1px;
+}
+
 /* Neubrutalist Custom Scrollbars */
 ::-webkit-scrollbar {
   width: 7px;
