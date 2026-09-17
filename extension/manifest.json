@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "SabioChess - Chess.com Reviewer",
   "version": "1.0.4",
-  "description": "Injects one-click SabioChess neubrutalist analysis sidebar directly into Chess.com completed games.",
+  "description": "One-click instant game review and Stockfish analysis sidebar for completed Chess.com games.",
   "permissions": ["storage", "activeTab"],
   "host_permissions": [
     "https://chess.com/*",

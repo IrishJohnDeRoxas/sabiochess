@@ -67,11 +67,11 @@ export const BOARD_THEMES: BoardThemeOption[] = [
   },
   {
     id: 'brutal',
-    name: 'Neubrutalist Pure',
+    name: 'Monochrome Bold',
     light: '#FFFFFF',
     dark: '#C0C0C0',
     accent: '#FF4F00',
-    description: 'Ultra high-contrast brutalist monochrome.',
+    description: 'High-contrast clean monochrome board style.',
   },
 ];
 

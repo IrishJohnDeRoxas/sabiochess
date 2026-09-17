@@ -2,13 +2,13 @@
 
 A lightweight Manifest V3 Chrome Extension that integrates SabioChess directly into **Chess.com**.
 
-When you finish a game on Chess.com, the extension automatically detects the game-over screen and injects a tactile **"Review on SabioChess"** button below the default *Game Review* button. Clicking it slides open a Neubrutalist sidebar that loads your game and runs Stockfish depth-16 analysis instantly.
+When you finish a game on Chess.com, the extension automatically detects the game-over screen and injects a **"Review on SabioChess"** button below the default *Game Review* button. Clicking it slides open an analysis sidebar that loads your game and runs Stockfish depth-16 review instantly.
 
 ---
 
 ## Features
 
-- **Tactile Neubrutalist UI**: Matches SabioChess design with bold orange `#FF4F00`, solid borders, and tactile click animations.
+- **Modern Clean UI**: Matches SabioChess design with bold high-contrast styling and responsive tactile controls.
 - **Auto-Detection**: Uses `MutationObserver` to detect completed games across Chess.com live, daily, and play modes.
 - **Smart PGN Extraction**: Reads the live DOM move tree with fallback to Chess.com's public game API.
 - **Slide-Over Sidebar Drawer**: Smooth slide-in sidebar overlay with expand, minimize, and full-tab opening capabilities.
