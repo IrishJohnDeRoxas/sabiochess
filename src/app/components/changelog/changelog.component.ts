@@ -42,19 +42,53 @@ export class ChangelogComponent implements OnInit {
 
   readonly releases = signal<ReleaseVersion[]>([
     {
-      version: 'v1.4.0',
+      version: 'v1.5.0',
       date: 'September 2026',
-      title: 'Skeleton Loaders, Always-Visible Review Panel & Legal Docs',
+      title: 'Chess.com Reviewer Extension & Copy Polish',
       summary:
-        'A focused quality-of-life release delivering faster perceived load times, a permanently visible CAPS review panel, accurate legal documentation, and a suite of UI polish fixes.',
+        'Official SabioChess Chrome extension for one-click post-game reviews on Chess.com, updated store listing compliance, and refined player-focused copy.',
       isLatest: true,
       tag: 'Latest Release',
       items: [
         {
           type: 'feature',
+          title: 'Official Chess.com Browser Extension',
+          description:
+            'Introduced the SabioChess Chrome Extension for Chess.com. Injects a one-click review button on completed games that opens an instant sidebar review with Stockfish analysis and CAPS breakdown.',
+        },
+        {
+          type: 'improvement',
+          title: 'Streamlined Player-Focused Copy',
+          description:
+            'Refined application subtitles, meta tags, footer badges, and settings labels across the platform to prioritize clear chess analysis tools over internal design jargon.',
+        },
+        {
+          type: 'improvement',
+          title: 'Chrome Web Store & Fair Play Compliance',
+          description:
+            'Packaged with Manifest V3 and minimal permissions (activeTab, storage). Strictly operates on completed post-game screens with zero real-time move assistance.',
+        },
+        {
+          type: 'fix',
+          title: 'Extension Sidebar Resizing & Integration',
+          description:
+            'Optimized sidebar injection layout, z-index hierarchy, and close/expand toggle buttons on live, daily, and archived match views.',
+        },
+      ],
+    },
+    {
+      version: 'v1.4.0',
+      date: 'September 2026',
+      title: 'Skeleton Loaders, Always-Visible Review Panel & Legal Docs',
+      summary:
+        'A focused quality-of-life release delivering faster perceived load times, a permanently visible CAPS review panel, accurate legal documentation, and a suite of UI polish fixes.',
+      isLatest: false,
+      items: [
+        {
+          type: 'feature',
           title: 'Skeleton Loading Screens',
           description:
-            'Neubrutalist shimmer skeleton placeholders now appear for the board, eval bar, player cards, and sidebar tabs on initial load — eliminating layout shifts and giving instant visual feedback.',
+            'Tactile shimmer skeleton placeholders now appear for the board, eval bar, player cards, and sidebar tabs on initial load — eliminating layout shifts and giving instant visual feedback.',
         },
         {
           type: 'feature',
@@ -211,7 +245,7 @@ export class ChangelogComponent implements OnInit {
       date: 'May 2026',
       title: 'SabioChess Official Launch',
       summary:
-        'The debut of SabioChess: a free, account-free, privacy-first neubrutalist chess analysis workbench powered entirely by Stockfish 18 in your browser.',
+        'The debut of SabioChess: a free, account-free, privacy-first chess analysis workbench powered entirely by Stockfish 18 in your browser.',
       items: [
         {
           type: 'feature',
