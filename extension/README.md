@@ -33,3 +33,19 @@ When you finish a game on Chess.com, the extension automatically detects the gam
 2. When the game ends (or on any finished game screen), look right below the green **Game Review** button.
 3. You will see the orange **REVIEW ON SABIOCHESS** button.
 4. Click it to open the analysis sidebar.
+
+---
+
+## Switching Target URL (Localhost vs. Production)
+
+By default, the extension points to production `https://sabiochess.com`.
+
+To switch target environment while testing on Chess.com, open Developer Console (F12 / Cmd+Option+I on chess.com):
+
+```javascript
+// Point extension to local dev server:
+window.__setSabioUrl('http://localhost:4200');
+
+// Reset extension back to production:
+window.__setSabioUrl(); // or window.__setSabioUrl('https://sabiochess.com');
+```

@@ -9,8 +9,50 @@
   const SABIO_BUTTON_ID = 'sabiochess-review-injected-btn';
   const SIDEBAR_ID = 'sabiochess-sidebar-container';
 
-  // Base URL for SabioChess
-  let sabioBaseUrl = localStorage.getItem('sabiochess_target_url') || 'https://sabiochess.com';
+  // Base URL for SabioChess (Defaults to Production https://sabiochess.com)
+  const PROD_URL = 'https://sabiochess.com';
+  let sabioBaseUrl = PROD_URL;
+
+  function updateTargetUrl() {
+    try {
+      const stored = localStorage.getItem('sabiochess_target_url');
+      if (stored && typeof stored === 'string' && stored.trim().length > 0) {
+        sabioBaseUrl = stored.trim().replace(/\/+$/, '');
+        return;
+      }
+    } catch {}
+
+    if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
+      chrome.storage.local.get(['sabiochess_target_url'], (res) => {
+        if (res && res.sabiochess_target_url) {
+          sabioBaseUrl = res.sabiochess_target_url.trim().replace(/\/+$/, '');
+        }
+      });
+    }
+  }
+
+  updateTargetUrl();
+
+  // Console helper for developers: window.__setSabioUrl('http://localhost:4200')
+  try {
+    window.__setSabioUrl = (url) => {
+      if (url) {
+        localStorage.setItem('sabiochess_target_url', url);
+        if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
+          chrome.storage.local.set({ sabiochess_target_url: url });
+        }
+        sabioBaseUrl = url.trim().replace(/\/+$/, '');
+        console.log('[SabioChess] Target URL set to:', sabioBaseUrl);
+      } else {
+        localStorage.removeItem('sabiochess_target_url');
+        if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
+          chrome.storage.local.remove(['sabiochess_target_url']);
+        }
+        sabioBaseUrl = PROD_URL;
+        console.log('[SabioChess] Target URL reset to default:', PROD_URL);
+      }
+    };
+  } catch {}
 
   /**
    * Selectors for Chess.com game review button
@@ -433,6 +475,7 @@
     let pgn = extractPgnFromDOM();
 
     const buildUrl = (targetPgn) => {
+      updateTargetUrl();
       const params = new URLSearchParams();
       if (targetPgn) params.set('pgn', targetPgn);
       if (meta.isFlipped) params.set('flip', 'true');

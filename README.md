@@ -54,6 +54,23 @@ ng e2e
 
 Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
 
+## Browser Extension (Chess.com Integration)
+
+The `extension/` directory contains the official Manifest V3 Chrome extension.
+
+### Dev Testing on Chess.com:
+By default, the extension loads `https://sabiochess.com`. To point it to your local dev server while testing on Chess.com, open the browser console (`Cmd+Option+I` on chess.com) and run:
+
+```javascript
+// Point to local development:
+window.__setSabioUrl('http://localhost:4200');
+
+// Reset to production:
+window.__setSabioUrl(); // or window.__setSabioUrl('https://sabiochess.com');
+```
+
+---
+
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
