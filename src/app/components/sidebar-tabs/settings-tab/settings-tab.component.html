@@ -287,7 +287,7 @@
     </div>
   </div>
 
-  <!-- Section 4: Audio & Meme FX Reactions -->
+  <!-- Section 4: Audio & Sound Packs -->
   <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1E1E] flex flex-col gap-3">
     <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b-2 border-[#222222] dark:border-black pb-2 gap-2">
       <div class="flex items-center gap-2 min-w-0">
@@ -296,7 +296,7 @@
         </span>
         <div class="min-w-0">
           <h3 class="font-display text-sm sm:text-base uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6] truncate">AUDIO & SOUND FX</h3>
-          <p class="font-label text-xs text-gray-600 dark:text-gray-400">Physical piece taps & viral reaction sounds</p>
+          <p class="font-label text-xs text-gray-600 dark:text-gray-400">Physical piece taps & evaluation sound packs</p>
         </div>
       </div>
 
@@ -323,8 +323,8 @@
         <input type="checkbox" [checked]="settings.memeSounds()"
           (change)="settings.setMemeSounds(!settings.memeSounds())" class="accent-[#FF4F00] w-4.5 h-4.5 cursor-pointer" />
         <div class="flex flex-col">
-          <span class="font-bold text-[#222222] dark:text-[#F3F4F6]">Meme Reactions</span>
-          <span class="text-xs text-gray-600 dark:text-gray-400 font-label">Tactical sound effects</span>
+          <span class="font-bold text-[#222222] dark:text-[#F3F4F6]">Sound Packs</span>
+          <span class="text-xs text-gray-600 dark:text-gray-400 font-label">Evaluation sound effects</span>
         </div>
       </label>
     </div>
@@ -343,25 +343,30 @@
     <!-- Sound Pack Options List -->
     <div class="flex flex-col gap-1.5">
       <div class="flex items-center justify-between">
-        <span class="font-accent text-xs sm:text-sm uppercase font-bold text-gray-800 dark:text-gray-200">SELECT REACTION SOUND PACK:</span>
+        <span class="font-accent text-xs sm:text-sm uppercase font-bold text-gray-800 dark:text-gray-200">SELECT SOUND PACK:</span>
         <span class="font-label text-xs text-gray-500 dark:text-gray-400 font-bold">CLICK PLAY TO PREVIEW</span>
       </div>
 
       @for (pack of soundPacks; track pack.id) {
-      <div (click)="selectSoundPack(pack.id)"
-        class="flex items-center justify-between p-2.5 sm:p-3 border-2 border-[#222222] dark:border-black cursor-pointer hover:bg-[#D9D9D9] dark:hover:bg-[#262626] text-xs sm:text-sm font-accent transition-colors"
-        [ngClass]="{'bg-[#D9D9D9] dark:bg-[#262626] font-bold border-l-4 border-l-[#FF4F00] shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000]': settings.memePack() === pack.id && settings.memeSounds() && !soundService.isMuted()}">
-        <div class="flex flex-col pr-2 gap-0.5">
-          <div class="flex items-center gap-1.5">
-            <span class="font-bold text-sm sm:text-base text-[#222222] dark:text-[#F3F4F6]">{{ pack.name }}</span>
-            <span class="badge-brutal bg-[#222222] dark:bg-[#262626] text-white text-[10px] sm:text-xs !py-0.5 !px-1.5 font-bold">{{ pack.badge }}</span>
+      <div role="button" tabindex="0" (click)="selectSoundPack(pack.id)" (keydown.enter)="selectSoundPack(pack.id)" (keydown.space)="selectSoundPack(pack.id); $event.preventDefault()"
+        class="flex items-center justify-between p-2.5 sm:p-3 border-2 text-left cursor-pointer transition-all relative"
+        [ngClass]="settings.memePack() === pack.id ? 'border-[#FF4F00] bg-[#ECECD8] dark:bg-[#262626] shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]' : 'border-[#222222] dark:border-black bg-white dark:bg-[#1E1E1E] hover:bg-gray-50 dark:hover:bg-[#262626]'">
+        <div class="flex flex-col pr-2 gap-0.5 min-w-0">
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <span class="font-accent font-bold text-sm sm:text-base text-[#222222] dark:text-[#F3F4F6]">{{ pack.name }}</span>
+            <span class="badge-brutal bg-[#222222] dark:bg-[#262626] text-white text-[10px] sm:text-xs !py-0.5 !px-1.5 font-bold shrink-0">{{ pack.badge }}</span>
+            @if (settings.memePack() === pack.id) {
+            <span class="p-0.5 bg-[#FF4F00] text-white rounded-none border border-[#222222] dark:border-black shrink-0 inline-flex items-center justify-center">
+              <app-icon name="check" size="w-3 h-3"></app-icon>
+            </span>
+            }
           </div>
           <span class="text-xs sm:text-sm font-body text-gray-600 dark:text-gray-400 leading-tight">{{ pack.description }}</span>
         </div>
 
         <button type="button" (click)="previewSoundPack(pack.id, $event)"
           class="btn-brutal !p-2 bg-white dark:bg-[#1E1E1E] border border-[#222222] dark:border-black hover:bg-[#FF4F00] hover:text-white shrink-0 cursor-pointer"
-          title="Preview Audio Effect">
+          title="Preview Random Sound Effect">
           <app-icon name="play" size="w-4 h-4"></app-icon>
         </button>
       </div>
@@ -387,7 +392,7 @@
       Save your platform usernames to automatically populate the Game Fetcher and load your recent games with 1 click.
     </p>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+    <div class="flex flex-col gap-2.5">
       <div class="flex flex-col gap-1">
         <label
           class="font-label text-xs sm:text-sm uppercase text-gray-800 dark:text-gray-200 font-bold flex items-center gap-1.5">
@@ -396,24 +401,24 @@
         </label>
         <input type="text" [ngModel]="settings.chesscomUsername()"
           (ngModelChange)="settings.setChesscomUsername($event)" placeholder="e.g. Hikaru, GothamChess"
-          class="bg-[#D9D9D9] dark:bg-[#262626] text-[#222222] dark:text-[#F3F4F6] border-2 border-[#222222] dark:border-black p-2 text-xs sm:text-sm font-label focus:bg-white dark:focus:bg-[#1E1E1E] focus:outline-none focus:border-[#FF4F00] uppercase placeholder:normal-case" />
+          class="bg-[#D9D9D9] dark:bg-[#262626] text-[#222222] dark:text-[#F3F4F6] border-2 border-[#222222] dark:border-black p-2 text-xs sm:text-sm font-label focus:bg-white dark:focus:bg-[#1E1E1E] focus:outline-none focus:border-[#FF4F00] uppercase placeholder:normal-case w-full" />
       </div>
 
-      <div class="flex flex-col gap-1 opacity-60">
+      <div class="flex flex-col gap-1">
         <label
-          class="font-label text-xs sm:text-sm uppercase text-gray-800 dark:text-gray-200 font-bold flex items-center justify-between flex-wrap gap-1">
+          class="font-label text-xs sm:text-sm uppercase text-gray-800 dark:text-gray-200 font-bold flex items-center justify-between">
           <div class="flex items-center gap-1.5">
             <span class="w-2 h-2 bg-[#0E4C92] inline-block border border-[#222222] dark:border-black"></span>
             <span>LICHESS USERNAME</span>
           </div>
-          <span class="inline-flex items-center gap-1 text-[10px] bg-amber-500 text-black px-1.5 py-0.5 font-mono font-bold uppercase">
+          <span class="inline-flex items-center gap-1 text-[10px] bg-amber-500 text-black px-1.5 py-0.5 font-mono font-bold uppercase shrink-0">
             <app-icon name="lock-closed" size="w-2.5 h-2.5"></app-icon>
             IN DEV
           </span>
         </label>
         <input type="text" [ngModel]="settings.lichessUsername()" disabled
-          placeholder="Lichess integration in development..."
-          class="bg-[#D9D9D9] dark:bg-[#262626] text-gray-500 dark:text-gray-400 border-2 border-[#222222] dark:border-black p-2 text-xs sm:text-sm font-label cursor-not-allowed uppercase placeholder:normal-case select-none" />
+          placeholder="Lichess integration coming soon..."
+          class="bg-[#D9D9D9] dark:bg-[#262626] text-gray-500 dark:text-gray-400 border-2 border-[#222222] dark:border-black p-2 text-xs sm:text-sm font-label cursor-not-allowed uppercase placeholder:normal-case select-none opacity-75 w-full" />
       </div>
     </div>
   </div>

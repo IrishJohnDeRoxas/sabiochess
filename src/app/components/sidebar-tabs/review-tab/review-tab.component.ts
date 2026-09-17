@@ -592,7 +592,7 @@ export class ReviewTabComponent {
     event.stopPropagation();
     const pack = this.soundPacks.find((p) => p.id === packId);
     if (pack) {
-      this.soundService.playReactionSound('best', pack.id as any, this.settings.volume());
+      this.soundService.playRandomPackSound(pack.id as any, this.settings.volume());
     }
   }
 

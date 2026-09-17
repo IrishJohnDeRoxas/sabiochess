@@ -452,6 +452,45 @@ export class SoundService {
     this.playClassification(classification, volMult, pack);
   }
 
+  playRandomPackSound(
+    pack: MemeSoundPack = 'meme',
+    volumePercent = 80
+  ): void {
+    if (this.isMuted()) {
+      this.setMuted(false);
+    }
+
+    const volMult = Math.max(0, Math.min(1, volumePercent / 100));
+    const classifications: MoveClassification[] = [
+      'brilliant',
+      'great',
+      'best',
+      'excellent',
+      'good',
+      'book',
+      'inaccuracy',
+      'mistake',
+      'blunder',
+      'miss',
+    ];
+
+    let targetPack = pack;
+    if (targetPack === 'shuffle') {
+      const availablePacks: Exclude<MemeSoundPack, 'shuffle'>[] = [
+        'meme',
+        'arcade',
+        'cartoon',
+        'classical',
+      ];
+      targetPack = availablePacks[Math.floor(Math.random() * availablePacks.length)];
+    }
+
+    const randomClassification =
+      classifications[Math.floor(Math.random() * classifications.length)];
+
+    this.playClassification(randomClassification, volMult, targetPack);
+  }
+
   private selectRandomTrack(
     classification: MoveClassification,
     pack: Exclude<MemeSoundPack, 'shuffle'> = 'meme'

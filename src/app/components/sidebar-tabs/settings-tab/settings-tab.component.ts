@@ -49,7 +49,7 @@ export class SettingsTabComponent {
 
   previewSoundPack(pack: MemeSoundPack, event: Event): void {
     event.stopPropagation();
-    this.soundService.playReactionSound('best', pack, this.settings.volume());
+    this.soundService.playRandomPackSound(pack, this.settings.volume());
   }
 
   onVolumeChange(event: Event): void {

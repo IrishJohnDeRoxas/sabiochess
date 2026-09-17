@@ -45,9 +45,26 @@ describe('SettingsTabComponent', () => {
     expect(settingsService.isSupportModalOpen()).toBe(true);
   });
 
-  it('should render support section in settings tab', () => {
+  it('should select sound pack and update settings', () => {
+    component.selectSoundPack('arcade');
+    expect(settingsService.memePack()).toBe('arcade');
+    expect(settingsService.memeSounds()).toBe(true);
+  });
+
+  it('should preview random sound on preview button trigger', () => {
+    const soundService = TestBed.inject(SoundService);
+    const spy = vi.spyOn(soundService, 'playRandomPackSound');
+    const dummyEvent = new MouseEvent('click');
+    const stopSpy = vi.spyOn(dummyEvent, 'stopPropagation');
+
+    component.previewSoundPack('cartoon', dummyEvent);
+    expect(stopSpy).toHaveBeenCalled();
+    expect(spy).toHaveBeenCalledWith('cartoon', settingsService.volume());
+  });
+
+  it('should render sound packs section with active outline', () => {
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.textContent).toContain('SUPPORT SABIOCHESS');
-    expect(compiled.textContent).toContain('BUY ME A COFFEE');
+    expect(compiled.textContent).toContain('SELECT SOUND PACK:');
+    expect(compiled.textContent).toContain('Sound Packs');
   });
 });
