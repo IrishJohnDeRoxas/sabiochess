@@ -20,6 +20,24 @@ describe('SettingsService', () => {
     expect(service.memeSounds()).toBe(true);
     expect(service.memePack()).toBe('meme');
     expect(service.analysisDepth()).toBe(14);
+    expect(service.showCoordinates()).toBe(true);
+    expect(service.showMoveClassifications()).toBe(true);
+    expect(service.showLegalMoves()).toBe(true);
+    expect(service.highlightLastMove()).toBe(true);
+  });
+
+  it('should toggle board visual preferences', () => {
+    service.setShowCoordinates(false);
+    expect(service.showCoordinates()).toBe(false);
+
+    service.setShowMoveClassifications(false);
+    expect(service.showMoveClassifications()).toBe(false);
+
+    service.setShowLegalMoves(false);
+    expect(service.showLegalMoves()).toBe(false);
+
+    service.setHighlightLastMove(false);
+    expect(service.highlightLastMove()).toBe(false);
   });
 
   it('should update app theme and toggle dark mode', () => {

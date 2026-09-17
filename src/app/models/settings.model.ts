@@ -128,9 +128,12 @@ export interface UserSettings {
   volume: number; // 0 - 100
   analysisDepth: number; // 10 - 22
   autoEvaluation: boolean;
-  autoQueen: boolean;
   showEvalBar: boolean;
   showCandidateArrows: boolean;
+  showCoordinates: boolean;
+  showMoveClassifications: boolean;
+  showLegalMoves: boolean;
+  highlightLastMove: boolean;
   chesscomUsername: string;
   lichessUsername: string;
 }
@@ -144,9 +147,12 @@ export const DEFAULT_SETTINGS: UserSettings = {
   volume: 75,
   analysisDepth: 14,
   autoEvaluation: true,
-  autoQueen: true,
   showEvalBar: true,
   showCandidateArrows: true,
+  showCoordinates: true,
+  showMoveClassifications: true,
+  showLegalMoves: true,
+  highlightLastMove: true,
   chesscomUsername: '',
   lichessUsername: '',
 };

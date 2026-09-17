@@ -134,7 +134,7 @@
       </p>
     </div>
 
-    <!-- Engine Toggles -->
+    <!-- Engine Feature Checkboxes -->
     <div class="flex flex-col gap-2">
       <!-- Auto Evaluate Toggle -->
       <label
@@ -142,7 +142,7 @@
         <div class="flex flex-col gap-0.5">
           <span class="font-accent text-xs sm:text-sm uppercase font-bold text-[#222222] dark:text-[#F3F4F6]">Auto-Evaluate Placed Moves</span>
           <span class="font-body text-xs sm:text-sm text-gray-600 dark:text-gray-400 leading-normal">
-            Automatically calculates tactical classifications (Brilliant, Mistake, Blunder) immediately after each move is played.
+            Calculates tactical classifications (Brilliant, Mistake, Blunder) and CAPS accuracy immediately after each move is played.
           </span>
         </div>
         <input type="checkbox" [checked]="settings.autoEvaluation()"
@@ -177,23 +177,10 @@
           (change)="settings.setShowCandidateArrows(!settings.showCandidateArrows())"
           class="accent-[#FF4F00] w-5 h-5 cursor-pointer shrink-0 mt-0.5" />
       </label>
-
-      <!-- Auto Queen Toggle -->
-      <label
-        class="flex items-start justify-between p-2.5 sm:p-3 border-2 border-[#222222] dark:border-black bg-white dark:bg-[#1E1E1E] hover:bg-gray-50 dark:hover:bg-[#262626] cursor-pointer transition-colors gap-3">
-        <div class="flex flex-col gap-0.5">
-          <span class="font-accent text-xs sm:text-sm uppercase font-bold text-[#222222] dark:text-[#F3F4F6]">Auto-Promote Pawns to Queen</span>
-          <span class="font-body text-xs sm:text-sm text-gray-600 dark:text-gray-400 leading-normal">
-            Instantly promotes 8th-rank pawn pushes to Queens without interrupting move flow with a selection dialog.
-          </span>
-        </div>
-        <input type="checkbox" [checked]="settings.autoQueen()" (change)="settings.setAutoQueen(!settings.autoQueen())"
-          class="accent-[#FF4F00] w-5 h-5 cursor-pointer shrink-0 mt-0.5" />
-      </label>
     </div>
   </div>
 
-  <!-- Section 3: Board Appearance Themes -->
+  <!-- Section 3: Board Appearance & Gameplay Preferences -->
   <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1E1E] flex flex-col gap-3">
     <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b-2 border-[#222222] dark:border-black pb-2 gap-2">
       <div class="flex items-center gap-2 min-w-0">
@@ -201,8 +188,8 @@
           <app-icon name="swatch" size="w-4 h-4"></app-icon>
         </span>
         <div class="min-w-0">
-          <h3 class="font-display text-sm sm:text-base uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6] truncate">BOARD APPEARANCE</h3>
-          <p class="font-label text-xs text-gray-600 dark:text-gray-400">Square themes and high-contrast styling</p>
+          <h3 class="font-display text-sm sm:text-base uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6] truncate">BOARD & GAMEPLAY</h3>
+          <p class="font-label text-xs text-gray-600 dark:text-gray-400">Square themes, coordinates & visual indicators</p>
         </div>
       </div>
       <span class="badge-brutal bg-[#D9D9D9] dark:bg-[#262626] text-[#222222] dark:text-[#F3F4F6] text-xs sm:text-sm font-bold self-start sm:self-auto shrink-0">
@@ -238,6 +225,65 @@
         </div>
       </button>
       }
+    </div>
+
+    <!-- Board Display Checkboxes -->
+    <div class="flex flex-col gap-2 pt-1 border-t-2 border-[#222222] dark:border-black">
+      <!-- Show Coordinates Toggle -->
+      <label
+        class="flex items-start justify-between p-2.5 sm:p-3 border-2 border-[#222222] dark:border-black bg-white dark:bg-[#1E1E1E] hover:bg-gray-50 dark:hover:bg-[#262626] cursor-pointer transition-colors gap-3">
+        <div class="flex flex-col gap-0.5">
+          <span class="font-accent text-xs sm:text-sm uppercase font-bold text-[#222222] dark:text-[#F3F4F6]">Show Board Coordinates</span>
+          <span class="font-body text-xs sm:text-sm text-gray-600 dark:text-gray-400 leading-normal">
+            Displays rank (1–8) and file (a–h) coordinate notation along the outer squares of the board.
+          </span>
+        </div>
+        <input type="checkbox" [checked]="settings.showCoordinates()"
+          (change)="settings.setShowCoordinates(!settings.showCoordinates())"
+          class="accent-[#FF4F00] w-5 h-5 cursor-pointer shrink-0 mt-0.5" />
+      </label>
+
+      <!-- Show Move Classification Badges Toggle -->
+      <label
+        class="flex items-start justify-between p-2.5 sm:p-3 border-2 border-[#222222] dark:border-black bg-white dark:bg-[#1E1E1E] hover:bg-gray-50 dark:hover:bg-[#262626] cursor-pointer transition-colors gap-3">
+        <div class="flex flex-col gap-0.5">
+          <span class="font-accent text-xs sm:text-sm uppercase font-bold text-[#222222] dark:text-[#F3F4F6]">Show Move Classification Badges</span>
+          <span class="font-body text-xs sm:text-sm text-gray-600 dark:text-gray-400 leading-normal">
+            Displays tactical classification badges (Brilliant, Best, Mistake, Blunder) directly on move target squares.
+          </span>
+        </div>
+        <input type="checkbox" [checked]="settings.showMoveClassifications()"
+          (change)="settings.setShowMoveClassifications(!settings.showMoveClassifications())"
+          class="accent-[#FF4F00] w-5 h-5 cursor-pointer shrink-0 mt-0.5" />
+      </label>
+
+      <!-- Show Legal Move Hints Toggle -->
+      <label
+        class="flex items-start justify-between p-2.5 sm:p-3 border-2 border-[#222222] dark:border-black bg-white dark:bg-[#1E1E1E] hover:bg-gray-50 dark:hover:bg-[#262626] cursor-pointer transition-colors gap-3">
+        <div class="flex flex-col gap-0.5">
+          <span class="font-accent text-xs sm:text-sm uppercase font-bold text-[#222222] dark:text-[#F3F4F6]">Show Legal Move Hints</span>
+          <span class="font-body text-xs sm:text-sm text-gray-600 dark:text-gray-400 leading-normal">
+            Displays target dots and capture rings for valid squares when clicking or selecting a piece.
+          </span>
+        </div>
+        <input type="checkbox" [checked]="settings.showLegalMoves()"
+          (change)="settings.setShowLegalMoves(!settings.showLegalMoves())"
+          class="accent-[#FF4F00] w-5 h-5 cursor-pointer shrink-0 mt-0.5" />
+      </label>
+
+      <!-- Highlight Last Move Toggle -->
+      <label
+        class="flex items-start justify-between p-2.5 sm:p-3 border-2 border-[#222222] dark:border-black bg-white dark:bg-[#1E1E1E] hover:bg-gray-50 dark:hover:bg-[#262626] cursor-pointer transition-colors gap-3">
+        <div class="flex flex-col gap-0.5">
+          <span class="font-accent text-xs sm:text-sm uppercase font-bold text-[#222222] dark:text-[#F3F4F6]">Highlight Previous Move</span>
+          <span class="font-body text-xs sm:text-sm text-gray-600 dark:text-gray-400 leading-normal">
+            Highlights the starting and ending squares of the most recent move on the board.
+          </span>
+        </div>
+        <input type="checkbox" [checked]="settings.highlightLastMove()"
+          (change)="settings.setHighlightLastMove(!settings.highlightLastMove())"
+          class="accent-[#FF4F00] w-5 h-5 cursor-pointer shrink-0 mt-0.5" />
+      </label>
     </div>
   </div>
 

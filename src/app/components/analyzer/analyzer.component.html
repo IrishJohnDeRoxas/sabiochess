@@ -1,7 +1,8 @@
 <main class="analyzer-main flex-1 flex flex-col justify-center">
 
   <!-- Arena Grid Layout -->
-  <div class="arena-grid grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 items-start lg:items-stretch my-auto w-full">
+  <div class="arena-grid grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 items-start lg:items-stretch m-auto w-full"
+    [class.no-eval-bar]="!settings.showEvalBar()">
 
     <!-- Board Area: Top Player + [Eval Bar + Chess Board] + Bottom Player (lg:col-span-7) -->
     <div class="lg:col-span-7 flex flex-col gap-2.5 sm:gap-3 w-full max-w-[640px] mx-auto lg:max-w-none animate-drop-in-tl-delay-1">

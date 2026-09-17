@@ -25,9 +25,12 @@ export class SettingsService {
   readonly volume = signal<number>(DEFAULT_SETTINGS.volume);
   readonly analysisDepth = signal<number>(DEFAULT_SETTINGS.analysisDepth);
   readonly autoEvaluation = signal<boolean>(DEFAULT_SETTINGS.autoEvaluation);
-  readonly autoQueen = signal<boolean>(DEFAULT_SETTINGS.autoQueen);
   readonly showEvalBar = signal<boolean>(DEFAULT_SETTINGS.showEvalBar);
   readonly showCandidateArrows = signal<boolean>(DEFAULT_SETTINGS.showCandidateArrows);
+  readonly showCoordinates = signal<boolean>(DEFAULT_SETTINGS.showCoordinates);
+  readonly showMoveClassifications = signal<boolean>(DEFAULT_SETTINGS.showMoveClassifications);
+  readonly showLegalMoves = signal<boolean>(DEFAULT_SETTINGS.showLegalMoves);
+  readonly highlightLastMove = signal<boolean>(DEFAULT_SETTINGS.highlightLastMove);
   readonly chesscomUsername = signal<string>(DEFAULT_SETTINGS.chesscomUsername);
   readonly lichessUsername = signal<string>(DEFAULT_SETTINGS.lichessUsername);
   readonly isSupportModalOpen = signal<boolean>(false);
@@ -68,9 +71,12 @@ export class SettingsService {
         volume: this.volume(),
         analysisDepth: this.analysisDepth(),
         autoEvaluation: this.autoEvaluation(),
-        autoQueen: this.autoQueen(),
         showEvalBar: this.showEvalBar(),
         showCandidateArrows: this.showCandidateArrows(),
+        showCoordinates: this.showCoordinates(),
+        showMoveClassifications: this.showMoveClassifications(),
+        showLegalMoves: this.showLegalMoves(),
+        highlightLastMove: this.highlightLastMove(),
         chesscomUsername: this.chesscomUsername(),
         lichessUsername: this.lichessUsername(),
       };
@@ -114,16 +120,28 @@ export class SettingsService {
     this.autoEvaluation.set(enabled);
   }
 
-  setAutoQueen(enabled: boolean): void {
-    this.autoQueen.set(enabled);
-  }
-
   setShowEvalBar(show: boolean): void {
     this.showEvalBar.set(show);
   }
 
   setShowCandidateArrows(show: boolean): void {
     this.showCandidateArrows.set(show);
+  }
+
+  setShowCoordinates(show: boolean): void {
+    this.showCoordinates.set(show);
+  }
+
+  setShowMoveClassifications(show: boolean): void {
+    this.showMoveClassifications.set(show);
+  }
+
+  setShowLegalMoves(show: boolean): void {
+    this.showLegalMoves.set(show);
+  }
+
+  setHighlightLastMove(highlight: boolean): void {
+    this.highlightLastMove.set(highlight);
   }
 
   setChesscomUsername(name: string): void {
@@ -151,9 +169,12 @@ export class SettingsService {
     this.volume.set(DEFAULT_SETTINGS.volume);
     this.analysisDepth.set(DEFAULT_SETTINGS.analysisDepth);
     this.autoEvaluation.set(DEFAULT_SETTINGS.autoEvaluation);
-    this.autoQueen.set(DEFAULT_SETTINGS.autoQueen);
     this.showEvalBar.set(DEFAULT_SETTINGS.showEvalBar);
     this.showCandidateArrows.set(DEFAULT_SETTINGS.showCandidateArrows);
+    this.showCoordinates.set(DEFAULT_SETTINGS.showCoordinates);
+    this.showMoveClassifications.set(DEFAULT_SETTINGS.showMoveClassifications);
+    this.showLegalMoves.set(DEFAULT_SETTINGS.showLegalMoves);
+    this.highlightLastMove.set(DEFAULT_SETTINGS.highlightLastMove);
   }
 
   flashToast(msg: string, duration = 1800): void {
@@ -194,9 +215,12 @@ export class SettingsService {
       if (typeof data.volume === 'number') this.volume.set(data.volume);
       if (typeof data.analysisDepth === 'number') this.analysisDepth.set(data.analysisDepth);
       if (typeof data.autoEvaluation === 'boolean') this.autoEvaluation.set(data.autoEvaluation);
-      if (typeof data.autoQueen === 'boolean') this.autoQueen.set(data.autoQueen);
       if (typeof data.showEvalBar === 'boolean') this.showEvalBar.set(data.showEvalBar);
       if (typeof data.showCandidateArrows === 'boolean') this.showCandidateArrows.set(data.showCandidateArrows);
+      if (typeof data.showCoordinates === 'boolean') this.showCoordinates.set(data.showCoordinates);
+      if (typeof data.showMoveClassifications === 'boolean') this.showMoveClassifications.set(data.showMoveClassifications);
+      if (typeof data.showLegalMoves === 'boolean') this.showLegalMoves.set(data.showLegalMoves);
+      if (typeof data.highlightLastMove === 'boolean') this.highlightLastMove.set(data.highlightLastMove);
       if (data.chesscomUsername) this.chesscomUsername.set(data.chesscomUsername);
       if (data.lichessUsername) this.lichessUsername.set(data.lichessUsername);
     } catch {
