@@ -289,6 +289,9 @@ export class GameAnalysisService implements OnDestroy {
     });
   });
 
+  private currentRunId = 0;
+  private isSearching = false;
+
   constructor() {
     this.initWorker();
   }
@@ -306,6 +309,7 @@ export class GameAnalysisService implements OnDestroy {
       this.worker.onerror = () => {
         this.zone.run(() => {
           this.workerAvailable = false;
+          this.isSearching = false;
         });
       };
       this.worker.postMessage('uci');
@@ -320,7 +324,7 @@ export class GameAnalysisService implements OnDestroy {
       this.worker?.postMessage('isready');
     } else if (message === 'readyok') {
       this.isWorkerReady = true;
-      if (this.isAnalyzing() && this.currentHistory.length > 0) {
+      if (this.isAnalyzing() && this.currentHistory.length > 0 && !this.isSearching && this.currentAnalyzeIndex === 0) {
         this.evaluateNextWorkerPosition();
       }
     } else if (message.startsWith('info ')) {
@@ -331,7 +335,8 @@ export class GameAnalysisService implements OnDestroy {
   }
 
   private parseWorkerInfo(message: string): void {
-    if (!this.isAnalyzing()) return;
+    if (!this.isAnalyzing() || !this.isSearching) return;
+    if (this.currentAnalyzeIndex >= this.currentEvals.length) return;
 
     const parts = message.split(' ');
     const depthIndex = parts.indexOf('depth');
@@ -362,8 +367,10 @@ export class GameAnalysisService implements OnDestroy {
   }
 
   private parseWorkerBestMove(message: string): void {
-    if (!this.isAnalyzing()) return;
+    if (!this.isAnalyzing() || !this.isSearching) return;
+    if (this.currentAnalyzeIndex >= this.currentEvals.length) return;
 
+    this.isSearching = false;
     const parts = message.split(' ');
     const bm = parts[1] || this.currentBestMovePv;
 
@@ -390,7 +397,9 @@ export class GameAnalysisService implements OnDestroy {
   }
 
   private evaluateNextWorkerPosition(): void {
-    if (!this.worker) return;
+    if (!this.worker || !this.isAnalyzing()) return;
+    if (this.currentAnalyzeIndex > this.currentHistory.length) return;
+
     const fen = this.getFenForIndex(this.currentAnalyzeIndex);
     this.currentDepth = 0;
     this.currentScore = null;
@@ -398,6 +407,7 @@ export class GameAnalysisService implements OnDestroy {
     this.currentBestMovePv = null;
     this.currentPvMoves = [];
 
+    this.isSearching = true;
     const depth = this.settings?.analysisDepth ? this.settings.analysisDepth() : 14;
     this.worker.postMessage(`position fen ${fen}`);
     this.worker.postMessage(`go depth ${depth}`);
@@ -454,6 +464,8 @@ export class GameAnalysisService implements OnDestroy {
   ): Promise<void> {
     if (!history || history.length === 0) return;
 
+    this.currentRunId++;
+
     if (playerRatings) {
       this.setPlayerRatings(playerRatings);
     }
@@ -472,14 +484,16 @@ export class GameAnalysisService implements OnDestroy {
     this.currentAnalyzeIndex = 0;
 
     if (this.workerAvailable && this.worker) {
-      if (this.isWorkerReady) {
+      if (this.isSearching) {
         this.worker.postMessage('stop');
-        this.worker.postMessage('ucinewgame');
-        this.evaluateNextWorkerPosition();
-        return new Promise((resolve) => {
-          this.resolveAnalysisPromise = resolve;
-        });
+        this.isSearching = false;
       }
+      this.isWorkerReady = false;
+      this.worker.postMessage('ucinewgame');
+      this.worker.postMessage('isready');
+      return new Promise((resolve) => {
+        this.resolveAnalysisPromise = resolve;
+      });
     }
 
     // Fallback heuristic evaluation when worker is not ready or not available
@@ -936,9 +950,11 @@ export class GameAnalysisService implements OnDestroy {
   }
 
   clearAnalysis(): void {
-    if (this.worker) {
+    this.currentRunId++;
+    if (this.worker && this.isSearching) {
       this.worker.postMessage('stop');
     }
+    this.isSearching = false;
     this.movesAnalysis.set([]);
     this.detectedOpening.set(null);
     this.isAnalyzing.set(false);

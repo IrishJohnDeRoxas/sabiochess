@@ -1,0 +1,48 @@
+{
+  "manifest_version": 3,
+  "name": "SabioChess - Chess.com Reviewer",
+  "version": "1.0.4",
+  "description": "Injects one-click SabioChess neubrutalist analysis sidebar directly into Chess.com completed games.",
+  "permissions": ["storage", "activeTab"],
+  "host_permissions": [
+    "https://chess.com/*",
+    "https://www.chess.com/*",
+    "*://*.chess.com/*",
+    "*://chess.com/*",
+    "https://api.chess.com/*"
+  ],
+  "background": {
+    "service_worker": "src/background/service-worker.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://chess.com/*",
+        "https://www.chess.com/*",
+        "http://chess.com/*",
+        "http://www.chess.com/*",
+        "*://*.chess.com/*",
+        "*://chess.com/*"
+      ],
+      "js": ["src/content/content.js"],
+      "css": ["src/content/content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["icons/*"],
+      "matches": [
+        "*://*.chess.com/*",
+        "*://chess.com/*",
+        "https://chess.com/*",
+        "https://www.chess.com/*"
+      ]
+    }
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

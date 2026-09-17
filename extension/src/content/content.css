@@ -1,0 +1,132 @@
+/* ==========================================================================
+   SabioChess Chrome Extension Stylesheet (Neubrutalism System)
+   ========================================================================== */
+
+/* Neubrutalist Injected Review Button */
+.sabiochess-review-btn {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  margin-top: 10px !important;
+  margin-bottom: 6px !important;
+  padding: 12px 16px !important;
+  background-color: #FF4F00 !important;
+  color: #FFFFFF !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  border: 2.5px solid #222222 !important;
+  box-shadow: 4px 4px 0 0 #222222 !important;
+  border-radius: 0px !important;
+  cursor: pointer !important;
+  transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.15s ease !important;
+  user-select: none !important;
+  box-sizing: border-box !important;
+  z-index: 100 !important;
+  line-height: 1.2 !important;
+}
+
+.sabiochess-review-btn:hover {
+  background-color: #E04500 !important;
+  transform: translate(-1.5px, -1.5px) !important;
+  box-shadow: 5.5px 5.5px 0 0 #222222 !important;
+}
+
+.sabiochess-review-btn:active {
+  transform: translate(2px, 2px) !important;
+  box-shadow: 2px 2px 0 0 #222222 !important;
+}
+
+.sabiochess-review-btn svg {
+  width: 18px !important;
+  height: 18px !important;
+  fill: currentColor !important;
+  flex-shrink: 0 !important;
+}
+
+/* Slide-Over Drawer Container */
+#sabiochess-sidebar-container {
+  position: fixed !important;
+  top: 0 !important;
+  right: 0 !important;
+  width: 540px !important;
+  max-width: 92vw !important;
+  height: 100vh !important;
+  background-color: #D9D9D9 !important;
+  border-left: 3.5px solid #222222 !important;
+  box-shadow: -8px 0 0 0 rgba(34, 34, 34, 0.4) !important;
+  z-index: 2147483647 !important; /* Max browser z-index */
+  display: flex !important;
+  flex-direction: column !important;
+  transform: translateX(100%) !important;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), width 0.2s ease !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+#sabiochess-sidebar-container.open {
+  transform: translateX(0) !important;
+}
+
+#sabiochess-sidebar-container.expanded {
+  width: 780px !important;
+}
+
+/* Sidebar Header */
+.sabiochess-sidebar-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  padding: 8px 12px !important;
+  background-color: #222222 !important;
+  color: #FFFFFF !important;
+  border-bottom: 2.5px solid #222222 !important;
+  box-sizing: border-box !important;
+}
+
+.sabiochess-sidebar-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+.sabiochess-header-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: #373A46 !important;
+  color: #FFFFFF !important;
+  border: 1.5px solid #FFFFFF !important;
+  box-shadow: 2px 2px 0 0 #000000 !important;
+  padding: 4px 8px !important;
+  cursor: pointer !important;
+  font-weight: bold !important;
+  font-size: 12px !important;
+  line-height: 1 !important;
+  border-radius: 0px !important;
+  transition: background-color 0.12s ease !important;
+}
+
+.sabiochess-header-btn:hover {
+  background: #FF4F00 !important;
+}
+
+.sabiochess-header-btn:active {
+  transform: translate(1px, 1px) !important;
+  box-shadow: 1px 1px 0 0 #000000 !important;
+}
+
+/* Embedded Analysis Iframe */
+.sabiochess-iframe {
+  flex: 1 1 0% !important;
+  width: 100% !important;
+  height: 100% !important;
+  border: none !important;
+  background-color: #D9D9D9 !important;
+  display: block !important;
+}
