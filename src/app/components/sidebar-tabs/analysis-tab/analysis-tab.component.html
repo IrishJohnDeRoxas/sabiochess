@@ -136,12 +136,14 @@
       </div>
 
       <!-- SVG Interactive Area Momentum Curve -->
-      <div class="relative bg-[#D9D9D9] dark:bg-[#141519] border-2 border-[#222222] dark:border-black p-1 rounded-sm overflow-hidden select-none">
+      <div
+        class="relative bg-[#D9D9D9] dark:bg-[#141519] border-2 border-[#222222] dark:border-black p-1 rounded-sm overflow-hidden select-none cursor-pointer"
+        (click)="seekMomentum($event)"
+      >
         <svg
           viewBox="0 0 500 120"
-          class="w-full h-24 sm:h-28 overflow-visible block cursor-pointer"
+          class="w-full h-24 sm:h-28 overflow-visible block pointer-events-none"
           preserveAspectRatio="none"
-          (click)="seekMomentum($event)"
         >
           <defs>
             <linearGradient id="whiteMomentumGradAnalysis" x1="0" y1="0" x2="0" y2="1">
@@ -166,56 +168,34 @@
             stroke-linejoin="round"
             class="dark:stroke-[#3B82F6]"
           />
+        </svg>
 
+        <!-- HTML Overlay for Marker Badges & Current Move Ring (Protected from SVG non-uniform aspect ratio scaling) -->
+        <div class="absolute inset-1 pointer-events-none">
           <!-- Move Key Marker Pins -->
           @for (pin of momentumData().markerPins; track pin.ply) {
-            <g (click)="jumpFromMomentum(pin.ply); $event.stopPropagation()" class="cursor-pointer group">
-              <title>{{ pin.label }}: {{ pin.san }} (Move {{ Math.ceil(pin.ply / 2) }})</title>
-              <!-- Hit area to prevent edge flutter -->
-              <circle
-                [attr.cx]="pin.x"
-                [attr.cy]="pin.y"
-                r="14"
-                fill="transparent"
-              />
-              <!-- Visual circle with transform-box and transform-origin to prevent SVG (0,0) jumps -->
-              <circle
-                [attr.cx]="pin.x"
-                [attr.cy]="pin.y"
-                r="7"
-                [attr.fill]="pin.color"
-                stroke="#222222"
-                stroke-width="1.5"
-                class="transition-transform duration-150 group-hover:scale-125"
-                style="transform-box: fill-box; transform-origin: center;"
-              />
-              <text
-                [attr.x]="pin.x"
-                [attr.y]="pin.y + 3"
-                text-anchor="middle"
-                fill="#ffffff"
-                font-size="8"
-                font-weight="bold"
-                font-family="sans-serif"
-                pointer-events="none"
-              >
-                {{ pin.label }}
-              </text>
-            </g>
+            <button
+              type="button"
+              (click)="jumpFromMomentum(pin.ply); $event.stopPropagation()"
+              class="absolute -translate-x-1/2 -translate-y-1/2 pointer-events-auto flex items-center justify-center w-4 h-4 rounded-full border border-[#222222] dark:border-black text-white text-[8px] font-bold shadow-sm transition-transform duration-150 hover:scale-125 focus:outline-none z-10 cursor-pointer"
+              [style.left.%]="(pin.x / 500) * 100"
+              [style.top.%]="(pin.y / 120) * 100"
+              [style.background-color]="pin.color"
+              [title]="pin.label + ': ' + pin.san + ' (Move ' + Math.ceil(pin.ply / 2) + ')'"
+            >
+              <span class="leading-none select-none">{{ pin.label }}</span>
+            </button>
           }
 
           <!-- Current move position ring if seeking -->
           @if (momentumData().currentPin; as cur) {
-            <circle
-              [attr.cx]="cur.x"
-              [attr.cy]="cur.y"
-              r="6"
-              fill="#FF4F00"
-              stroke="#ffffff"
-              stroke-width="2"
-            />
+            <div
+              class="absolute -translate-x-1/2 -translate-y-1/2 pointer-events-none w-3 h-3 rounded-full bg-[#FF4F00] border-2 border-white dark:border-[#141519] shadow-md z-20 transition-all duration-75"
+              [style.left.%]="(cur.x / 500) * 100"
+              [style.top.%]="(cur.y / 120) * 100"
+            ></div>
           }
-        </svg>
+        </div>
       </div>
     </div>
 

@@ -239,7 +239,7 @@ export class AnalysisTabComponent {
     const data = this.momentumData();
     if (!data.mappedPoints || data.mappedPoints.length === 0) return;
 
-    const target = event.currentTarget as SVGElement;
+    const target = event.currentTarget as HTMLElement | SVGElement;
     const rect = target.getBoundingClientRect();
     if (rect.width <= 0) return;
 
