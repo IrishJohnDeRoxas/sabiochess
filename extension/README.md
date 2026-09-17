@@ -44,8 +44,8 @@ To switch target environment while testing on Chess.com, open Developer Console 
 
 ```javascript
 // Point extension to local dev server:
-window.__setSabioUrl('http://localhost:4200');
+localStorage.setItem('sabiochess_target_url', 'http://localhost:4200');
 
 // Reset extension back to production:
-window.__setSabioUrl(); // or window.__setSabioUrl('https://sabiochess.com');
+localStorage.removeItem('sabiochess_target_url');
 ```

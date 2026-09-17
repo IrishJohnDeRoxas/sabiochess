@@ -14,45 +14,48 @@
   let sabioBaseUrl = PROD_URL;
 
   function updateTargetUrl() {
+    let target = PROD_URL;
     try {
       const stored = localStorage.getItem('sabiochess_target_url');
       if (stored && typeof stored === 'string' && stored.trim().length > 0) {
-        sabioBaseUrl = stored.trim().replace(/\/+$/, '');
-        return;
+        target = stored.trim().replace(/\/+$/, '');
       }
     } catch {}
 
-    if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
-      chrome.storage.local.get(['sabiochess_target_url'], (res) => {
-        if (res && res.sabiochess_target_url) {
-          sabioBaseUrl = res.sabiochess_target_url.trim().replace(/\/+$/, '');
-        }
-      });
-    }
+    sabioBaseUrl = target;
+    return sabioBaseUrl;
   }
 
   updateTargetUrl();
 
-  // Console helper for developers: window.__setSabioUrl('http://localhost:4200')
-  try {
-    window.__setSabioUrl = (url) => {
-      if (url) {
-        localStorage.setItem('sabiochess_target_url', url);
-        if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
-          chrome.storage.local.set({ sabiochess_target_url: url });
-        }
-        sabioBaseUrl = url.trim().replace(/\/+$/, '');
-        console.log('[SabioChess] Target URL set to:', sabioBaseUrl);
-      } else {
-        localStorage.removeItem('sabiochess_target_url');
-        if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
-          chrome.storage.local.remove(['sabiochess_target_url']);
-        }
-        sabioBaseUrl = PROD_URL;
-        console.log('[SabioChess] Target URL reset to default:', PROD_URL);
-      }
-    };
-  } catch {}
+  // Listen to cross-context storage changes
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'sabiochess_target_url') {
+      const newUrl = updateTargetUrl();
+      console.log('[SabioChess] Target URL updated:', newUrl);
+    }
+  });
+
+  // Listen to window messages
+  window.addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'SABIO_SET_TARGET_URL') {
+      sabioBaseUrl = event.data.url ? event.data.url.trim().replace(/\/+$/, '') : PROD_URL;
+      console.log('[SabioChess] Target URL updated via message:', sabioBaseUrl);
+    }
+  });
+
+  // Helper in extension scope
+  window.__setSabioUrl = (url) => {
+    if (url) {
+      localStorage.setItem('sabiochess_target_url', url);
+      sabioBaseUrl = url.trim().replace(/\/+$/, '');
+      console.log('[SabioChess] Target URL set to:', sabioBaseUrl);
+    } else {
+      localStorage.removeItem('sabiochess_target_url');
+      sabioBaseUrl = PROD_URL;
+      console.log('[SabioChess] Target URL reset to default:', PROD_URL);
+    }
+  };
 
   /**
    * Selectors for Chess.com game review button
@@ -545,9 +548,14 @@
     } else {
       const iframe = sidebar.querySelector('#sabiochess-iframe');
       if (iframe) {
-        sendPostMessage(undefined);
-        clearActiveTimers();
-        activePostMessageTimers.push(setTimeout(() => sendPostMessage(undefined), 300));
+        const expectedPrefix = sabioBaseUrl.replace(/\/+$/, '');
+        if (!iframe.src || !iframe.src.startsWith(expectedPrefix)) {
+          iframe.src = buildUrl(pgn);
+        } else {
+          sendPostMessage(undefined);
+          clearActiveTimers();
+          activePostMessageTimers.push(setTimeout(() => sendPostMessage(undefined), 300));
+        }
       }
     }
 

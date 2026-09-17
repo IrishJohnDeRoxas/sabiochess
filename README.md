@@ -63,10 +63,10 @@ By default, the extension loads `https://sabiochess.com`. To point it to your lo
 
 ```javascript
 // Point to local development:
-window.__setSabioUrl('http://localhost:4200');
+localStorage.setItem('sabiochess_target_url', 'http://localhost:4200');
 
 // Reset to production:
-window.__setSabioUrl(); // or window.__setSabioUrl('https://sabiochess.com');
+localStorage.removeItem('sabiochess_target_url');
 ```
 
 ---
