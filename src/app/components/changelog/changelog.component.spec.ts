@@ -28,7 +28,7 @@ describe('ChangelogComponent', () => {
 
     const releaseCards = compiled.querySelectorAll('.release-card');
     expect(releaseCards.length).toBeGreaterThanOrEqual(1);
-    expect(compiled.querySelector('.version-tag')?.textContent).toContain('v1.5.0');
+    expect(compiled.querySelector('.version-tag')?.textContent).toContain('v1.6.0');
   });
 
   it('should filter release items by category', () => {

@@ -42,13 +42,53 @@ export class ChangelogComponent implements OnInit {
 
   readonly releases = signal<ReleaseVersion[]>([
     {
+      version: 'v1.6.0',
+      date: 'September 2026',
+      title: 'Candidate Move Arrows, Engine Variations & Clean Navigation',
+      summary:
+        'Dynamic on-board candidate move arrows for top Stockfish evaluation lines, SAN-formatted multi-line variations preview, clean URL navigation after game import, and configurable candidate arrows toggle.',
+      isLatest: true,
+      tag: 'Latest Release',
+      items: [
+        {
+          type: 'engine',
+          title: 'Candidate Move Arrows on Board',
+          description:
+            'Visual SVG arrows dynamically drawn directly on the board illustrating the best candidate moves suggested by Stockfish, color-coded and proportional to line rank.',
+        },
+        {
+          type: 'feature',
+          title: 'Engine Line SAN Formatting & Previews',
+          description:
+            'Multi-line engine evaluations are now displayed with readable Standard Algebraic Notation (SAN), move sequence previews, and evaluation scores in both Analysis and Review tabs.',
+        },
+        {
+          type: 'improvement',
+          title: 'Candidate Move Arrows Toggle',
+          description:
+            'Added a dedicated setting in the Settings tab to toggle candidate move arrow overlays on and off based on preference.',
+        },
+        {
+          type: 'improvement',
+          title: 'URL Sanitization After Game Load',
+          description:
+            'Automatically cleans PGN, FEN, and game identifier query parameters from the browser address bar once a game or position is loaded, keeping links tidy.',
+        },
+        {
+          type: 'fix',
+          title: 'Cloudflare SPA Redirect Optimization',
+          description:
+            'Streamlined deployment redirect configurations for fast and reliable single-page application routing on Cloudflare Pages.',
+        },
+      ],
+    },
+    {
       version: 'v1.5.0',
       date: 'September 2026',
       title: 'Chess.com Reviewer Extension & Copy Polish',
       summary:
         'Official SabioChess Chrome extension for one-click post-game reviews on Chess.com, updated store listing compliance, and refined player-focused copy.',
-      isLatest: true,
-      tag: 'Latest Release',
+      isLatest: false,
       items: [
         {
           type: 'feature',
