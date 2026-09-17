@@ -144,9 +144,21 @@ export class ReviewTabComponent {
         setTimeout(() => {
           const container = this.movesListContainer?.nativeElement;
           if (!container) return;
-          const activeEl = container.querySelector('[data-active-move="true"], .variation-move-pill.active') as HTMLElement;
-          if (activeEl && typeof activeEl.scrollIntoView === 'function') {
-            activeEl.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+          const activeEl = container.querySelector('[data-active-move="true"]') as HTMLElement;
+          if (activeEl) {
+            const containerRect = container.getBoundingClientRect();
+            const elRect = activeEl.getBoundingClientRect();
+            if (containerRect.height === 0 || elRect.height === 0) return;
+
+            const stickyHeaderOffset = 34;
+            const diffTop = elRect.top - (containerRect.top + stickyHeaderOffset);
+            const diffBottom = elRect.bottom - containerRect.bottom;
+
+            if (diffTop < 0) {
+              container.scrollTop += diffTop;
+            } else if (diffBottom > 0) {
+              container.scrollTop += diffBottom;
+            }
           }
         }, 0);
       }

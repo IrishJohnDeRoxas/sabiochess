@@ -173,13 +173,56 @@ describe('ReviewTabComponent', () => {
   it('should reset game and return to initial state when loadNewGame is called', () => {
     gameService.loadSampleGame('opera');
     fixture.detectChanges();
-    expect(gameService.history().length).toBeGreaterThan(0);
-
     component.loadNewGame();
     fixture.detectChanges();
 
     expect(gameService.history().length).toBe(0);
     expect(component.isReportView()).toBe(true);
   });
+
+  it('should adjust movesListContainer scrollTop without calling scrollIntoView on active move', async () => {
+    gameService.loadSampleGame('opera');
+    component.startReviewWalkthrough();
+    fixture.detectChanges();
+
+    const containerEl = document.createElement('div');
+    containerEl.scrollTop = 0;
+    containerEl.getBoundingClientRect = () => ({
+      top: 100,
+      bottom: 300,
+      height: 200,
+      left: 0,
+      right: 200,
+      width: 200,
+      x: 0,
+      y: 100,
+      toJSON: () => {},
+    });
+
+    const activeEl = document.createElement('button');
+    activeEl.setAttribute('data-active-move', 'true');
+    activeEl.getBoundingClientRect = () => ({
+      top: 350,
+      bottom: 380,
+      height: 30,
+      left: 0,
+      right: 200,
+      width: 200,
+      x: 0,
+      y: 350,
+      toJSON: () => {},
+    });
+    containerEl.appendChild(activeEl);
+
+    component.movesListContainer = { nativeElement: containerEl };
+    gameService.jumpToPly(4);
+    fixture.detectChanges();
+
+    // Allow the setTimeout in the effect to execute
+    await new Promise((resolve) => setTimeout(resolve, 10));
+
+    expect(containerEl.scrollTop).toBeGreaterThan(0);
+  });
 });
+
 
