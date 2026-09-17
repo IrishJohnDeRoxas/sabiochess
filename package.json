@@ -8,7 +8,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "package:extension": "cd extension && zip -r ../sabiochess-extension.zip . -x \"*.DS_Store*\" -x \"__MACOSX*\""
   },
   "private": true,
   "packageManager": "npm@10.9.8",
