@@ -1,11 +1,11 @@
 @if (settings.isSupportModalOpen()) {
 <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in" (click)="onBackdropClick($event)">
-  <div class="card-brutal w-full max-w-xl bg-white dark:bg-[#1E1F24] p-0 overflow-hidden shadow-[8px_8px_0_0_#222222] dark:shadow-[8px_8px_0_0_#000000] border-4 border-[#222222] dark:border-black animate-scale-up" (click)="$event.stopPropagation()">
+  <div class="card-brutal w-full max-w-xl bg-white dark:bg-[#1E1E1E] p-0 overflow-hidden shadow-[8px_8px_0_0_#222222] dark:shadow-[8px_8px_0_0_#000000] border-4 border-[#222222] dark:border-black animate-scale-up" (click)="$event.stopPropagation()">
     
     <!-- Modal Header -->
-    <div class="flex items-center justify-between p-4 bg-[#FFDD00] text-[#141519] border-b-4 border-[#222222] dark:border-black">
-      <h2 class="font-display text-lg sm:text-xl uppercase font-extrabold tracking-tight text-[#141519]">SUPPORT SABIOCHESS</h2>
-      <button type="button" (click)="close()" class="btn-brutal !p-1.5 bg-white text-black border-2 border-[#222222] hover:bg-red-500 hover:text-white cursor-pointer" title="Close modal">
+    <div class="flex items-center justify-between p-4 bg-[#FEF3C7] dark:bg-[#262626] text-[#92400E] dark:text-[#FBBF24] border-b-4 border-[#222222] dark:border-black">
+      <h2 class="font-display text-lg sm:text-xl uppercase font-extrabold tracking-tight">☕ SUPPORT SABIOCHESS</h2>
+      <button type="button" (click)="close()" class="btn-brutal !p-1.5 bg-white dark:bg-[#1E1E1E] text-black dark:text-white border-2 border-[#222222] dark:border-black hover:bg-red-500 hover:text-white cursor-pointer" title="Close modal">
         <app-icon name="x-mark" size="w-5 h-5"></app-icon>
       </button>
     </div>
@@ -14,7 +14,7 @@
     <div class="p-5 flex flex-col gap-4 text-[#222222] dark:text-[#F3F4F6] max-h-[85vh] overflow-y-auto">
       
       <!-- Philosophy Banner -->
-      <div class="p-3.5 border-2 border-[#222222] dark:border-[#373A46] bg-[#ECECD8] dark:bg-[#2A2B32] flex flex-col gap-1.5">
+      <div class="p-3.5 border-2 border-[#222222] dark:border-[#373A46] bg-[#ECECD8] dark:bg-[#262626] flex flex-col gap-1.5">
         <div class="flex items-center gap-2 font-accent text-xs font-bold text-[#FF4F00] uppercase">
           <app-icon name="heart" size="w-4 h-4"></app-icon>
           <span>100% Free & Open For All Chess Lovers</span>
@@ -33,7 +33,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
           @for (option of coffeeAmounts; track option.amount) {
             <div
-              class="card-brutal !p-3 bg-white dark:bg-[#2A2B32] border-2 border-[#222222] dark:border-[#373A46] text-left flex flex-col justify-between gap-1.5 shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000] select-none">
+              class="card-brutal !p-3 bg-white dark:bg-[#262626] border-2 border-[#222222] dark:border-[#373A46] text-left flex flex-col justify-between gap-1.5 shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000] select-none">
               <div class="flex items-center justify-between">
                 <span class="text-xl">{{ option.icon }}</span>
                 <span class="font-display font-extrabold text-sm px-2 py-0.5 bg-[#FF4F00] text-white border border-[#222222]">${{ option.amount }}</span>
@@ -48,7 +48,7 @@
       </div>
 
       <!-- QR Code Mobile Scan Card -->
-      <div class="p-3.5 border-2 border-[#222222] dark:border-[#373A46] bg-[#F7F7F2] dark:bg-[#26272E] flex flex-col sm:flex-row items-center gap-4 shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000]">
+      <div class="p-3.5 border-2 border-[#222222] dark:border-[#373A46] bg-[#F7F7F2] dark:bg-[#262626] flex flex-col sm:flex-row items-center gap-4 shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000]">
         <div class="p-2 bg-white border-2 border-[#222222] dark:border-black shrink-0 shadow-[2px_2px_0_0_#222222]">
           <img src="/qr-code.png" alt="Buy Me a Coffee QR Code - SabioChess" class="w-28 h-28 object-contain block select-none" />
         </div>

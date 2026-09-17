@@ -44,13 +44,13 @@
 
       <!-- Mobile Quick Move Navigation Bar (Easy thumb reach on mobile screens) -->
       @if (game.history().length > 0) {
-      <div class="grid grid-cols-6 lg:hidden gap-1.5 p-1.5 bg-white dark:bg-[#1E1F24] border-2 border-[#222222] dark:border-black shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000] w-full">
+      <div class="grid grid-cols-6 lg:hidden gap-1.5 p-1.5 bg-white dark:bg-[#1E1E1E] border-2 border-[#222222] dark:border-black shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000] w-full">
         <!-- First Move -->
         <button
           type="button"
           (click)="game.goToStart()"
           [disabled]="!game.canUndo()"
-          class="btn-brutal !py-2 !px-0 text-xs font-bold flex items-center justify-center bg-[#ECECD8] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+          class="btn-brutal btn-brutal-silver !py-2 !px-0 text-xs font-bold flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
           title="First Move"
           aria-label="First Move"
         >
@@ -62,7 +62,7 @@
           type="button"
           (click)="game.prevMove()"
           [disabled]="!game.canUndo()"
-          class="btn-brutal !py-2 !px-0 text-xs font-bold flex items-center justify-center bg-[#ECECD8] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+          class="btn-brutal btn-brutal-silver !py-2 !px-0 text-xs font-bold flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
           title="Previous Move"
           aria-label="Previous Move"
         >
@@ -73,7 +73,7 @@
         <button
           type="button"
           (click)="game.flipBoard()"
-          class="btn-brutal !py-2 !px-0 text-xs font-bold flex items-center justify-center bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] cursor-pointer"
+          class="btn-brutal btn-brutal-silver !py-2 !px-0 text-xs font-bold flex items-center justify-center cursor-pointer"
           title="Flip Board"
           aria-label="Flip Board"
         >
@@ -84,7 +84,7 @@
         <button
           type="button"
           (click)="game.toggleAutoplay()"
-          class="btn-brutal !py-2 !px-0 text-xs font-bold flex items-center justify-center bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] cursor-pointer"
+          class="btn-brutal btn-brutal-orange !py-2 !px-0 text-xs font-bold flex items-center justify-center cursor-pointer"
           [title]="game.isAutoplaying() ? 'Pause Autoplay' : 'Play Moves'"
           [attr.aria-label]="game.isAutoplaying() ? 'Pause Autoplay' : 'Play Moves'"
         >
@@ -96,7 +96,7 @@
           type="button"
           (click)="game.nextMove()"
           [disabled]="!game.canRedo()"
-          class="btn-brutal btn-brutal-green !py-2 !px-0 text-xs font-bold flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000]"
+          class="btn-brutal btn-brutal-silver !py-2 !px-0 text-xs font-bold flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000]"
           title="Next Move"
           aria-label="Next Move"
         >
@@ -108,7 +108,7 @@
           type="button"
           (click)="game.goToEnd()"
           [disabled]="!game.canRedo()"
-          class="btn-brutal !py-2 !px-0 text-xs font-bold flex items-center justify-center bg-[#ECECD8] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+          class="btn-brutal btn-brutal-silver !py-2 !px-0 text-xs font-bold flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
           title="Last Move"
           aria-label="Last Move"
         >

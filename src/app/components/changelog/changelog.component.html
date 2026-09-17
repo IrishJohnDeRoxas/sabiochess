@@ -36,7 +36,7 @@
         class="btn-brutal !py-1.5 !px-3.5 text-xs sm:text-sm font-accent flex items-center gap-2 cursor-pointer transition-all duration-150"
         [ngClass]="selectedFilter() === cat.id 
           ? 'btn-brutal-orange shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]' 
-          : 'bg-white dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] hover:bg-gray-100 dark:hover:bg-[#373A46]'"
+          : 'bg-white dark:bg-[#262626] text-[#222222] dark:text-[#F3F4F6] hover:bg-gray-100 dark:hover:bg-[#333333]'"
         (click)="setFilter(cat.id)"
         role="tab"
         [attr.aria-selected]="selectedFilter() === cat.id"
@@ -100,7 +100,7 @@
           <!-- Release Items List -->
           <div class="flex flex-col gap-3.5 mt-2">
             @for (item of release.items; track item.title) {
-              <div class="changelog-item bg-[#F8F9FA] dark:bg-[#25272F] border-2 border-[#222222] dark:border-black p-4 shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000] flex flex-col gap-2">
+              <div class="changelog-item bg-[#F8F9FA] dark:bg-[#262626] border-2 border-[#222222] dark:border-black p-4 shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000] flex flex-col gap-2">
                 <div class="flex items-center gap-2.5 flex-wrap">
                   <span class="item-type-badge badge-brutal text-[10px] sm:text-xs py-0.5 px-2 font-bold" [ngClass]="getItemBadgeClass(item.type)">
                     {{ getItemBadgeLabel(item.type) }}
@@ -121,7 +121,7 @@
   </main>
 
   <!-- Bottom Feedback & Contribution Box -->
-  <section class="mt-12 card-brutal bg-[#FFFFFF] dark:bg-[#1E1F24] p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6">
+  <section class="mt-12 card-brutal bg-[#FFFFFF] dark:bg-[#1E1E1E] p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6">
     <div class="flex flex-col gap-2 text-center sm:text-left">
       <div class="flex items-center justify-center sm:justify-start gap-2">
         <app-icon name="bolt" size="w-5 h-5 text-[#FF4F00]"></app-icon>

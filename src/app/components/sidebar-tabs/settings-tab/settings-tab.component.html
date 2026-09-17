@@ -1,7 +1,7 @@
 <div class="flex flex-col gap-3 w-full text-[#222222] dark:text-[#F3F4F6]">
   <!-- Section 1: App Interface Theme (Dark & Light Mode Toggle) -->
-  <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1F24] flex flex-col gap-3">
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-2 gap-2">
+  <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1E1E] flex flex-col gap-3">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b-2 border-[#222222] dark:border-black pb-2 gap-2">
       <div class="flex items-center gap-2 min-w-0">
         <span class="p-1.5 bg-[#FF4F00] text-white inline-flex border border-[#222222] dark:border-black shrink-0">
           <app-icon [name]="settings.appTheme() === 'dark' ? 'moon' : 'sun'" size="w-4 h-4"></app-icon>
@@ -12,7 +12,7 @@
         </div>
       </div>
       <span class="badge-brutal text-xs sm:text-sm font-bold transition-colors self-start sm:self-auto shrink-0"
-        [ngClass]="settings.appTheme() === 'dark' ? 'bg-[#FF4F00] text-white' : 'bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6]'">
+        [ngClass]="settings.appTheme() === 'dark' ? 'bg-[#FF4F00] text-white' : 'bg-[#D9D9D9] dark:bg-[#262626] text-[#222222] dark:text-[#F3F4F6]'">
         {{ settings.appTheme() === 'dark' ? '🌙 DARK MODE' : '☀️ LIGHT MODE' }}
       </span>
     </div>
@@ -22,7 +22,7 @@
       <!-- Light Mode Option Card -->
       <button type="button" (click)="selectAppTheme('light')"
         class="flex flex-col gap-2 p-3 border-2 text-left cursor-pointer transition-all relative"
-        [ngClass]="settings.appTheme() === 'light' ? 'border-[#FF4F00] bg-[#ECECD8] dark:bg-[#2A2B32] shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]' : 'border-[#222222] dark:border-[#373A46] bg-white dark:bg-[#1E1F24] hover:bg-gray-50 dark:hover:bg-[#25272F]'">
+        [ngClass]="settings.appTheme() === 'light' ? 'border-[#FF4F00] bg-[#ECECD8] dark:bg-[#262626] shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]' : 'border-[#222222] dark:border-black bg-white dark:bg-[#1E1E1E] hover:bg-gray-50 dark:hover:bg-[#262626]'">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-1.5">
             <span class="p-1 bg-[#F59E0B] text-white inline-flex border border-[#222222] dark:border-black">
@@ -38,7 +38,7 @@
         </div>
 
         <!-- Visual Swatch Representation -->
-        <div class="flex items-center justify-between bg-[#D9D9D9] dark:bg-[#2A2B32] p-1.5 border border-[#222222] dark:border-black">
+        <div class="flex items-center justify-between bg-[#D9D9D9] dark:bg-[#262626] p-1.5 border border-[#222222] dark:border-black">
           <div class="flex items-center gap-1.5">
             <div class="w-4 h-4 bg-white border border-[#222222] dark:border-black"></div>
             <div class="w-4 h-4 bg-[#FF4F00] border border-[#222222] dark:border-black"></div>
@@ -55,7 +55,7 @@
       <!-- Dark Mode Option Card -->
       <button type="button" (click)="selectAppTheme('dark')"
         class="flex flex-col gap-2 p-3 border-2 text-left cursor-pointer transition-all relative"
-        [ngClass]="settings.appTheme() === 'dark' ? 'border-[#FF4F00] bg-[#ECECD8] dark:bg-[#2A2B32] shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]' : 'border-[#222222] dark:border-[#373A46] bg-white dark:bg-[#1E1F24] hover:bg-gray-50 dark:hover:bg-[#25272F]'">
+        [ngClass]="settings.appTheme() === 'dark' ? 'border-[#FF4F00] bg-[#ECECD8] dark:bg-[#262626] shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]' : 'border-[#222222] dark:border-black bg-white dark:bg-[#1E1E1E] hover:bg-gray-50 dark:hover:bg-[#262626]'">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-1.5">
             <span class="p-1 bg-[#6366F1] text-white inline-flex border border-[#222222] dark:border-black">
@@ -71,9 +71,9 @@
         </div>
 
         <!-- Visual Swatch Representation -->
-        <div class="flex items-center justify-between bg-[#141519] p-1.5 border border-[#222222] dark:border-black">
+        <div class="flex items-center justify-between bg-[#121212] p-1.5 border border-[#222222] dark:border-black">
           <div class="flex items-center gap-1.5">
-            <div class="w-4 h-4 bg-[#1E1F24] border border-[#373A46]"></div>
+            <div class="w-4 h-4 bg-[#1E1E1E] border border-[#262626]"></div>
             <div class="w-4 h-4 bg-[#FF4F00] border border-black"></div>
             <div class="w-4 h-4 bg-[#0E4C92] border border-black"></div>
           </div>
@@ -88,8 +88,8 @@
   </div>
 
   <!-- Section 2: Engine & Evaluation Configuration -->
-  <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1F24] flex flex-col gap-3">
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-2 gap-2">
+  <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1E1E] flex flex-col gap-3">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b-2 border-[#222222] dark:border-black pb-2 gap-2">
       <div class="flex items-center gap-2 min-w-0">
         <span class="p-1.5 bg-[#FF4F00] text-white inline-flex border border-[#222222] dark:border-black shrink-0">
           <app-icon name="cpu-chip" size="w-4 h-4"></app-icon>
@@ -105,7 +105,7 @@
     </div>
 
     <!-- Analysis Depth Presets & Slider -->
-    <div class="flex flex-col gap-2.5 bg-[#D9D9D9] dark:bg-[#2A2B32] p-3 border border-[#222222] dark:border-[#373A46]">
+    <div class="flex flex-col gap-2.5 bg-[#D9D9D9] dark:bg-[#262626] p-3 border border-[#222222] dark:border-black">
       <div class="flex items-center justify-between font-accent text-xs sm:text-sm">
         <span class="font-bold uppercase text-[#222222] dark:text-[#F3F4F6]">Search Calculation Depth:</span>
         <span class="font-label font-bold text-[#0E4C92] dark:text-[#60A5FA]">{{ settings.analysisDepth() }} Plies</span>
@@ -118,7 +118,7 @@
             type="button"
             (click)="setDepth(preset.depth)"
             class="badge-brutal text-center justify-center flex flex-col !py-1 !px-0.5 cursor-pointer transition-all text-xs font-bold"
-            [ngClass]="settings.analysisDepth() === preset.depth ? 'bg-[#FF4F00] text-white !border-[#222222] dark:!border-black shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000]' : 'bg-white dark:bg-[#1E1F24] text-[#222222] dark:text-[#F3F4F6] hover:bg-[#ECECD8] dark:hover:bg-[#373A46]'"
+            [ngClass]="settings.analysisDepth() === preset.depth ? 'bg-[#FF4F00] text-white !border-[#222222] dark:!border-black shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000]' : 'bg-white dark:bg-[#1E1E1E] text-[#222222] dark:text-[#F3F4F6] hover:bg-[#ECECD8] dark:hover:bg-[#333333]'"
           >
             <span>{{ preset.label }}</span>
             <span class="text-[9px] font-label font-normal opacity-80 leading-none">{{ preset.name }}</span>
@@ -138,7 +138,7 @@
     <div class="flex flex-col gap-2">
       <!-- Auto Evaluate Toggle -->
       <label
-        class="flex items-start justify-between p-2.5 sm:p-3 border-2 border-[#222222] dark:border-[#373A46] bg-white dark:bg-[#1E1F24] hover:bg-gray-50 dark:hover:bg-[#25272F] cursor-pointer transition-colors gap-3">
+        class="flex items-start justify-between p-2.5 sm:p-3 border-2 border-[#222222] dark:border-black bg-white dark:bg-[#1E1E1E] hover:bg-gray-50 dark:hover:bg-[#262626] cursor-pointer transition-colors gap-3">
         <div class="flex flex-col gap-0.5">
           <span class="font-accent text-xs sm:text-sm uppercase font-bold text-[#222222] dark:text-[#F3F4F6]">Auto-Evaluate Placed Moves</span>
           <span class="font-body text-xs sm:text-sm text-gray-600 dark:text-gray-400 leading-normal">
@@ -152,7 +152,7 @@
 
       <!-- Real-Time Eval Bar Toggle -->
       <label
-        class="flex items-start justify-between p-2.5 sm:p-3 border-2 border-[#222222] dark:border-[#373A46] bg-white dark:bg-[#1E1F24] hover:bg-gray-50 dark:hover:bg-[#25272F] cursor-pointer transition-colors gap-3">
+        class="flex items-start justify-between p-2.5 sm:p-3 border-2 border-[#222222] dark:border-black bg-white dark:bg-[#1E1E1E] hover:bg-gray-50 dark:hover:bg-[#262626] cursor-pointer transition-colors gap-3">
         <div class="flex flex-col gap-0.5">
           <span class="font-accent text-xs sm:text-sm uppercase font-bold text-[#222222] dark:text-[#F3F4F6]">Show Advantage Eval Bar</span>
           <span class="font-body text-xs sm:text-sm text-gray-600 dark:text-gray-400 leading-normal">
@@ -166,7 +166,7 @@
 
       <!-- Show Candidate Move Arrows Toggle -->
       <label
-        class="flex items-start justify-between p-2.5 sm:p-3 border-2 border-[#222222] dark:border-[#373A46] bg-white dark:bg-[#1E1F24] hover:bg-gray-50 dark:hover:bg-[#25272F] cursor-pointer transition-colors gap-3">
+        class="flex items-start justify-between p-2.5 sm:p-3 border-2 border-[#222222] dark:border-black bg-white dark:bg-[#1E1E1E] hover:bg-gray-50 dark:hover:bg-[#262626] cursor-pointer transition-colors gap-3">
         <div class="flex flex-col gap-0.5">
           <span class="font-accent text-xs sm:text-sm uppercase font-bold text-[#222222] dark:text-[#F3F4F6]">Show Candidate Move Arrows</span>
           <span class="font-body text-xs sm:text-sm text-gray-600 dark:text-gray-400 leading-normal">
@@ -180,7 +180,7 @@
 
       <!-- Auto Queen Toggle -->
       <label
-        class="flex items-start justify-between p-2.5 sm:p-3 border-2 border-[#222222] dark:border-[#373A46] bg-white dark:bg-[#1E1F24] hover:bg-gray-50 dark:hover:bg-[#25272F] cursor-pointer transition-colors gap-3">
+        class="flex items-start justify-between p-2.5 sm:p-3 border-2 border-[#222222] dark:border-black bg-white dark:bg-[#1E1E1E] hover:bg-gray-50 dark:hover:bg-[#262626] cursor-pointer transition-colors gap-3">
         <div class="flex flex-col gap-0.5">
           <span class="font-accent text-xs sm:text-sm uppercase font-bold text-[#222222] dark:text-[#F3F4F6]">Auto-Promote Pawns to Queen</span>
           <span class="font-body text-xs sm:text-sm text-gray-600 dark:text-gray-400 leading-normal">
@@ -194,8 +194,8 @@
   </div>
 
   <!-- Section 3: Board Appearance Themes -->
-  <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1F24] flex flex-col gap-3">
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-2 gap-2">
+  <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1E1E] flex flex-col gap-3">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b-2 border-[#222222] dark:border-black pb-2 gap-2">
       <div class="flex items-center gap-2 min-w-0">
         <span class="p-1.5 bg-[#0E4C92] text-white inline-flex border border-[#222222] dark:border-black shrink-0">
           <app-icon name="swatch" size="w-4 h-4"></app-icon>
@@ -205,7 +205,7 @@
           <p class="font-label text-xs text-gray-600 dark:text-gray-400">Square themes and high-contrast styling</p>
         </div>
       </div>
-      <span class="badge-brutal bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] text-xs sm:text-sm font-bold self-start sm:self-auto shrink-0">
+      <span class="badge-brutal bg-[#D9D9D9] dark:bg-[#262626] text-[#222222] dark:text-[#F3F4F6] text-xs sm:text-sm font-bold self-start sm:self-auto shrink-0">
         {{ settings.activeBoardThemeOption().name.toUpperCase() }}
       </span>
     </div>
@@ -215,7 +215,7 @@
       @for (theme of boardThemes; track theme.id) {
       <button type="button" (click)="selectBoardTheme(theme.id)"
         class="flex items-center gap-2.5 p-2.5 border-2 text-left cursor-pointer transition-all relative"
-        [ngClass]="settings.boardTheme() === theme.id ? 'border-[#FF4F00] bg-[#ECECD8] dark:bg-[#2A2B32] shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]' : 'border-[#222222] dark:border-[#373A46] bg-white dark:bg-[#1E1F24] hover:bg-gray-50 dark:hover:bg-[#25272F]'">
+        [ngClass]="settings.boardTheme() === theme.id ? 'border-[#FF4F00] bg-[#ECECD8] dark:bg-[#262626] shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]' : 'border-[#222222] dark:border-black bg-white dark:bg-[#1E1E1E] hover:bg-gray-50 dark:hover:bg-[#262626]'">
         <!-- 2x2 Mini Board Swatch Preview -->
         <div
           class="w-8 h-8 grid grid-cols-2 grid-rows-2 border-2 border-[#222222] dark:border-black shrink-0 shadow-[1px_1px_0_0_#222222] dark:shadow-[1px_1px_0_0_#000000]">
@@ -242,10 +242,10 @@
   </div>
 
   <!-- Section 4: Audio & Meme FX Reactions -->
-  <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1F24] flex flex-col gap-3">
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-2 gap-2">
+  <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1E1E] flex flex-col gap-3">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b-2 border-[#222222] dark:border-black pb-2 gap-2">
       <div class="flex items-center gap-2 min-w-0">
-        <span class="p-1.5 bg-[#222222] dark:bg-[#373A46] text-white inline-flex border border-[#222222] dark:border-black shrink-0">
+        <span class="p-1.5 bg-[#222222] dark:bg-[#262626] text-white inline-flex border border-[#222222] dark:border-black shrink-0">
           <app-icon name="speaker-wave" size="w-4 h-4"></app-icon>
         </span>
         <div class="min-w-0">
@@ -263,7 +263,7 @@
     <!-- Toggles Row -->
     <div class="grid grid-cols-2 gap-2">
       <label
-        class="flex items-center gap-2 p-2.5 border-2 border-[#222222] dark:border-[#373A46] bg-[#D9D9D9] dark:bg-[#2A2B32] cursor-pointer text-xs sm:text-sm font-accent">
+        class="flex items-center gap-2 p-2.5 border-2 border-[#222222] dark:border-black bg-[#D9D9D9] dark:bg-[#262626] cursor-pointer text-xs sm:text-sm font-accent">
         <input type="checkbox" [checked]="settings.moveSounds()"
           (change)="settings.setMoveSounds(!settings.moveSounds())" class="accent-[#FF4F00] w-4.5 h-4.5 cursor-pointer" />
         <div class="flex flex-col">
@@ -273,7 +273,7 @@
       </label>
 
       <label
-        class="flex items-center gap-2 p-2.5 border-2 border-[#222222] dark:border-[#373A46] bg-[#D9D9D9] dark:bg-[#2A2B32] cursor-pointer text-xs sm:text-sm font-accent">
+        class="flex items-center gap-2 p-2.5 border-2 border-[#222222] dark:border-black bg-[#D9D9D9] dark:bg-[#262626] cursor-pointer text-xs sm:text-sm font-accent">
         <input type="checkbox" [checked]="settings.memeSounds()"
           (change)="settings.setMemeSounds(!settings.memeSounds())" class="accent-[#FF4F00] w-4.5 h-4.5 cursor-pointer" />
         <div class="flex flex-col">
@@ -285,7 +285,7 @@
 
     <!-- Master Volume Slider -->
     <div
-      class="flex flex-col gap-1.5 bg-[#ECECD8] dark:bg-[#2A2B32] p-3 border border-[#222222] dark:border-[#373A46]">
+      class="flex flex-col gap-1.5 bg-[#ECECD8] dark:bg-[#262626] p-3 border border-[#222222] dark:border-black">
       <div class="flex justify-between text-xs sm:text-sm font-accent">
         <span class="font-bold uppercase text-[#222222] dark:text-[#F3F4F6]">MASTER AUDIO VOLUME:</span>
         <span class="font-label font-bold text-[#0E4C92] dark:text-[#60A5FA]">{{ settings.volume() }}%</span>
@@ -303,18 +303,18 @@
 
       @for (pack of soundPacks; track pack.id) {
       <div (click)="selectSoundPack(pack.id)"
-        class="flex items-center justify-between p-2.5 sm:p-3 border-2 border-[#222222] dark:border-[#373A46] cursor-pointer hover:bg-[#D9D9D9] dark:hover:bg-[#2A2B32] text-xs sm:text-sm font-accent transition-colors"
-        [ngClass]="{'bg-[#D9D9D9] dark:bg-[#2A2B32] font-bold border-l-4 border-l-[#FF4F00] shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000]': settings.memePack() === pack.id && settings.memeSounds() && !soundService.isMuted()}">
+        class="flex items-center justify-between p-2.5 sm:p-3 border-2 border-[#222222] dark:border-black cursor-pointer hover:bg-[#D9D9D9] dark:hover:bg-[#262626] text-xs sm:text-sm font-accent transition-colors"
+        [ngClass]="{'bg-[#D9D9D9] dark:bg-[#262626] font-bold border-l-4 border-l-[#FF4F00] shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000]': settings.memePack() === pack.id && settings.memeSounds() && !soundService.isMuted()}">
         <div class="flex flex-col pr-2 gap-0.5">
           <div class="flex items-center gap-1.5">
             <span class="font-bold text-sm sm:text-base text-[#222222] dark:text-[#F3F4F6]">{{ pack.name }}</span>
-            <span class="badge-brutal bg-[#222222] dark:bg-[#373A46] text-white text-[10px] sm:text-xs !py-0.5 !px-1.5 font-bold">{{ pack.badge }}</span>
+            <span class="badge-brutal bg-[#222222] dark:bg-[#262626] text-white text-[10px] sm:text-xs !py-0.5 !px-1.5 font-bold">{{ pack.badge }}</span>
           </div>
           <span class="text-xs sm:text-sm font-body text-gray-600 dark:text-gray-400 leading-tight">{{ pack.description }}</span>
         </div>
 
         <button type="button" (click)="previewSoundPack(pack.id, $event)"
-          class="btn-brutal !p-2 bg-white dark:bg-[#1E1F24] border border-[#222222] dark:border-[#373A46] hover:bg-[#FF4F00] hover:text-white shrink-0 cursor-pointer"
+          class="btn-brutal !p-2 bg-white dark:bg-[#1E1E1E] border border-[#222222] dark:border-black hover:bg-[#FF4F00] hover:text-white shrink-0 cursor-pointer"
           title="Preview Audio Effect">
           <app-icon name="play" size="w-4 h-4"></app-icon>
         </button>
@@ -324,8 +324,8 @@
   </div>
 
   <!-- Section 5: Connected Platform Accounts -->
-  <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1F24] flex flex-col gap-3">
-    <div class="flex items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-2">
+  <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1E1E] flex flex-col gap-3">
+    <div class="flex items-center justify-between border-b-2 border-[#222222] dark:border-black pb-2">
       <div class="flex items-center gap-2">
         <span class="p-1.5 bg-[#10B981] text-white inline-flex border border-[#222222] dark:border-black">
           <app-icon name="user" size="w-4 h-4"></app-icon>
@@ -350,7 +350,7 @@
         </label>
         <input type="text" [ngModel]="settings.chesscomUsername()"
           (ngModelChange)="settings.setChesscomUsername($event)" placeholder="e.g. Hikaru, GothamChess"
-          class="bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] border-2 border-[#222222] dark:border-[#373A46] p-2 text-xs sm:text-sm font-label focus:bg-white dark:focus:bg-[#1E1F24] focus:outline-none focus:border-[#FF4F00] uppercase placeholder:normal-case" />
+          class="bg-[#D9D9D9] dark:bg-[#262626] text-[#222222] dark:text-[#F3F4F6] border-2 border-[#222222] dark:border-black p-2 text-xs sm:text-sm font-label focus:bg-white dark:focus:bg-[#1E1E1E] focus:outline-none focus:border-[#FF4F00] uppercase placeholder:normal-case" />
       </div>
 
       <div class="flex flex-col gap-1 opacity-60">
@@ -367,16 +367,16 @@
         </label>
         <input type="text" [ngModel]="settings.lichessUsername()" disabled
           placeholder="Lichess integration in development..."
-          class="bg-[#D9D9D9] dark:bg-[#2A2B32] text-gray-500 dark:text-gray-400 border-2 border-[#222222] dark:border-[#373A46] p-2 text-xs sm:text-sm font-label cursor-not-allowed uppercase placeholder:normal-case select-none" />
+          class="bg-[#D9D9D9] dark:bg-[#262626] text-gray-500 dark:text-gray-400 border-2 border-[#222222] dark:border-black p-2 text-xs sm:text-sm font-label cursor-not-allowed uppercase placeholder:normal-case select-none" />
       </div>
     </div>
   </div>
 
   <!-- Section 6: Support SabioChess (Buy Me a Coffee) -->
-  <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1F24] flex flex-col gap-3 border-4 border-[#222222] dark:border-black shadow-[4px_4px_0_0_#222222] dark:shadow-[4px_4px_0_0_#000000]">
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-2 gap-2">
+  <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1E1E] flex flex-col gap-3 border-4 border-[#222222] dark:border-black shadow-[4px_4px_0_0_#222222] dark:shadow-[4px_4px_0_0_#000000]">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b-2 border-[#222222] dark:border-black pb-2 gap-2">
       <div class="flex items-center gap-2 min-w-0">
-        <span class="p-1.5 bg-[#FFDD00] text-[#141519] inline-flex border border-[#222222] dark:border-black shrink-0 font-bold text-sm">
+        <span class="p-1.5 bg-[#FFDD00] text-[#121212] inline-flex border border-[#222222] dark:border-black shrink-0 font-bold text-sm">
           ☕
         </span>
         <div class="min-w-0">
@@ -385,19 +385,19 @@
         </div>
       </div>
       
-      <span class="badge-brutal bg-[#00D084] text-[#141519] text-xs sm:text-sm font-bold self-start sm:self-auto shrink-0">
+      <span class="badge-brutal bg-[#00D084] text-[#121212] text-xs sm:text-sm font-bold self-start sm:self-auto shrink-0">
         ⚡ 100% FREE
       </span>
     </div>
 
-    <div class="p-3 bg-[#ECECD8] dark:bg-[#2A2B32] border border-[#222222] dark:border-[#373A46] flex flex-col sm:flex-row items-center justify-between gap-3">
+    <div class="p-3 bg-[#ECECD8] dark:bg-[#262626] border border-[#222222] dark:border-black flex flex-col sm:flex-row items-center justify-between gap-3">
       <p class="font-body text-xs sm:text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
         Enjoying unlimited engine analysis without paywalls? Consider buying the developer a coffee to support hosting and domain renewal!
       </p>
       <button type="button" (click)="openSupportModal()"
-        class="btn-brutal btn-brutal-yellow !text-[#141519] dark:!text-[#141519] !py-2 !px-4 text-xs sm:text-sm font-accent font-black uppercase flex items-center gap-1.5 shrink-0 cursor-pointer shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000]">
+        class="btn-brutal btn-brutal-coffee !py-2 !px-4 text-xs sm:text-sm font-accent font-black uppercase flex items-center gap-1.5 shrink-0 cursor-pointer shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000]">
         <span>☕</span>
-        <span class="!text-[#141519] dark:!text-[#141519]">BUY ME A COFFEE</span>
+        <span>BUY ME A COFFEE</span>
       </button>
     </div>
   </div>

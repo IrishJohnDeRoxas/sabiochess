@@ -1,8 +1,8 @@
-<div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1F24] flex flex-col gap-2.5 w-full text-[#222222] dark:text-[#F3F4F6]">
+<div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1E1E] flex flex-col gap-2.5 w-full text-[#222222] dark:text-[#F3F4F6]">
   <!-- Header -->
   <div class="flex flex-wrap items-center justify-between gap-1.5 border-b-2 border-[#222222] dark:border-[#373A46] pb-2">
     <div class="flex items-center gap-1.5">
-      <span class="p-1 bg-[#10B981] text-white inline-flex border border-[#222222] dark:border-black">
+      <span class="p-1 bg-[#FF4F00] text-white inline-flex border border-[#222222] dark:border-black">
         <app-icon name="arrow-down-tray" size="w-3.5 h-3.5"></app-icon>
       </span>
       <span class="font-display text-xs sm:text-sm uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6]">FETCH ONLINE GAMES</span>
@@ -14,7 +14,7 @@
         type="button"
         (click)="selectPlatform('chess.com')"
         class="badge-brutal cursor-pointer text-[10px] sm:text-xs !px-1.5 sm:!px-2 !py-0.5 sm:!py-1 transition-colors font-bold"
-        [ngClass]="activePlatform() === 'chess.com' ? 'bg-[#10B981] text-white' : 'bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6]'"
+        [ngClass]="activePlatform() === 'chess.com' ? 'bg-[#FF4F00] text-white' : 'bg-[#D9D9D9] dark:bg-[#262626] text-[#222222] dark:text-[#F3F4F6]'"
       >
         CHESS.COM
       </button>
@@ -23,7 +23,7 @@
         type="button"
         disabled
         title="Lichess feature is currently in development"
-        class="badge-brutal opacity-50 cursor-not-allowed text-[10px] sm:text-xs !px-1.5 sm:!px-2 !py-0.5 sm:!py-1 font-bold bg-[#D9D9D9] dark:bg-[#2A2B32] text-gray-500 dark:text-gray-400 flex items-center gap-1 select-none"
+        class="badge-brutal opacity-50 cursor-not-allowed text-[10px] sm:text-xs !px-1.5 sm:!px-2 !py-0.5 sm:!py-1 font-bold bg-[#D9D9D9] dark:bg-[#262626] text-gray-500 dark:text-gray-400 flex items-center gap-1 select-none"
       >
         <app-icon name="lock-closed" size="w-2.5 h-2.5 sm:w-3 sm:h-3"></app-icon>
         <span>LICHESS</span>
@@ -41,7 +41,7 @@
         (ngModelChange)="onUsernameChange($event)"
         name="username"
         placeholder="Chess.com Username (e.g. Hikaru)"
-        class="w-full h-9 bg-[#D9D9D9] dark:bg-[#2A2B32] border-2 border-[#222222] dark:border-[#373A46] pl-3 pr-8 text-xs sm:text-sm font-label text-[#222222] dark:text-[#F3F4F6] focus:bg-white dark:focus:bg-[#1E1F24] focus:outline-none focus:border-[#FF4F00] uppercase placeholder:normal-case box-border"
+        class="w-full h-9 bg-[#D9D9D9] dark:bg-[#262626] border-2 border-[#222222] dark:border-[#373A46] pl-3 pr-8 text-xs sm:text-sm font-label text-[#222222] dark:text-[#F3F4F6] focus:bg-white dark:focus:bg-[#1E1E1E] focus:outline-none focus:border-[#FF4F00] uppercase placeholder:normal-case box-border"
       />
       @if (username()) {
         <button
@@ -88,7 +88,7 @@
 
   <!-- Games List Container -->
   @if (gamesList().length > 0) {
-    <div class="flex flex-col gap-1.5 border-2 border-[#222222] dark:border-black bg-[#ECECD8] dark:bg-[#141519] p-2 max-h-[240px] overflow-y-auto select-none">
+    <div class="flex flex-col gap-1.5 border-2 border-[#222222] dark:border-black bg-[#ECECD8] dark:bg-[#121212] p-2 max-h-[240px] overflow-y-auto select-none">
       <div class="flex items-center justify-between text-[11px] sm:text-xs font-label font-bold text-gray-700 dark:text-gray-300 px-1 border-b border-gray-300 dark:border-gray-700 pb-1">
         <div class="flex items-center gap-2">
           <span>RECENT MATCHES ({{ gamesList().length }})</span>
@@ -108,7 +108,7 @@
       @for (g of gamesList(); track g.id) {
         <div
           (click)="loadGame(g)"
-          class="flex items-center justify-between p-2 bg-white dark:bg-[#1E1F24] border border-[#222222] dark:border-[#373A46] hover:bg-[#FF4F00] dark:hover:bg-[#FF4F00] hover:text-white dark:hover:text-white cursor-pointer transition-colors group"
+          class="flex items-center justify-between p-2 bg-white dark:bg-[#1E1E1E] border border-[#222222] dark:border-[#373A46] hover:bg-[#FF4F00] dark:hover:bg-[#FF4F00] hover:text-white dark:hover:text-white cursor-pointer transition-colors group"
         >
           <!-- Player vs Player Info -->
           <div class="flex flex-col min-w-0 pr-2 gap-0.5">
@@ -137,7 +137,7 @@
                 'bg-[#10B981] text-white': g.userResult === 'win',
                 'bg-[#EF4444] text-white': g.userResult === 'loss',
                 'bg-[#C0C0C0] text-[#222222]': g.userResult === 'draw',
-                'bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6]': g.userResult === 'unknown'
+                'bg-[#D9D9D9] dark:bg-[#262626] text-[#222222] dark:text-[#F3F4F6]': g.userResult === 'unknown'
               }"
             >
               {{ g.userResult === 'win' ? 'WON' : g.userResult === 'loss' ? 'LOST' : g.userResult === 'draw' ? 'DRAW' : g.result }}

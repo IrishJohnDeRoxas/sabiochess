@@ -1,6 +1,6 @@
 <div class="flex flex-col gap-2.5 w-full h-auto lg:h-full min-h-0 text-[#222222] dark:text-[#F3F4F6]">
   <!-- Review Header & Sound / Import Bar -->
-  <div class="card-brutal p-2 sm:p-3 bg-white dark:bg-[#1E1F24] flex flex-col gap-2 shrink-0 mr-0 sm:mr-1.5">
+  <div class="card-brutal p-2 sm:p-3 bg-white dark:bg-[#1E1E1E] flex flex-col gap-2 shrink-0 mr-0 sm:mr-1.5">
     <div
       class="flex items-center justify-between gap-1.5 sm:gap-2 flex-wrap sm:flex-nowrap"
       [ngClass]="{'border-b-2 border-[#222222] dark:border-[#373A46] pb-2': (!isReportView() || game.isVariationActive()) && game.history().length > 0}"
@@ -33,7 +33,7 @@
           <button
             type="button"
             (click)="loadNewGame()"
-            class="btn-brutal !py-1 !px-1.5 sm:!px-2 text-[10px] sm:text-xs flex items-center gap-1 font-accent font-bold cursor-pointer bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] hover:bg-[#10B981] hover:text-white dark:hover:bg-[#10B981] !shadow-[2px_2px_0_0_#222222] dark:!shadow-[2px_2px_0_0_#000000]"
+            class="btn-brutal !py-1 !px-1.5 sm:!px-2 text-[10px] sm:text-xs flex items-center gap-1 font-accent font-bold cursor-pointer bg-[#D9D9D9] dark:bg-[#262626] text-[#222222] dark:text-[#F3F4F6] hover:bg-[#C0C0C0] dark:hover:bg-[#333333] !shadow-[2px_2px_0_0_#222222] dark:!shadow-[2px_2px_0_0_#000000]"
             title="Clear loaded game and fetch or load a new game"
           >
             <app-icon name="arrow-down-tray" size="w-3 sm:w-3.5 h-3 sm:h-3.5"></app-icon>
@@ -45,7 +45,7 @@
         <button
           type="button"
           (click)="toggleSoundMenu()"
-          class="btn-brutal !py-1 !px-1.5 sm:!px-2 text-[10px] sm:text-xs flex items-center gap-1 font-accent font-bold cursor-pointer bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] hover:bg-[#0E4C92] hover:text-white dark:hover:bg-[#0E4C92] !shadow-[2px_2px_0_0_#222222] dark:!shadow-[2px_2px_0_0_#000000]"
+          class="btn-brutal !py-1 !px-1.5 sm:!px-2 text-[10px] sm:text-xs flex items-center gap-1 font-accent font-bold cursor-pointer bg-[#D9D9D9] dark:bg-[#262626] text-[#222222] dark:text-[#F3F4F6] hover:bg-[#C0C0C0] dark:hover:bg-[#333333] !shadow-[2px_2px_0_0_#222222] dark:!shadow-[2px_2px_0_0_#000000]"
           [ngClass]="{'opacity-60': soundService.isMuted()}"
           title="Audio: {{ activeSoundLabel() }}"
         >
@@ -55,7 +55,7 @@
 
         <!-- Sound Dropdown Popover -->
         @if (isSoundMenuOpen()) {
-          <div class="absolute right-0 top-[calc(100%+6px)] z-30 w-68 bg-white dark:bg-[#1E1F24] border-[3px] border-[#222222] dark:border-black shadow-[5px_5px_0_0_#222222] dark:shadow-[5px_5px_0_0_#000000] p-2.5 flex flex-col gap-1.5 animate-fadeIn">
+          <div class="absolute right-0 top-[calc(100%+6px)] z-30 w-68 bg-white dark:bg-[#1E1E1E] border-[3px] border-[#222222] dark:border-black shadow-[5px_5px_0_0_#222222] dark:shadow-[5px_5px_0_0_#000000] p-2.5 flex flex-col gap-1.5 animate-fadeIn">
             <div class="font-accent text-sm uppercase font-bold border-b-2 border-[#222222] dark:border-[#373A46] pb-1 flex items-center justify-between text-[#222222] dark:text-[#F3F4F6]">
               <span>AUDIO PACK</span>
               <button 
@@ -70,8 +70,8 @@
             @for (pack of soundPacks; track pack.id) {
               <div 
                 (click)="selectSoundPack(pack.id)"
-                class="flex items-center justify-between p-2 border border-[#222222] dark:border-[#373A46] cursor-pointer hover:bg-[#D9D9D9] dark:hover:bg-[#2A2B32] text-xs sm:text-sm font-accent transition-colors"
-                [ngClass]="{'bg-[#D9D9D9] dark:bg-[#2A2B32] font-bold': settings.memePack() === pack.id && settings.memeSounds() && !soundService.isMuted()}"
+                class="flex items-center justify-between p-2 border border-[#222222] dark:border-[#373A46] cursor-pointer hover:bg-[#D9D9D9] dark:hover:bg-[#262626] text-xs sm:text-sm font-accent transition-colors"
+                [ngClass]="{'bg-[#D9D9D9] dark:bg-[#262626] font-bold': settings.memePack() === pack.id && settings.memeSounds() && !soundService.isMuted()}"
               >
                 <div class="flex flex-col pr-1">
                   <span class="text-[#222222] dark:text-[#F3F4F6] font-bold">{{ pack.name }}</span>
@@ -80,7 +80,7 @@
                 <button 
                   type="button" 
                   (click)="previewSoundPack(pack.id, $event)" 
-                  class="p-1.5 bg-white dark:bg-[#2A2B32] border border-[#222222] dark:border-[#373A46] hover:bg-[#FF4F00] hover:text-white shrink-0"
+                  class="p-1.5 bg-white dark:bg-[#262626] border border-[#222222] dark:border-[#373A46] hover:bg-[#FF4F00] hover:text-white shrink-0"
                   title="Preview audio"
                 >
                   <app-icon name="play" size="w-3.5 h-3.5"></app-icon>
@@ -90,8 +90,8 @@
 
             <div 
               (click)="setStandardSounds()"
-              class="flex items-center justify-between p-2 border border-[#222222] dark:border-[#373A46] cursor-pointer hover:bg-[#D9D9D9] dark:hover:bg-[#2A2B32] text-xs sm:text-sm font-accent transition-colors"
-              [ngClass]="{'bg-[#D9D9D9] dark:bg-[#2A2B32] font-bold': !settings.memeSounds() && !soundService.isMuted()}"
+              class="flex items-center justify-between p-2 border border-[#222222] dark:border-[#373A46] cursor-pointer hover:bg-[#D9D9D9] dark:hover:bg-[#262626] text-xs sm:text-sm font-accent transition-colors"
+              [ngClass]="{'bg-[#D9D9D9] dark:bg-[#262626] font-bold': !settings.memeSounds() && !soundService.isMuted()}"
             >
               <div class="flex flex-col">
                 <span class="text-[#222222] dark:text-[#F3F4F6] font-bold">Standard Chess Only</span>
@@ -109,7 +109,7 @@
     @if ((!isReportView() || game.isVariationActive()) && game.history().length > 0) {
       <div class="flex flex-col gap-2.5">
         <!-- Commentary Card -->
-        <div class="bg-white dark:bg-[#1E1F24] border-2 border-[#222222] dark:border-black p-2.5 sm:p-3 flex flex-col gap-2 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000] min-w-0">
+        <div class="bg-white dark:bg-[#1E1E1E] border-2 border-[#222222] dark:border-black p-2.5 sm:p-3 flex flex-col gap-2 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000] min-w-0">
           <div class="flex items-center justify-between gap-1.5">
             <div class="flex items-center gap-1.5 min-w-0">
               @if (currentExplanation(); as exp) {
@@ -147,7 +147,7 @@
                 <button
                   type="button"
                   (click)="game.exitVariation()"
-                  class="btn-brutal btn-brutal-blue !py-0.5 !px-2 text-[10px] sm:text-xs font-accent font-bold flex items-center gap-1 cursor-pointer !shadow-[1px_1px_0_0_#222222] dark:!shadow-[1px_1px_0_0_#000000]"
+                  class="btn-brutal btn-brutal-silver !py-0.5 !px-2 text-[10px] sm:text-xs font-accent font-bold flex items-center gap-1 cursor-pointer !shadow-[1px_1px_0_0_#222222] dark:!shadow-[1px_1px_0_0_#000000]"
                   title="Return to main game line"
                 >
                   <app-icon name="arrow-uturn-left" size="w-3 h-3"></app-icon>
@@ -156,7 +156,7 @@
               }
 
               @if (currentExplanation()?.moveTime; as mTime) {
-                <span class="badge-brutal bg-[#ECECD8] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] text-[10px] sm:text-xs !py-0.5 !px-1.5 font-bold shrink-0">
+                <span class="badge-brutal bg-[#ECECD8] dark:bg-[#262626] text-[#222222] dark:text-[#F3F4F6] text-[10px] sm:text-xs !py-0.5 !px-1.5 font-bold shrink-0">
                   ⏱ {{ mTime }}
                 </span>
               }
@@ -181,7 +181,7 @@
             <button
               type="button"
               (click)="toggleFollowUp()"
-              class="btn-brutal !py-1 !px-2.5 text-xs font-bold flex items-center gap-1.5 cursor-pointer bg-[#ECECD8] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] hover:bg-[#D9D9D9] dark:hover:bg-[#373A46] transition-colors"
+              class="btn-brutal !py-1 !px-2.5 text-xs font-bold flex items-center gap-1.5 cursor-pointer bg-[#ECECD8] dark:bg-[#262626] text-[#222222] dark:text-[#F3F4F6] hover:bg-[#D9D9D9] dark:hover:bg-[#333333] transition-colors"
               [ngClass]="{'bg-[#10B981]/20 border-[#10B981] text-[#10B981] dark:text-[#34D399]': isFollowUpActive()}"
               title="Show follow-up continuation line"
             >
@@ -200,33 +200,33 @@
 
           <!-- Multi-PV Candidate Lines (if available for this position) -->
           @if (analysisService.liveEngineLines().length > 0) {
-            <div class="flex flex-col gap-1 border-t border-[#222222]/20 dark:border-[#373A46] pt-2 mt-1">
-              <div class="flex items-center justify-between text-[10px] sm:text-xs font-accent font-bold uppercase text-gray-500 dark:text-gray-400">
+            <div class="flex flex-col gap-1.5 border-t border-[#222222]/20 dark:border-[#373A46] pt-2.5 mt-1">
+              <div class="flex items-center justify-between text-[10px] sm:text-xs font-accent font-bold uppercase text-gray-500 dark:text-gray-400 px-0.5">
                 <span>Top Candidate Lines</span>
                 <span class="font-mono">depth {{ settings.analysisDepth() }}</span>
               </div>
-              <div class="flex flex-col gap-1">
+              <div class="flex flex-col gap-1.5">
                 @for (line of analysisService.liveEngineLines(); track line.multipv) {
                   <div
                     (mouseenter)="onLineHover(line.multipv)"
                     (mouseleave)="onLineHover(null)"
                     (click)="onLineClick(line)"
-                    class="flex items-center gap-1.5 p-1 border border-[#222222]/20 dark:border-[#373A46] hover:border-[#10B981] dark:hover:border-[#10B981] bg-[#ECECD8]/30 dark:bg-[#141519]/60 hover:bg-[#ECECD8] dark:hover:bg-[#2A2B32] cursor-pointer text-xs transition-colors rounded-xs group"
+                    class="flex items-center gap-2 py-1.5 px-2.5 border border-[#222222]/20 dark:border-[#373A46] hover:border-[#FF4F00] dark:hover:border-[#FF4F00] bg-[#ECECD8]/40 dark:bg-[#262626]/70 hover:bg-[#ECECD8] dark:hover:bg-[#333333] cursor-pointer text-xs transition-colors rounded-xs group select-none"
                   >
                     <span
-                      class="font-mono text-[10px] font-bold px-1 py-0.5 border rounded-xs shrink-0"
+                      class="font-mono text-[10px] font-bold px-1.5 py-0.5 border rounded-xs shrink-0"
                       [ngClass]="{
                         'bg-white text-black border-[#222222]': line.isWhiteAdvantage,
                         'bg-[#222222] text-white border-gray-600': line.isBlackAdvantage,
-                        'bg-[#D9D9D9] dark:bg-[#373A46] text-[#222222] dark:text-white border-[#222222] dark:border-black': line.isEqual
+                        'bg-[#D9D9D9] dark:bg-[#333333] text-[#222222] dark:text-white border-[#222222] dark:border-black': line.isEqual
                       }"
                     >
                       {{ line.scoreFormatted }}
                     </span>
-                    <div class="font-accent text-[11px] truncate min-w-0 flex-1 select-none">
-                      <span class="text-gray-500 dark:text-gray-400 mr-0.5 font-bold">{{ line.moveNumberPrefix }}</span>
-                      <strong class="font-extrabold text-[#10B981] group-hover:underline mr-1">{{ line.firstSan }}</strong>
-                      <span class="text-gray-700 dark:text-gray-300 font-medium">{{ line.restLineSan }}</span>
+                    <div class="font-accent text-[11px] sm:text-xs leading-relaxed truncate min-w-0 flex-1">
+                      <span class="text-gray-500 dark:text-[#A3A3A3] mr-1 font-bold">{{ line.moveNumberPrefix }}</span>
+                      <strong class="font-extrabold text-[#0E4C92] dark:text-[#60A5FA] group-hover:underline mr-1">{{ line.firstSan }}</strong>
+                      <span class="text-gray-700 dark:text-[#D4D4D4] font-medium">{{ line.restLineSan }}</span>
                     </div>
                   </div>
                 }
@@ -241,7 +241,7 @@
             type="button"
             (click)="playBestMove()"
             [disabled]="!canPlayBest()"
-            class="btn-brutal !py-1.5 sm:!py-2.5 !px-1 sm:!px-2 text-[11px] sm:text-sm font-bold flex items-center justify-center gap-1 sm:gap-1.5 bg-[#ECECD8] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] disabled:opacity-40 disabled:cursor-not-allowed hover:not-disabled:bg-[#D9D9D9] dark:hover:not-disabled:bg-[#373A46] cursor-pointer"
+            class="btn-brutal !py-1.5 sm:!py-2.5 !px-1 sm:!px-2 text-[11px] sm:text-sm font-bold flex items-center justify-center gap-1 sm:gap-1.5 bg-[#ECECD8] dark:bg-[#262626] text-[#222222] dark:text-[#F3F4F6] disabled:opacity-40 disabled:cursor-not-allowed hover:not-disabled:bg-[#D9D9D9] dark:hover:not-disabled:bg-[#333333] cursor-pointer"
             title="Play engine's best move"
           >
             <app-icon name="magnifying-glass" size="w-3 sm:w-3.5 h-3 sm:h-3.5"></app-icon>
@@ -252,7 +252,7 @@
             type="button"
             (click)="retryMove()"
             [disabled]="!canRetry()"
-            class="btn-brutal !py-1.5 sm:!py-2.5 !px-1 sm:!px-2 text-[11px] sm:text-sm font-bold flex items-center justify-center gap-1 sm:gap-1.5 bg-[#ECECD8] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] disabled:opacity-40 disabled:cursor-not-allowed hover:not-disabled:bg-[#D9D9D9] dark:hover:not-disabled:bg-[#373A46] cursor-pointer"
+            class="btn-brutal !py-1.5 sm:!py-2.5 !px-1 sm:!px-2 text-[11px] sm:text-sm font-bold flex items-center justify-center gap-1 sm:gap-1.5 bg-[#ECECD8] dark:bg-[#262626] text-[#222222] dark:text-[#F3F4F6] disabled:opacity-40 disabled:cursor-not-allowed hover:not-disabled:bg-[#D9D9D9] dark:hover:not-disabled:bg-[#333333] cursor-pointer"
             title="Retry this move"
           >
             <app-icon name="arrow-path" size="w-3 sm:w-3.5 h-3 sm:h-3.5"></app-icon>
@@ -263,7 +263,7 @@
             <button
               type="button"
               (click)="game.exitVariation()"
-              class="btn-brutal btn-brutal-blue !py-1.5 sm:!py-2.5 !px-1 sm:!px-2 text-[11px] sm:text-sm font-bold flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000]"
+              class="btn-brutal btn-brutal-silver !py-1.5 sm:!py-2.5 !px-1 sm:!px-2 text-[11px] sm:text-sm font-bold flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000]"
               title="Return to main game line"
             >
               <app-icon name="arrow-uturn-left" size="w-3 sm:w-3.5 h-3 sm:h-3.5"></app-icon>
@@ -274,7 +274,7 @@
               type="button"
               (click)="nextMove()"
               [disabled]="!canNext()"
-              class="btn-brutal btn-brutal-green !py-1.5 sm:!py-2.5 !px-1 sm:!px-2 text-[11px] sm:text-sm font-bold flex items-center justify-center gap-1 sm:gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+              class="btn-brutal btn-brutal-orange !py-1.5 sm:!py-2.5 !px-1 sm:!px-2 text-[11px] sm:text-sm font-bold flex items-center justify-center gap-1 sm:gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000]"
               title="Next Move"
             >
               <span>Next</span>
@@ -291,17 +291,17 @@
     <div class="flex flex-col gap-2 flex-1 min-h-0 lg:overflow-y-auto pr-0 lg:pr-1.5 pb-1.5">
       <app-platform-game-selector (gameSelected)="onOnlineGameSelected($event)"></app-platform-game-selector>
       
-      <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1F24] flex flex-col gap-2">
+      <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1E1E] flex flex-col gap-2">
         <div class="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 pb-1.5">
           <span class="font-accent text-xs sm:text-sm uppercase text-[#222222] dark:text-[#F3F4F6] font-bold">CLASSIC SAMPLES</span>
-          <span class="badge-brutal bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] text-xs font-bold">4 GAMES</span>
+          <span class="badge-brutal bg-[#D9D9D9] dark:bg-[#262626] text-[#222222] dark:text-[#F3F4F6] text-xs font-bold">4 GAMES</span>
         </div>
         <div class="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 gap-2">
           @for (sample of sampleGames; track sample.id) {
             <button
               type="button"
               (click)="loadSample(sample.id)"
-              class="p-2 sm:p-2.5 border border-[#222222] dark:border-[#373A46] text-left text-xs sm:text-sm font-accent flex flex-col bg-white dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] hover:bg-[#FF4F00] dark:hover:bg-[#FF4F00] hover:text-white dark:hover:text-white transition-colors cursor-pointer group"
+              class="p-2 sm:p-2.5 border border-[#222222] dark:border-[#373A46] text-left text-xs sm:text-sm font-accent flex flex-col bg-white dark:bg-[#262626] text-[#222222] dark:text-[#F3F4F6] hover:bg-[#FF4F00] dark:hover:bg-[#FF4F00] hover:text-white dark:hover:text-white transition-colors cursor-pointer group"
             >
               <span class="font-bold truncate">{{ sample.title }}</span>
               <span class="text-[10px] sm:text-xs font-label text-gray-600 dark:text-gray-400 group-hover:text-white opacity-80 truncate">{{ sample.result }} • {{ sample.event }}</span>
@@ -316,7 +316,7 @@
   @else if (isReportView() && !game.isVariationActive()) {
     <div class="flex flex-col gap-2.5 flex-1 min-h-0 lg:overflow-y-auto pr-0 lg:pr-1.5 pb-1.5">
       <!-- 1. EVALUATION MOMENTUM CARD -->
-      <div class="card-brutal p-3 bg-white dark:bg-[#1E1F24] flex flex-col gap-2 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]">
+      <div class="card-brutal p-3 bg-white dark:bg-[#1E1E1E] flex flex-col gap-2 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]">
         <div class="flex items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-1.5">
           <div class="flex items-center gap-1.5">
             <app-icon name="arrow-trending-up" size="w-4 h-4" class="text-[#FF4F00]"></app-icon>
@@ -327,7 +327,7 @@
 
         <!-- SVG Interactive Area Momentum Curve -->
         <div
-          class="relative bg-[#D9D9D9] dark:bg-[#141519] border-2 border-[#222222] dark:border-black p-1 rounded-sm overflow-hidden select-none cursor-pointer"
+          class="relative bg-[#D9D9D9] dark:bg-[#121212] border-2 border-[#222222] dark:border-black p-1 rounded-sm overflow-hidden select-none cursor-pointer"
           (click)="seekMomentum($event)"
         >
           <svg
@@ -393,7 +393,7 @@
       <button
         type="button"
         (click)="startReviewWalkthrough()"
-        class="btn-brutal btn-brutal-green w-full !py-2.5 sm:!py-3 text-sm sm:text-base font-accent font-extrabold flex items-center justify-center gap-2 cursor-pointer shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000] hover:scale-[1.005] active:scale-[0.99] transition-all shrink-0"
+        class="btn-brutal btn-brutal-orange w-full !py-2.5 sm:!py-3 text-sm sm:text-base font-accent font-extrabold flex items-center justify-center gap-2 cursor-pointer shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000] hover:scale-[1.005] active:scale-[0.99] transition-all shrink-0"
         title="Start move-by-move game review walkthrough"
       >
         <app-icon name="play" size="w-4 h-4"></app-icon>
@@ -402,12 +402,12 @@
       </button>
 
       <!-- 2. PLAYER & ACCURACY CARD -->
-      <div class="card-brutal p-3 bg-white dark:bg-[#1E1F24] flex flex-col gap-2.5 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]">
+      <div class="card-brutal p-3 bg-white dark:bg-[#1E1E1E] flex flex-col gap-2.5 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]">
         <!-- Player Badges Header -->
         <div class="grid grid-cols-2 gap-2">
           <!-- White Player -->
-          <div class="flex items-center gap-2 p-1.5 border border-[#222222] dark:border-[#373A46] bg-[#FFFFFF] dark:bg-[#2A2B32] min-w-0">
-            <div class="w-7 h-7 bg-[#ECECD8] dark:bg-[#373A46] border border-[#222222] dark:border-black flex items-center justify-center font-display font-bold text-xs shrink-0 text-[#222222] dark:text-[#F3F4F6]">
+          <div class="flex items-center gap-2 p-1.5 border border-[#222222] dark:border-[#373A46] bg-[#FFFFFF] dark:bg-[#262626] min-w-0">
+            <div class="w-7 h-7 bg-[#ECECD8] dark:bg-[#333333] border border-[#222222] dark:border-black flex items-center justify-center font-display font-bold text-xs shrink-0 text-[#222222] dark:text-[#F3F4F6]">
               {{ getPlayerInitial(game.matchMetadata().white.name) }}
             </div>
             <div class="flex flex-col min-w-0">
@@ -423,7 +423,7 @@
           </div>
 
           <!-- Black Player -->
-          <div class="flex items-center gap-2 p-1.5 border border-[#222222] dark:border-[#373A46] bg-[#222222] dark:bg-[#141519] min-w-0">
+          <div class="flex items-center gap-2 p-1.5 border border-[#222222] dark:border-[#373A46] bg-[#222222] dark:bg-[#121212] min-w-0">
             <div class="w-7 h-7 bg-[#373A46] border border-white dark:border-gray-600 flex items-center justify-center font-display font-bold text-xs shrink-0 text-white">
               {{ getPlayerInitial(game.matchMetadata().black.name) }}
             </div>
@@ -442,13 +442,13 @@
 
         <!-- Accuracy Split Row: 88.0 Accuracy 66.6 -->
         @if (analysisService.summary(); as sum) {
-          <div class="border-2 border-[#222222] dark:border-black bg-[#ECECD8] dark:bg-[#141519] p-2.5 flex items-center justify-between gap-2 shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000]">
+          <div class="border-2 border-[#222222] dark:border-black bg-[#ECECD8] dark:bg-[#121212] p-2.5 flex items-center justify-between gap-2 shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000]">
             <!-- White Accuracy -->
             <div class="flex flex-col items-center flex-1">
               <span class="font-display text-2xl sm:text-3xl tracking-tight text-[#0E4C92] dark:text-[#60A5FA]">
                 {{ sum.whiteAccuracy.toFixed(1) }}
               </span>
-              <div class="w-full h-1.5 bg-[#D9D9D9] dark:bg-[#2A2B32] border border-[#222222] dark:border-black mt-1 overflow-hidden">
+              <div class="w-full h-1.5 bg-[#D9D9D9] dark:bg-[#262626] border border-[#222222] dark:border-black mt-1 overflow-hidden">
                 <div class="h-full bg-[#0E4C92] dark:bg-[#60A5FA]" [style.width]="sum.whiteAccuracy + '%'"></div>
               </div>
             </div>
@@ -465,7 +465,7 @@
               <span class="font-display text-2xl sm:text-3xl tracking-tight text-[#FF4F00]">
                 {{ sum.blackAccuracy.toFixed(1) }}
               </span>
-              <div class="w-full h-1.5 bg-[#D9D9D9] dark:bg-[#2A2B32] border border-[#222222] dark:border-black mt-1 overflow-hidden">
+              <div class="w-full h-1.5 bg-[#D9D9D9] dark:bg-[#262626] border border-[#222222] dark:border-black mt-1 overflow-hidden">
                 <div class="h-full bg-[#FF4F00]" [style.width]="sum.blackAccuracy + '%'"></div>
               </div>
             </div>
@@ -474,20 +474,20 @@
       </div>
 
       <!-- 3. MOVE CLASSIFICATION BREAKDOWN CARD -->
-      <div class="card-brutal p-3 bg-white dark:bg-[#1E1F24] flex flex-col gap-2 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]">
+      <div class="card-brutal p-3 bg-white dark:bg-[#1E1E1E] flex flex-col gap-2 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]">
         <!-- Title bar -->
         <div class="flex items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-1.5">
           <div class="flex items-center gap-1.5">
             <app-icon name="chart-bar" size="w-4 h-4" class="text-[#0E4C92] dark:text-[#60A5FA]"></app-icon>
             <span class="font-display text-xs sm:text-sm uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6]">MOVE BREAKDOWN</span>
           </div>
-          <span class="badge-brutal bg-[#D9D9D9] dark:bg-[#2A2B32] text-[10px] sm:text-xs font-bold text-[#222222] dark:text-[#F3F4F6]">
+          <span class="badge-brutal bg-[#D9D9D9] dark:bg-[#262626] text-[10px] sm:text-xs font-bold text-[#222222] dark:text-[#F3F4F6]">
             {{ game.history().length }} PLY
           </span>
         </div>
 
         <!-- Aligned Column Headers -->
-        <div class="grid grid-cols-[48px_1fr_48px] items-center text-xs font-label font-extrabold uppercase bg-[#ECECD8] dark:bg-[#2A2B32] border border-[#222222] dark:border-black py-1 px-1.5 text-[#222222] dark:text-[#F3F4F6]">
+        <div class="grid grid-cols-[48px_1fr_48px] items-center text-xs font-label font-extrabold uppercase bg-[#ECECD8] dark:bg-[#262626] border border-[#222222] dark:border-black py-1 px-1.5 text-[#222222] dark:text-[#F3F4F6]">
           <span class="text-center text-[#0E4C92] dark:text-[#60A5FA]">WHITE</span>
           <span class="text-center text-gray-600 dark:text-gray-300">CLASSIFICATION</span>
           <span class="text-center text-[#FF4F00]">BLACK</span>
@@ -496,7 +496,7 @@
         <!-- 7 Classic Classification Rows -->
         <div class="flex flex-col divide-y divide-gray-100 dark:divide-gray-800 text-xs sm:text-sm">
           @for (row of reportClassificationRows(); track row.key) {
-            <div class="grid grid-cols-[48px_1fr_48px] items-center py-1.5 px-1.5 hover:bg-[#D9D9D9]/40 dark:hover:bg-[#2A2B32]/40 transition-colors">
+            <div class="grid grid-cols-[48px_1fr_48px] items-center py-1.5 px-1.5 hover:bg-[#D9D9D9]/40 dark:hover:bg-[#262626]/40 transition-colors">
               <!-- White Count -->
               <span
                 class="text-center font-label font-extrabold text-xs sm:text-sm"
@@ -537,10 +537,10 @@
       </div>
 
       <!-- 4. GAME RATING ROW & COACH REVIEW & PHASES CARD -->
-      <div class="card-brutal p-3 bg-white dark:bg-[#1E1F24] flex flex-col gap-2 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]">
+      <div class="card-brutal p-3 bg-white dark:bg-[#1E1E1E] flex flex-col gap-2 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]">
         @if (analysisService.summary(); as sum) {
           <!-- Game Rating Row -->
-          <div class="flex items-center justify-between p-2 bg-[#ECECD8] dark:bg-[#141519] border border-[#222222] dark:border-black text-xs sm:text-sm">
+          <div class="flex items-center justify-between p-2 bg-[#ECECD8] dark:bg-[#121212] border border-[#222222] dark:border-black text-xs sm:text-sm">
             <span class="font-display text-base sm:text-lg font-bold text-[#0E4C92] dark:text-[#60A5FA]">
               {{ sum.whitePerformanceRating }}
             </span>
@@ -553,7 +553,7 @@
           </div>
 
           <!-- Coach Review Verdict Row -->
-          <div class="flex items-center justify-between p-2 bg-[#FFFFFF] dark:bg-[#2A2B32] border border-[#222222] dark:border-black text-xs sm:text-sm">
+          <div class="flex items-center justify-between p-2 bg-[#FFFFFF] dark:bg-[#262626] border border-[#222222] dark:border-black text-xs sm:text-sm">
             <span class="badge-brutal text-[10px] sm:text-xs !py-0.5 !px-2 font-bold uppercase" [ngClass]="getCoachVerdictBadgeClass(sum.whiteCoachVerdict)">
               {{ sum.whiteCoachVerdict }}
             </span>
@@ -570,7 +570,7 @@
             <!-- Opening -->
             @let opW = getPhaseBadgeInfo(sum.phases.opening.white);
             @let opB = getPhaseBadgeInfo(sum.phases.opening.black);
-            <div class="grid grid-cols-[1fr_84px_1fr] items-center py-1 px-1.5 text-xs font-accent bg-[#ECECD8]/50 dark:bg-[#2A2B32]/50 border border-[#222222]/20 dark:border-black/40">
+            <div class="grid grid-cols-[1fr_84px_1fr] items-center py-1 px-1.5 text-xs font-accent bg-[#ECECD8]/50 dark:bg-[#262626]/50 border border-[#222222]/20 dark:border-black/40">
               <!-- White -->
               <div class="flex items-center gap-1.5 min-w-0 justify-start">
                 @if (!opW.isEmpty) {
@@ -618,7 +618,7 @@
             <!-- Middlegame -->
             @let midW = getPhaseBadgeInfo(sum.phases.middlegame.white);
             @let midB = getPhaseBadgeInfo(sum.phases.middlegame.black);
-            <div class="grid grid-cols-[1fr_84px_1fr] items-center py-1 px-1.5 text-xs font-accent bg-[#ECECD8]/50 dark:bg-[#2A2B32]/50 border border-[#222222]/20 dark:border-black/40">
+            <div class="grid grid-cols-[1fr_84px_1fr] items-center py-1 px-1.5 text-xs font-accent bg-[#ECECD8]/50 dark:bg-[#262626]/50 border border-[#222222]/20 dark:border-black/40">
               <!-- White -->
               <div class="flex items-center gap-1.5 min-w-0 justify-start">
                 @if (!midW.isEmpty) {
@@ -666,7 +666,7 @@
             <!-- Endgame -->
             @let endW = getPhaseBadgeInfo(sum.phases.endgame.white);
             @let endB = getPhaseBadgeInfo(sum.phases.endgame.black);
-            <div class="grid grid-cols-[1fr_84px_1fr] items-center py-1 px-1.5 text-xs font-accent bg-[#ECECD8]/50 dark:bg-[#2A2B32]/50 border border-[#222222]/20 dark:border-black/40">
+            <div class="grid grid-cols-[1fr_84px_1fr] items-center py-1 px-1.5 text-xs font-accent bg-[#ECECD8]/50 dark:bg-[#262626]/50 border border-[#222222]/20 dark:border-black/40">
               <!-- White -->
               <div class="flex items-center gap-1.5 min-w-0 justify-start">
                 @if (!endW.isEmpty) {
@@ -720,17 +720,17 @@
   @else {
     <div class="flex flex-col gap-2 flex-1 min-h-0 overflow-y-auto pr-0 lg:pr-1 pb-1.5">
       <!-- Move List Table Card -->
-      <div class="card-brutal p-2.5 sm:p-3.5 bg-white dark:bg-[#1E1F24] flex flex-col gap-2 shrink-0 lg:flex-1 lg:min-h-[140px]">
+      <div class="card-brutal p-2.5 sm:p-3.5 bg-white dark:bg-[#1E1E1E] flex flex-col gap-2 shrink-0 lg:flex-1 lg:min-h-[140px]">
         <div class="flex items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-2 shrink-0">
           <span class="font-display text-xs sm:text-sm uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6]">MOVE NOTATION & TIMING</span>
-          <span class="badge-brutal bg-[#C0C0C0] dark:bg-[#373A46] text-[#222222] dark:text-[#F3F4F6] text-xs font-bold">
+          <span class="badge-brutal bg-[#C0C0C0] dark:bg-[#262626] text-[#222222] dark:text-[#F3F4F6] text-xs font-bold">
             {{ game.history().length }} PLY
           </span>
         </div>
 
         <!-- Scrollable Notation Table -->
         <div #movesListContainer class="overflow-y-auto h-44 sm:h-48 lg:h-auto lg:flex-1 lg:min-h-[80px] pr-1 flex flex-col gap-0.5 select-none scroll-smooth">
-          <div class="grid grid-cols-[36px_1fr_1fr] text-xs sm:text-sm font-label font-bold border-b border-[#222222] dark:border-[#373A46] pb-1.5 text-[#222222] dark:text-[#F3F4F6] bg-[#D9D9D9] dark:bg-[#2A2B32] px-2 py-1.5 sticky top-0 z-10">
+          <div class="grid grid-cols-[36px_1fr_1fr] text-xs sm:text-sm font-label font-bold border-b border-[#222222] dark:border-[#373A46] pb-1.5 text-[#222222] dark:text-[#F3F4F6] bg-[#D9D9D9] dark:bg-[#262626] px-2 py-1.5 sticky top-0 z-10">
             <span>#</span>
             <span>WHITE</span>
             <span>BLACK</span>
@@ -746,7 +746,7 @@
                     type="button"
                     (click)="jumpToVariation(varItem.id, varMove.plyIndex)"
                     class="variation-move-pill cursor-pointer px-1.5 py-0.5 rounded text-xs font-bold font-mono transition-all flex items-center gap-1 border border-transparent"
-                    [ngClass]="varMove.isActive ? 'bg-[#00C0F9] !text-black shadow-[1px_1px_0_0_#222222] dark:shadow-[1px_1px_0_0_#000000] border-[#222222] dark:border-black font-extrabold' : 'bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] hover:bg-[#00C0F9]/30'"
+                    [ngClass]="varMove.isActive ? 'bg-[#00C0F9] !text-black shadow-[1px_1px_0_0_#222222] dark:shadow-[1px_1px_0_0_#000000] border-[#222222] dark:border-black font-extrabold' : 'bg-[#D9D9D9] dark:bg-[#262626] text-[#222222] dark:text-[#F3F4F6] hover:bg-[#00C0F9]/30'"
                   >
                     @if (varMove.label) {
                       <span class="opacity-75 text-[10px]">{{ varMove.label }}</span>
@@ -777,7 +777,7 @@
           }
 
           @for (pair of movePairs(); track pair.moveNumber) {
-            <div class="grid grid-cols-[36px_1fr_1fr] text-xs sm:text-sm font-label px-2 py-1 border-b border-gray-100 dark:border-gray-800 hover:bg-[#D9D9D9]/50 dark:hover:bg-[#2A2B32]/50 items-center transition-colors">
+            <div class="grid grid-cols-[36px_1fr_1fr] text-xs sm:text-sm font-label px-2 py-1 border-b border-gray-100 dark:border-gray-800 hover:bg-[#D9D9D9]/50 dark:hover:bg-[#262626]/50 items-center transition-colors">
               <span class="text-gray-500 dark:text-gray-400 font-bold text-xs">{{ pair.moveNumber }}.</span>
               
               <!-- White Move -->
@@ -816,7 +816,7 @@
                   [attr.data-active-move]="isMainPlyActive(pair.blackPly)"
                   class="flex items-center justify-between font-bold px-1.5 py-0.5 transition-colors cursor-pointer border border-transparent"
                   [ngClass]="{
-                    'bg-[#0E4C92] !text-white shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000] border-[#222222] dark:border-black': isMainPlyActive(pair.blackPly)
+                    'bg-[#FF4F00] !text-white shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000] border-[#222222] dark:border-black': isMainPlyActive(pair.blackPly)
                   }"
                 >
                   <div class="flex items-center gap-1 truncate">
@@ -853,7 +853,7 @@
                       type="button"
                       (click)="jumpToVariation(varItem.id, varMove.plyIndex)"
                       class="variation-move-pill cursor-pointer px-1.5 py-0.5 rounded text-xs font-bold font-mono transition-all flex items-center gap-1 border border-transparent"
-                      [ngClass]="varMove.isActive ? 'bg-[#00C0F9] !text-black shadow-[1px_1px_0_0_#222222] dark:shadow-[1px_1px_0_0_#000000] border-[#222222] dark:border-black font-extrabold' : 'bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] hover:bg-[#00C0F9]/30'"
+                      [ngClass]="varMove.isActive ? 'bg-[#00C0F9] !text-black shadow-[1px_1px_0_0_#222222] dark:shadow-[1px_1px_0_0_#000000] border-[#222222] dark:border-black font-extrabold' : 'bg-[#D9D9D9] dark:bg-[#262626] text-[#222222] dark:text-[#F3F4F6] hover:bg-[#00C0F9]/30'"
                     >
                       @if (varMove.label) {
                         <span class="opacity-75 text-[10px]">{{ varMove.label }}</span>
@@ -887,13 +887,13 @@
       </div>
 
       <!-- Timeline Stepper Bar (Desktop only; mobile uses the quick navigation bar under the board) -->
-      <div class="card-brutal p-1.5 bg-[#D9D9D9] dark:bg-[#2A2B32] hidden lg:flex items-center justify-between gap-1 shrink-0">
+      <div class="card-brutal p-1.5 bg-[#D9D9D9] dark:bg-[#1E1E1E] hidden lg:flex items-center justify-between gap-1 shrink-0">
         <!-- First Move (Start Position) -->
         <button
           type="button"
           (click)="game.goToStart()"
           [disabled]="game.history().length === 0"
-          class="btn-brutal !py-1.5 !px-2 flex-1 text-xs cursor-pointer"
+          class="btn-brutal btn-brutal-silver !py-1.5 !px-2 flex-1 text-xs cursor-pointer"
           title="Go to Start (Move 0)"
         >
           <app-icon name="chevron-double-left" size="w-3.5 h-3.5"></app-icon>
@@ -904,7 +904,7 @@
           type="button"
           (click)="game.prevMove()"
           [disabled]="game.history().length === 0"
-          class="btn-brutal !py-1.5 !px-2 flex-1 text-xs cursor-pointer"
+          class="btn-brutal btn-brutal-silver !py-1.5 !px-2 flex-1 text-xs cursor-pointer"
           title="Previous Move"
         >
           <app-icon name="chevron-left" size="w-3.5 h-3.5"></app-icon>
@@ -926,7 +926,7 @@
           type="button"
           (click)="game.nextMove()"
           [disabled]="game.history().length === 0"
-          class="btn-brutal !py-1.5 !px-2 flex-1 text-xs cursor-pointer"
+          class="btn-brutal btn-brutal-silver !py-1.5 !px-2 flex-1 text-xs cursor-pointer"
           title="Next Move"
         >
           <app-icon name="chevron-right" size="w-3.5 h-3.5"></app-icon>
@@ -937,14 +937,14 @@
           type="button"
           (click)="game.goToEnd()"
           [disabled]="game.history().length === 0"
-          class="btn-brutal !py-1.5 !px-2 flex-1 text-xs cursor-pointer"
+          class="btn-brutal btn-brutal-silver !py-1.5 !px-2 flex-1 text-xs cursor-pointer"
           title="Go to Final Position"
         >
           <app-icon name="chevron-double-right" size="w-3.5 h-3.5"></app-icon>
         </button>
       </div>
 
-      <!-- Bottom Quick Controls -->
+      <!-- Bottom Quick Controls (Unified Secondary Utility Style) -->
       <div class="grid grid-cols-4 gap-1 sm:gap-1.5 shrink-0 p-0.5">
         <button
           type="button"
@@ -970,7 +970,7 @@
         <button
           type="button"
           (click)="game.resetGame()"
-          class="btn-brutal btn-brutal-orange !py-1.5 !px-1 text-[11px] sm:text-xs font-bold flex items-center justify-center gap-1 cursor-pointer"
+          class="btn-brutal btn-brutal-silver !py-1.5 !px-1 text-[11px] sm:text-xs font-bold flex items-center justify-center gap-1 cursor-pointer"
           title="Start new game"
         >
           <app-icon name="plus" size="w-3 sm:w-3.5 h-3 sm:h-3.5"></app-icon>
@@ -980,7 +980,7 @@
         <button
           type="button"
           (click)="copyFen()"
-          class="btn-brutal btn-brutal-blue !py-1.5 !px-1 text-[11px] sm:text-xs font-bold flex items-center justify-center gap-1 cursor-pointer"
+          class="btn-brutal btn-brutal-silver !py-1.5 !px-1 text-[11px] sm:text-xs font-bold flex items-center justify-center gap-1 cursor-pointer"
           title="Copy FEN string"
         >
           <app-icon [name]="settings.toastMessage() === 'FEN COPIED' ? 'check' : 'clipboard-document'" size="w-3 sm:w-3.5 h-3 sm:h-3.5"></app-icon>

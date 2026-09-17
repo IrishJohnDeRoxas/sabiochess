@@ -219,27 +219,27 @@ body {
   background: #FF4F00;
 }
 
-/* Dark Mode Overrides & Neubrutalist Midnight Palette */
+/* Dark Mode Overrides & Neubrutalist 3-Tier Surface System */
 html.dark {
   color-scheme: dark;
 }
 
 .dark body {
-  background-color: #141519;
+  background-color: #121212;
   color: #F3F4F6;
 }
 
 .dark * {
-  scrollbar-color: #373A46 #141519;
+  scrollbar-color: #2A2A2A #121212;
 }
 
 .dark ::-webkit-scrollbar-track {
-  background: #141519;
+  background: #121212;
   border-left: 2px solid #000000;
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: #373A46;
+  background: #2A2A2A;
 }
 
 .dark ::-webkit-scrollbar-thumb:hover {
@@ -247,27 +247,28 @@ html.dark {
 }
 
 .dark .card-brutal {
-  background-color: #1E1F24;
+  background-color: #1E1E1E;
   border-color: #000000;
   box-shadow: 5px 5px 0 0 #000000;
   color: #F3F4F6;
 }
 
 .dark .card-brutal-lg {
-  background-color: #1E1F24;
+  background-color: #1E1E1E;
   border-color: #000000;
   box-shadow: 8px 8px 0 0 #000000;
   color: #F3F4F6;
 }
 
 .dark .btn-brutal {
-  background-color: #2A2B32;
+  background-color: #262626;
   color: #F3F4F6;
   border-color: #000000;
   box-shadow: 3px 3px 0 0 #000000;
 }
 
 .dark .btn-brutal:hover {
+  background-color: #333333;
   box-shadow: 4.5px 4.5px 0 0 #000000;
   z-index: 10;
 }
@@ -309,21 +310,21 @@ html.dark {
 }
 
 .dark .btn-brutal-yellow {
-  background-color: #FFDD00;
-  color: #141519 !important;
+  background-color: #D97706;
+  color: #FFFFFF !important;
 }
 
 .dark .btn-brutal-yellow:hover {
-  background-color: #FFE600;
+  background-color: #B45309;
 }
 
 .dark .btn-brutal-silver {
-  background-color: #373A46;
+  background-color: #262626;
   color: #F3F4F6;
 }
 
 .dark .btn-brutal-silver:hover {
-  background-color: #454958;
+  background-color: #333333;
 }
 
 .dark .badge-brutal {

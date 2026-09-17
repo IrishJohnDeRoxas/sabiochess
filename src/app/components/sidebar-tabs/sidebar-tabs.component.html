@@ -1,12 +1,12 @@
 <div class="flex flex-col gap-3 w-full h-auto lg:h-full min-h-0">
   <!-- Neubrutalist Tab Buttons Navigation Strip -->
   <div
-    class="card-brutal shrink-0 grid grid-cols-3 gap-1 sm:gap-2 p-1 sm:p-1.5 mr-0 sm:mr-1.5 transition-colors"
+    class="card-brutal shrink-0 grid grid-cols-3 gap-1 sm:gap-2 p-1 sm:p-1.5 mr-0 sm:mr-1.5 bg-white dark:bg-[#1E1E1E] transition-colors"
     role="tablist">
     <!-- Tab 1: Review -->
     <button type="button" role="tab" (click)="setTab('review')" [attr.aria-selected]="activeTab() === 'review'"
       class="btn-brutal !py-1.5 sm:!py-2 !px-1 sm:!px-2 text-[10px] xs:text-xs sm:text-sm flex items-center justify-center gap-1 sm:gap-1.5 transition-all cursor-pointer select-none min-w-0"
-      [ngClass]="activeTab() === 'review' ? 'btn-brutal-orange !shadow-[2px_2px_0_0_#222222] dark:!shadow-[2px_2px_0_0_#000000]' : 'bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] hover:bg-white dark:hover:bg-[#373A46] !shadow-none'">
+      [ngClass]="activeTab() === 'review' ? 'btn-brutal-orange !shadow-[2px_2px_0_0_#222222] dark:!shadow-[2px_2px_0_0_#000000]' : 'bg-[#ECECD8] dark:bg-[#262626] text-[#222222] dark:text-[#F3F4F6] hover:bg-white dark:hover:bg-[#333333] !shadow-none'">
       <app-icon name="star" size="w-3 xs:w-3.5 sm:w-4 h-3 xs:h-3.5 sm:h-4"></app-icon>
       <span class="font-accent tracking-wider uppercase font-bold truncate">REVIEW</span>
     </button>
@@ -14,7 +14,7 @@
     <!-- Tab 2: Analysis -->
     <button type="button" role="tab" (click)="setTab('analysis')" [attr.aria-selected]="activeTab() === 'analysis'"
       class="btn-brutal !py-1.5 sm:!py-2 !px-1 sm:!px-2 text-[10px] xs:text-xs sm:text-sm flex items-center justify-center gap-1 sm:gap-1.5 transition-all cursor-pointer select-none min-w-0"
-      [ngClass]="activeTab() === 'analysis' ? 'btn-brutal-blue !shadow-[2px_2px_0_0_#222222] dark:!shadow-[2px_2px_0_0_#000000]' : 'bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] hover:bg-white dark:hover:bg-[#373A46] !shadow-none'">
+      [ngClass]="activeTab() === 'analysis' ? 'btn-brutal-orange !shadow-[2px_2px_0_0_#222222] dark:!shadow-[2px_2px_0_0_#000000]' : 'bg-[#ECECD8] dark:bg-[#262626] text-[#222222] dark:text-[#F3F4F6] hover:bg-white dark:hover:bg-[#333333] !shadow-none'">
       <app-icon name="chart-bar" size="w-3 xs:w-3.5 sm:w-4 h-3 xs:h-3.5 sm:h-4"></app-icon>
       <span class="font-accent tracking-wider uppercase font-bold truncate">ANALYSIS</span>
     </button>
@@ -22,7 +22,7 @@
     <!-- Tab 3: Settings -->
     <button type="button" role="tab" (click)="setTab('settings')" [attr.aria-selected]="activeTab() === 'settings'"
       class="btn-brutal !py-1.5 sm:!py-2 !px-1 sm:!px-2 text-[10px] xs:text-xs sm:text-sm flex items-center justify-center gap-1 sm:gap-1.5 transition-all cursor-pointer select-none min-w-0"
-      [ngClass]="activeTab() === 'settings' ? 'bg-[#222222] dark:bg-[#373A46] text-white !shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000]' : 'bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] hover:bg-white dark:hover:bg-[#373A46] !shadow-none'">
+      [ngClass]="activeTab() === 'settings' ? 'btn-brutal-orange !shadow-[2px_2px_0_0_#222222] dark:!shadow-[2px_2px_0_0_#000000]' : 'bg-[#ECECD8] dark:bg-[#262626] text-[#222222] dark:text-[#F3F4F6] hover:bg-white dark:hover:bg-[#333333] !shadow-none'">
       <app-icon name="cog-6-tooth" size="w-3 xs:w-3.5 sm:w-4 h-3 xs:h-3.5 sm:h-4"></app-icon>
       <span class="font-accent tracking-wider uppercase font-bold truncate">SETTINGS</span>
     </button>
