@@ -718,9 +718,9 @@
 
   <!-- STATE 3: Move-by-Move Interactive Review Walkthrough -->
   @else {
-    <div class="flex flex-col gap-2 flex-1 min-h-0 lg:overflow-y-auto pr-0 lg:pr-1 pb-1.5">
+    <div class="flex flex-col gap-2 flex-1 min-h-0 overflow-y-auto pr-0 lg:pr-1 pb-1.5">
       <!-- Move List Table Card -->
-      <div class="card-brutal p-2.5 sm:p-3.5 bg-white dark:bg-[#1E1F24] flex flex-col gap-2 shrink-0">
+      <div class="card-brutal p-2.5 sm:p-3.5 bg-white dark:bg-[#1E1F24] flex flex-col gap-2 shrink-0 lg:flex-1 lg:min-h-[140px]">
         <div class="flex items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-2 shrink-0">
           <span class="font-display text-xs sm:text-sm uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6]">MOVE NOTATION & TIMING</span>
           <span class="badge-brutal bg-[#C0C0C0] dark:bg-[#373A46] text-[#222222] dark:text-[#F3F4F6] text-xs font-bold">
@@ -728,8 +728,8 @@
           </span>
         </div>
 
-        <!-- Fixed Height Scrollable Notation Table -->
-        <div #movesListContainer class="overflow-y-auto h-44 sm:h-48 pr-1 flex flex-col gap-0.5 select-none scroll-smooth">
+        <!-- Scrollable Notation Table -->
+        <div #movesListContainer class="overflow-y-auto h-44 sm:h-48 lg:h-auto lg:flex-1 lg:min-h-[80px] pr-1 flex flex-col gap-0.5 select-none scroll-smooth">
           <div class="grid grid-cols-[36px_1fr_1fr] text-xs sm:text-sm font-label font-bold border-b border-[#222222] dark:border-[#373A46] pb-1.5 text-[#222222] dark:text-[#F3F4F6] bg-[#D9D9D9] dark:bg-[#2A2B32] px-2 py-1.5 sticky top-0 z-10">
             <span>#</span>
             <span>WHITE</span>
@@ -886,8 +886,8 @@
         </div>
       </div>
 
-      <!-- Timeline Stepper Bar -->
-      <div class="card-brutal p-1.5 bg-[#D9D9D9] dark:bg-[#2A2B32] flex items-center justify-between gap-1 shrink-0">
+      <!-- Timeline Stepper Bar (Desktop only; mobile uses the quick navigation bar under the board) -->
+      <div class="card-brutal p-1.5 bg-[#D9D9D9] dark:bg-[#2A2B32] hidden lg:flex items-center justify-between gap-1 shrink-0">
         <!-- First Move (Start Position) -->
         <button
           type="button"
