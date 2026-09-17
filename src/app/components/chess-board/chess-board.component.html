@@ -40,6 +40,18 @@
           />
         }
 
+        <!-- Move Annotation Badges (Rendered directly on destination square) -->
+        @if (square.classification) {
+          <div class="square-annotation badge-{{ square.classification }}" aria-hidden="true">
+            <app-icon
+              [name]="getHeroIcon(square.classification)"
+              size="w-3 h-3"
+              class="square-annotation-icon"
+              aria-hidden="true"
+            ></app-icon>
+          </div>
+        }
+
         <!-- Rank Coordinate (on a-file) -->
         @if ((!game.isBoardFlipped() && square.file === 'a') || (game.isBoardFlipped() && square.file === 'h')) {
           <span class="coord rank-coord font-label" [class.dark-text]="square.isLight" [class.light-text]="!square.isLight">
@@ -57,21 +69,26 @@
     }
   </div>
 
-  <!-- Move Annotation Badges Overlay (Rendered above board and pieces) -->
-  <div class="annotation-overlay" aria-hidden="true">
-    @for (square of game.boardSquares(); track square.square) {
-      <div class="annotation-cell">
-        @if (square.classification) {
-          <div class="square-annotation badge-{{ square.classification }}">
-            <app-icon
-              [name]="getHeroIcon(square.classification)"
-              size="w-3 h-3"
-              class="square-annotation-icon"
-              aria-hidden="true"
-            ></app-icon>
-          </div>
-        }
-      </div>
-    }
-  </div>
+  <!-- Candidate Move Arrows Overlay (Stockfish Multi-PV Lines) -->
+  @if (settings.showCandidateArrows() && game.engineMoveArrows().length > 0) {
+    <svg
+      class="arrow-overlay"
+      viewBox="0 0 800 800"
+      preserveAspectRatio="none"
+      aria-hidden="true"
+    >
+      @for (arrow of game.engineMoveArrows(); track arrow.id) {
+        <path
+          [attr.d]="arrow.pathD"
+          [attr.fill]="arrow.color"
+          stroke="#141519"
+          [attr.stroke-width]="arrow.strokeWidth"
+          [attr.opacity]="arrow.opacity"
+          stroke-linejoin="round"
+          stroke-linecap="round"
+          class="candidate-arrow candidate-arrow-{{ arrow.id }}"
+        />
+      }
+    </svg>
+  }
 </div>

@@ -135,6 +135,27 @@
   }
 }
 
+/* Candidate Move Arrows Overlay (Neubrutalist Polygons) */
+.arrow-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+  overflow: visible;
+}
+
+.candidate-arrow {
+  transition: opacity 0.15s ease, filter 0.15s ease, transform 0.15s ease;
+  filter: drop-shadow(2px 2.5px 0px rgba(20, 21, 25, 0.85));
+}
+
+.candidate-arrow-1 {
+  filter: drop-shadow(2.5px 3px 0px rgba(20, 21, 25, 0.95));
+}
+
 /* Move Annotations Overlay (Rendered above board and pieces) */
 .annotation-overlay {
   position: absolute;

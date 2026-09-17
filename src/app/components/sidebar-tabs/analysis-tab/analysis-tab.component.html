@@ -1,4 +1,7 @@
 <div class="flex flex-col gap-2.5 w-full text-[#222222] dark:text-[#F3F4F6]">
+  <!-- Variation Active Banner -->
+  <app-variation-banner class="block"></app-variation-banner>
+
   <!-- Real-time Analysis Progress Banner (if active) -->
   @if (analysisService.isAnalyzing()) {
     <div class="card-brutal p-3 bg-white dark:bg-[#1E1F24] flex flex-col gap-2 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]">
@@ -53,6 +56,75 @@
       </button>
     </div>
   } @else {
+    <!-- REAL-TIME 3-LINE STOCKFISH ENGINE EVALUATION CARD -->
+    @if (analysisService.liveEngineLines().length > 0) {
+      <div class="card-brutal p-3 bg-white dark:bg-[#1E1F24] flex flex-col gap-2.5 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]">
+        <!-- Header: Title + Live Depth Badge -->
+        <div class="flex items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-1.5">
+          <div class="flex items-center gap-1.5">
+            <span class="p-1 bg-[#10B981] text-white inline-flex border border-[#222222] dark:border-black shadow-[1px_1px_0_0_#222222]">
+              <app-icon name="bolt" size="w-3.5 h-3.5"></app-icon>
+            </span>
+            <span class="font-display text-xs sm:text-sm uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6]">
+              ENGINE LINES
+            </span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="badge-brutal bg-[#D9D9D9] dark:bg-[#2A2B32] text-[10px] sm:text-xs font-mono font-bold text-[#222222] dark:text-[#F3F4F6]">
+              depth {{ settings.analysisDepth() }}
+            </span>
+            @if (analysisService.isLiveCalculating()) {
+              <app-icon name="arrow-path" size="w-3.5 h-3.5 animate-spin text-[#FF4F00]"></app-icon>
+            }
+          </div>
+        </div>
+
+        <!-- 3 Engine Lines -->
+        <div class="flex flex-col gap-1.5">
+          @for (line of analysisService.liveEngineLines(); track line.multipv) {
+            <div
+              (mouseenter)="onLineHover(line.multipv)"
+              (mouseleave)="onLineHover(null)"
+              (click)="onLineClick(line)"
+              class="flex items-start gap-2 p-1.5 border border-[#222222]/30 dark:border-[#373A46] hover:border-[#10B981] dark:hover:border-[#10B981] bg-[#ECECD8]/30 dark:bg-[#141519]/60 hover:bg-[#ECECD8] dark:hover:bg-[#2A2B32] cursor-pointer transition-colors group rounded-xs"
+              [class.border-l-4]="line.multipv === 1"
+              [class.border-l-[#10B981]]="line.multipv === 1"
+            >
+              <!-- Eval Badge -->
+              <span
+                class="font-mono text-xs font-extrabold px-1.5 py-0.5 border rounded-xs shrink-0 tracking-tight shadow-[1px_1px_0_0_#222222] dark:shadow-[1px_1px_0_0_#000000]"
+                [ngClass]="{
+                  'bg-white text-black border-[#222222]': line.isWhiteAdvantage,
+                  'bg-[#222222] text-white border-gray-600': line.isBlackAdvantage,
+                  'bg-[#D9D9D9] dark:bg-[#373A46] text-[#222222] dark:text-white border-[#222222] dark:border-black': line.isEqual
+                }"
+              >
+                {{ line.scoreFormatted }}
+              </span>
+
+              <!-- Move Sequence Text -->
+              <div class="font-accent text-xs text-gray-800 dark:text-gray-200 leading-snug line-clamp-2 select-none">
+                <span class="text-gray-500 dark:text-gray-400 font-bold mr-1">{{ line.moveNumberPrefix }}</span>
+                <strong class="font-extrabold text-[#10B981] group-hover:underline mr-1">{{ line.firstSan }}</strong>
+                <span>{{ line.restLineSan }}</span>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- See Best Move Action Button -->
+        <button
+          type="button"
+          (click)="onSeeBestMove()"
+          class="btn-brutal btn-brutal-yellow w-full !py-2 text-xs sm:text-sm font-accent font-extrabold flex items-center justify-center gap-1.5 cursor-pointer shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000] hover:scale-[1.005] active:scale-[0.99] transition-all"
+          title="Play the top engine move on the board"
+        >
+          <span class="text-sm">👑</span>
+          <span class="tracking-wider uppercase">SEE BEST MOVE</span>
+        </button>
+      </div>
+    }
+
     <!-- 1. EVALUATION MOMENTUM CARD -->
     <div class="card-brutal p-3 bg-white dark:bg-[#1E1F24] flex flex-col gap-2 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]">
       <div class="flex items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-1.5">

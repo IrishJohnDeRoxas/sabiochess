@@ -5,10 +5,12 @@ import {
   GameAnalysisSummary,
   MoveAnalysis,
   MoveClassification,
+  LiveEngineLine,
 } from '../models/analysis.model';
 import { OpeningBookService } from './opening-book.service';
 import { getCoachCommentary } from '../utils/coach-commentary.util';
 import { SettingsService } from './settings.service';
+import { formatEnginePvLine, RawEnginePvInfo } from '../utils/engine-line-formatter.util';
 
 export interface MoveRecordInput {
   from: string;
@@ -40,11 +42,25 @@ export class GameAnalysisService implements OnDestroy {
   private isWorkerReady = false;
   private workerAvailable = false;
 
+  private liveWorker: Worker | null = null;
+  private isLiveWorkerReady = false;
+  private liveWorkerAvailable = false;
+  private currentLiveFen = '';
+  private pendingLiveFen: string | null = null;
+  private isLiveSearching = false;
+  private activePvMap = new Map<number, RawEnginePvInfo>();
+
   readonly isAnalyzing = signal<boolean>(false);
   readonly progress = signal<number>(0); // 0 - 100
   readonly movesAnalysis = signal<MoveAnalysis[]>([]);
   readonly detectedOpening = signal<{ eco: string; name: string } | null>(null);
   readonly playerRatings = signal<{ white?: number; black?: number }>({});
+
+  // Live Continuous Evaluation (Multi-PV = 3)
+  readonly liveEngineLines = signal<LiveEngineLine[]>([]);
+  readonly liveDepth = signal<number>(0);
+  readonly hoveredLineRank = signal<number | null>(null);
+  readonly isLiveCalculating = signal<boolean>(false);
 
   private currentHistory: MoveRecordInput[] = [];
   private currentEvals: PositionEval[] = [];
@@ -294,6 +310,7 @@ export class GameAnalysisService implements OnDestroy {
 
   constructor() {
     this.initWorker();
+    this.initLiveWorker();
   }
 
   private initWorker(): void {
@@ -1034,11 +1051,247 @@ export class GameAnalysisService implements OnDestroy {
     return preferred || legalMoves[0];
   }
 
+  // ==========================================
+  // LIVE MULTI-PV CONTINUOUS EVALUATION
+  // ==========================================
+
+  private initLiveWorker(): void {
+    if (typeof Worker === 'undefined') {
+      this.liveWorkerAvailable = false;
+      return;
+    }
+    try {
+      this.liveWorker = new Worker('engine/v18/lite/stockfish.js#stockfish.wasm');
+      this.liveWorker.onmessage = (event) => {
+        this.zone.run(() => this.handleLiveWorkerMessage(event.data));
+      };
+      this.liveWorker.onerror = () => {
+        this.zone.run(() => {
+          this.liveWorkerAvailable = false;
+          this.isLiveCalculating.set(false);
+        });
+      };
+      this.liveWorker.postMessage('uci');
+      this.liveWorkerAvailable = true;
+    } catch {
+      this.liveWorkerAvailable = false;
+    }
+  }
+
+  private handleLiveWorkerMessage(message: string): void {
+    if (message === 'uciok') {
+      this.liveWorker?.postMessage('setoption name MultiPV value 3');
+      this.liveWorker?.postMessage('isready');
+    } else if (message === 'readyok') {
+      this.isLiveWorkerReady = true;
+      if (this.pendingLiveFen) {
+        const fen = this.pendingLiveFen;
+        this.pendingLiveFen = null;
+        this.sendLiveSearch(fen);
+      } else if (this.currentLiveFen) {
+        this.sendLiveSearch(this.currentLiveFen);
+      }
+    } else if (message.startsWith('info ')) {
+      this.parseLiveWorkerInfo(message);
+    } else if (message.startsWith('bestmove ')) {
+      this.isLiveSearching = false;
+      this.isLiveCalculating.set(false);
+      if (this.pendingLiveFen) {
+        const fen = this.pendingLiveFen;
+        this.pendingLiveFen = null;
+        this.sendLiveSearch(fen);
+      }
+    }
+  }
+
+  private parseLiveWorkerInfo(message: string): void {
+    const parts = message.split(' ');
+    const pvIndex = parts.indexOf('pv');
+    if (pvIndex === -1) return;
+
+    let multipv = 1;
+    const mpvIndex = parts.indexOf('multipv');
+    if (mpvIndex !== -1) {
+      multipv = parseInt(parts[mpvIndex + 1], 10) || 1;
+    }
+
+    let depth = 0;
+    const depthIndex = parts.indexOf('depth');
+    if (depthIndex !== -1) {
+      depth = parseInt(parts[depthIndex + 1], 10) || 0;
+    }
+
+    let scoreCp: number | null = null;
+    let mate: number | null = null;
+    const scoreIndex = parts.indexOf('score');
+    if (scoreIndex !== -1) {
+      if (parts[scoreIndex + 1] === 'cp') {
+        scoreCp = parseInt(parts[scoreIndex + 2], 10);
+      } else if (parts[scoreIndex + 1] === 'mate') {
+        mate = parseInt(parts[scoreIndex + 2], 10);
+      }
+    }
+
+    const pv = parts.slice(pvIndex + 1);
+    if (pv.length === 0) return;
+
+    const rawInfo: RawEnginePvInfo = {
+      multipv,
+      depth,
+      scoreCp,
+      mate,
+      pv,
+    };
+
+    this.activePvMap.set(multipv, rawInfo);
+
+    if (depth > this.liveDepth()) {
+      this.liveDepth.set(depth);
+    }
+
+    // Build formatted lines
+    const sortedRaw = Array.from(this.activePvMap.values()).sort((a, b) => a.multipv - b.multipv);
+    const formattedLines: LiveEngineLine[] = [];
+    for (const item of sortedRaw) {
+      const formatted = formatEnginePvLine(this.currentLiveFen, item);
+      if (formatted) {
+        formattedLines.push(formatted);
+      }
+    }
+
+    if (formattedLines.length > 0) {
+      this.liveEngineLines.set(formattedLines);
+    }
+  }
+
+  private sendLiveSearch(fen: string): void {
+    if (!this.liveWorker || !this.isLiveWorkerReady) return;
+    this.isLiveSearching = true;
+    this.isLiveCalculating.set(true);
+    const depth = this.settings?.analysisDepth ? this.settings.analysisDepth() : 14;
+    this.liveWorker.postMessage(`position fen ${fen}`);
+    this.liveWorker.postMessage(`go depth ${depth}`);
+  }
+
+  evaluateLivePosition(fen: string): void {
+    if (!fen) return;
+    if (fen === this.currentLiveFen && this.liveEngineLines().length > 0) return;
+
+    this.currentLiveFen = fen;
+    this.activePvMap.clear();
+    this.liveDepth.set(1);
+
+    // Instant candidate lines with 4-5 ply rollout for 0ms lag
+    const instantLines = this.generateHeuristicLiveLines(fen);
+    if (instantLines.length > 0) {
+      this.liveEngineLines.set(instantLines);
+    }
+
+    if (this.liveWorkerAvailable && this.liveWorker) {
+      if (!this.isLiveWorkerReady) {
+        this.pendingLiveFen = fen;
+        return;
+      }
+
+      if (this.isLiveSearching) {
+        this.pendingLiveFen = fen;
+        this.liveWorker.postMessage('stop');
+      } else {
+        this.sendLiveSearch(fen);
+      }
+    }
+  }
+
+  setHoveredLineRank(rank: number | null): void {
+    this.hoveredLineRank.set(rank);
+  }
+
+  generateHeuristicLiveLines(fen: string): LiveEngineLine[] {
+    try {
+      const chess = new Chess(fen);
+      const isWhiteTurn = chess.turn() === 'w';
+      const rootMoves = chess.moves({ verbose: true });
+      if (rootMoves.length === 0) return [];
+
+      // Score moves by captures, checks, center dominance
+      const scoredMoves = rootMoves.map((m) => {
+        let weight = 0;
+        if (m.san.includes('#')) weight += 1000;
+        if (m.captured) {
+          const vals: Record<string, number> = { p: 100, n: 300, b: 320, r: 500, q: 900, k: 0 };
+          weight += (vals[m.captured] || 100) * 2;
+        }
+        if (m.san.includes('+')) weight += 50;
+        if (['e4', 'e5', 'd4', 'd5', 'c4', 'Nf3', 'Nc3', 'Nf6', 'Nc6'].includes(m.san)) weight += 30;
+        return { move: m, weight };
+      });
+
+      scoredMoves.sort((a, b) => b.weight - a.weight);
+      const top3 = scoredMoves.slice(0, 3);
+
+      const lines: LiveEngineLine[] = [];
+      for (let i = 0; i < top3.length; i++) {
+        const item = top3[i];
+        const lineChess = new Chess(fen);
+        const pvList: string[] = [];
+
+        // Move 1
+        const uci1 = `${item.move.from}${item.move.to}${item.move.promotion || ''}`;
+        pvList.push(uci1);
+        lineChess.move(item.move);
+
+        // Roll out 3-4 continuation moves
+        for (let step = 0; step < 4; step++) {
+          if (lineChess.isGameOver()) break;
+          const nextMoves = lineChess.moves({ verbose: true });
+          if (nextMoves.length === 0) break;
+
+          nextMoves.sort((a, b) => {
+            let scoreA = 0;
+            let scoreB = 0;
+            if (a.san.includes('#')) scoreA += 1000;
+            if (b.san.includes('#')) scoreB += 1000;
+            if (a.captured) scoreA += 200;
+            if (b.captured) scoreB += 200;
+            if (a.san.includes('+')) scoreA += 80;
+            if (b.san.includes('+')) scoreB += 80;
+            return scoreB - scoreA;
+          });
+
+          const chosen = nextMoves[0];
+          pvList.push(`${chosen.from}${chosen.to}${chosen.promotion || ''}`);
+          lineChess.move(chosen);
+        }
+
+        const raw: RawEnginePvInfo = {
+          multipv: i + 1,
+          depth: 1,
+          scoreCp: isWhiteTurn ? Math.max(-20, 20 - i * 15) : Math.min(20, -(20 - i * 15)),
+          mate: null,
+          pv: pvList,
+        };
+
+        const formatted = formatEnginePvLine(fen, raw);
+        if (formatted) {
+          lines.push(formatted);
+        }
+      }
+      return lines;
+    } catch {
+      return [];
+    }
+  }
+
   ngOnDestroy(): void {
     if (this.worker) {
       this.worker.postMessage('quit');
       this.worker.terminate();
       this.worker = null;
+    }
+    if (this.liveWorker) {
+      this.liveWorker.postMessage('quit');
+      this.liveWorker.terminate();
+      this.liveWorker = null;
     }
   }
 }

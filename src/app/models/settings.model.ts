@@ -130,6 +130,7 @@ export interface UserSettings {
   autoEvaluation: boolean;
   autoQueen: boolean;
   showEvalBar: boolean;
+  showCandidateArrows: boolean;
   chesscomUsername: string;
   lichessUsername: string;
 }
@@ -145,6 +146,7 @@ export const DEFAULT_SETTINGS: UserSettings = {
   autoEvaluation: true,
   autoQueen: true,
   showEvalBar: true,
+  showCandidateArrows: true,
   chesscomUsername: '',
   lichessUsername: '',
 };

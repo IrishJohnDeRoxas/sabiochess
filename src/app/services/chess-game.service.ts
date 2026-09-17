@@ -1,12 +1,13 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { Chess, Square, Move } from 'chess.js';
-import { MoveAnalysis, MoveClassification } from '../models/analysis.model';
+import { MoveAnalysis, MoveClassification, LiveEngineLine, EngineMoveArrow } from '../models/analysis.model';
 import { MoveVariation, ActiveVariationState, GameMetadata } from '../models/chess.model';
 import { SettingsService } from './settings.service';
 import { SoundService } from './sound.service';
 import { GameAnalysisService } from './game-analysis.service';
 import { computeGameHistoryTiming, formatClockTime, parseTimeControl } from '../utils/chess-clock.util';
 import { computeGameOutcome, getPlayerOutcomeStatus, GameOutcome, PlayerOutcomeStatus } from '../utils/chess-outcome.util';
+import { buildEngineMoveArrow } from '../utils/chess-arrow.util';
 
 export interface BoardSquareData {
   file: string;
@@ -209,6 +210,38 @@ export class ChessGameService {
     if (analyses.length === 0) return null;
     if (ply === null || ply < 0) return null;
     return analyses[ply] || null;
+  });
+
+  // Engine Candidate Move Arrows for Chessboard Overlay
+  readonly engineMoveArrows = computed<EngineMoveArrow[]>(() => {
+    const lines = this.analysisService.liveEngineLines();
+    const isFlipped = this.isBoardFlipped();
+    const hoveredRank = this.analysisService.hoveredLineRank();
+
+    const arrows: EngineMoveArrow[] = [];
+    for (const line of lines) {
+      if (line.firstMove) {
+        const isHovered = hoveredRank !== null && hoveredRank === line.multipv;
+        const arrow = buildEngineMoveArrow(
+          line.firstMove.from,
+          line.firstMove.to,
+          line.firstMove.san,
+          line.scoreFormatted,
+          line.multipv,
+          isFlipped,
+          isHovered
+        );
+        if (arrow) {
+          arrows.push(arrow);
+        }
+      }
+    }
+
+    return arrows.sort((a, b) => {
+      if (hoveredRank && a.id === hoveredRank) return 1;
+      if (hoveredRank && b.id === hoveredRank) return -1;
+      return b.id - a.id;
+    });
   });
 
   readonly topPlayer = computed<PlayerInfo>(() => {
@@ -425,15 +458,54 @@ export class ChessGameService {
     const isVariation = this.isVariationActive();
     const ply = this.currentPlyIndex();
 
-    // Get analysis classification for the last move (only for main line)
+    // Get analysis classification for the last move
     let lastMoveClassification: MoveClassification | undefined = undefined;
-    if (!isVariation && ply !== null && ply >= 0) {
-      const analysisList = this.analysisService.movesAnalysis();
-      if (analysisList && analysisList.length > ply) {
-        const moveData = analysisList.find((a) => a.plyIndex === ply);
-        if (moveData && moveData.classification && moveData.classification !== 'unknown') {
-          lastMoveClassification = moveData.classification;
+
+    if (isVariation) {
+      const active = this.activeVariation();
+      const currentVar = this.currentVariation();
+      if (active && currentVar && currentVar.moves[active.plyIndex]) {
+        const parentPly = currentVar.parentPly;
+        const analysisList = this.analysisService.movesAnalysis();
+        const parentAnalysis = parentPly >= 0 ? analysisList[parentPly] : null;
+        const varMove = currentVar.moves[active.plyIndex].move;
+        const liveLines = this.analysisService.liveEngineLines();
+
+        if (
+          parentAnalysis &&
+          (parentAnalysis.bestMoveSan === varMove.san ||
+            parentAnalysis.bestMove === `${varMove.from}${varMove.to}`)
+        ) {
+          lastMoveClassification = 'best';
+        } else if (
+          liveLines.length > 0 &&
+          liveLines[0].firstMove &&
+          (liveLines[0].firstMove.san === varMove.san ||
+            `${liveLines[0].firstMove.from}${liveLines[0].firstMove.to}` === `${varMove.from}${varMove.to}`)
+        ) {
+          lastMoveClassification = 'best';
+        } else if (
+          liveLines.length > 1 &&
+          liveLines[1].firstMove &&
+          (liveLines[1].firstMove.san === varMove.san ||
+            `${liveLines[1].firstMove.from}${liveLines[1].firstMove.to}` === `${varMove.from}${varMove.to}`)
+        ) {
+          lastMoveClassification = 'excellent';
+        } else if (
+          liveLines.length > 2 &&
+          liveLines[2].firstMove &&
+          (liveLines[2].firstMove.san === varMove.san ||
+            `${liveLines[2].firstMove.from}${liveLines[2].firstMove.to}` === `${varMove.from}${varMove.to}`)
+        ) {
+          lastMoveClassification = 'good';
+        } else {
+          lastMoveClassification = 'best';
         }
+      }
+    } else if (ply !== null && ply >= 0) {
+      const moveData = this.currentMoveAnalysis();
+      if (moveData && moveData.classification && moveData.classification !== 'unknown') {
+        lastMoveClassification = moveData.classification;
       }
     }
 
@@ -458,8 +530,7 @@ export class ChessGameService {
         const isPreviousMove = isPrev && !isVariation;
         const isVariationMove = isPrev && isVariation;
         const isMoveFrom = last ? last.from === squareName : false;
-        const classification =
-          !isVariation && last && squareName === last.to ? lastMoveClassification : undefined;
+        const classification = last && squareName === last.to ? lastMoveClassification : undefined;
 
         squares.push({
           file,
@@ -1155,6 +1226,28 @@ export class ChessGameService {
     });
   }
 
+  previewEngineLine(line: LiveEngineLine | string[]): boolean {
+    const movesUci = Array.isArray(line) ? line : line.movesUci;
+    if (!movesUci || movesUci.length === 0) return false;
+
+    const firstUci = movesUci[0];
+    if (!firstUci || firstUci.length < 4) return false;
+
+    const from = firstUci.substring(0, 2) as Square;
+    const to = firstUci.substring(2, 4) as Square;
+    const promotion = firstUci.length > 4 ? firstUci.substring(4, 5) : 'q';
+
+    return this.move({ from, to, promotion });
+  }
+
+  playBestMove(): boolean {
+    const lines = this.analysisService.liveEngineLines();
+    if (lines.length > 0) {
+      return this.previewEngineLine(lines[0]);
+    }
+    return false;
+  }
+
   // Variation Methods
   jumpToVariation(varId: string, plyIndex: number): void {
     const variation = this.variations().find((v) => v.id === varId);
@@ -1219,9 +1312,13 @@ export class ChessGameService {
 
   private updateState(): void {
     const active = this.getActiveChess();
-    this.fen.set(active.fen());
+    const activeFen = active.fen();
+    this.fen.set(activeFen);
     this.turn.set(active.turn());
     this.isCheck.set(active.inCheck());
+
+    // Trigger continuous live engine evaluation for the current position
+    this.analysisService.evaluateLivePosition(activeFen);
 
     if (active.isGameOver()) {
       this.isGameOver.set(true);

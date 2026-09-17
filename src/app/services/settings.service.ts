@@ -27,6 +27,7 @@ export class SettingsService {
   readonly autoEvaluation = signal<boolean>(DEFAULT_SETTINGS.autoEvaluation);
   readonly autoQueen = signal<boolean>(DEFAULT_SETTINGS.autoQueen);
   readonly showEvalBar = signal<boolean>(DEFAULT_SETTINGS.showEvalBar);
+  readonly showCandidateArrows = signal<boolean>(DEFAULT_SETTINGS.showCandidateArrows);
   readonly chesscomUsername = signal<string>(DEFAULT_SETTINGS.chesscomUsername);
   readonly lichessUsername = signal<string>(DEFAULT_SETTINGS.lichessUsername);
   readonly isSupportModalOpen = signal<boolean>(false);
@@ -69,6 +70,7 @@ export class SettingsService {
         autoEvaluation: this.autoEvaluation(),
         autoQueen: this.autoQueen(),
         showEvalBar: this.showEvalBar(),
+        showCandidateArrows: this.showCandidateArrows(),
         chesscomUsername: this.chesscomUsername(),
         lichessUsername: this.lichessUsername(),
       };
@@ -120,6 +122,10 @@ export class SettingsService {
     this.showEvalBar.set(show);
   }
 
+  setShowCandidateArrows(show: boolean): void {
+    this.showCandidateArrows.set(show);
+  }
+
   setChesscomUsername(name: string): void {
     this.chesscomUsername.set(name.trim());
   }
@@ -147,6 +153,7 @@ export class SettingsService {
     this.autoEvaluation.set(DEFAULT_SETTINGS.autoEvaluation);
     this.autoQueen.set(DEFAULT_SETTINGS.autoQueen);
     this.showEvalBar.set(DEFAULT_SETTINGS.showEvalBar);
+    this.showCandidateArrows.set(DEFAULT_SETTINGS.showCandidateArrows);
   }
 
   flashToast(msg: string, duration = 1800): void {
@@ -189,6 +196,7 @@ export class SettingsService {
       if (typeof data.autoEvaluation === 'boolean') this.autoEvaluation.set(data.autoEvaluation);
       if (typeof data.autoQueen === 'boolean') this.autoQueen.set(data.autoQueen);
       if (typeof data.showEvalBar === 'boolean') this.showEvalBar.set(data.showEvalBar);
+      if (typeof data.showCandidateArrows === 'boolean') this.showCandidateArrows.set(data.showCandidateArrows);
       if (data.chesscomUsername) this.chesscomUsername.set(data.chesscomUsername);
       if (data.lichessUsername) this.lichessUsername.set(data.lichessUsername);
     } catch {

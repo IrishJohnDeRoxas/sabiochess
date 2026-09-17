@@ -3,8 +3,9 @@ import { CommonModule } from '@angular/common';
 import { ChessGameService } from '../../../services/chess-game.service';
 import { GameAnalysisService } from '../../../services/game-analysis.service';
 import { SettingsService } from '../../../services/settings.service';
-import { MoveClassification } from '../../../models/analysis.model';
+import { MoveClassification, LiveEngineLine } from '../../../models/analysis.model';
 import { IconComponent, IconName } from '../../icon/icon.component';
+import { VariationBannerComponent } from '../../variation-banner/variation-banner.component';
 
 export interface ReportClassificationRow {
   key: MoveClassification;
@@ -37,7 +38,7 @@ export interface MomentumChartData {
 @Component({
   selector: 'app-analysis-tab',
   standalone: true,
-  imports: [CommonModule, IconComponent],
+  imports: [CommonModule, IconComponent, VariationBannerComponent],
   templateUrl: './analysis-tab.component.html',
   styleUrls: ['./analysis-tab.component.css'],
 })
@@ -323,5 +324,17 @@ export class AnalysisTabComponent {
       return { icon: 'check', symbol: '✓', badgeClass: 'bg-[#10B981] text-white border-[#222222]', label: 'Good', isEmpty: false };
     }
     return { icon: 'star', symbol: '•', badgeClass: 'bg-[#D9D9D9] text-[#222222] border-[#222222]', label: quality, isEmpty: false };
+  }
+
+  onLineHover(rank: number | null): void {
+    this.analysisService.setHoveredLineRank(rank);
+  }
+
+  onLineClick(line: LiveEngineLine): void {
+    this.game.previewEngineLine(line);
+  }
+
+  onSeeBestMove(): void {
+    this.game.playBestMove();
   }
 }

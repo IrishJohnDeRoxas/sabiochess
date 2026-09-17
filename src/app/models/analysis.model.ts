@@ -99,3 +99,35 @@ export function getHeroIconForClass(c: MoveClassification): string {
       return 'star';
   }
 }
+
+export interface LiveEngineLine {
+  id: number; // 1, 2, 3
+  multipv: number;
+  scoreFormatted: string;
+  scoreCp: number | null;
+  mate: number | null;
+  isWhiteAdvantage: boolean;
+  isBlackAdvantage: boolean;
+  isEqual: boolean;
+  movesUci: string[];
+  movesSan: string[];
+  firstMove: { from: string; to: string; san: string };
+  moveNumberPrefix: string;
+  firstSan: string;
+  restLineSan: string;
+  fullLineText: string;
+}
+
+export interface EngineMoveArrow {
+  id: number; // 1, 2, 3
+  from: string;
+  to: string;
+  san: string;
+  scoreFormatted: string;
+  isKnightMove: boolean;
+  pathD: string;
+  color: string;
+  strokeWidth: number;
+  opacity: number;
+  markerId: string;
+}

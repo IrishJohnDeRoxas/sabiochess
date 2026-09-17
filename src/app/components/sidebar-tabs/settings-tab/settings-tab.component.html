@@ -164,6 +164,20 @@
           class="accent-[#FF4F00] w-5 h-5 cursor-pointer shrink-0 mt-0.5" />
       </label>
 
+      <!-- Show Candidate Move Arrows Toggle -->
+      <label
+        class="flex items-start justify-between p-2.5 sm:p-3 border-2 border-[#222222] dark:border-[#373A46] bg-white dark:bg-[#1E1F24] hover:bg-gray-50 dark:hover:bg-[#25272F] cursor-pointer transition-colors gap-3">
+        <div class="flex flex-col gap-0.5">
+          <span class="font-accent text-xs sm:text-sm uppercase font-bold text-[#222222] dark:text-[#F3F4F6]">Show Candidate Move Arrows</span>
+          <span class="font-body text-xs sm:text-sm text-gray-600 dark:text-gray-400 leading-normal">
+            Displays visual arrows on the board for the top 3 Stockfish evaluation lines.
+          </span>
+        </div>
+        <input type="checkbox" [checked]="settings.showCandidateArrows()"
+          (change)="settings.setShowCandidateArrows(!settings.showCandidateArrows())"
+          class="accent-[#FF4F00] w-5 h-5 cursor-pointer shrink-0 mt-0.5" />
+      </label>
+
       <!-- Auto Queen Toggle -->
       <label
         class="flex items-start justify-between p-2.5 sm:p-3 border-2 border-[#222222] dark:border-[#373A46] bg-white dark:bg-[#1E1F24] hover:bg-gray-50 dark:hover:bg-[#25272F] cursor-pointer transition-colors gap-3">

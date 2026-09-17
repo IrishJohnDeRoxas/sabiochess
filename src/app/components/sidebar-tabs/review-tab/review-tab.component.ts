@@ -6,11 +6,10 @@ import { GameAnalysisService } from '../../../services/game-analysis.service';
 import { SoundService } from '../../../services/sound.service';
 import { SettingsService } from '../../../services/settings.service';
 import { MEME_SOUND_PACKS, MemeSoundPack } from '../../../models/settings.model';
-import { MoveClassification, getHeroIconForClass } from '../../../models/analysis.model';
+import { MoveClassification, getHeroIconForClass, LiveEngineLine } from '../../../models/analysis.model';
 import { MoveVariation } from '../../../models/chess.model';
 import { IconComponent, IconName } from '../../icon/icon.component';
 import { PlatformGameSelectorComponent } from '../../platform-game-selector/platform-game-selector.component';
-import { VariationBannerComponent } from '../../variation-banner/variation-banner.component';
 import { FetchedGame } from '../../../services/platform-importer.service';
 
 export type ImporterSubTab = 'online' | 'samples' | 'pgn';
@@ -20,6 +19,7 @@ export interface FormattedVariationMove {
   san: string;
   plyIndex: number;
   isActive: boolean;
+  classification?: MoveClassification;
 }
 
 export interface RenderedVariation {
@@ -82,7 +82,7 @@ export interface MomentumChartData {
 @Component({
   selector: 'app-review-tab',
   standalone: true,
-  imports: [CommonModule, FormsModule, IconComponent, PlatformGameSelectorComponent, VariationBannerComponent],
+  imports: [CommonModule, FormsModule, IconComponent, PlatformGameSelectorComponent],
   templateUrl: './review-tab.component.html',
   styleUrls: ['./review-tab.component.css'],
 })
@@ -129,6 +129,9 @@ export class ReviewTabComponent {
   constructor() {
     effect(() => {
       const isVar = this.game.isVariationActive();
+      if (isVar) {
+        this.isReportView.set(false);
+      }
       if (!isVar && this.isFollowUpActive() && !this.isPlayingFollowUp()) {
         this.isFollowUpActive.set(false);
         this.isBestVariation.set(false);
@@ -164,10 +167,13 @@ export class ReviewTabComponent {
     { key: 'brilliant', label: 'Brilliant Move', icon: 'sparkles', symbol: '!!', badgeClass: 'bg-[#00C0F9] text-black border-[#222222]' },
     { key: 'great', label: 'Great Move', icon: 'arrow-trending-up', symbol: '!', badgeClass: 'bg-[#0E4C92] text-white border-[#222222]' },
     { key: 'best', label: 'Best Move', icon: 'star', symbol: '★', badgeClass: 'bg-[#10B981] text-white border-[#222222]' },
+    { key: 'excellent', label: 'Excellent', icon: 'hand-thumb-up', symbol: '✓', badgeClass: 'bg-[#84CC16] text-[#222222] border-[#222222]' },
+    { key: 'good', label: 'Good Move', icon: 'check', symbol: '✓', badgeClass: 'bg-[#3B82F6] text-white border-[#222222]' },
+    { key: 'book', label: 'Book Move', icon: 'book-open', symbol: '📖', badgeClass: 'bg-[#A16207] text-white border-[#222222]' },
     { key: 'inaccuracy', label: 'Inaccuracy', icon: 'exclamation-circle', symbol: '?!', badgeClass: 'bg-[#F59E0B] text-black border-[#222222]' },
     { key: 'mistake', label: 'Mistake', icon: 'question-mark-circle', symbol: '?', badgeClass: 'bg-[#F97316] text-white border-[#222222]' },
     { key: 'miss', label: 'Miss', icon: 'x-mark', symbol: '✕', badgeClass: 'bg-[#EA580C] text-white border-[#222222]' },
-    { key: 'blunder', label: 'Blunder', icon: 'exclamation-triangle', symbol: '??', badgeClass: 'bg-[#DC2626] text-white border-[#222222]' },
+    { key: 'blunder', label: 'Blunder', icon: 'exclamation-triangle', symbol: '??', badgeClass: 'bg-[#EF4444] text-white border-[#222222]' },
   ];
 
   readonly reportClassificationRows = computed<ReportClassificationRow[]>(() => {
@@ -340,6 +346,10 @@ export class ReviewTabComponent {
 
   private formatVariation(v: MoveVariation): RenderedVariation {
     const active = this.game.activeVariation();
+    const analyses = this.analysisService.movesAnalysis();
+    const parentAnalysis = v.parentPly >= 0 ? analyses[v.parentPly] : null;
+    const liveLines = this.analysisService.liveEngineLines();
+
     const moves: FormattedVariationMove[] = v.moves.map((item, i) => {
       const effectivePly = v.parentPly + 1 + i;
       const isWhite = effectivePly % 2 === 0;
@@ -351,11 +361,42 @@ export class ReviewTabComponent {
         label = `${mNum}.`;
       }
       const isActive = active !== null && active.id === v.id && active.plyIndex === i;
+
+      let classification: MoveClassification | undefined = undefined;
+      const varMove = item.move;
+      if (
+        i === 0 &&
+        parentAnalysis &&
+        (parentAnalysis.bestMoveSan === varMove.san ||
+          parentAnalysis.bestMove === `${varMove.from}${varMove.to}`)
+      ) {
+        classification = 'best';
+      } else if (
+        i === 0 &&
+        liveLines.length > 0 &&
+        liveLines[0].firstMove &&
+        (liveLines[0].firstMove.san === varMove.san ||
+          `${liveLines[0].firstMove.from}${liveLines[0].firstMove.to}` === `${varMove.from}${varMove.to}`)
+      ) {
+        classification = 'best';
+      } else if (
+        i === 0 &&
+        liveLines.length > 1 &&
+        liveLines[1].firstMove &&
+        (liveLines[1].firstMove.san === varMove.san ||
+          `${liveLines[1].firstMove.from}${liveLines[1].firstMove.to}` === `${varMove.from}${varMove.to}`)
+      ) {
+        classification = 'excellent';
+      } else {
+        classification = 'good';
+      }
+
       return {
         label,
         san: item.move.san,
         plyIndex: i,
         isActive,
+        classification,
       };
     });
 
@@ -415,29 +456,58 @@ export class ReviewTabComponent {
       if (active && variation && active.plyIndex >= 0 && active.plyIndex < variation.moves.length) {
         const item = variation.moves[active.plyIndex];
         const parentPly = variation.parentPly;
-        const analysis = parentPly >= 0 ? this.analysisService.movesAnalysis()[parentPly] : null;
+        const parentAnalysis = parentPly >= 0 ? this.analysisService.movesAnalysis()[parentPly] : null;
+        const liveLines = this.analysisService.liveEngineLines();
+        const varMove = item.move;
 
+        let classification: MoveClassification = 'good';
         let commentary = `Exploring variation move ${item.move.san}. Step forward or play alternate moves on the board.`;
+
         if (this.isFollowUpActive()) {
-          commentary = 'Demonstrating the engine\'s recommended line from this position.';
-        } else if (this.isBestVariation()) {
-          commentary = 'This was the top engine choice in this position. Click Show Follow-Up to see the line unfold.';
+          classification = 'best';
+          commentary = `Demonstrating engine continuation (${item.move.san}) from move ${parentPly >= 0 ? Math.floor(parentPly / 2) + 1 : 1}.`;
+        } else if (
+          this.isBestVariation() ||
+          (parentAnalysis &&
+            (parentAnalysis.bestMoveSan === varMove.san ||
+              parentAnalysis.bestMove === `${varMove.from}${varMove.to}`))
+        ) {
+          classification = 'best';
+          commentary = `Alternative move ${item.move.san} matches the top engine recommendation for this position.`;
+        } else if (
+          liveLines.length > 0 &&
+          liveLines[0].firstMove &&
+          (liveLines[0].firstMove.san === varMove.san ||
+            `${liveLines[0].firstMove.from}${liveLines[0].firstMove.to}` === `${varMove.from}${varMove.to}`)
+        ) {
+          classification = 'best';
+          commentary = `Alternative move ${item.move.san} is evaluated as the strongest engine candidate.`;
+        } else if (
+          liveLines.length > 1 &&
+          liveLines[1].firstMove &&
+          (liveLines[1].firstMove.san === varMove.san ||
+            `${liveLines[1].firstMove.from}${liveLines[1].firstMove.to}` === `${varMove.from}${varMove.to}`)
+        ) {
+          classification = 'excellent';
+          commentary = `Alternative move ${item.move.san} is a strong second-choice engine line.`;
+        } else {
+          commentary = `Exploring variation move ${item.move.san}. Step forward, play alternate moves, or click RETURN to resume the main review.`;
         }
 
         return {
           isVariation: true,
           isFollowUp: this.isFollowUpActive(),
-          isBest: this.isBestVariation(),
+          isBest: this.isBestVariation() || classification === 'best',
           plyIndex: parentPly,
           san: item.move.san,
           turn: item.move.color,
           moveTime: undefined,
           clock: undefined,
-          classification: (this.isBestVariation() ? 'best' : 'good') as MoveClassification,
+          classification,
           accuracy: null,
           commentary,
-          bestMoveSan: analysis?.bestMoveSan,
-          followUpMoves: analysis?.followUpMoves || [],
+          bestMoveSan: parentAnalysis?.bestMoveSan,
+          followUpMoves: parentAnalysis?.followUpMoves || [],
         };
       }
     }
@@ -599,6 +669,15 @@ export class ReviewTabComponent {
     if (ok) {
       this.isBestVariation.set(true);
     }
+  }
+
+  onLineHover(rank: number | null): void {
+    this.analysisService.setHoveredLineRank(rank);
+  }
+
+  onLineClick(line: LiveEngineLine): void {
+    this.stopFollowUp();
+    this.game.previewEngineLine(line);
   }
 
   retryMove(): void {

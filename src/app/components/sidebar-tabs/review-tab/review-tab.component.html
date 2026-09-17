@@ -3,20 +3,20 @@
   <div class="card-brutal p-2.5 sm:p-3 bg-white dark:bg-[#1E1F24] flex flex-col gap-2 shrink-0 mr-1.5">
     <div
       class="flex items-center justify-between gap-2"
-      [ngClass]="{'border-b-2 border-[#222222] dark:border-[#373A46] pb-2': !isReportView() && game.history().length > 0}"
+      [ngClass]="{'border-b-2 border-[#222222] dark:border-[#373A46] pb-2': (!isReportView() || game.isVariationActive()) && game.history().length > 0}"
     >
       <div class="flex items-center gap-1.5 shrink-0">
         <span class="p-1 bg-[#FF4F00] text-white inline-flex border border-[#222222] dark:border-black shadow-[1px_1px_0_0_#222222]">
           <app-icon name="star" size="w-3.5 h-3.5"></app-icon>
         </span>
         <span class="font-display text-xs sm:text-sm uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6] whitespace-nowrap">
-          {{ isReportView() && game.history().length > 0 ? 'GAME REPORT' : 'GAME REVIEW' }}
+          {{ isReportView() && !game.isVariationActive() && game.history().length > 0 ? 'GAME REPORT' : 'GAME REVIEW' }}
         </span>
       </div>
 
       <div class="flex items-center gap-1.5 relative shrink-0" #soundMenuContainer>
         <!-- If in walkthrough mode, show "BACK TO REPORT" button -->
-        @if (!isReportView() && game.history().length > 0) {
+        @if (!isReportView() && !game.isVariationActive() && game.history().length > 0) {
           <button
             type="button"
             (click)="returnToReport()"
@@ -105,8 +105,8 @@
 
 
 
-    <!-- Coach Commentary & Move Explanation Card (Walkthrough Mode Only) -->
-    @if (!isReportView() && game.history().length > 0) {
+    <!-- Coach Commentary & Move Explanation Card (Walkthrough Mode & Variation Mode) -->
+    @if ((!isReportView() || game.isVariationActive()) && game.history().length > 0) {
       <div class="flex flex-col gap-2.5">
         <!-- Commentary Card -->
         <div class="bg-white dark:bg-[#1E1F24] border-2 border-[#222222] dark:border-black p-2.5 sm:p-3 flex flex-col gap-2 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000] min-w-0">
@@ -126,7 +126,7 @@
                 <span class="font-accent text-xs sm:text-sm font-bold truncate text-[#222222] dark:text-[#F3F4F6]">
                   @if (exp.isVariation) {
                     @if (exp.isFollowUp) {
-                      <strong>Follow-Up</strong> line
+                      <strong>Follow-Up: {{ exp.san }}</strong>
                     } @else if (exp.isBest) {
                       <strong>{{ exp.san }}</strong> is best
                     } @else {
@@ -142,11 +142,25 @@
               }
             </div>
 
-            @if (currentExplanation()?.moveTime; as mTime) {
-              <span class="badge-brutal bg-[#ECECD8] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] text-[10px] sm:text-xs !py-0.5 !px-1.5 font-bold shrink-0">
-                ⏱ {{ mTime }}
-              </span>
-            }
+            <div class="flex items-center gap-1.5 shrink-0">
+              @if (game.isVariationActive()) {
+                <button
+                  type="button"
+                  (click)="game.exitVariation()"
+                  class="btn-brutal btn-brutal-blue !py-0.5 !px-2 text-[10px] sm:text-xs font-accent font-bold flex items-center gap-1 cursor-pointer !shadow-[1px_1px_0_0_#222222] dark:!shadow-[1px_1px_0_0_#000000]"
+                  title="Return to main game line"
+                >
+                  <app-icon name="arrow-uturn-left" size="w-3 h-3"></app-icon>
+                  <span>RETURN</span>
+                </button>
+              }
+
+              @if (currentExplanation()?.moveTime; as mTime) {
+                <span class="badge-brutal bg-[#ECECD8] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] text-[10px] sm:text-xs !py-0.5 !px-1.5 font-bold shrink-0">
+                  ⏱ {{ mTime }}
+                </span>
+              }
+            </div>
           </div>
 
           <!-- Commentary Text -->
@@ -183,9 +197,45 @@
               }
             </button>
           </div>
+
+          <!-- Multi-PV Candidate Lines (if available for this position) -->
+          @if (analysisService.liveEngineLines().length > 0) {
+            <div class="flex flex-col gap-1 border-t border-[#222222]/20 dark:border-[#373A46] pt-2 mt-1">
+              <div class="flex items-center justify-between text-[10px] sm:text-xs font-accent font-bold uppercase text-gray-500 dark:text-gray-400">
+                <span>Top Candidate Lines</span>
+                <span class="font-mono">depth {{ settings.analysisDepth() }}</span>
+              </div>
+              <div class="flex flex-col gap-1">
+                @for (line of analysisService.liveEngineLines(); track line.multipv) {
+                  <div
+                    (mouseenter)="onLineHover(line.multipv)"
+                    (mouseleave)="onLineHover(null)"
+                    (click)="onLineClick(line)"
+                    class="flex items-center gap-1.5 p-1 border border-[#222222]/20 dark:border-[#373A46] hover:border-[#10B981] dark:hover:border-[#10B981] bg-[#ECECD8]/30 dark:bg-[#141519]/60 hover:bg-[#ECECD8] dark:hover:bg-[#2A2B32] cursor-pointer text-xs transition-colors rounded-xs group"
+                  >
+                    <span
+                      class="font-mono text-[10px] font-bold px-1 py-0.5 border rounded-xs shrink-0"
+                      [ngClass]="{
+                        'bg-white text-black border-[#222222]': line.isWhiteAdvantage,
+                        'bg-[#222222] text-white border-gray-600': line.isBlackAdvantage,
+                        'bg-[#D9D9D9] dark:bg-[#373A46] text-[#222222] dark:text-white border-[#222222] dark:border-black': line.isEqual
+                      }"
+                    >
+                      {{ line.scoreFormatted }}
+                    </span>
+                    <div class="font-accent text-[11px] truncate min-w-0 flex-1 select-none">
+                      <span class="text-gray-500 dark:text-gray-400 mr-0.5 font-bold">{{ line.moveNumberPrefix }}</span>
+                      <strong class="font-extrabold text-[#10B981] group-hover:underline mr-1">{{ line.firstSan }}</strong>
+                      <span class="text-gray-700 dark:text-gray-300 font-medium">{{ line.restLineSan }}</span>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          }
         </div>
 
-        <!-- Action buttons row: Best, Retry, Next -->
+        <!-- Action buttons row: Best, Retry, Next / Return -->
         <div class="grid grid-cols-3 gap-1.5 sm:gap-2">
           <button
             type="button"
@@ -209,16 +259,28 @@
             <span>Retry</span>
           </button>
 
-          <button
-            type="button"
-            (click)="nextMove()"
-            [disabled]="!canNext()"
-            class="btn-brutal btn-brutal-green !py-2 sm:!py-2.5 text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
-            title="Next Move"
-          >
-            <span>Next</span>
-            <app-icon name="chevron-right" size="w-3.5 h-3.5"></app-icon>
-          </button>
+          @if (game.isVariationActive()) {
+            <button
+              type="button"
+              (click)="game.exitVariation()"
+              class="btn-brutal btn-brutal-blue !py-2 sm:!py-2.5 text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 cursor-pointer shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000]"
+              title="Return to main game line"
+            >
+              <app-icon name="arrow-uturn-left" size="w-3.5 h-3.5"></app-icon>
+              <span>Return</span>
+            </button>
+          } @else {
+            <button
+              type="button"
+              (click)="nextMove()"
+              [disabled]="!canNext()"
+              class="btn-brutal btn-brutal-green !py-2 sm:!py-2.5 text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+              title="Next Move"
+            >
+              <span>Next</span>
+              <app-icon name="chevron-right" size="w-3.5 h-3.5"></app-icon>
+            </button>
+          }
         </div>
       </div>
     }
@@ -250,8 +312,8 @@
     </div>
   }
 
-  <!-- STATE 2: Full Game Review Report Screen (when game has moves and isReportView() is true) -->
-  @else if (isReportView()) {
+  <!-- STATE 2: Full Game Review Report Screen (when game has moves and isReportView() is true and no variation active) -->
+  @else if (isReportView() && !game.isVariationActive()) {
     <div class="flex flex-col gap-2.5 flex-1 min-h-0 overflow-y-auto pr-1.5 pb-1.5">
       <!-- 1. EVALUATION MOMENTUM CARD -->
       <div class="card-brutal p-3 bg-white dark:bg-[#1E1F24] flex flex-col gap-2 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]">
@@ -676,10 +738,7 @@
 
   <!-- STATE 3: Move-by-Move Interactive Review Walkthrough -->
   @else {
-    <!-- Variation Active Banner -->
-    <div class="mr-1.5">
-      <app-variation-banner></app-variation-banner>
-    </div>
+    <!-- Move List Table Card -->
 
     <!-- Move List Table Card -->
     <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1F24] flex flex-col gap-2 flex-1 min-h-0 mr-1.5">
@@ -714,6 +773,15 @@
                     <span class="opacity-75 text-[10px]">{{ varMove.label }}</span>
                   }
                   <span>{{ varMove.san }}</span>
+                  @if (varMove.classification) {
+                    <span class="badge-brutal text-[8px] !py-0 !px-0.5 font-bold shrink-0 min-w-[14px] h-[14px] flex items-center justify-center rounded-full" [ngClass]="getClassificationBadgeClass(varMove.classification)">
+                      @if (varMove.classification === 'best' || varMove.classification === 'book') {
+                        <app-icon name="star" size="w-2 h-2"></app-icon>
+                      } @else {
+                        <span>{{ getClassificationSymbol(varMove.classification) }}</span>
+                      }
+                    </span>
+                  }
                 </button>
               }
             </div>
@@ -812,6 +880,15 @@
                       <span class="opacity-75 text-[10px]">{{ varMove.label }}</span>
                     }
                     <span>{{ varMove.san }}</span>
+                    @if (varMove.classification) {
+                      <span class="badge-brutal text-[8px] !py-0 !px-0.5 font-bold shrink-0 min-w-[14px] h-[14px] flex items-center justify-center rounded-full" [ngClass]="getClassificationBadgeClass(varMove.classification)">
+                        @if (varMove.classification === 'best' || varMove.classification === 'book') {
+                          <app-icon name="star" size="w-2 h-2"></app-icon>
+                        } @else {
+                          <span>{{ getClassificationSymbol(varMove.classification) }}</span>
+                        }
+                      </span>
+                    }
                   </button>
                 }
               </div>

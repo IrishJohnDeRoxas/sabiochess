@@ -73,11 +73,36 @@ describe('ReviewTabComponent', () => {
     // Click pill to jump
     component.jumpToVariation(pairs[0].variations[0].id, 0);
     expect(gameService.isVariationActive()).toBe(true);
+    expect(component.isReportView()).toBe(false);
+
+    // Verify explanation contains variation annotation details
+    const exp = component.currentExplanation();
+    expect(exp).not.toBeNull();
+    expect(exp?.isVariation).toBe(true);
+    expect(exp?.san).toBe('c5');
+    expect(exp?.classification).toBeDefined();
 
     // Delete variation
     component.deleteVariation(pairs[0].variations[0].id);
     expect(gameService.isVariationActive()).toBe(false);
     expect(gameService.variations().length).toBe(0);
+  });
+
+  it('should auto-switch from report view to walkthrough mode when variation becomes active', () => {
+    gameService.loadSampleGame('opera');
+    fixture.detectChanges();
+    expect(component.isReportView()).toBe(true);
+
+    gameService.jumpToPly(0); // 1. e4
+    gameService.move('d5'); // alternative move creates variation
+    fixture.detectChanges();
+
+    expect(gameService.isVariationActive()).toBe(true);
+    expect(component.isReportView()).toBe(false);
+
+    const exp = component.currentExplanation();
+    expect(exp?.isVariation).toBe(true);
+    expect(exp?.san).toBe('d5');
   });
 
   it('should render game report screen and transition to review walkthrough on start review', () => {
