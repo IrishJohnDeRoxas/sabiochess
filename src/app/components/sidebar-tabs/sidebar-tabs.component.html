@@ -1,4 +1,4 @@
-<div class="flex flex-col gap-3 w-full h-full min-h-0">
+<div class="flex flex-col gap-3 w-full h-auto lg:h-full min-h-0">
   <!-- Neubrutalist Tab Buttons Navigation Strip -->
   <div
     class="card-brutal shrink-0 grid grid-cols-3 gap-1 sm:gap-2 p-1 sm:p-1.5 mr-0 sm:mr-1.5 transition-colors"
@@ -31,7 +31,7 @@
   <!-- Realtime Analysis Top Strip Indicator (visible if analyzing in background) -->
   @if (analysisService.isAnalyzing() && activeTab() !== 'analysis') {
   <div (click)="setTab('analysis')"
-    class="shrink-0 bg-[#FF4F00] text-white border-2 border-[#222222] dark:border-black p-2 flex items-center justify-between text-xs sm:text-sm font-accent font-bold uppercase cursor-pointer hover:opacity-95 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000] animate-pulse mr-1.5"
+    class="shrink-0 bg-[#FF4F00] text-white border-2 border-[#222222] dark:border-black p-2 flex items-center justify-between text-xs sm:text-sm font-accent font-bold uppercase cursor-pointer hover:opacity-95 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000] animate-pulse mr-0 sm:mr-1.5"
     title="Click to open Analysis tab">
     <span class="flex items-center gap-1.5">
       <app-icon name="bolt" size="w-4 h-4"></app-icon>
@@ -41,19 +41,19 @@
   </div>
   }
 
-  <!-- Active Tab Body (Scrollable container matching board height) -->
+  <!-- Active Tab Body (Scrollable container on desktop matching board height, natural on mobile) -->
   <div class="flex-1 min-h-0 flex flex-col">
     @switch (activeTab()) {
     @case ('review') {
-    <app-review-tab class="w-full h-full min-h-0 flex flex-col"></app-review-tab>
+    <app-review-tab class="w-full h-auto lg:h-full min-h-0 flex flex-col"></app-review-tab>
     }
     @case ('analysis') {
-    <div class="w-full h-full min-h-0 overflow-y-auto pr-1.5 pb-1.5">
+    <div class="w-full h-auto lg:h-full min-h-0 lg:overflow-y-auto pr-0 lg:pr-1.5 pb-1.5">
       <app-analysis-tab (startReview)="setTab('review')"></app-analysis-tab>
     </div>
     }
     @case ('settings') {
-    <div class="w-full h-full min-h-0 overflow-y-auto pr-1.5 pb-1.5">
+    <div class="w-full h-auto lg:h-full min-h-0 lg:overflow-y-auto pr-0 lg:pr-1.5 pb-1.5">
       <app-settings-tab></app-settings-tab>
     </div>
     }

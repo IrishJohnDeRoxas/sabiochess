@@ -1,6 +1,6 @@
-<div class="flex flex-col gap-2.5 w-full h-full min-h-0 text-[#222222] dark:text-[#F3F4F6]">
+<div class="flex flex-col gap-2.5 w-full h-auto lg:h-full min-h-0 text-[#222222] dark:text-[#F3F4F6]">
   <!-- Review Header & Sound / Import Bar -->
-  <div class="card-brutal p-2 sm:p-3 bg-white dark:bg-[#1E1F24] flex flex-col gap-2 shrink-0 mr-1.5">
+  <div class="card-brutal p-2 sm:p-3 bg-white dark:bg-[#1E1F24] flex flex-col gap-2 shrink-0 mr-0 sm:mr-1.5">
     <div
       class="flex items-center justify-between gap-1.5 sm:gap-2 flex-wrap sm:flex-nowrap"
       [ngClass]="{'border-b-2 border-[#222222] dark:border-[#373A46] pb-2': (!isReportView() || game.isVariationActive()) && game.history().length > 0}"
@@ -288,7 +288,7 @@
 
   <!-- STATE 1: When 0 moves are played, show Online Fetcher & Samples -->
   @if (game.history().length === 0) {
-    <div class="flex flex-col gap-2 flex-1 min-h-0 overflow-y-auto pr-1.5 pb-1.5">
+    <div class="flex flex-col gap-2 flex-1 min-h-0 lg:overflow-y-auto pr-0 lg:pr-1.5 pb-1.5">
       <app-platform-game-selector (gameSelected)="onOnlineGameSelected($event)"></app-platform-game-selector>
       
       <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1F24] flex flex-col gap-2">
@@ -314,7 +314,7 @@
 
   <!-- STATE 2: Full Game Review Report Screen (when game has moves and isReportView() is true and no variation active) -->
   @else if (isReportView() && !game.isVariationActive()) {
-    <div class="flex flex-col gap-2.5 flex-1 min-h-0 overflow-y-auto pr-1.5 pb-1.5">
+    <div class="flex flex-col gap-2.5 flex-1 min-h-0 lg:overflow-y-auto pr-0 lg:pr-1.5 pb-1.5">
       <!-- 1. EVALUATION MOMENTUM CARD -->
       <div class="card-brutal p-3 bg-white dark:bg-[#1E1F24] flex flex-col gap-2 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]">
         <div class="flex items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-1.5">
@@ -718,134 +718,26 @@
 
   <!-- STATE 3: Move-by-Move Interactive Review Walkthrough -->
   @else {
-    <!-- Move List Table Card -->
-
-    <!-- Move List Table Card -->
-    <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1F24] flex flex-col gap-2 flex-1 min-h-0 mr-1.5">
-      <div class="flex items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-2 shrink-0">
-        <span class="font-display text-xs sm:text-sm uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6]">MOVE NOTATION & TIMING</span>
-        <span class="badge-brutal bg-[#C0C0C0] dark:bg-[#373A46] text-[#222222] dark:text-[#F3F4F6] text-xs font-bold">
-          {{ game.history().length }} PLY
-        </span>
-      </div>
-
-      <!-- Scrollable Notation Container -->
-      <div #movesListContainer class="overflow-y-auto flex-1 min-h-0 pr-1 flex flex-col gap-0.5 select-none scroll-smooth">
-        <div class="grid grid-cols-[36px_1fr_1fr] text-xs sm:text-sm font-label font-bold border-b border-[#222222] dark:border-[#373A46] pb-1.5 text-[#222222] dark:text-[#F3F4F6] bg-[#D9D9D9] dark:bg-[#2A2B32] px-2 py-1.5 sticky top-0 z-10">
-          <span>#</span>
-          <span>WHITE</span>
-          <span>BLACK</span>
+    <div class="flex flex-col gap-2 flex-1 min-h-0 lg:overflow-y-auto pr-0 lg:pr-1 pb-1.5">
+      <!-- Move List Table Card -->
+      <div class="card-brutal p-2.5 sm:p-3.5 bg-white dark:bg-[#1E1F24] flex flex-col gap-2 shrink-0">
+        <div class="flex items-center justify-between border-b-2 border-[#222222] dark:border-[#373A46] pb-2 shrink-0">
+          <span class="font-display text-xs sm:text-sm uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6]">MOVE NOTATION & TIMING</span>
+          <span class="badge-brutal bg-[#C0C0C0] dark:bg-[#373A46] text-[#222222] dark:text-[#F3F4F6] text-xs font-bold">
+            {{ game.history().length }} PLY
+          </span>
         </div>
 
-        <!-- Root Variations (branched from start position / ply -1) -->
-        @for (varItem of rootVariations(); track varItem.id) {
-          <div class="flex items-center justify-between gap-1.5 px-2 py-1.5 bg-[#00C0F9]/10 dark:bg-[#00C0F9]/15 border-l-4 border-[#00C0F9] border-b border-gray-100 dark:border-gray-800 text-xs font-label">
-            <span class="text-[#00C0F9] font-bold text-sm shrink-0 select-none">↳</span>
-            <div class="flex flex-wrap items-center gap-1.5 flex-1 min-w-0">
-              @for (varMove of varItem.moves; track varMove.plyIndex) {
-                <button
-                  type="button"
-                  (click)="jumpToVariation(varItem.id, varMove.plyIndex)"
-                  class="variation-move-pill cursor-pointer px-1.5 py-0.5 rounded text-xs font-bold font-mono transition-all flex items-center gap-1 border border-transparent"
-                  [ngClass]="varMove.isActive ? 'bg-[#00C0F9] !text-black shadow-[1px_1px_0_0_#222222] dark:shadow-[1px_1px_0_0_#000000] border-[#222222] dark:border-black font-extrabold' : 'bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] hover:bg-[#00C0F9]/30'"
-                >
-                  @if (varMove.label) {
-                    <span class="opacity-75 text-[10px]">{{ varMove.label }}</span>
-                  }
-                  <span>{{ varMove.san }}</span>
-                  @if (varMove.classification) {
-                    <span class="badge-brutal text-[8px] !py-0 !px-0.5 font-bold shrink-0 min-w-[14px] h-[14px] flex items-center justify-center rounded-full" [ngClass]="getClassificationBadgeClass(varMove.classification)">
-                      @if (varMove.classification === 'best' || varMove.classification === 'book') {
-                        <app-icon name="star" size="w-2 h-2"></app-icon>
-                      } @else {
-                        <span>{{ getClassificationSymbol(varMove.classification) }}</span>
-                      }
-                    </span>
-                  }
-                </button>
-              }
-            </div>
-            <button
-              type="button"
-              (click)="deleteVariation(varItem.id, $event)"
-              class="text-gray-400 hover:text-red-500 hover:bg-red-500/10 p-1 rounded transition-colors shrink-0 cursor-pointer"
-              title="Delete variation branch"
-              aria-label="Delete variation"
-            >
-              <app-icon name="trash" size="w-3.5 h-3.5"></app-icon>
-            </button>
-          </div>
-        }
-
-        @for (pair of movePairs(); track pair.moveNumber) {
-          <div class="grid grid-cols-[36px_1fr_1fr] text-xs sm:text-sm font-label px-2 py-1 border-b border-gray-100 dark:border-gray-800 hover:bg-[#D9D9D9]/50 dark:hover:bg-[#2A2B32]/50 items-center transition-colors">
-            <span class="text-gray-500 dark:text-gray-400 font-bold text-xs">{{ pair.moveNumber }}.</span>
-            
-            <!-- White Move -->
-            <div
-              (click)="jumpTo(pair.whitePly)"
-              [attr.data-active-move]="isMainPlyActive(pair.whitePly)"
-              class="flex items-center justify-between font-bold px-1.5 py-0.5 transition-colors cursor-pointer border border-transparent"
-              [ngClass]="{
-                'bg-[#FF4F00] !text-white shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000] border-[#222222] dark:border-black': isMainPlyActive(pair.whitePly)
-              }"
-            >
-              <div class="flex items-center gap-1 truncate">
-                <span>{{ pair.whiteSan }}</span>
-                @if (pair.whiteMoveTime) {
-                  <span class="text-[10px] font-normal opacity-75" [title]="'Time spent: ' + pair.whiteMoveTime + (pair.whiteClock ? ' | Clock: ' + pair.whiteClock : '')">
-                    {{ pair.whiteMoveTime }}
-                  </span>
-                }
-              </div>
-
-              @if (pair.whiteClass) {
-                <span class="badge-brutal text-[9px] !py-0 !px-1 font-bold shrink-0 min-w-[18px] h-[16px] flex items-center justify-center" [ngClass]="getClassificationBadgeClass(pair.whiteClass)">
-                  @if (pair.whiteClass === 'best' || pair.whiteClass === 'book') {
-                    <app-icon name="star" size="w-2.5 h-2.5"></app-icon>
-                  } @else {
-                    <span>{{ getClassificationSymbol(pair.whiteClass) }}</span>
-                  }
-                </span>
-              }
-            </div>
-
-            <!-- Black Move -->
-            @if (pair.blackSan && pair.blackPly !== undefined) {
-              <div
-                (click)="jumpTo(pair.blackPly)"
-                [attr.data-active-move]="isMainPlyActive(pair.blackPly)"
-                class="flex items-center justify-between font-bold px-1.5 py-0.5 transition-colors cursor-pointer border border-transparent"
-                [ngClass]="{
-                  'bg-[#0E4C92] !text-white shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000] border-[#222222] dark:border-black': isMainPlyActive(pair.blackPly)
-                }"
-              >
-                <div class="flex items-center gap-1 truncate">
-                  <span>{{ pair.blackSan }}</span>
-                  @if (pair.blackMoveTime) {
-                    <span class="text-[10px] font-normal opacity-75" [title]="'Time spent: ' + pair.blackMoveTime + (pair.blackClock ? ' | Clock: ' + pair.blackClock : '')">
-                      {{ pair.blackMoveTime }}
-                    </span>
-                  }
-                </div>
-
-                @if (pair.blackClass) {
-                  <span class="badge-brutal text-[9px] !py-0 !px-1 font-bold shrink-0 min-w-[18px] h-[16px] flex items-center justify-center" [ngClass]="getClassificationBadgeClass(pair.blackClass)">
-                    @if (pair.blackClass === 'best' || pair.blackClass === 'book') {
-                      <app-icon name="star" size="w-2.5 h-2.5"></app-icon>
-                    } @else {
-                      <span>{{ getClassificationSymbol(pair.blackClass) }}</span>
-                    }
-                  </span>
-                }
-              </div>
-            } @else {
-              <span class="text-gray-400 px-1.5">...</span>
-            }
+        <!-- Fixed Height Scrollable Notation Table -->
+        <div #movesListContainer class="overflow-y-auto h-44 sm:h-48 pr-1 flex flex-col gap-0.5 select-none scroll-smooth">
+          <div class="grid grid-cols-[36px_1fr_1fr] text-xs sm:text-sm font-label font-bold border-b border-[#222222] dark:border-[#373A46] pb-1.5 text-[#222222] dark:text-[#F3F4F6] bg-[#D9D9D9] dark:bg-[#2A2B32] px-2 py-1.5 sticky top-0 z-10">
+            <span>#</span>
+            <span>WHITE</span>
+            <span>BLACK</span>
           </div>
 
-          <!-- Variations branched after white's or black's move in this pair -->
-          @for (varItem of pair.variations; track varItem.id) {
+          <!-- Root Variations (branched from start position / ply -1) -->
+          @for (varItem of rootVariations(); track varItem.id) {
             <div class="flex items-center justify-between gap-1.5 px-2 py-1.5 bg-[#00C0F9]/10 dark:bg-[#00C0F9]/15 border-l-4 border-[#00C0F9] border-b border-gray-100 dark:border-gray-800 text-xs font-label">
               <span class="text-[#00C0F9] font-bold text-sm shrink-0 select-none">↳</span>
               <div class="flex flex-wrap items-center gap-1.5 flex-1 min-w-0">
@@ -883,110 +775,218 @@
               </button>
             </div>
           }
-        }
+
+          @for (pair of movePairs(); track pair.moveNumber) {
+            <div class="grid grid-cols-[36px_1fr_1fr] text-xs sm:text-sm font-label px-2 py-1 border-b border-gray-100 dark:border-gray-800 hover:bg-[#D9D9D9]/50 dark:hover:bg-[#2A2B32]/50 items-center transition-colors">
+              <span class="text-gray-500 dark:text-gray-400 font-bold text-xs">{{ pair.moveNumber }}.</span>
+              
+              <!-- White Move -->
+              <div
+                (click)="jumpTo(pair.whitePly)"
+                [attr.data-active-move]="isMainPlyActive(pair.whitePly)"
+                class="flex items-center justify-between font-bold px-1.5 py-0.5 transition-colors cursor-pointer border border-transparent"
+                [ngClass]="{
+                  'bg-[#FF4F00] !text-white shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000] border-[#222222] dark:border-black': isMainPlyActive(pair.whitePly)
+                }"
+              >
+                <div class="flex items-center gap-1 truncate">
+                  <span>{{ pair.whiteSan }}</span>
+                  @if (pair.whiteMoveTime) {
+                    <span class="text-[10px] font-normal opacity-75" [title]="'Time spent: ' + pair.whiteMoveTime + (pair.whiteClock ? ' | Clock: ' + pair.whiteClock : '')">
+                      {{ pair.whiteMoveTime }}
+                    </span>
+                  }
+                </div>
+
+                @if (pair.whiteClass) {
+                  <span class="badge-brutal text-[9px] !py-0 !px-1 font-bold shrink-0 min-w-[18px] h-[16px] flex items-center justify-center" [ngClass]="getClassificationBadgeClass(pair.whiteClass)">
+                    @if (pair.whiteClass === 'best' || pair.whiteClass === 'book') {
+                      <app-icon name="star" size="w-2.5 h-2.5"></app-icon>
+                    } @else {
+                      <span>{{ getClassificationSymbol(pair.whiteClass) }}</span>
+                    }
+                  </span>
+                }
+              </div>
+
+              <!-- Black Move -->
+              @if (pair.blackSan && pair.blackPly !== undefined) {
+                <div
+                  (click)="jumpTo(pair.blackPly)"
+                  [attr.data-active-move]="isMainPlyActive(pair.blackPly)"
+                  class="flex items-center justify-between font-bold px-1.5 py-0.5 transition-colors cursor-pointer border border-transparent"
+                  [ngClass]="{
+                    'bg-[#0E4C92] !text-white shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000] border-[#222222] dark:border-black': isMainPlyActive(pair.blackPly)
+                  }"
+                >
+                  <div class="flex items-center gap-1 truncate">
+                    <span>{{ pair.blackSan }}</span>
+                    @if (pair.blackMoveTime) {
+                      <span class="text-[10px] font-normal opacity-75" [title]="'Time spent: ' + pair.blackMoveTime + (pair.blackClock ? ' | Clock: ' + pair.blackClock : '')">
+                        {{ pair.blackMoveTime }}
+                      </span>
+                    }
+                  </div>
+
+                  @if (pair.blackClass) {
+                    <span class="badge-brutal text-[9px] !py-0 !px-1 font-bold shrink-0 min-w-[18px] h-[16px] flex items-center justify-center" [ngClass]="getClassificationBadgeClass(pair.blackClass)">
+                      @if (pair.blackClass === 'best' || pair.blackClass === 'book') {
+                        <app-icon name="star" size="w-2.5 h-2.5"></app-icon>
+                      } @else {
+                        <span>{{ getClassificationSymbol(pair.blackClass) }}</span>
+                      }
+                    </span>
+                  }
+                </div>
+              } @else {
+                <span class="text-gray-400 px-1.5">...</span>
+              }
+            </div>
+
+            <!-- Variations branched after white's or black's move in this pair -->
+            @for (varItem of pair.variations; track varItem.id) {
+              <div class="flex items-center justify-between gap-1.5 px-2 py-1.5 bg-[#00C0F9]/10 dark:bg-[#00C0F9]/15 border-l-4 border-[#00C0F9] border-b border-gray-100 dark:border-gray-800 text-xs font-label">
+                <span class="text-[#00C0F9] font-bold text-sm shrink-0 select-none">↳</span>
+                <div class="flex flex-wrap items-center gap-1.5 flex-1 min-w-0">
+                  @for (varMove of varItem.moves; track varMove.plyIndex) {
+                    <button
+                      type="button"
+                      (click)="jumpToVariation(varItem.id, varMove.plyIndex)"
+                      class="variation-move-pill cursor-pointer px-1.5 py-0.5 rounded text-xs font-bold font-mono transition-all flex items-center gap-1 border border-transparent"
+                      [ngClass]="varMove.isActive ? 'bg-[#00C0F9] !text-black shadow-[1px_1px_0_0_#222222] dark:shadow-[1px_1px_0_0_#000000] border-[#222222] dark:border-black font-extrabold' : 'bg-[#D9D9D9] dark:bg-[#2A2B32] text-[#222222] dark:text-[#F3F4F6] hover:bg-[#00C0F9]/30'"
+                    >
+                      @if (varMove.label) {
+                        <span class="opacity-75 text-[10px]">{{ varMove.label }}</span>
+                      }
+                      <span>{{ varMove.san }}</span>
+                      @if (varMove.classification) {
+                        <span class="badge-brutal text-[8px] !py-0 !px-0.5 font-bold shrink-0 min-w-[14px] h-[14px] flex items-center justify-center rounded-full" [ngClass]="getClassificationBadgeClass(varMove.classification)">
+                          @if (varMove.classification === 'best' || varMove.classification === 'book') {
+                            <app-icon name="star" size="w-2 h-2"></app-icon>
+                          } @else {
+                            <span>{{ getClassificationSymbol(varMove.classification) }}</span>
+                          }
+                        </span>
+                      }
+                    </button>
+                  }
+                </div>
+                <button
+                  type="button"
+                  (click)="deleteVariation(varItem.id, $event)"
+                  class="text-gray-400 hover:text-red-500 hover:bg-red-500/10 p-1 rounded transition-colors shrink-0 cursor-pointer"
+                  title="Delete variation branch"
+                  aria-label="Delete variation"
+                >
+                  <app-icon name="trash" size="w-3.5 h-3.5"></app-icon>
+                </button>
+              </div>
+            }
+          }
+        </div>
       </div>
-    </div>
 
-    <!-- Timeline Stepper Bar -->
-    <div class="card-brutal p-1.5 bg-[#D9D9D9] dark:bg-[#2A2B32] flex items-center justify-between gap-1 shrink-0 mr-1.5">
-      <!-- First Move (Start Position) -->
-      <button
-        type="button"
-        (click)="game.goToStart()"
-        [disabled]="game.history().length === 0"
-        class="btn-brutal !py-1.5 !px-2 flex-1 text-xs cursor-pointer"
-        title="Go to Start (Move 0)"
-      >
-        <app-icon name="chevron-double-left" size="w-3.5 h-3.5"></app-icon>
-      </button>
+      <!-- Timeline Stepper Bar -->
+      <div class="card-brutal p-1.5 bg-[#D9D9D9] dark:bg-[#2A2B32] flex items-center justify-between gap-1 shrink-0">
+        <!-- First Move (Start Position) -->
+        <button
+          type="button"
+          (click)="game.goToStart()"
+          [disabled]="game.history().length === 0"
+          class="btn-brutal !py-1.5 !px-2 flex-1 text-xs cursor-pointer"
+          title="Go to Start (Move 0)"
+        >
+          <app-icon name="chevron-double-left" size="w-3.5 h-3.5"></app-icon>
+        </button>
 
-      <!-- Prev Move -->
-      <button
-        type="button"
-        (click)="game.prevMove()"
-        [disabled]="game.history().length === 0"
-        class="btn-brutal !py-1.5 !px-2 flex-1 text-xs cursor-pointer"
-        title="Previous Move"
-      >
-        <app-icon name="chevron-left" size="w-3.5 h-3.5"></app-icon>
-      </button>
+        <!-- Prev Move -->
+        <button
+          type="button"
+          (click)="game.prevMove()"
+          [disabled]="game.history().length === 0"
+          class="btn-brutal !py-1.5 !px-2 flex-1 text-xs cursor-pointer"
+          title="Previous Move"
+        >
+          <app-icon name="chevron-left" size="w-3.5 h-3.5"></app-icon>
+        </button>
 
-      <!-- Auto Play / Pause -->
-      <button
-        type="button"
-        (click)="game.toggleAutoplay()"
-        [disabled]="game.history().length === 0"
-        class="btn-brutal btn-brutal-orange !py-1.5 !px-2.5 flex-1 text-xs flex items-center justify-center gap-1 cursor-pointer"
-        title="Autoplay Moves"
-      >
-        <app-icon [name]="game.isAutoplaying() ? 'pause' : 'play'" size="w-3.5 h-3.5"></app-icon>
-      </button>
+        <!-- Auto Play / Pause -->
+        <button
+          type="button"
+          (click)="game.toggleAutoplay()"
+          [disabled]="game.history().length === 0"
+          class="btn-brutal btn-brutal-orange !py-1.5 !px-2.5 flex-1 text-xs flex items-center justify-center gap-1 cursor-pointer"
+          title="Autoplay Moves"
+        >
+          <app-icon [name]="game.isAutoplaying() ? 'pause' : 'play'" size="w-3.5 h-3.5"></app-icon>
+        </button>
 
-      <!-- Next Move -->
-      <button
-        type="button"
-        (click)="game.nextMove()"
-        [disabled]="game.history().length === 0"
-        class="btn-brutal !py-1.5 !px-2 flex-1 text-xs cursor-pointer"
-        title="Next Move"
-      >
-        <app-icon name="chevron-right" size="w-3.5 h-3.5"></app-icon>
-      </button>
+        <!-- Next Move -->
+        <button
+          type="button"
+          (click)="game.nextMove()"
+          [disabled]="game.history().length === 0"
+          class="btn-brutal !py-1.5 !px-2 flex-1 text-xs cursor-pointer"
+          title="Next Move"
+        >
+          <app-icon name="chevron-right" size="w-3.5 h-3.5"></app-icon>
+        </button>
 
-      <!-- Last Move / Live -->
-      <button
-        type="button"
-        (click)="game.goToEnd()"
-        [disabled]="game.history().length === 0"
-        class="btn-brutal !py-1.5 !px-2 flex-1 text-xs cursor-pointer"
-        title="Go to Final Position"
-      >
-        <app-icon name="chevron-double-right" size="w-3.5 h-3.5"></app-icon>
-      </button>
-    </div>
+        <!-- Last Move / Live -->
+        <button
+          type="button"
+          (click)="game.goToEnd()"
+          [disabled]="game.history().length === 0"
+          class="btn-brutal !py-1.5 !px-2 flex-1 text-xs cursor-pointer"
+          title="Go to Final Position"
+        >
+          <app-icon name="chevron-double-right" size="w-3.5 h-3.5"></app-icon>
+        </button>
+      </div>
 
-    <!-- Bottom Quick Controls -->
-    <div class="grid grid-cols-4 gap-1.5 shrink-0 p-0.5 mr-1.5">
-      <button
-        type="button"
-        (click)="game.flipBoard()"
-        class="btn-brutal btn-brutal-silver !py-1.5 !px-1 text-xs font-bold flex items-center justify-center gap-1 cursor-pointer"
-        title="Flip board orientation"
-      >
-        <app-icon name="arrow-path" size="w-3.5 h-3.5"></app-icon>
-        <span>FLIP</span>
-      </button>
+      <!-- Bottom Quick Controls -->
+      <div class="grid grid-cols-4 gap-1 sm:gap-1.5 shrink-0 p-0.5">
+        <button
+          type="button"
+          (click)="game.flipBoard()"
+          class="btn-brutal btn-brutal-silver !py-1.5 !px-1 text-[11px] sm:text-xs font-bold flex items-center justify-center gap-1 cursor-pointer"
+          title="Flip board orientation"
+        >
+          <app-icon name="arrow-path" size="w-3 sm:w-3.5 h-3 sm:h-3.5"></app-icon>
+          <span>FLIP</span>
+        </button>
 
-      <button
-        type="button"
-        (click)="game.undoMove()"
-        [disabled]="game.history().length === 0"
-        class="btn-brutal btn-brutal-silver !py-1.5 !px-1 text-xs font-bold flex items-center justify-center gap-1 cursor-pointer"
-        title="Undo move"
-      >
-        <app-icon name="arrow-uturn-left" size="w-3.5 h-3.5"></app-icon>
-        <span>UNDO</span>
-      </button>
+        <button
+          type="button"
+          (click)="game.undoMove()"
+          [disabled]="game.history().length === 0"
+          class="btn-brutal btn-brutal-silver !py-1.5 !px-1 text-[11px] sm:text-xs font-bold flex items-center justify-center gap-1 cursor-pointer"
+          title="Undo move"
+        >
+          <app-icon name="arrow-uturn-left" size="w-3 sm:w-3.5 h-3 sm:h-3.5"></app-icon>
+          <span>UNDO</span>
+        </button>
 
-      <button
-        type="button"
-        (click)="game.resetGame()"
-        class="btn-brutal btn-brutal-orange !py-1.5 !px-1 text-xs font-bold flex items-center justify-center gap-1 cursor-pointer"
-        title="Start new game"
-      >
-        <app-icon name="plus" size="w-3.5 h-3.5"></app-icon>
-        <span>NEW</span>
-      </button>
+        <button
+          type="button"
+          (click)="game.resetGame()"
+          class="btn-brutal btn-brutal-orange !py-1.5 !px-1 text-[11px] sm:text-xs font-bold flex items-center justify-center gap-1 cursor-pointer"
+          title="Start new game"
+        >
+          <app-icon name="plus" size="w-3 sm:w-3.5 h-3 sm:h-3.5"></app-icon>
+          <span>NEW</span>
+        </button>
 
-      <button
-        type="button"
-        (click)="copyFen()"
-        class="btn-brutal btn-brutal-blue !py-1.5 !px-1 text-xs font-bold flex items-center justify-center gap-1 cursor-pointer"
-        title="Copy FEN string"
-      >
-        <app-icon [name]="settings.toastMessage() === 'FEN COPIED' ? 'check' : 'clipboard-document'" size="w-3.5 h-3.5"></app-icon>
-        <span>{{ settings.toastMessage() === 'FEN COPIED' ? 'COPIED' : 'FEN' }}</span>
-      </button>
+        <button
+          type="button"
+          (click)="copyFen()"
+          class="btn-brutal btn-brutal-blue !py-1.5 !px-1 text-[11px] sm:text-xs font-bold flex items-center justify-center gap-1 cursor-pointer"
+          title="Copy FEN string"
+        >
+          <app-icon [name]="settings.toastMessage() === 'FEN COPIED' ? 'check' : 'clipboard-document'" size="w-3 sm:w-3.5 h-3 sm:h-3.5"></app-icon>
+          <span>{{ settings.toastMessage() === 'FEN COPIED' ? 'COPIED' : 'FEN' }}</span>
+        </button>
+      </div>
     </div>
   }
 </div>
