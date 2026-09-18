@@ -82,20 +82,15 @@ addEventListener('message', async (event: MessageEvent) => {
 
         if (device === 'webgpu') {
           try {
-            console.log('[SupertonicWorker] Trying WebGPU...');
             ttsPipeline = await loadPipeline('webgpu');
-            console.log('[SupertonicWorker] WebGPU pipeline ready');
-          } catch (gpuErr) {
-            console.warn('[SupertonicWorker] WebGPU pipeline failed, falling back to WASM:', gpuErr);
+          } catch {
             ttsPipeline = null;
             device = 'wasm';
           }
         }
 
         if (!ttsPipeline) {
-          console.log('[SupertonicWorker] Loading WASM pipeline...');
           ttsPipeline = await loadPipeline('wasm');
-          console.log('[SupertonicWorker] WASM pipeline ready');
         }
 
         isInitializing = false;
@@ -129,11 +124,9 @@ addEventListener('message', async (event: MessageEvent) => {
       // Chain onto the queue — ensures only one generate() runs at a time
       generationQueue = generationQueue.then(async () => {
         if (currentGenerationId !== id) {
-          console.log('[SupertonicWorker] Skipping stale request, id:', id);
           return;
         }
 
-        console.log('[SupertonicWorker] Starting generate, id:', id, 'voice:', voice, 'text:', text.slice(0, 50));
         try {
           // Format text with language tag if not already provided
           const formattedText = text.startsWith('<') ? text : `<en>${text}</en>`;
@@ -147,7 +140,6 @@ addEventListener('message', async (event: MessageEvent) => {
 
           // Check again after async generate completes
           if (currentGenerationId !== id) {
-            console.log('[SupertonicWorker] Stale result discarded, id:', id);
             return;
           }
 
@@ -156,7 +148,6 @@ addEventListener('message', async (event: MessageEvent) => {
             rawData instanceof Float32Array ? rawData : new Float32Array(rawData);
           const sampleRate: number = output.sampling_rate || 44100;
 
-          console.log('[SupertonicWorker] Posting AUDIO, id:', id, 'samples:', floatArray.length, 'rate:', sampleRate);
           postMessage({
             type: 'AUDIO',
             payload: { id, sampleRate, samples: floatArray },
