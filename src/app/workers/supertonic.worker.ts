@@ -6,7 +6,6 @@ env.allowRemoteModels = true;
 if (env.backends?.onnx?.wasm) {
   env.backends.onnx.wasm.proxy = false;
   env.backends.onnx.wasm.numThreads = 1;
-  env.backends.onnx.wasm.wasmPaths = '/onnxruntime-web/';
 }
 
 self.addEventListener('error', (err) => {
@@ -34,10 +33,10 @@ addEventListener('message', async (event: MessageEvent) => {
 
       isInitializing = true;
 
-      const loadPipeline = async (device: 'webgpu' | 'wasm', dtype: 'fp32' | 'q8') => {
+      const loadPipeline = async (device: 'webgpu' | 'wasm') => {
         return pipeline('text-to-speech', 'onnx-community/Supertonic-TTS-2-ONNX', {
           device,
-          dtype,
+          dtype: 'fp32',
           progress_callback: (progressInfo: any) => {
             const key = progressInfo.file || progressInfo.name || 'unknown';
             if (progressInfo.status === 'progress' && progressInfo.total > 0) {
@@ -68,7 +67,6 @@ addEventListener('message', async (event: MessageEvent) => {
 
       try {
         let device: 'webgpu' | 'wasm' = 'wasm';
-        let dtype: 'fp32' | 'q8' = 'q8';
 
         // Probe WebGPU availability
         if (typeof navigator !== 'undefined' && 'gpu' in navigator && (navigator as any).gpu) {
@@ -76,29 +74,27 @@ addEventListener('message', async (event: MessageEvent) => {
             const adapter = await (navigator as any).gpu.requestAdapter();
             if (adapter) {
               device = 'webgpu';
-              dtype = 'fp32';
             }
           } catch {
-            // stay on wasm
+            device = 'wasm';
           }
         }
 
         if (device === 'webgpu') {
           try {
             console.log('[SupertonicWorker] Trying WebGPU...');
-            ttsPipeline = await loadPipeline('webgpu', 'fp32');
+            ttsPipeline = await loadPipeline('webgpu');
             console.log('[SupertonicWorker] WebGPU pipeline ready');
           } catch (gpuErr) {
             console.warn('[SupertonicWorker] WebGPU pipeline failed, falling back to WASM:', gpuErr);
             ttsPipeline = null;
             device = 'wasm';
-            dtype = 'q8';
           }
         }
 
         if (!ttsPipeline) {
-          console.log('[SupertonicWorker] Loading WASM/q8 pipeline...');
-          ttsPipeline = await loadPipeline('wasm', 'q8');
+          console.log('[SupertonicWorker] Loading WASM pipeline...');
+          ttsPipeline = await loadPipeline('wasm');
           console.log('[SupertonicWorker] WASM pipeline ready');
         }
 
@@ -106,6 +102,7 @@ addEventListener('message', async (event: MessageEvent) => {
         postMessage({ type: 'READY', payload: { device } });
       } catch (err: any) {
         isInitializing = false;
+        console.error('[SupertonicWorker] Failed to load pipeline:', err);
         postMessage({
           type: 'ERROR',
           payload: { message: err?.message || 'Failed to initialize Supertonic TTS' },
