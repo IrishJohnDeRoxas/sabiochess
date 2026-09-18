@@ -160,6 +160,21 @@
                   ⏱ {{ mTime }}
                 </span>
               }
+
+              <button
+                type="button"
+                (click)="speakCurrentCommentary()"
+                class="btn-brutal btn-brutal-silver !py-0.5 !px-1.5 text-[10px] sm:text-xs font-accent font-bold flex items-center gap-1 cursor-pointer !shadow-[1px_1px_0_0_#222222] dark:!shadow-[1px_1px_0_0_#000000]"
+                [title]="voiceService.isSpeaking() ? 'Stop voice commentary' : 'Listen to coach commentary'"
+              >
+                @if (voiceService.isSpeaking()) {
+                  <app-icon name="speaker-wave" size="w-3 h-3 text-[#8B5CF6] animate-pulse"></app-icon>
+                  <span class="text-[#8B5CF6]">VOICE</span>
+                } @else {
+                  <app-icon name="speaker-wave" size="w-3 h-3"></app-icon>
+                  <span>VOICE</span>
+                }
+              </button>
             </div>
           </div>
 

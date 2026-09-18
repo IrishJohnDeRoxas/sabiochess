@@ -117,6 +117,112 @@ export const MEME_SOUND_PACKS: MemePackOption[] = [
   },
 ];
 
+export type VoiceEngine = 'instant' | 'neural';
+
+export type CommentaryVoice =
+  | 'F1'
+  | 'F2'
+  | 'F3'
+  | 'F4'
+  | 'F5'
+  | 'M1'
+  | 'M2'
+  | 'M3'
+  | 'M4'
+  | 'M5';
+
+export interface VoiceOption {
+  id: CommentaryVoice;
+  name: string;
+  accent: string;
+  gender: 'Female' | 'Male';
+  badge: string;
+  description: string;
+}
+
+export const COMMENTARY_VOICES: VoiceOption[] = [
+  {
+    id: 'F1',
+    name: 'Aria (Recommended)',
+    accent: 'American',
+    gender: 'Female',
+    badge: 'Popular',
+    description: 'Warm, highly expressive, and clear natural delivery.',
+  },
+  {
+    id: 'M1',
+    name: 'Marcus',
+    accent: 'American',
+    gender: 'Male',
+    badge: 'Master',
+    description: 'Deep, resonant, and calm grandmaster commentary tone.',
+  },
+  {
+    id: 'M3',
+    name: 'Arthur',
+    accent: 'British',
+    gender: 'Male',
+    badge: 'British',
+    description: 'Classic, crisp tournament commentator style.',
+  },
+  {
+    id: 'F3',
+    name: 'Camille',
+    accent: 'European',
+    gender: 'Female',
+    badge: 'Articulate',
+    description: 'Sophisticated and articulate analysis tone.',
+  },
+  {
+    id: 'M2',
+    name: 'Leo',
+    accent: 'European',
+    gender: 'Male',
+    badge: 'Energetic',
+    description: 'Punchy and upbeat play-by-play tactical narration.',
+  },
+  {
+    id: 'F2',
+    name: 'Elena',
+    accent: 'European',
+    gender: 'Female',
+    badge: 'Expressive',
+    description: 'Bright, energetic, and engaging play-by-play style.',
+  },
+  {
+    id: 'F4',
+    name: 'Beatriz',
+    accent: 'European',
+    gender: 'Female',
+    badge: 'Narrative',
+    description: 'Deep, calm, and insightful positional delivery.',
+  },
+  {
+    id: 'M4',
+    name: 'Gabriel',
+    accent: 'European',
+    gender: 'Male',
+    badge: 'Deep',
+    description: 'Authoritative and precise tactical breakdown.',
+  },
+  {
+    id: 'F5',
+    name: 'Ji-woo',
+    accent: 'Asian',
+    gender: 'Female',
+    badge: 'Soft',
+    description: 'Gentle, focused, and relaxed tactical guidance.',
+  },
+  {
+    id: 'M5',
+    name: 'Min-ho',
+    accent: 'Asian',
+    gender: 'Male',
+    badge: 'Smooth',
+    description: 'Smooth, measured, and strategic master insights.',
+  },
+];
+
 export type AppTheme = 'light' | 'dark';
 
 export interface UserSettings {
@@ -125,6 +231,10 @@ export interface UserSettings {
   moveSounds: boolean;
   memeSounds: boolean;
   memePack: MemeSoundPack;
+  voiceCommentary: boolean;
+  voiceEngine: VoiceEngine;
+  commentaryVoice: CommentaryVoice;
+  commentarySpeed: number;
   volume: number; // 0 - 100
   analysisDepth: number; // 10 - 22
   autoEvaluation: boolean;
@@ -144,6 +254,10 @@ export const DEFAULT_SETTINGS: UserSettings = {
   moveSounds: true,
   memeSounds: true,
   memePack: 'meme',
+  voiceCommentary: false,
+  voiceEngine: 'neural',
+  commentaryVoice: 'F1',
+  commentarySpeed: 1.05,
   volume: 75,
   analysisDepth: 14,
   autoEvaluation: true,

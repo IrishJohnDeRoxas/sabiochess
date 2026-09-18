@@ -5,6 +5,7 @@ import { ChessGameService, SAMPLE_GAMES } from '../../../services/chess-game.ser
 import { GameAnalysisService } from '../../../services/game-analysis.service';
 import { SoundService } from '../../../services/sound.service';
 import { SettingsService } from '../../../services/settings.service';
+import { VoiceCommentaryService } from '../../../services/voice-commentary.service';
 import { MEME_SOUND_PACKS, MemeSoundPack } from '../../../models/settings.model';
 import { MoveClassification, getHeroIconForClass, LiveEngineLine } from '../../../models/analysis.model';
 import { MoveVariation } from '../../../models/chess.model';
@@ -91,6 +92,7 @@ export class ReviewTabComponent {
   readonly analysisService = inject(GameAnalysisService);
   readonly soundService = inject(SoundService);
   readonly settings = inject(SettingsService);
+  readonly voiceService = inject(VoiceCommentaryService);
 
   readonly sampleGames = SAMPLE_GAMES;
   readonly soundPacks = MEME_SOUND_PACKS;
@@ -171,6 +173,21 @@ export class ReviewTabComponent {
         if (!this.analysisService.summary() && !this.analysisService.isAnalyzing()) {
           this.triggerAutoAnalysis();
         }
+      }
+    });
+
+    // Auto-narrate coach commentary when navigating moves if voiceCommentary is enabled
+    effect(() => {
+      const isVoiceEnabled = this.settings.voiceCommentary();
+      if (!isVoiceEnabled) return;
+      const isReport = this.isReportView();
+      if (isReport) return;
+      const exp = this.currentExplanation();
+      if (!exp) return;
+
+      const commentaryText = exp.commentary || `${exp.san} is ${exp.classification}`;
+      if (commentaryText) {
+        this.voiceService.speak(commentaryText);
       }
     });
   }
@@ -594,6 +611,14 @@ export class ReviewTabComponent {
     if (pack) {
       this.soundService.playRandomPackSound(pack.id as any, this.settings.volume());
     }
+  }
+
+  speakCurrentCommentary(): void {
+    const exp = this.currentExplanation();
+    const text =
+      exp?.commentary ||
+      (exp ? `${exp.san} is ${exp.classification}` : 'Review each move with tactical insights.');
+    this.voiceService.speak(text, { force: true, interrupt: true });
   }
 
   loadNewGame(): void {

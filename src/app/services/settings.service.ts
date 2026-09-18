@@ -3,9 +3,11 @@ import {
   AppTheme,
   BOARD_THEMES,
   BoardTheme,
+  CommentaryVoice,
   DEFAULT_SETTINGS,
   MemeSoundPack,
   UserSettings,
+  VoiceEngine,
 } from '../models/settings.model';
 import { SoundService } from './sound.service';
 
@@ -22,6 +24,10 @@ export class SettingsService {
   readonly moveSounds = signal<boolean>(DEFAULT_SETTINGS.moveSounds);
   readonly memeSounds = signal<boolean>(DEFAULT_SETTINGS.memeSounds);
   readonly memePack = signal<MemeSoundPack>(DEFAULT_SETTINGS.memePack);
+  readonly voiceCommentary = signal<boolean>(DEFAULT_SETTINGS.voiceCommentary);
+  readonly voiceEngine = signal<VoiceEngine>(DEFAULT_SETTINGS.voiceEngine);
+  readonly commentaryVoice = signal<CommentaryVoice>(DEFAULT_SETTINGS.commentaryVoice);
+  readonly commentarySpeed = signal<number>(DEFAULT_SETTINGS.commentarySpeed);
   readonly volume = signal<number>(DEFAULT_SETTINGS.volume);
   readonly analysisDepth = signal<number>(DEFAULT_SETTINGS.analysisDepth);
   readonly autoEvaluation = signal<boolean>(DEFAULT_SETTINGS.autoEvaluation);
@@ -68,6 +74,10 @@ export class SettingsService {
         moveSounds: this.moveSounds(),
         memeSounds: this.memeSounds(),
         memePack: this.memePack(),
+        voiceCommentary: this.voiceCommentary(),
+        voiceEngine: this.voiceEngine(),
+        commentaryVoice: this.commentaryVoice(),
+        commentarySpeed: this.commentarySpeed(),
         volume: this.volume(),
         analysisDepth: this.analysisDepth(),
         autoEvaluation: this.autoEvaluation(),
@@ -106,6 +116,22 @@ export class SettingsService {
 
   setMemePack(pack: MemeSoundPack): void {
     this.memePack.set(pack);
+  }
+
+  setVoiceCommentary(enabled: boolean): void {
+    this.voiceCommentary.set(enabled);
+  }
+
+  setVoiceEngine(engine: VoiceEngine): void {
+    this.voiceEngine.set(engine);
+  }
+
+  setCommentaryVoice(voice: CommentaryVoice): void {
+    this.commentaryVoice.set(voice);
+  }
+
+  setCommentarySpeed(speed: number): void {
+    this.commentarySpeed.set(Math.max(0.7, Math.min(1.5, speed)));
   }
 
   setVolume(vol: number): void {
@@ -166,6 +192,10 @@ export class SettingsService {
     this.moveSounds.set(DEFAULT_SETTINGS.moveSounds);
     this.memeSounds.set(DEFAULT_SETTINGS.memeSounds);
     this.memePack.set(DEFAULT_SETTINGS.memePack);
+    this.voiceCommentary.set(DEFAULT_SETTINGS.voiceCommentary);
+    this.voiceEngine.set(DEFAULT_SETTINGS.voiceEngine);
+    this.commentaryVoice.set(DEFAULT_SETTINGS.commentaryVoice);
+    this.commentarySpeed.set(DEFAULT_SETTINGS.commentarySpeed);
     this.volume.set(DEFAULT_SETTINGS.volume);
     this.analysisDepth.set(DEFAULT_SETTINGS.analysisDepth);
     this.autoEvaluation.set(DEFAULT_SETTINGS.autoEvaluation);
@@ -212,6 +242,10 @@ export class SettingsService {
       if (typeof data.moveSounds === 'boolean') this.moveSounds.set(data.moveSounds);
       if (typeof data.memeSounds === 'boolean') this.memeSounds.set(data.memeSounds);
       if (data.memePack) this.memePack.set(data.memePack);
+      if (typeof data.voiceCommentary === 'boolean') this.voiceCommentary.set(data.voiceCommentary);
+      if (data.voiceEngine) this.voiceEngine.set(data.voiceEngine);
+      if (data.commentaryVoice) this.commentaryVoice.set(data.commentaryVoice);
+      if (typeof data.commentarySpeed === 'number') this.commentarySpeed.set(data.commentarySpeed);
       if (typeof data.volume === 'number') this.volume.set(data.volume);
       if (typeof data.analysisDepth === 'number') this.analysisDepth.set(data.analysisDepth);
       if (typeof data.autoEvaluation === 'boolean') this.autoEvaluation.set(data.autoEvaluation);

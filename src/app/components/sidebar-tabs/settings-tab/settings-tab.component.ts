@@ -3,7 +3,17 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SettingsService } from '../../../services/settings.service';
 import { SoundService } from '../../../services/sound.service';
-import { AppTheme, BOARD_THEMES, BoardTheme, MEME_SOUND_PACKS, MemeSoundPack } from '../../../models/settings.model';
+import { VoiceCommentaryService } from '../../../services/voice-commentary.service';
+import {
+  AppTheme,
+  BOARD_THEMES,
+  BoardTheme,
+  COMMENTARY_VOICES,
+  CommentaryVoice,
+  MEME_SOUND_PACKS,
+  MemeSoundPack,
+  VoiceEngine,
+} from '../../../models/settings.model';
 import { IconComponent } from '../../icon/icon.component';
 
 @Component({
@@ -16,9 +26,11 @@ import { IconComponent } from '../../icon/icon.component';
 export class SettingsTabComponent {
   readonly settings = inject(SettingsService);
   readonly soundService = inject(SoundService);
+  readonly voiceService = inject(VoiceCommentaryService);
 
   readonly boardThemes = BOARD_THEMES;
   readonly soundPacks = MEME_SOUND_PACKS;
+  readonly commentaryVoices = COMMENTARY_VOICES;
 
   readonly depthPresets = [
     { depth: 10, label: '10', name: 'Fast' },
@@ -50,6 +62,48 @@ export class SettingsTabComponent {
   previewSoundPack(pack: MemeSoundPack, event: Event): void {
     event.stopPropagation();
     this.soundService.playRandomPackSound(pack, this.settings.volume());
+  }
+
+  toggleVoiceCommentary(): void {
+    const nextState = !this.settings.voiceCommentary();
+    this.settings.setVoiceCommentary(nextState);
+    if (nextState) {
+      this.settings.flashToast('AI VOICE COMMENTARY ACTIVATED');
+      if (this.settings.voiceEngine() === 'neural') {
+        this.voiceService.initModel();
+      }
+    } else {
+      this.voiceService.stop();
+      this.settings.flashToast('AI VOICE COMMENTARY DISABLED');
+    }
+  }
+
+  selectVoiceEngine(engine: VoiceEngine): void {
+    this.settings.setVoiceEngine(engine);
+    if (engine === 'neural') {
+      this.settings.flashToast('SUPERTONIC 2 NEURAL ENGINE ACTIVATED');
+      this.voiceService.initModel();
+    } else {
+      this.settings.flashToast('INSTANT NATIVE SPEECH (0s LAG)');
+    }
+  }
+
+  selectVoice(voice: CommentaryVoice): void {
+    this.settings.setCommentaryVoice(voice);
+    this.settings.setVoiceCommentary(true);
+    this.settings.flashToast('VOICE PROFILE UPDATED');
+  }
+
+  testVoice(voice?: CommentaryVoice, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.voiceService.testVoice(voice);
+  }
+
+  onCommentarySpeedChange(event: Event): void {
+    const val = Number((event.target as HTMLInputElement).value);
+    this.settings.setCommentarySpeed(val);
   }
 
   onVolumeChange(event: Event): void {

@@ -19,6 +19,9 @@ describe('SettingsService', () => {
     expect(service.moveSounds()).toBe(true);
     expect(service.memeSounds()).toBe(true);
     expect(service.memePack()).toBe('meme');
+    expect(service.voiceCommentary()).toBe(false);
+    expect(service.voiceEngine()).toBe('neural');
+    expect(service.commentaryVoice()).toBe('F1');
     expect(service.analysisDepth()).toBe(14);
     expect(service.showCoordinates()).toBe(true);
     expect(service.showMoveClassifications()).toBe(true);
@@ -56,9 +59,21 @@ describe('SettingsService', () => {
     expect(service.activeBoardThemeOption().name).toBe('Classic Wood');
   });
 
-  it('should toggle sound options and persist volume', () => {
+  it('should toggle sound and voice options', () => {
     service.setMoveSounds(false);
     expect(service.moveSounds()).toBe(false);
+
+    service.setVoiceCommentary(true);
+    expect(service.voiceCommentary()).toBe(true);
+
+    service.setVoiceEngine('instant');
+    expect(service.voiceEngine()).toBe('instant');
+
+    service.setCommentaryVoice('M1');
+    expect(service.commentaryVoice()).toBe('M1');
+
+    service.setCommentarySpeed(1.2);
+    expect(service.commentarySpeed()).toBe(1.2);
 
     service.setVolume(50);
     expect(service.volume()).toBe(50);
