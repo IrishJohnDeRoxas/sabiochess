@@ -30,6 +30,7 @@ describe('PrivacyComponent', () => {
     expect(compiled.querySelector('#third-parties')).toBeTruthy();
     expect(compiled.querySelector('#engine')).toBeTruthy();
     expect(compiled.querySelector('#your-control')).toBeTruthy();
+    expect(compiled.querySelector('#extension')).toBeTruthy();
   });
 
   it('should change active section on scrollToSection', () => {

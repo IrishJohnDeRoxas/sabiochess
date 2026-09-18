@@ -106,6 +106,19 @@
               <app-icon name="chevron-right" size="w-3.5 h-3.5"></app-icon>
             </button>
           </li>
+          <li>
+            <button
+              type="button"
+              class="w-full text-left py-2 px-3 border-2 transition-all duration-150 font-bold uppercase tracking-wide flex items-center justify-between cursor-pointer"
+              [ngClass]="activeSection() === 'extension'
+                ? 'bg-[#0E4C92] text-white border-[#222222] dark:border-black shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]'
+                : 'bg-white dark:bg-[#262626] text-[#222222] dark:text-[#F3F4F6] border-[#222222] dark:border-black hover:bg-gray-100 dark:hover:bg-[#333333]'"
+              (click)="scrollToSection('extension')"
+            >
+              <span>6. Chrome Extension</span>
+              <app-icon name="chevron-right" size="w-3.5 h-3.5"></app-icon>
+            </button>
+          </li>
         </ul>
 
         <!-- Related Legal Link -->
@@ -255,6 +268,35 @@
           <p>
             If you have any privacy concerns or questions, please reach out via our support channel.
           </p>
+        </div>
+      </section>
+
+      <!-- Section 6: Browser Extension (SabioChess - Chess.com Reviewer) -->
+      <section id="extension" class="card-brutal p-6 sm:p-8 relative scroll-mt-24 border-l-[6px] border-l-[#FF4F00]">
+        <div class="section-watermark select-none absolute top-4 right-6 font-display text-4xl sm:text-5xl text-[#FF4F00]/20 font-black pointer-events-none">
+          06
+        </div>
+        <h2 class="font-display text-xl sm:text-2xl text-[#222222] dark:text-[#F3F4F6] uppercase mb-4 tracking-tight">
+          6. Browser Extension (SabioChess - Chess.com Reviewer)
+        </h2>
+        <div class="font-body text-sm sm:text-base text-gray-800 dark:text-gray-200 leading-relaxed space-y-3 font-medium">
+          <p>
+            The <strong>SabioChess - Chess.com Reviewer</strong> browser extension operates under the same strict privacy principles as our web workbench:
+          </p>
+          <ul class="list-disc pl-5 space-y-2 text-sm sm:text-base">
+            <li>
+              <strong class="text-[#222222] dark:text-white">Host Permissions (chess.com):</strong> Used exclusively to detect active chessboard states (PGN/FEN) and inject the "Review on SabioChess" button and sidebar UI into the chess.com webpage.
+            </li>
+            <li>
+              <strong class="text-[#222222] dark:text-white">No Personal Data Collection:</strong> The extension does not access, read, or harvest passwords, account credentials, payment info, personal messages, or unrelated browsing history.
+            </li>
+            <li>
+              <strong class="text-[#222222] dark:text-white">Local Execution &amp; No Remote Code:</strong> Move analysis runs directly in your browser using local Stockfish engine computation. No chess data is transmitted to, logged on, or sold to third-party servers.
+            </li>
+            <li>
+              <strong class="text-[#222222] dark:text-white">Local Storage:</strong> Used only to preserve client-side extension preferences (e.g. analysis UI settings and target review window options).
+            </li>
+          </ul>
         </div>
 
         <div class="mt-8 pt-6 border-t-2 border-[#222222] dark:border-black flex items-center justify-between flex-wrap gap-4">
