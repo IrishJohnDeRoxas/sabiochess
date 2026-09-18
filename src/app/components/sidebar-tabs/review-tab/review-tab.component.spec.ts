@@ -185,43 +185,68 @@ describe('ReviewTabComponent', () => {
     component.startReviewWalkthrough();
     fixture.detectChanges();
 
-    const containerEl = document.createElement('div');
-    containerEl.scrollTop = 0;
-    containerEl.getBoundingClientRect = () => ({
-      top: 100,
-      bottom: 300,
-      height: 200,
-      left: 0,
-      right: 200,
-      width: 200,
-      x: 0,
-      y: 100,
-      toJSON: () => {},
+    const containerEl = component.movesListContainer?.nativeElement;
+    expect(containerEl).toBeTruthy();
+
+    let scrollTopVal = 0;
+    Object.defineProperty(containerEl, 'scrollTop', {
+      get: () => scrollTopVal,
+      set: (val: number) => {
+        scrollTopVal = val;
+      },
+      configurable: true,
     });
 
-    const activeEl = document.createElement('button');
-    activeEl.setAttribute('data-active-move', 'true');
-    activeEl.getBoundingClientRect = () => ({
-      top: 350,
-      bottom: 380,
-      height: 30,
-      left: 0,
-      right: 200,
-      width: 200,
-      x: 0,
-      y: 350,
-      toJSON: () => {},
+    const rectSpy = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (
+      this: HTMLElement
+    ) {
+      if (this === containerEl) {
+        return {
+          top: 100,
+          bottom: 300,
+          height: 200,
+          left: 0,
+          right: 200,
+          width: 200,
+          x: 0,
+          y: 100,
+          toJSON: () => {},
+        } as DOMRect;
+      }
+      if (this.getAttribute && this.getAttribute('data-active-move') === 'true') {
+        return {
+          top: 350,
+          bottom: 380,
+          height: 30,
+          left: 0,
+          right: 200,
+          width: 200,
+          x: 0,
+          y: 350,
+          toJSON: () => {},
+        } as DOMRect;
+      }
+      return {
+        top: 0,
+        bottom: 0,
+        height: 0,
+        left: 0,
+        right: 0,
+        width: 0,
+        x: 0,
+        y: 0,
+        toJSON: () => {},
+      } as DOMRect;
     });
-    containerEl.appendChild(activeEl);
 
-    component.movesListContainer = { nativeElement: containerEl };
     gameService.jumpToPly(4);
     fixture.detectChanges();
 
     // Allow the setTimeout in the effect to execute
-    await new Promise((resolve) => setTimeout(resolve, 10));
+    await new Promise((resolve) => setTimeout(resolve, 50));
 
-    expect(containerEl.scrollTop).toBeGreaterThan(0);
+    expect(scrollTopVal).toBeGreaterThan(0);
+    rectSpy.mockRestore();
   });
 });
 

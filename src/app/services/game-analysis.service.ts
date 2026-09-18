@@ -654,12 +654,20 @@ export class GameAnalysisService implements OnDestroy {
         }
       }
 
+      const prevAnalysis = i > 0 ? analysis[i - 1] : undefined;
       const commentary = getCoachCommentary(
         classification,
         item.san,
         bestMoveSan,
         i,
-        opening?.name
+        opening?.name,
+        {
+          prevMoveSan: prevAnalysis?.san || (i > 0 && this.currentHistory[i - 1] ? this.currentHistory[i - 1].san : null),
+          prevClassification: prevAnalysis?.classification,
+          scoreBefore: evalBefore?.score ?? null,
+          scoreAfter: evalAfter?.score ?? null,
+          cpl,
+        }
       );
 
       analysis.push({
@@ -917,12 +925,20 @@ export class GameAnalysisService implements OnDestroy {
 
       const accuracy = classification === 'book' ? 100 : this.calculateCaps2Accuracy(deltaWin, classification === 'best', classification);
 
+      const prevResult = i > 0 ? results[i - 1] : undefined;
       const commentary = getCoachCommentary(
         classification,
         item.san,
         bestMoveCandidate ? bestMoveCandidate.san : null,
         i,
-        opening?.name
+        opening?.name,
+        {
+          prevMoveSan: prevResult?.san || (i > 0 && history[i - 1] ? history[i - 1].san : null),
+          prevClassification: prevResult?.classification,
+          scoreBefore: scoreBeforePlayer,
+          scoreAfter: scoreAfterPlayer,
+          cpl: cpDelta,
+        }
       );
 
       // Extract follow up moves from next moves

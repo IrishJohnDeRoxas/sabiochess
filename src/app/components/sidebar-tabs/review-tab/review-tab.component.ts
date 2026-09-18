@@ -545,17 +545,17 @@ export class ReviewTabComponent {
     const hist = this.game.history();
     if (hist.length === 0) return null;
 
-    const targetPly = ply === null || ply < 0 ? 0 : ply;
-    const item = hist[targetPly];
+    if (ply === null || ply < 0) return null;
+    const item = hist[ply];
     if (!item) return null;
 
-    const analysis = this.game.currentMoveAnalysis() || this.analysisService.movesAnalysis()[targetPly];
+    const analysis = this.game.currentMoveAnalysis() || this.analysisService.movesAnalysis()[ply];
 
     return {
       isVariation: false,
       isFollowUp: false,
       isBest: false,
-      plyIndex: targetPly,
+      plyIndex: ply,
       san: item.san,
       turn: item.turn,
       moveTime: item.formattedMoveTime,
