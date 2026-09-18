@@ -133,37 +133,7 @@ export class AnalyzerComponent implements OnInit, OnDestroy {
   }
 
   private applyBoardOrientation(flip?: string | boolean, targetUser?: string): void {
-    if (targetUser && typeof targetUser === 'string') {
-      const cleanTarget = targetUser.toLowerCase().replace(/[^a-z0-9]/g, '');
-      const meta = this.game.matchMetadata();
-      const white = meta.white.name.toLowerCase().replace(/[^a-z0-9]/g, '');
-      const black = meta.black.name.toLowerCase().replace(/[^a-z0-9]/g, '');
-
-      if (
-        cleanTarget &&
-        (black === cleanTarget ||
-          (black.length > 2 && cleanTarget.includes(black)) ||
-          (cleanTarget.length > 2 && black.includes(cleanTarget)))
-      ) {
-        this.game.isBoardFlipped.set(true);
-        return;
-      }
-      if (
-        cleanTarget &&
-        (white === cleanTarget ||
-          (white.length > 2 && cleanTarget.includes(white)) ||
-          (cleanTarget.length > 2 && white.includes(cleanTarget)))
-      ) {
-        this.game.isBoardFlipped.set(false);
-        return;
-      }
-    }
-
-    if (flip === true || flip === 'true' || flip === 'black' || flip === '1') {
-      this.game.isBoardFlipped.set(true);
-    } else if (flip === false || flip === 'false' || flip === 'white' || flip === '0') {
-      this.game.isBoardFlipped.set(false);
-    }
+    this.game.applyBoardOrientation(flip, targetUser);
   }
 
   private handleWindowMessage(event: MessageEvent): void {

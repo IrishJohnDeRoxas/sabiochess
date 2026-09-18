@@ -12,6 +12,7 @@ import { MoveVariation } from '../../../models/chess.model';
 import { IconComponent, IconName } from '../../icon/icon.component';
 import { PlatformGameSelectorComponent } from '../../platform-game-selector/platform-game-selector.component';
 import { FetchedGame } from '../../../services/platform-importer.service';
+import { getGameSummaryCommentary } from '../../../utils/coach-commentary.util';
 
 export type ImporterSubTab = 'online' | 'samples' | 'pgn';
 
@@ -183,9 +184,13 @@ export class ReviewTabComponent {
       const isReport = this.isReportView();
       if (isReport) return;
       const exp = this.currentExplanation();
-      if (!exp) return;
+      const hist = this.game.history();
+      if (hist.length === 0) return;
 
-      const commentaryText = exp.commentary || `${exp.san} is ${exp.classification}`;
+      const commentaryText = exp
+        ? (exp.commentary || `${exp.san} is ${exp.classification}`)
+        : this.gameSummaryCommentary();
+
       if (commentaryText) {
         this.voiceService.speak(commentaryText);
       }
@@ -568,6 +573,36 @@ export class ReviewTabComponent {
     };
   });
 
+  readonly gameSummaryCommentary = computed<string>(() => {
+    const hist = this.game.history();
+    if (hist.length === 0) {
+      return 'Ready for move 1. Play your moves on the board, or import a match from Chess.com!';
+    }
+
+    const meta = this.game.matchMetadata();
+    const outcome = this.game.gameOutcome();
+    const summary = this.analysisService.summary();
+    const detectedOpening = this.analysisService.detectedOpening();
+
+    return getGameSummaryCommentary({
+      whiteName: meta.white?.name,
+      blackName: meta.black?.name,
+      whiteRating: meta.white?.rating,
+      blackRating: meta.black?.rating,
+      openingName: detectedOpening?.name || meta.openingName,
+      eco: detectedOpening?.eco || meta.eco,
+      result: meta.result,
+      termination: meta.termination,
+      totalPlies: hist.length,
+      winner: outcome.winner,
+      terminationType: outcome.terminationType,
+      whiteAccuracy: summary?.whiteAccuracy,
+      blackAccuracy: summary?.blackAccuracy,
+      whiteCounts: summary?.whiteCounts as any,
+      blackCounts: summary?.blackCounts as any,
+    });
+  });
+
   readonly canPlayBest = computed(() => {
     const exp = this.currentExplanation();
     if (!exp) return false;
@@ -617,7 +652,7 @@ export class ReviewTabComponent {
     const exp = this.currentExplanation();
     const text =
       exp?.commentary ||
-      (exp ? `${exp.san} is ${exp.classification}` : 'Review each move with tactical insights.');
+      (exp ? `${exp.san} is ${exp.classification}` : this.gameSummaryCommentary());
     this.voiceService.speak(text, { force: true, interrupt: true });
   }
 
@@ -871,6 +906,9 @@ export class ReviewTabComponent {
   startReviewWalkthrough(): void {
     this.isReportView.set(false);
     this.game.goToStart();
+    if (this.settings.voiceCommentary()) {
+      this.voiceService.speak(this.gameSummaryCommentary(), { force: true, interrupt: true });
+    }
   }
 
   returnToReport(): void {

@@ -137,8 +137,9 @@
                   }
                 </span>
               } @else {
-                <span class="badge-brutal bg-[#10B981] text-white text-xs !py-0.5 !px-1.5 font-bold">★</span>
-                <span class="font-accent text-xs sm:text-sm font-bold text-[#222222] dark:text-[#F3F4F6]">Starting Position</span>
+                <span class="font-accent text-xs sm:text-sm font-bold text-[#222222] dark:text-[#F3F4F6]">
+                  {{ game.history().length > 0 ? 'Game Summary' : 'Starting Position' }}
+                </span>
               }
             </div>
 
@@ -182,12 +183,12 @@
           <p class="font-body text-xs sm:text-sm text-gray-700 dark:text-gray-300 leading-relaxed font-medium">
             @if (currentExplanation()?.commentary; as comm) {
               {{ comm }}
-            } @else if (game.isGameOver()) {
+            } @else if (game.isGameOver() && game.history().length === 0) {
               {{ game.gameOverReason() }}
             } @else if (game.history().length === 0) {
               Ready for move 1. Play your moves on the board, or import a match from Chess.com!
             } @else {
-              Review each move with tactical insights. Click Next to begin.
+              {{ gameSummaryCommentary() }}
             }
           </p>
 

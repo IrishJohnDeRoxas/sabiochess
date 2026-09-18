@@ -316,5 +316,53 @@ describe('ChessGameService', () => {
     const e5Square = squaresPly1.find((s) => s.square === 'e5');
     expect(e5Square?.classification).toBe('best');
   });
+
+  describe('applyBoardOrientation based on user', () => {
+    it('should automatically flip the board if the target user is playing as Black', () => {
+      const pgn = `[Event "Live Chess"]
+[White "migue10102"]
+[Black "IrishJohnDeRoxas"]
+[Result "1-0"]
+
+1. e4 e5 2. Nf3 Nc6 1-0`;
+
+      service.loadPgn(pgn, undefined, 'IrishJohnDeRoxas');
+      expect(service.isBoardFlipped()).toBe(true);
+      expect(service.bottomPlayer().name).toBe('IrishJohnDeRoxas');
+      expect(service.topPlayer().name).toBe('migue10102');
+    });
+
+    it('should orient from White perspective if the target user is playing as White', () => {
+      const pgn = `[Event "Live Chess"]
+[White "IrishJohnDeRoxas"]
+[Black "migue10102"]
+[Result "1-0"]
+
+1. e4 e5 2. Nf3 Nc6 1-0`;
+
+      service.loadPgn(pgn, undefined, 'IrishJohnDeRoxas');
+      expect(service.isBoardFlipped()).toBe(false);
+      expect(service.bottomPlayer().name).toBe('IrishJohnDeRoxas');
+      expect(service.topPlayer().name).toBe('migue10102');
+    });
+
+    it('should auto-orient board when loading online game with targetUser', () => {
+      const gameData = {
+        pgn: '1. d4 d5 2. c4 c6 1-0',
+        white: 'OpponentPlayer',
+        black: 'IrishJohnDeRoxas',
+      };
+
+      service.loadOnlineGame(gameData, 'IRISHJOHNDEROXAS');
+      expect(service.isBoardFlipped()).toBe(true);
+    });
+
+    it('should reset board to unflipped when loading sample games', () => {
+      service.isBoardFlipped.set(true);
+      service.loadSampleGame('opera');
+      expect(service.isBoardFlipped()).toBe(false);
+    });
+  });
 });
+
 

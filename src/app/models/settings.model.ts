@@ -252,7 +252,7 @@ export const DEFAULT_SETTINGS: UserSettings = {
   appTheme: 'light',
   boardTheme: 'green',
   moveSounds: true,
-  memeSounds: true,
+  memeSounds: false,
   memePack: 'meme',
   voiceCommentary: false,
   voiceEngine: 'neural',

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { getCoachCommentary, formatFriendlyMove } from './coach-commentary.util';
+import { getCoachCommentary, formatFriendlyMove, getGameSummaryCommentary } from './coach-commentary.util';
 
 describe('coach-commentary.util', () => {
   describe('formatFriendlyMove', () => {
@@ -79,6 +79,40 @@ describe('coach-commentary.util', () => {
       const c1 = getCoachCommentary('best', 'Nf3', null, 2);
       const c2 = getCoachCommentary('best', 'Nf3', null, 2);
       expect(c1).toBe(c2);
+    });
+  });
+
+  describe('getGameSummaryCommentary', () => {
+    it('should produce an authentic, natural game summary for decisive games with opening & accuracy', () => {
+      const summary = getGameSummaryCommentary({
+        whiteName: 'migue10102',
+        blackName: 'IrishJohnDeRoxas',
+        openingName: "Queen's Pawn Opening",
+        totalPlies: 45,
+        winner: 'white',
+        result: '1-0',
+        whiteAccuracy: 70.3,
+        blackAccuracy: 57.9,
+        whiteCounts: { blunder: 0, brilliant: 1 } as any,
+        blackCounts: { blunder: 2 } as any,
+      });
+
+      expect(summary).toContain("Queen's Pawn Opening");
+      expect(summary).toContain('migue10102');
+      expect(summary).toContain('70.3%');
+      expect(summary).toContain('1-0');
+    });
+
+    it('should produce draw summary correctly', () => {
+      const summary = getGameSummaryCommentary({
+        whiteName: 'Carlsen',
+        blackName: 'Nakamura',
+        totalPlies: 60,
+        winner: 'draw',
+        result: '1/2-1/2',
+      });
+
+      expect(summary).toMatch(/split the point|draw/i);
     });
   });
 });

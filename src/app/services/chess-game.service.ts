@@ -1062,7 +1062,49 @@ export class ChessGameService {
     this.isBoardFlipped.update((f) => !f);
   }
 
-  loadPgn(pgnString: string, customMeta?: Partial<MatchMetadata>): boolean {
+  applyBoardOrientation(flip?: string | boolean, targetUser?: string): void {
+    const userToMatch = targetUser || this.settings.chesscomUsername() || this.settings.lichessUsername();
+    if (userToMatch && typeof userToMatch === 'string') {
+      const cleanTarget = userToMatch.toLowerCase().replace(/[^a-z0-9]/g, '');
+      const meta = this.matchMetadata();
+      const white = (meta.white?.name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+      const black = (meta.black?.name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+
+      if (
+        cleanTarget &&
+        (black === cleanTarget ||
+          (black.length > 2 && cleanTarget.includes(black)) ||
+          (cleanTarget.length > 2 && black.includes(cleanTarget)))
+      ) {
+        this.isBoardFlipped.set(true);
+        return;
+      }
+      if (
+        cleanTarget &&
+        (white === cleanTarget ||
+          (white.length > 2 && cleanTarget.includes(white)) ||
+          (cleanTarget.length > 2 && white.includes(cleanTarget)))
+      ) {
+        this.isBoardFlipped.set(false);
+        return;
+      }
+    }
+
+    if (flip === true || flip === 'true' || flip === 'black' || flip === '1') {
+      this.isBoardFlipped.set(true);
+    } else if (flip === false || flip === 'false' || flip === 'white' || flip === '0') {
+      this.isBoardFlipped.set(false);
+    } else {
+      this.isBoardFlipped.set(false);
+    }
+  }
+
+  loadPgn(
+    pgnString: string,
+    customMeta?: Partial<MatchMetadata>,
+    targetUser?: string,
+    flip?: string | boolean
+  ): boolean {
     this.stopAutoplay();
     try {
       const testChess = new Chess();
@@ -1114,6 +1156,8 @@ export class ChessGameService {
         platform: customMeta?.platform || 'custom',
       });
 
+      this.applyBoardOrientation(flip, targetUser);
+
       this.liveChess.reset();
       const rawRecords: MoveRecord[] = [];
 
@@ -1155,38 +1199,45 @@ export class ChessGameService {
     }
   }
 
-  loadOnlineGame(game: {
-    pgn: string;
-    white: string;
-    black: string;
-    whiteRating?: number | string;
-    blackRating?: number | string;
-    date?: string;
-    timeControl?: string;
-    result?: string;
-    platform?: 'chess.com' | 'lichess';
-    eco?: string;
-    openingName?: string;
-  }): boolean {
-    return this.loadPgn(game.pgn, {
-      white: {
-        name: game.white,
-        rating: game.whiteRating,
+  loadOnlineGame(
+    game: {
+      pgn: string;
+      white: string;
+      black: string;
+      whiteRating?: number | string;
+      blackRating?: number | string;
+      date?: string;
+      timeControl?: string;
+      result?: string;
+      platform?: 'chess.com' | 'lichess';
+      eco?: string;
+      openingName?: string;
+    },
+    targetUser?: string
+  ): boolean {
+    return this.loadPgn(
+      game.pgn,
+      {
+        white: {
+          name: game.white,
+          rating: game.whiteRating,
+        },
+        black: {
+          name: game.black,
+          rating: game.blackRating,
+        },
+        date: game.date,
+        timeControl: game.timeControl,
+        result: game.result,
+        platform: game.platform || 'chess.com',
+        eco: game.eco,
+        openingName: game.openingName,
       },
-      black: {
-        name: game.black,
-        rating: game.blackRating,
-      },
-      date: game.date,
-      timeControl: game.timeControl,
-      result: game.result,
-      platform: game.platform || 'chess.com',
-      eco: game.eco,
-      openingName: game.openingName,
-    });
+      targetUser
+    );
   }
 
-  loadFen(fenString: string): boolean {
+  loadFen(fenString: string, flip?: string | boolean, targetUser?: string): boolean {
     this.stopAutoplay();
     try {
       this.liveChess.load(fenString.trim());
@@ -1199,6 +1250,9 @@ export class ChessGameService {
       this.updateState();
       this.updateEvalHeuristic();
       this.analysisService.clearAnalysis();
+      if (flip !== undefined || targetUser !== undefined) {
+        this.applyBoardOrientation(flip, targetUser);
+      }
       return true;
     } catch {
       return false;
@@ -1208,22 +1262,27 @@ export class ChessGameService {
   loadSampleGame(gameId: string): boolean {
     const sample = SAMPLE_GAMES.find((g) => g.id === gameId);
     if (!sample) return false;
-    return this.loadPgn(sample.pgn, {
-      white: {
-        name: sample.white,
-        rating: sample.whiteRating,
-        title: sample.whiteTitle,
+    return this.loadPgn(
+      sample.pgn,
+      {
+        white: {
+          name: sample.white,
+          rating: sample.whiteRating,
+          title: sample.whiteTitle,
+        },
+        black: {
+          name: sample.black,
+          rating: sample.blackRating,
+          title: sample.blackTitle,
+        },
+        event: sample.event,
+        result: sample.result,
+        timeControl: sample.timeControl,
+        platform: 'sample',
       },
-      black: {
-        name: sample.black,
-        rating: sample.blackRating,
-        title: sample.blackTitle,
-      },
-      event: sample.event,
-      result: sample.result,
-      timeControl: sample.timeControl,
-      platform: 'sample',
-    });
+      undefined,
+      false
+    );
   }
 
   previewEngineLine(line: LiveEngineLine | string[]): boolean {

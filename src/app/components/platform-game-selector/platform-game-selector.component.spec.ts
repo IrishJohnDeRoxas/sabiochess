@@ -111,4 +111,25 @@ describe('PlatformGameSelectorComponent', () => {
     expect(localStorage.getItem('sabiochess_cached_games_chess.com_hikaru')).toBeNull();
     expect(localStorage.getItem('sabiochess_recent_cached_games')).toBeNull();
   });
+
+  it('should auto-orient board when loading a game where active username is Black', () => {
+    const gameService = TestBed.inject(ChessGameService);
+    const mockGame = {
+      id: 'game-black',
+      white: 'Opponent',
+      black: 'IrishJohnDeRoxas',
+      date: '2026-09-18',
+      timeControl: '3m Blitz',
+      result: '0-1',
+      userResult: 'win' as const,
+      pgn: '1. e4 e5 2. Nf3 Nc6 0-1',
+      platform: 'chess.com' as const,
+    };
+
+    component.username.set('IRISHJOHNDEROXAS');
+    component.loadGame(mockGame);
+
+    expect(gameService.isBoardFlipped()).toBe(true);
+    expect(gameService.bottomPlayer().name).toBe('IrishJohnDeRoxas');
+  });
 });

@@ -913,3 +913,138 @@ export function getCoachCommentary(
       );
   }
 }
+
+export interface GameSummaryContext {
+  whiteName?: string;
+  blackName?: string;
+  whiteRating?: number | string;
+  blackRating?: number | string;
+  openingName?: string | null;
+  eco?: string | null;
+  result?: string | null;
+  termination?: string | null;
+  totalPlies?: number;
+  winner?: 'white' | 'black' | 'draw' | null;
+  terminationType?: string | null;
+  whiteAccuracy?: number | null;
+  blackAccuracy?: number | null;
+  whiteCounts?: Record<string, number> | null;
+  blackCounts?: Record<string, number> | null;
+}
+
+export function getGameSummaryCommentary(ctx: GameSummaryContext): string {
+  const whiteName = ctx.whiteName || 'White';
+  const blackName = ctx.blackName || 'Black';
+  const moveCount = ctx.totalPlies ? Math.ceil(ctx.totalPlies / 2) : 0;
+  const opening = ctx.openingName || (ctx.eco ? `ECO ${ctx.eco}` : null);
+  const winner = ctx.winner;
+  const result = ctx.result;
+  const termType = ctx.terminationType;
+
+  // 1. Opening introduction
+  let intro = '';
+  if (opening) {
+    const openingLower = opening.toLowerCase();
+    if (
+      openingLower.includes('sicilian') ||
+      openingLower.includes("king's indian") ||
+      openingLower.includes('dragon') ||
+      openingLower.includes('benoni') ||
+      openingLower.includes('grunfeld') ||
+      openingLower.includes('dutch')
+    ) {
+      intro = `An aggressive, double-edged struggle in the ${opening}.`;
+    } else if (
+      openingLower.includes('french') ||
+      openingLower.includes('caro-kann') ||
+      openingLower.includes('slav') ||
+      openingLower.includes('london')
+    ) {
+      intro = `A rich strategic contest in the ${opening}.`;
+    } else if (
+      openingLower.includes('italian') ||
+      openingLower.includes('spanish') ||
+      openingLower.includes('ruy lopez') ||
+      openingLower.includes("queen's gambit")
+    ) {
+      intro = `A classical theoretical battle in the ${opening}.`;
+    } else {
+      intro = `A competitive ${moveCount > 0 ? `${moveCount}-move ` : ''}contest in the ${opening}.`;
+    }
+  } else if (moveCount > 0) {
+    intro = `A hard-fought ${moveCount}-move battle between ${whiteName} and ${blackName}.`;
+  } else {
+    intro = `A match between ${whiteName} and ${blackName}.`;
+  }
+
+  // 2. Middle game dynamics & tactical narrative
+  let narrative = '';
+  const wAcc = ctx.whiteAccuracy;
+  const bAcc = ctx.blackAccuracy;
+  const wc = ctx.whiteCounts || {};
+  const bc = ctx.blackCounts || {};
+  const wBlunders = wc['blunder'] || 0;
+  const bBlunders = bc['blunder'] || 0;
+  const wBrilliant = (wc['brilliant'] || 0) + (wc['great'] || 0);
+  const bBrilliant = (bc['brilliant'] || 0) + (bc['great'] || 0);
+
+  if (wAcc !== null && wAcc !== undefined && bAcc !== null && bAcc !== undefined) {
+    if (wAcc >= 85 && bAcc >= 85) {
+      narrative = 'Both players navigated complex positions with impressive accuracy and deep theoretical precision.';
+    } else if (wBrilliant > 0 || bBrilliant > 0) {
+      narrative = 'The game caught fire in the middlegame with brilliant tactical fireworks on the board.';
+    } else if (winner === 'white' && bBlunders > 0) {
+      narrative = 'White seized the initiative and ruthlessly capitalized on tactical mistakes in the middlegame.';
+    } else if (winner === 'black' && wBlunders > 0) {
+      narrative = "Black seized the momentum after punishing White's critical errors with sharp counterplay.";
+    } else if (wBlunders > 1 && bBlunders > 1) {
+      narrative = 'A dramatic, volatile encounter with major swings in momentum before the final breakthrough.';
+    } else if (winner === 'white') {
+      narrative = 'White maintained steady pressure and gradually outmaneuvered Black across the board.';
+    } else if (winner === 'black') {
+      narrative = 'Black dismantled the opposing setup with proactive piece play and solid defense.';
+    } else {
+      narrative = 'Neither player surrendered ground, trading tactical blows evenly throughout.';
+    }
+  } else {
+    if (winner === 'white') {
+      narrative = 'White dictated the tempo and steered the game toward a decisive conclusion.';
+    } else if (winner === 'black') {
+      narrative = 'Black took command of key open files and created unstoppable threats.';
+    } else {
+      narrative = 'Both sides demonstrated resilient defense and balanced piece coordination.';
+    }
+  }
+
+  // 3. Conclusion & outcome
+  let conclusion = '';
+  if (winner === 'white' || result === '1-0') {
+    const accStr = wAcc !== null && wAcc !== undefined ? ` (${wAcc.toFixed(1)}% accuracy)` : '';
+    if (termType === 'checkmate') {
+      conclusion = `${whiteName}${accStr} crowned the victory with a clean checkmate.`;
+    } else if (termType === 'resignation') {
+      conclusion = `${whiteName}${accStr} converted the winning advantage to force resignation.`;
+    } else if (termType === 'timeout') {
+      conclusion = `${whiteName}${accStr} secured the win as Black's clock expired.`;
+    } else {
+      conclusion = `${whiteName}${accStr} clinched the full point (${result || '1-0'}).`;
+    }
+  } else if (winner === 'black' || result === '0-1') {
+    const accStr = bAcc !== null && bAcc !== undefined ? ` (${bAcc.toFixed(1)}% accuracy)` : '';
+    if (termType === 'checkmate') {
+      conclusion = `${blackName}${accStr} finished in style with an unstoppable mating attack.`;
+    } else if (termType === 'resignation') {
+      conclusion = `${blackName}${accStr} converted the decisive edge to force resignation.`;
+    } else if (termType === 'timeout') {
+      conclusion = `${blackName}${accStr} won on time in a tense endgame struggle.`;
+    } else {
+      conclusion = `${blackName}${accStr} locked up the victory (${result || '0-1'}).`;
+    }
+  } else if (winner === 'draw' || result === '1/2-1/2') {
+    conclusion = `The players split the point in a balanced draw (${result || '1/2-1/2'}).`;
+  } else {
+    conclusion = 'Review the key moves to see how the battle unfolded.';
+  }
+
+  return `${intro} ${narrative} ${conclusion}`;
+}

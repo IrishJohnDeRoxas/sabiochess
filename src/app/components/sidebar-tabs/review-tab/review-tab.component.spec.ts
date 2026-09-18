@@ -248,6 +248,15 @@ describe('ReviewTabComponent', () => {
     expect(scrollTopVal).toBeGreaterThan(0);
     rectSpy.mockRestore();
   });
+
+  it('should generate a descriptive game summary commentary when a game is loaded at ply -1', () => {
+    gameService.loadSampleGame('opera');
+    fixture.detectChanges();
+
+    const summaryText = component.gameSummaryCommentary();
+    expect(summaryText).toContain('Paul Morphy');
+    expect(summaryText).toMatch(/checkmate|victory/i);
+  });
 });
 
 

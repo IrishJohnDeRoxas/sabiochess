@@ -115,7 +115,8 @@ export class PlatformGameSelectorComponent implements OnInit {
   }
 
   loadGame(game: FetchedGame): void {
-    const success = this.gameService.loadOnlineGame(game);
+    const user = this.username().trim();
+    const success = this.gameService.loadOnlineGame(game, user);
     if (success) {
       this.gameSelected.emit(game);
     } else {

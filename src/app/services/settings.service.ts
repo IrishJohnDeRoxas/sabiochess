@@ -205,6 +205,7 @@ export class SettingsService {
     this.showMoveClassifications.set(DEFAULT_SETTINGS.showMoveClassifications);
     this.showLegalMoves.set(DEFAULT_SETTINGS.showLegalMoves);
     this.highlightLastMove.set(DEFAULT_SETTINGS.highlightLastMove);
+    this.soundService.setMuted(false);
   }
 
   flashToast(msg: string, duration = 1800): void {

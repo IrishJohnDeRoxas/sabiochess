@@ -17,7 +17,7 @@ describe('SettingsService', () => {
     expect(service.isDarkMode()).toBe(false);
     expect(service.boardTheme()).toBe('green');
     expect(service.moveSounds()).toBe(true);
-    expect(service.memeSounds()).toBe(true);
+    expect(service.memeSounds()).toBe(false);
     expect(service.memePack()).toBe('meme');
     expect(service.voiceCommentary()).toBe(false);
     expect(service.voiceEngine()).toBe('neural');
