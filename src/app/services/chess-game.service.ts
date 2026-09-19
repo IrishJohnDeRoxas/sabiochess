@@ -32,6 +32,7 @@ export interface MoveRecord {
   san: string;
   fen: string;
   turn: 'w' | 'b';
+  flags?: string;
   clock?: string;
   clockSeconds?: number;
   moveTime?: number;
@@ -672,7 +673,10 @@ export class ChessGameService {
     return this.displayChess;
   }
 
-  private playSoundForMove(move: any, plyIndex?: number): void {
+  private playSoundForMove(
+    move?: Partial<Move> | Partial<MoveRecord> | { san?: string; captured?: string; flags?: string } | null,
+    plyIndex?: number
+  ): void {
     if (this.soundService.isMuted()) return;
 
     if (this.settings.memeSounds()) {

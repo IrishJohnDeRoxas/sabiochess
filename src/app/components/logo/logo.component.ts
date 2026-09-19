@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 export type LogoSize = 'sm' | 'md' | 'lg' | 'xl';
@@ -9,6 +9,7 @@ export type LogoSize = 'sm' | 'md' | 'lg' | 'xl';
   imports: [CommonModule],
   templateUrl: './logo.component.html',
   styleUrls: ['./logo.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LogoComponent {
   readonly size = input<LogoSize>('md');

@@ -3,6 +3,31 @@ import { CommentaryVoice } from '../models/settings.model';
 import { cleanCommentaryForSpeech } from '../utils/chess-speech.util';
 import { SettingsService } from './settings.service';
 
+export interface SupertonicProgressPayload {
+  progress?: number;
+  name?: string;
+}
+
+export interface SupertonicReadyPayload {
+  device?: string;
+}
+
+export interface SupertonicAudioPayload {
+  id: string | number;
+  sampleRate: number;
+  samples: Float32Array;
+}
+
+export interface SupertonicErrorPayload {
+  message?: string;
+}
+
+export type SupertonicWorkerMessage =
+  | { type: 'PROGRESS'; payload?: SupertonicProgressPayload }
+  | { type: 'READY'; payload?: SupertonicReadyPayload }
+  | { type: 'AUDIO'; payload: SupertonicAudioPayload }
+  | { type: 'ERROR'; payload?: SupertonicErrorPayload };
+
 @Injectable({
   providedIn: 'root',
 })
@@ -203,7 +228,7 @@ export class VoiceCommentaryService {
     window.speechSynthesis.speak(utterance);
   }
 
-  private handleWorkerMessage(data: any): void {
+  private handleWorkerMessage(data: SupertonicWorkerMessage | null | undefined): void {
     const { type, payload } = data || {};
 
     switch (type) {
@@ -233,11 +258,13 @@ export class VoiceCommentaryService {
       case 'AUDIO': {
         const { id, sampleRate, samples } = payload || {};
         this.isGenerating.set(false);
-        if (parseInt(id, 10) !== this.activeRequestId) {
+        if (id === undefined || parseInt(String(id), 10) !== this.activeRequestId) {
           // Stale audio request from previous move
           return;
         }
-        this.playAudioSamples(samples, sampleRate);
+        if (samples && sampleRate) {
+          this.playAudioSamples(samples, sampleRate);
+        }
         break;
       }
 

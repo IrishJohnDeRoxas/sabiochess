@@ -20,12 +20,12 @@ describe('PlayerCardComponent', () => {
   });
 
   it('should display player name, rating and title', () => {
-    component.player = {
+    fixture.componentRef.setInput('player', {
       name: 'Hikaru Nakamura',
       rating: 2875,
       title: 'GM',
-    };
-    component.color = 'w';
+    });
+    fixture.componentRef.setInput('color', 'w');
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
@@ -35,9 +35,9 @@ describe('PlayerCardComponent', () => {
   });
 
   it('should display unrated symbol (?) when rating is missing', () => {
-    component.player = {
+    fixture.componentRef.setInput('player', {
       name: 'Casual Player',
-    };
+    });
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
@@ -46,7 +46,7 @@ describe('PlayerCardComponent', () => {
   });
 
   it('should apply is-active-turn class when isTurn is true and game is not ended', () => {
-    component.isTurn = true;
+    fixture.componentRef.setInput('isTurn', true);
     fixture.detectChanges();
 
     const container = fixture.nativeElement.querySelector('.player-card-container') as HTMLElement;
@@ -54,14 +54,14 @@ describe('PlayerCardComponent', () => {
   });
 
   it('should display outcome status and winner styling when player wins', () => {
-    component.outcome = {
+    fixture.componentRef.setInput('outcome', {
       isWinner: true,
       isLoser: false,
       isDraw: false,
       score: '1',
       reason: 'Won by checkmate',
       shortReason: 'Checkmate',
-    };
+    });
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
@@ -70,14 +70,15 @@ describe('PlayerCardComponent', () => {
   });
 
   it('should display clock time and detect low-time', () => {
-    component.clock = '00:08.4';
-    expect(component.isLowTime).toBe(true);
+    fixture.componentRef.setInput('clock', '00:08.4');
+    expect(component.isLowTime()).toBe(true);
 
-    component.clock = '05:30';
-    expect(component.isLowTime).toBe(false);
+    fixture.componentRef.setInput('clock', '05:30');
+    expect(component.isLowTime()).toBe(false);
 
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.textContent).toContain('05:30');
   });
 });
+

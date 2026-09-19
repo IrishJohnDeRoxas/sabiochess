@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ChessGameService } from '../../services/chess-game.service';
 
@@ -8,7 +8,9 @@ import { ChessGameService } from '../../services/chess-game.service';
   imports: [CommonModule],
   templateUrl: './eval-bar.component.html',
   styleUrls: ['./eval-bar.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EvalBarComponent {
   readonly game = inject(ChessGameService);
 }
+

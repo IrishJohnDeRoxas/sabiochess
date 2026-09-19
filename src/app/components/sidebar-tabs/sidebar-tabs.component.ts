@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReviewTabComponent } from './review-tab/review-tab.component';
 import { AnalysisTabComponent } from './analysis-tab/analysis-tab.component';
@@ -21,6 +21,7 @@ export type ActiveSidebarTab = 'review' | 'analysis' | 'settings';
   ],
   templateUrl: './sidebar-tabs.component.html',
   styleUrls: ['./sidebar-tabs.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SidebarTabsComponent {
   readonly settings = inject(SettingsService);

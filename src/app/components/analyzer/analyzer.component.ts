@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener, OnDestroy, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ChessGameService } from '../../services/chess-game.service';
@@ -23,6 +23,7 @@ import { SidebarTabsComponent } from '../sidebar-tabs/sidebar-tabs.component';
   ],
   templateUrl: './analyzer.component.html',
   styleUrls: ['./analyzer.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AnalyzerComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute, { optional: true });
@@ -33,6 +34,62 @@ export class AnalyzerComponent implements OnInit, OnDestroy {
   private routeSub?: Subscription;
   private lastLoadedPgn = '';
   private messageHandler = (event: MessageEvent) => this.handleWindowMessage(event);
+
+  @HostListener('window:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent): void {
+    const target = event.target as HTMLElement | null;
+    if (target) {
+      const tagName = target.tagName?.toLowerCase();
+      if (
+        tagName === 'input' ||
+        tagName === 'textarea' ||
+        tagName === 'select' ||
+        target.isContentEditable
+      ) {
+        return;
+      }
+    }
+
+    switch (event.key) {
+      case 'ArrowLeft':
+        if (this.game.canUndo()) {
+          this.game.prevMove();
+          event.preventDefault();
+        }
+        break;
+      case 'ArrowRight':
+        if (this.game.canRedo()) {
+          this.game.nextMove();
+          event.preventDefault();
+        }
+        break;
+      case 'ArrowUp':
+      case 'Home':
+        if (this.game.canUndo()) {
+          this.game.goToStart();
+          event.preventDefault();
+        }
+        break;
+      case 'ArrowDown':
+      case 'End':
+        if (this.game.canRedo()) {
+          this.game.goToEnd();
+          event.preventDefault();
+        }
+        break;
+      case ' ':
+        if (this.game.history().length > 0) {
+          this.game.toggleAutoplay();
+          event.preventDefault();
+        }
+        break;
+      case 'f':
+      case 'F':
+        this.game.flipBoard();
+        event.preventDefault();
+        break;
+    }
+  }
 
   ngOnInit(): void {
     if (this.route) {

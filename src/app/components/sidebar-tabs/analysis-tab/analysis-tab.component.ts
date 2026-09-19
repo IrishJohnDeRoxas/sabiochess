@@ -1,4 +1,4 @@
-import { Component, computed, inject, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ChessGameService } from '../../../services/chess-game.service';
 import { GameAnalysisService } from '../../../services/game-analysis.service';
@@ -41,6 +41,7 @@ export interface MomentumChartData {
   imports: [CommonModule, IconComponent, VariationBannerComponent],
   templateUrl: './analysis-tab.component.html',
   styleUrls: ['./analysis-tab.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AnalysisTabComponent {
   readonly game = inject(ChessGameService);

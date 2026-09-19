@@ -1,4 +1,4 @@
-import { Component, Input, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PlayerInfo } from '../../services/chess-game.service';
 import { PlayerOutcomeStatus } from '../../utils/chess-outcome.util';
@@ -10,23 +10,27 @@ import { IconComponent } from '../icon/icon.component';
   imports: [CommonModule, IconComponent],
   templateUrl: './player-card.component.html',
   styleUrls: ['./player-card.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PlayerCardComponent {
-  @Input() player: PlayerInfo = { name: 'Player', rating: 1500 };
-  @Input() color: 'w' | 'b' = 'w';
-  @Input() isTurn: boolean = false;
-  @Input() clock: string | null = null;
-  @Input() outcome: PlayerOutcomeStatus | null = null;
+  readonly player = input<PlayerInfo>({ name: 'Player', rating: 1500 });
+  readonly color = input<'w' | 'b'>('w');
+  readonly isTurn = input<boolean>(false);
+  readonly clock = input<string | null>(null);
+  readonly outcome = input<PlayerOutcomeStatus | null>(null);
 
-  get formattedRating(): string {
-    if (this.player.rating === undefined || this.player.rating === null || this.player.rating === '') {
+  readonly formattedRating = computed<string>(() => {
+    const rating = this.player().rating;
+    if (rating === undefined || rating === null || rating === '') {
       return '?';
     }
-    return `${this.player.rating}`;
-  }
+    return `${rating}`;
+  });
 
-  get isLowTime(): boolean {
-    if (!this.clock) return false;
-    return this.clock.startsWith('00:0') || this.clock.startsWith('00:1') || this.clock.startsWith('00:2');
-  }
+  readonly isLowTime = computed<boolean>(() => {
+    const clockVal = this.clock();
+    if (!clockVal) return false;
+    return clockVal.startsWith('00:0') || clockVal.startsWith('00:1') || clockVal.startsWith('00:2');
+  });
 }
+

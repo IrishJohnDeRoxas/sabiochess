@@ -1,4 +1,4 @@
-import { Component, inject, signal, ElementRef, ViewChild, HostListener } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, ElementRef, ViewChild, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { LogoComponent } from '../logo/logo.component';
@@ -11,6 +11,7 @@ import { SettingsService } from '../../services/settings.service';
   imports: [CommonModule, RouterModule, LogoComponent, IconComponent],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeaderComponent {
   readonly settings = inject(SettingsService);

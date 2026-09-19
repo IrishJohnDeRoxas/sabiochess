@@ -18,6 +18,26 @@ export interface FetchedGame {
   openingName?: string;
 }
 
+export interface ChessComPlayer {
+  username?: string;
+  rating?: number;
+  result?: string;
+}
+
+export interface ChessComGame {
+  url?: string;
+  pgn: string;
+  time_control?: string;
+  time_class?: string;
+  end_time?: number;
+  white?: ChessComPlayer;
+  black?: ChessComPlayer;
+}
+
+export interface ChessComMonthResponse {
+  games?: ChessComGame[];
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -44,7 +64,7 @@ export class PlatformImporterService {
     for (const url of recentArchiveUrls) {
       try {
         const monthRes = await firstValueFrom(
-          this.http.get<{ games?: any[] }>(url)
+          this.http.get<ChessComMonthResponse>(url)
         );
         if (monthRes.games && Array.isArray(monthRes.games)) {
           // Sort latest games first
@@ -86,7 +106,7 @@ export class PlatformImporterService {
     return this.parseMultiplePgns(pgnText, username);
   }
 
-  private mapChessComGame(game: any, targetUsername: string): FetchedGame {
+  private mapChessComGame(game: ChessComGame, targetUsername: string): FetchedGame {
     const whiteUser = game.white?.username || 'White';
     const blackUser = game.black?.username || 'Black';
     const isUserWhite = whiteUser.toLowerCase() === targetUsername.toLowerCase();
@@ -98,11 +118,11 @@ export class PlatformImporterService {
 
     if (isUserWhite) {
       if (whiteResult === 'win') userResult = 'win';
-      else if (['agreed', 'repetition', 'stalemate', 'insufficient', '50move', 'timevsinsufficient'].includes(whiteResult)) userResult = 'draw';
+      else if (whiteResult && ['agreed', 'repetition', 'stalemate', 'insufficient', '50move', 'timevsinsufficient'].includes(whiteResult)) userResult = 'draw';
       else userResult = 'loss';
     } else if (isUserBlack) {
       if (blackResult === 'win') userResult = 'win';
-      else if (['agreed', 'repetition', 'stalemate', 'insufficient', '50move', 'timevsinsufficient'].includes(blackResult)) userResult = 'draw';
+      else if (blackResult && ['agreed', 'repetition', 'stalemate', 'insufficient', '50move', 'timevsinsufficient'].includes(blackResult)) userResult = 'draw';
       else userResult = 'loss';
     }
 

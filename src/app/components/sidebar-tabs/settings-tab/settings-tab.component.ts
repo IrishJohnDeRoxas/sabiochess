@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SettingsService } from '../../../services/settings.service';
@@ -22,6 +22,7 @@ import { IconComponent } from '../../icon/icon.component';
   imports: [CommonModule, FormsModule, IconComponent],
   templateUrl: './settings-tab.component.html',
   styleUrls: ['./settings-tab.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SettingsTabComponent {
   readonly settings = inject(SettingsService);

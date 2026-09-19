@@ -177,6 +177,21 @@ export class SoundService {
       window.addEventListener('touchstart', unlockAudio, { passive: true });
       window.addEventListener('pointerdown', unlockAudio, { passive: true });
 
+      // Save CPU & battery by suspending AudioContext when document is in background
+      if (typeof document !== 'undefined') {
+        document.addEventListener('visibilitychange', () => {
+          if (document.hidden) {
+            if (this.audioCtx && this.audioCtx.state === 'running') {
+              this.audioCtx.suspend().catch(() => {});
+            }
+          } else {
+            if (this.audioCtx && this.audioCtx.state === 'suspended' && !this.isMuted()) {
+              this.audioCtx.resume().catch(() => {});
+            }
+          }
+        });
+      }
+
       // Preload sound buffers across all sound packs in background silently
       this.preloadAllSounds();
     }

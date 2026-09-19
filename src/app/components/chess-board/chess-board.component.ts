@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ChessGameService, BoardSquareData } from '../../services/chess-game.service';
 import { SettingsService } from '../../services/settings.service';
@@ -11,6 +11,7 @@ import { MoveClassification, getHeroIconForClass } from '../../models/analysis.m
   imports: [CommonModule, IconComponent],
   templateUrl: './chess-board.component.html',
   styleUrls: ['./chess-board.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ChessBoardComponent {
   readonly game = inject(ChessGameService);

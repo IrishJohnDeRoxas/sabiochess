@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { LogoComponent } from '../logo/logo.component';
@@ -11,6 +11,7 @@ import { SettingsService } from '../../services/settings.service';
   imports: [CommonModule, RouterLink, LogoComponent, IconComponent],
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FooterComponent {
   readonly settings = inject(SettingsService);

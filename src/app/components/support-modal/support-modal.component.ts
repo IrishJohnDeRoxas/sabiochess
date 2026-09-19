@@ -1,4 +1,4 @@
-import { Component, inject, HostListener, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, HostListener, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SettingsService } from '../../services/settings.service';
 import { IconComponent } from '../icon/icon.component';
@@ -9,6 +9,7 @@ import { IconComponent } from '../icon/icon.component';
   imports: [CommonModule, IconComponent],
   templateUrl: './support-modal.component.html',
   styleUrls: ['./support-modal.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SupportModalComponent {
   readonly settings = inject(SettingsService);

@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal, ElementRef, ViewChild, HostListener, effect } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal, ElementRef, ViewChild, HostListener, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChessGameService, SAMPLE_GAMES } from '../../../services/chess-game.service';
@@ -87,6 +87,7 @@ export interface MomentumChartData {
   imports: [CommonModule, FormsModule, IconComponent, PlatformGameSelectorComponent],
   templateUrl: './review-tab.component.html',
   styleUrls: ['./review-tab.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReviewTabComponent {
   readonly game = inject(ChessGameService);

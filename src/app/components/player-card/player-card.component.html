@@ -1,10 +1,10 @@
 <div
   class="player-card-container px-3 py-2 sm:px-4 sm:py-2.5 bg-white dark:bg-[#1E1E1E] flex items-center justify-between gap-2 sm:gap-3 select-none transition-all duration-150 w-full border-2 border-[#222222] dark:border-black relative"
   [ngClass]="{
-    'is-active-turn shadow-[3px_3px_0_0_#FF4F00] sm:shadow-[4px_4px_0_0_#FF4F00] ring-2 ring-[#FF4F00]': isTurn && !outcome?.isWinner && !outcome?.isLoser && !outcome?.isDraw,
-    'shadow-[3px_3px_0_0_#EAB308] sm:shadow-[4px_4px_0_0_#EAB308] border-[#CA8A04] bg-amber-50/20 dark:bg-amber-950/10': outcome?.isWinner,
-    'shadow-[3px_3px_0_0_#222222] sm:shadow-[4px_4px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000] sm:dark:shadow-[4px_4px_0_0_#000000] opacity-90': outcome?.isLoser,
-    'shadow-[3px_3px_0_0_#222222] sm:shadow-[4px_4px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000] sm:dark:shadow-[4px_4px_0_0_#000000]': !isTurn && !outcome?.isWinner && !outcome?.isLoser
+    'is-active-turn shadow-[3px_3px_0_0_#FF4F00] sm:shadow-[4px_4px_0_0_#FF4F00] ring-2 ring-[#FF4F00]': isTurn() && !outcome()?.isWinner && !outcome()?.isLoser && !outcome()?.isDraw,
+    'shadow-[3px_3px_0_0_#EAB308] sm:shadow-[4px_4px_0_0_#EAB308] border-[#CA8A04] bg-amber-50/20 dark:bg-amber-950/10': outcome()?.isWinner,
+    'shadow-[3px_3px_0_0_#222222] sm:shadow-[4px_4px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000] sm:dark:shadow-[4px_4px_0_0_#000000] opacity-90': outcome()?.isLoser,
+    'shadow-[3px_3px_0_0_#222222] sm:shadow-[4px_4px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000] sm:dark:shadow-[4px_4px_0_0_#000000]': !isTurn() && !outcome()?.isWinner && !outcome()?.isLoser
   }"
 >
   <!-- Left: Player Profile Details -->
@@ -13,16 +13,16 @@
     <div class="relative shrink-0">
       <div
         class="player-avatar w-7 h-7 sm:w-9 sm:h-9 rounded-none border-2 border-[#222222] dark:border-black flex items-center justify-center shrink-0 shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000] transition-transform"
-        [ngClass]="color === 'w' ? 'bg-[#ECECD8] dark:bg-[#262626]' : 'bg-[#373A46] dark:bg-[#333333] text-white'"
+        [ngClass]="color() === 'w' ? 'bg-[#ECECD8] dark:bg-[#262626]' : 'bg-[#373A46] dark:bg-[#333333] text-white'"
       >
-        @if (color === 'w') {
+        @if (color() === 'w') {
           <img src="pieces/wK.svg" alt="White Player" class="w-4 h-4 sm:w-6 sm:h-6 select-none pointer-events-none" />
         } @else {
           <img src="pieces/bK.svg" alt="Black Player" class="w-4 h-4 sm:w-6 sm:h-6 select-none pointer-events-none" />
         }
       </div>
 
-      @if (outcome?.isWinner) {
+      @if (outcome()?.isWinner) {
         <div class="absolute -bottom-1 -right-1 w-3.5 h-3.5 sm:w-5 sm:h-5 bg-[#EAB308] border border-[#222222] dark:border-black flex items-center justify-center text-[#222222] shadow-[1px_1px_0_0_#222222]" title="Winner">
           <app-icon name="trophy" size="w-2 h-2 sm:w-3 sm:h-3"></app-icon>
         </div>
@@ -32,37 +32,37 @@
     <!-- Name, Rating & Outcome Stack -->
     <div class="flex flex-col min-w-0 overflow-hidden gap-0.5">
       <div class="flex items-center gap-1.5 sm:gap-2 min-w-0">
-        @if (player.title) {
+        @if (player().title) {
           <span class="badge-brutal text-[9px] sm:text-xs !px-1 sm:!px-1.5 !py-0 bg-[#F59E0B] text-[#222222] font-black shrink-0 tracking-tight shadow-[1px_1px_0_0_#222222] dark:shadow-[1px_1px_0_0_#000000]">
-            {{ player.title }}
+            {{ player().title }}
           </span>
         }
-        <span class="font-display font-bold text-xs sm:text-sm text-[#222222] dark:text-[#F3F4F6] truncate max-w-[100px] xs:max-w-[140px] sm:max-w-[200px]" [title]="player.name">
-          {{ player.name }}
+        <span class="font-display font-bold text-xs sm:text-sm text-[#222222] dark:text-[#F3F4F6] truncate max-w-[100px] xs:max-w-[140px] sm:max-w-[200px]" [title]="player().name">
+          {{ player().name }}
         </span>
 
         <!-- Rating -->
         <span class="text-[10px] sm:text-xs font-label text-gray-500 dark:text-gray-400 shrink-0">
-          ({{ formattedRating }})
+          ({{ formattedRating() }})
         </span>
       </div>
 
       <!-- Outcome Pill -->
-      @if (outcome?.reason) {
+      @if (outcome()?.reason) {
         <div class="flex items-center gap-1">
           <span
             class="inline-flex items-center gap-1 px-1.5 py-0.2 border text-[10px] sm:text-[11px] font-bold font-accent uppercase truncate max-w-full"
             [ngClass]="{
-              'bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border-amber-500': outcome?.isWinner,
-              'bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400 border-red-300 dark:border-red-800': outcome?.isLoser,
-              'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-700': outcome?.isDraw
+              'bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border-amber-500': outcome()?.isWinner,
+              'bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-400 border-red-300 dark:border-red-800': outcome()?.isLoser,
+              'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-700': outcome()?.isDraw
             }"
-            [title]="outcome?.reason"
+            [title]="outcome()?.reason"
           >
-            @if (outcome?.isWinner) {
+            @if (outcome()?.isWinner) {
               <app-icon name="trophy" size="w-2.5 h-2.5"></app-icon>
             }
-            {{ outcome?.reason }}
+            {{ outcome()?.reason }}
           </span>
         </div>
       }
@@ -72,35 +72,36 @@
   <!-- Right: Score Pill & Digital Clock Display -->
   <div class="flex items-center gap-2 sm:gap-2.5 shrink-0">
     <!-- Score Pill (1, 0, ½) -->
-    @if (outcome?.score) {
+    @if (outcome()?.score) {
       <div
         class="badge-brutal text-xs sm:text-sm !px-2 !py-0.5 font-black font-display shrink-0 border-2 border-[#222222] dark:border-black shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000]"
         [ngClass]="{
-          'bg-[#EAB308] text-[#222222]': outcome?.score === '1',
-          'bg-[#D9D9D9] dark:bg-[#333333] text-gray-500 dark:text-gray-400': outcome?.score === '0',
-          'bg-[#ECECD8] dark:bg-[#262626] text-[#222222] dark:text-[#F3F4F6]': outcome?.score === '½'
+          'bg-[#EAB308] text-[#222222]': outcome()?.score === '1',
+          'bg-[#D9D9D9] dark:bg-[#333333] text-gray-500 dark:text-gray-400': outcome()?.score === '0',
+          'bg-[#ECECD8] dark:bg-[#262626] text-[#222222] dark:text-[#F3F4F6]': outcome()?.score === '½'
         }"
-        [title]="outcome?.isWinner ? 'Won (1.0)' : outcome?.isLoser ? 'Lost (0.0)' : 'Draw (0.5)'"
+        [title]="outcome()?.isWinner ? 'Won (1.0)' : outcome()?.isLoser ? 'Lost (0.0)' : 'Draw (0.5)'"
       >
-        {{ outcome?.score }}
+        {{ outcome()?.score }}
       </div>
     }
 
     <!-- Digital Clock Display -->
-    @if (clock) {
+    @if (clock()) {
       <div
         class="flex items-center gap-1.5 px-2.5 py-1 bg-[#ECECD8] dark:bg-[#262626] border-2 border-[#222222] dark:border-black shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000] shrink-0"
         [ngClass]="{
-          'bg-red-100 dark:bg-red-950/50 border-red-600 text-red-600 animate-pulse': isLowTime,
-          'bg-[#D9D9D9] dark:bg-[#1E1E1E] border-[#FF4F00]': isTurn && !isLowTime
+          'bg-red-100 dark:bg-red-950/50 border-red-600 text-red-600 animate-pulse': isLowTime(),
+          'bg-[#D9D9D9] dark:bg-[#1E1E1E] border-[#FF4F00]': isTurn() && !isLowTime()
         }"
-        [title]="player.name + ' Clock: ' + clock"
+        [title]="player().name + ' Clock: ' + clock()"
       >
         <span class="text-xs text-gray-500 dark:text-gray-400 inline-flex">⏱</span>
         <span class="font-label font-bold text-xs sm:text-sm tracking-wider text-[#222222] dark:text-[#F3F4F6]">
-          {{ clock }}
+          {{ clock() }}
         </span>
       </div>
     }
   </div>
 </div>
+

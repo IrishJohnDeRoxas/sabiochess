@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, inject, signal, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, output, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FetchedGame, PlatformImporterService } from '../../services/platform-importer.service';
@@ -24,13 +24,14 @@ interface CachedPlatformGames {
   imports: [CommonModule, FormsModule, IconComponent],
   templateUrl: './platform-game-selector.component.html',
   styleUrls: ['./platform-game-selector.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PlatformGameSelectorComponent implements OnInit {
   private readonly platformService = inject(PlatformImporterService);
   private readonly gameService = inject(ChessGameService);
   readonly settings = inject(SettingsService);
 
-  @Output() gameSelected = new EventEmitter<FetchedGame>();
+  readonly gameSelected = output<FetchedGame>();
 
   readonly activePlatform = signal<PlatformType>('chess.com');
   readonly username = signal<string>(this.settings.chesscomUsername() || 'Hikaru');
