@@ -106,7 +106,7 @@ export class ChangelogComponent implements OnInit {
           type: 'improvement',
           title: 'Chrome Web Store & Fair Play Compliance',
           description:
-            'Packaged with Manifest V3 and minimal permissions (activeTab, storage). Strictly operates on completed post-game screens with zero real-time move assistance.',
+            'Packaged with Manifest V3 and zero elevated permissions (no storage, no activeTab). Strictly operates on completed post-game screens with zero real-time move assistance.',
         },
         {
           type: 'fix',

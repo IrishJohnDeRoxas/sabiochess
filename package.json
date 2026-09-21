@@ -9,7 +9,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "vitest run",
     "test:watch": "vitest",
-    "package:extension": "cd extension && zip -r ../sabiochess-extension.zip . -x \"*.DS_Store*\" -x \"__MACOSX*\""
+    "package:extension": "python3 -c \"import shutil; shutil.make_archive('sabiochess-extension', 'zip', 'extension')\""
   },
   "private": true,
   "license": "GPL-3.0-only",

@@ -36,6 +36,14 @@ When you finish a game on Chess.com, the extension automatically detects the gam
 
 ---
 
+## Permissions & Architecture
+
+- **Zero Elevated Permissions (`permissions: []`)**: The extension does not request or require `storage`, `activeTab`, `tabs`, or background cookies.
+- **Narrow Host Permissions**: Strictly limited to `https://www.chess.com/*`, `https://chess.com/*`, and `https://api.chess.com/*` solely to detect completed game states and query public match archive PGN data.
+- **100% Client-Side Engine**: Game analysis runs locally in the browser via WebAssembly Stockfish. Zero game data or personal credentials are sent to or logged on remote servers.
+
+---
+
 ## Switching Target URL (Localhost vs. Production)
 
 By default, the extension points to production `https://sabiochess.com`.
@@ -49,3 +57,4 @@ localStorage.setItem('sabiochess_target_url', 'http://localhost:4200');
 // Reset extension back to production:
 localStorage.removeItem('sabiochess_target_url');
 ```
+

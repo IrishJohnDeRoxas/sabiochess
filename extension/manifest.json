@@ -1,14 +1,12 @@
 {
   "manifest_version": 3,
   "name": "SabioChess - Chess.com Reviewer",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "One-click instant game review and Stockfish analysis sidebar for completed Chess.com games.",
-  "permissions": ["storage", "activeTab"],
+  "permissions": [],
   "host_permissions": [
-    "https://chess.com/*",
     "https://www.chess.com/*",
-    "*://*.chess.com/*",
-    "*://chess.com/*",
+    "https://chess.com/*",
     "https://api.chess.com/*"
   ],
   "background": {
@@ -17,12 +15,8 @@
   "content_scripts": [
     {
       "matches": [
-        "https://chess.com/*",
         "https://www.chess.com/*",
-        "http://chess.com/*",
-        "http://www.chess.com/*",
-        "*://*.chess.com/*",
-        "*://chess.com/*"
+        "https://chess.com/*"
       ],
       "js": ["src/content/content.js"],
       "css": ["src/content/content.css"],
@@ -33,10 +27,8 @@
     {
       "resources": ["icons/*"],
       "matches": [
-        "*://*.chess.com/*",
-        "*://chess.com/*",
-        "https://chess.com/*",
-        "https://www.chess.com/*"
+        "https://www.chess.com/*",
+        "https://chess.com/*"
       ]
     }
   ],

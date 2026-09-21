@@ -285,16 +285,19 @@
           </p>
           <ul class="list-disc pl-5 space-y-2 text-sm sm:text-base">
             <li>
-              <strong class="text-[#222222] dark:text-white">Host Permissions (chess.com):</strong> Used exclusively to detect active chessboard states (PGN/FEN) and inject the "Review on SabioChess" button and sidebar UI into the chess.com webpage.
+              <strong class="text-[#222222] dark:text-white">Zero Elevated Permissions (permissions: []):</strong> The extension requests no privileged browser permissions (no <code>storage</code>, no <code>activeTab</code>, no background tabs, and no cookies). It operates solely within the scope of post-game Chess.com pages.
             </li>
             <li>
-              <strong class="text-[#222222] dark:text-white">No Personal Data Collection:</strong> The extension does not access, read, or harvest passwords, account credentials, payment info, personal messages, or unrelated browsing history.
+              <strong class="text-[#222222] dark:text-white">Narrow Host Scope (chess.com):</strong> Host permissions are strictly restricted to <code>https://*.chess.com/*</code> and <code>https://api.chess.com/*</code> exclusively to identify completed game states (PGN/FEN), inject the review button and sidebar iframe, and query the public game archive for the current match.
             </li>
             <li>
-              <strong class="text-[#222222] dark:text-white">Local Execution &amp; No Remote Code:</strong> Move analysis runs directly in your browser using local Stockfish engine computation. No chess data is transmitted to, logged on, or sold to third-party servers.
+              <strong class="text-[#222222] dark:text-white">No Personal Data Collection or Tracking:</strong> The extension does not access, read, or collect passwords, account credentials, payment info, chat messages, or browsing activity outside of Chess.com completed game boards.
             </li>
             <li>
-              <strong class="text-[#222222] dark:text-white">Local Storage:</strong> Used only to preserve client-side extension preferences (e.g. analysis UI settings and target review window options).
+              <strong class="text-[#222222] dark:text-white">100% Local Engine Computation:</strong> Stockfish engine analysis runs entirely inside the local browser WebAssembly sandbox. No game data is transmitted to, logged on, or sold to remote servers.
+            </li>
+            <li>
+              <strong class="text-[#222222] dark:text-white">Local DOM Storage:</strong> Local storage is limited to standard browser DOM <code>localStorage</code> for caching client-side target URL preferences during development or testing.
             </li>
           </ul>
         </div>
