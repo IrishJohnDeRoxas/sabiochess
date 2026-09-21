@@ -192,6 +192,19 @@
             }
           </p>
 
+          <!-- Brilliant Move Dopamine BMC Prompt -->
+          @if (currentExplanation()?.classification === 'brilliant') {
+            <div
+              (click)="settings.openSupportModal()"
+              class="flex items-center justify-between p-2 bg-[#00C0F9]/15 dark:bg-[#00C0F9]/20 border-2 border-[#00C0F9] text-[#006A8E] dark:text-[#38BDF8] cursor-pointer hover:bg-[#00C0F9]/25 transition-all shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000]">
+              <div class="flex items-center gap-1.5 font-accent text-xs font-bold">
+                <span>⚡</span>
+                <span>Brilliant move! Saved $10/mo vs Diamond? Support on BMC ☕</span>
+              </div>
+              <span class="text-xs underline font-bold uppercase shrink-0">Tip ↗</span>
+            </div>
+          }
+
           <!-- Follow-Up Action Button inside card -->
           <div class="pt-0.5">
             <button
@@ -728,6 +741,27 @@
             </div>
           </div>
         }
+      </div>
+
+      <!-- BMC Post-Review Callout Banner -->
+      <div class="card-brutal p-3 bg-[#FEF3C7] dark:bg-[#262626] border-2 border-[#222222] dark:border-[#F59E0B]/60 flex items-center justify-between gap-3 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <span class="text-xl sm:text-2xl">☕</span>
+          <div class="flex flex-col min-w-0">
+            <strong class="font-accent text-xs font-bold text-[#92400E] dark:text-[#FBBF24] uppercase tracking-wide truncate">
+              Enjoying Unlimited Game Reviews?
+            </strong>
+            <span class="font-body text-[11px] text-gray-700 dark:text-gray-300 leading-tight">
+              Save $10/mo on Chess.com Diamond & support independent chess dev!
+            </span>
+          </div>
+        </div>
+        <button
+          type="button"
+          (click)="settings.openSupportModal()"
+          class="btn-brutal !py-1.5 !px-3 bg-[#F59E0B] text-black font-accent text-xs font-black uppercase shrink-0 cursor-pointer shadow-[2px_2px_0_0_#222222] hover:bg-[#FBBF24] transition-all">
+          Support ☕
+        </button>
       </div>
     </div>
   }

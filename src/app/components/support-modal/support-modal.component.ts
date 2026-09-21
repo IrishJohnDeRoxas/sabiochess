@@ -14,6 +14,8 @@ import { IconComponent } from '../icon/icon.component';
 export class SupportModalComponent {
   readonly settings = inject(SettingsService);
   readonly copiedUrl = signal<boolean>(false);
+  readonly inputCode = signal<string>('');
+  readonly codeError = signal<string | null>(null);
 
   readonly buyMeCoffeeUrl = 'https://buymeacoffee.com/sabiochess';
   readonly coffeeAmounts = [
@@ -36,6 +38,7 @@ export class SupportModalComponent {
   }
 
   close(): void {
+    this.codeError.set(null);
     this.settings.closeSupportModal();
   }
 
@@ -50,6 +53,27 @@ export class SupportModalComponent {
         this.settings.flashToast('Buy Me a Coffee link copied!');
         setTimeout(() => this.copiedUrl.set(false), 2500);
       });
+    }
+  }
+
+  onCodeInput(event: Event): void {
+    const val = (event.target as HTMLInputElement)?.value || '';
+    this.inputCode.set(val);
+    this.codeError.set(null);
+  }
+
+  submitSupporterCode(): void {
+    const code = this.inputCode();
+    if (!code.trim()) {
+      this.codeError.set('Please enter a code or BMC note');
+      return;
+    }
+    const success = this.settings.unlockSupporter(code);
+    if (success) {
+      this.inputCode.set('');
+      this.codeError.set(null);
+    } else {
+      this.codeError.set('Invalid supporter code. Please try again.');
     }
   }
 }

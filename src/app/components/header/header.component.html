@@ -2,9 +2,21 @@
   class="w-full bg-[#FFFFFF] dark:bg-[#1E1E1E] border-b-[4px] border-[#222222] dark:border-black shadow-[0_4px_0_0_#222222] dark:shadow-[0_4px_0_0_#000000] px-3 py-2.5 sm:px-6 lg:px-8 transition-colors duration-150 relative z-30">
   <div class="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-4">
     <!-- Brand / Logo Area -->
-    <a [routerLink]="['/']" (click)="closeMobileMenu()" class="inline-block no-underline">
-      <app-logo size="md"></app-logo>
-    </a>
+    <div class="flex items-center gap-2">
+      <a [routerLink]="['/']" (click)="closeMobileMenu()" class="inline-block no-underline">
+        <app-logo size="md"></app-logo>
+      </a>
+      @if (settings.isSupporter()) {
+        <button
+          type="button"
+          (click)="openSupportModal()"
+          class="badge-brutal !py-0.5 !px-2 bg-[#F59E0B] text-black border-2 border-[#222222] font-accent text-[11px] font-black uppercase tracking-wider flex items-center gap-1 shadow-[2px_2px_0_0_#222222] cursor-pointer hover:bg-[#FBBF24] transition-all"
+          title="Active SabioChess Supporter">
+          <span>👑</span>
+          <span class="hidden sm:inline">SUPPORTER</span>
+        </button>
+      }
+    </div>
 
     <!-- Actions Area (Desktop) -->
     <div class="hidden md:flex items-center gap-3 shrink-0">

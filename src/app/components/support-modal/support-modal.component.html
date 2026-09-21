@@ -72,6 +72,59 @@
         </div>
       </div>
 
+      <!-- Supporter Perk Section -->
+      <div class="p-3.5 border-2 border-[#222222] dark:border-[#373A46] bg-[#FFFBEB] dark:bg-[#202020] flex flex-col gap-2 shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000]">
+        @if (settings.isSupporter()) {
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-xl">👑</span>
+              <div>
+                <strong class="font-accent text-xs block font-bold text-[#92400E] dark:text-[#FBBF24] uppercase tracking-wide">
+                  Active SabioChess Supporter
+                </strong>
+                <span class="font-body text-[11px] text-gray-700 dark:text-gray-300">
+                  Golden 👑 badge active across the app. Thank you!
+                </span>
+              </div>
+            </div>
+            <button type="button" (click)="settings.setSupporter(false)" class="text-[10px] text-gray-500 hover:text-red-500 underline cursor-pointer">
+              Reset
+            </button>
+          </div>
+        } @else {
+          <div class="flex flex-col gap-1.5">
+            <div class="flex items-center justify-between">
+              <span class="font-accent text-xs font-bold uppercase text-[#92400E] dark:text-[#FBBF24] flex items-center gap-1">
+                <span>👑</span>
+                <span>Already Tipped? Unlock Supporter Badge</span>
+              </span>
+            </div>
+            <p class="font-body text-[11px] text-gray-600 dark:text-gray-400">
+              Enter your BMC donation code, transaction ID, or supporter passcode to activate the golden 👑 Supporter badge:
+            </p>
+            <div class="flex items-center gap-2 pt-1">
+              <input
+                type="text"
+                [value]="inputCode()"
+                (input)="onCodeInput($event)"
+                (keyup.enter)="submitSupporterCode()"
+                placeholder="e.g. BMC-SUPPORTER or note..."
+                class="input-brutal flex-1 !py-1.5 !px-2.5 text-xs bg-white dark:bg-[#1A1A1A] border-2 border-[#222222] dark:border-black font-mono text-black dark:text-white"
+              />
+              <button
+                type="button"
+                (click)="submitSupporterCode()"
+                class="btn-brutal !py-1.5 !px-3 text-xs bg-[#F59E0B] text-black font-accent font-bold uppercase cursor-pointer border-2 border-[#222222] shadow-[2px_2px_0_0_#222222]">
+                Unlock
+              </button>
+            </div>
+            @if (codeError()) {
+              <span class="text-[11px] text-red-500 font-bold">{{ codeError() }}</span>
+            }
+          </div>
+        }
+      </div>
+
       <!-- Main Action Buttons -->
       <div class="flex flex-col sm:flex-row gap-2.5 pt-1">
         <button type="button" (click)="openCoffee()"

@@ -39,6 +39,7 @@ export class SettingsService {
   readonly highlightLastMove = signal<boolean>(DEFAULT_SETTINGS.highlightLastMove);
   readonly chesscomUsername = signal<string>(DEFAULT_SETTINGS.chesscomUsername);
   readonly lichessUsername = signal<string>(DEFAULT_SETTINGS.lichessUsername);
+  readonly isSupporter = signal<boolean>(DEFAULT_SETTINGS.isSupporter);
   readonly isSupportModalOpen = signal<boolean>(false);
 
   readonly toastMessage = signal<string | null>(null);
@@ -89,6 +90,7 @@ export class SettingsService {
         highlightLastMove: this.highlightLastMove(),
         chesscomUsername: this.chesscomUsername(),
         lichessUsername: this.lichessUsername(),
+        isSupporter: this.isSupporter(),
       };
       this.saveSettings(state);
     });
@@ -178,6 +180,27 @@ export class SettingsService {
     this.lichessUsername.set(name.trim());
   }
 
+  setSupporter(status: boolean): void {
+    this.isSupporter.set(status);
+  }
+
+  unlockSupporter(code: string): boolean {
+    const clean = (code || '').trim().toUpperCase();
+    if (!clean) return false;
+
+    // Accept common supporter codes, BMC IDs, or any code with length >= 4
+    const validKeywords = ['SABIO', 'CHESS', 'COFFEE', 'SUPPORTER', 'PATRON', 'GRANDMASTER', 'DIAMOND', 'BMC'];
+    const isKeyword = validKeywords.some((kw) => clean.includes(kw));
+    const isValidId = clean.length >= 4;
+
+    if (isKeyword || isValidId) {
+      this.isSupporter.set(true);
+      this.flashToast('👑 Supporter Perks Unlocked! Thank you for supporting SabioChess!', 3000);
+      return true;
+    }
+    return false;
+  }
+
   openSupportModal(): void {
     this.isSupportModalOpen.set(true);
   }
@@ -258,6 +281,7 @@ export class SettingsService {
       if (typeof data.highlightLastMove === 'boolean') this.highlightLastMove.set(data.highlightLastMove);
       if (data.chesscomUsername) this.chesscomUsername.set(data.chesscomUsername);
       if (data.lichessUsername) this.lichessUsername.set(data.lichessUsername);
+      if (typeof data.isSupporter === 'boolean') this.isSupporter.set(data.isSupporter);
     } catch {
       // Ignore load error
     }

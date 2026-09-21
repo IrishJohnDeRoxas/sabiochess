@@ -1,58 +1,69 @@
-# Sabiochess
+# SabioChess
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.1.7.
+> **Master Chess Analysis & Real-Time AI Voice Coach — 100% Free, Private, and Running Client-Side.**
 
-## Development server
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-Donate-orange?style=for-the-badge&logo=buy-me-a-coffee)](https://buymeacoffee.com/sabiochess)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg?style=for-the-badge)](https://www.gnu.org/licenses/gpl-3.0)
+[![Angular](https://img.shields.io/badge/Angular-22-DD0031?style=for-the-badge&logo=angular)](https://angular.dev)
+[![Engine](https://img.shields.io/badge/Stockfish-WASM-black?style=for-the-badge)](https://stockfishchess.org)
 
-To start a local development server, run:
+---
 
+## Why SabioChess?
+
+| Feature | Chess.com Diamond ($120/yr) | Lichess | **SabioChess (Free)** |
+| :--- | :---: | :---: | :---: |
+| **Unlimited Full Game Reviews** | No (Free is 1/day) | No (Basic Analysis) | **Unlimited & Free** |
+| **Natural AI Voice Coach** | No (Robotic Audio) | None | **On-Device Neural TTS** |
+| **Move Classifications (!!, !, ★, ??)** | Yes | Basic centipawn | **Full 7-Tier System** |
+| **Direct Chess.com Match Import** | Yes | Manual PGN | **1-Click Chrome Extension** |
+| **Privacy & Serverless Execution** | Cloud tracked | Cloud Engine | **100% In-Browser Worker** |
+
+---
+
+## Key Features
+
+- **Client-Side Stockfish WASM**: Deep multithreaded engine analysis directly in Web Workers with zero latency and zero server queues.
+- **On-Device Voice Commentary**: Spoken move explanations and real-time coaching using neural text-to-speech.
+- **Master Opening Book**: Contextual opening recognition, variations, and theory insights.
+- **Neubrutalist Board & Themes**: High-contrast, accessibility-first board themes, sound packs, and momentum charts.
+- **Chrome Extension Overlay**: 1-click review directly from Chess.com game-over screens.
+
+---
+
+## Support SabioChess
+
+SabioChess is completely free and open-source. If you saved money skipping expensive chess subscriptions, consider supporting development:
+
+- **[Support on Buy Me a Coffee](https://buymeacoffee.com/sabiochess)**
+
+---
+
+## Development & Local Setup
+
+### 1. Install Dependencies
 ```bash
-ng serve
+npm install
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
+### 2. Start Dev Server
 ```bash
-ng generate component component-name
+npm run dev
+# or: ng serve
+```
+Open `http://localhost:4200/` in your browser.
+
+### 3. Run Tests
+```bash
+npm test
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
+### 4. Build Production Bundle
 ```bash
-ng generate --help
+npm run build
 ```
 
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+---
 
 ## Browser Extension (Chess.com Integration)
 
@@ -71,6 +82,5 @@ localStorage.removeItem('sabiochess_target_url');
 
 ---
 
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## License
+This project is licensed under the [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0).

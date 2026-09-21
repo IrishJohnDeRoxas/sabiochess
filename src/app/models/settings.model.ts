@@ -246,6 +246,7 @@ export interface UserSettings {
   highlightLastMove: boolean;
   chesscomUsername: string;
   lichessUsername: string;
+  isSupporter: boolean;
 }
 
 export const DEFAULT_SETTINGS: UserSettings = {
@@ -269,4 +270,5 @@ export const DEFAULT_SETTINGS: UserSettings = {
   highlightLastMove: true,
   chesscomUsername: '',
   lichessUsername: '',
+  isSupporter: false,
 };
