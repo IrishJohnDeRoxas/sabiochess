@@ -1,0 +1,169 @@
+@if (historyService.isDrawerOpen()) {
+  <!-- Backdrop Overlay -->
+  <div
+    class="fixed inset-0 bg-black/60 backdrop-blur-[2px] z-50 flex justify-end animate-fadeIn"
+    (click)="onBackdropClick($event)"
+    aria-modal="true"
+    role="dialog"
+    aria-labelledby="recent-reviews-title"
+  >
+    <!-- Drawer Container -->
+    <div
+      class="w-full max-w-lg h-full bg-[#D9D9D9] dark:bg-[#141519] border-l-[4px] border-[#222222] dark:border-black shadow-[-8px_0_0_0_#222222] dark:shadow-[-8px_0_0_0_#000000] flex flex-col z-50 animate-slide-in-right overflow-hidden"
+    >
+      <!-- Header -->
+      <div
+        class="bg-white dark:bg-[#1E1E1E] p-3.5 sm:p-4 border-b-[3px] border-[#222222] dark:border-black flex items-center justify-between gap-2 shadow-[0_3px_0_0_#222222] dark:shadow-[0_3px_0_0_#000000] shrink-0"
+      >
+        <div class="flex items-center gap-2">
+          <div
+            class="w-8 h-8 rounded-none bg-[#FF4F00] text-white border-2 border-[#222222] dark:border-black flex items-center justify-center shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000]"
+          >
+            <app-icon name="clock" size="w-4 h-4"></app-icon>
+          </div>
+          <div>
+            <h2 id="recent-reviews-title" class="font-accent text-sm sm:text-base font-black uppercase text-[#222222] dark:text-[#F3F4F6] leading-none">
+              RECENT REVIEWS
+            </h2>
+            <span class="text-[10px] sm:text-xs font-label font-bold text-gray-600 dark:text-gray-400">
+              Saved in browser IndexedDB ({{ historyService.recentReviews().length }}/50)
+            </span>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          @if (historyService.recentReviews().length > 0) {
+            <button
+              type="button"
+              (click)="clearAll($event)"
+              class="btn-brutal bg-[#FEE2E2] dark:bg-[#3B1818] text-[#991B1B] dark:text-[#FCA5A5] border-2 border-[#222222] dark:border-black !py-1.5 !px-2 text-[10px] sm:text-xs font-bold flex items-center gap-1 cursor-pointer hover:bg-[#FECACA] transition-colors"
+              title="Clear all saved reviews"
+            >
+              <app-icon name="trash" size="w-3 h-3"></app-icon>
+              <span>CLEAR ALL</span>
+            </button>
+          }
+          <button
+            type="button"
+            (click)="close()"
+            class="btn-brutal !py-1.5 !px-2 bg-[#ECECD8] dark:bg-[#262626] text-[#222222] dark:text-[#F3F4F6] border-2 border-[#222222] dark:border-black text-xs font-bold cursor-pointer hover:bg-white dark:hover:bg-[#333333]"
+            aria-label="Close recent reviews drawer"
+          >
+            <app-icon name="x-mark" size="w-4 h-4"></app-icon>
+          </button>
+        </div>
+      </div>
+
+      <!-- Drawer Content / Game List -->
+      <div class="flex-1 overflow-y-auto p-3 sm:p-4 flex flex-col gap-2.5">
+        @if (historyService.recentReviews().length === 0) {
+          <div
+            class="card-brutal p-6 bg-white dark:bg-[#1E1E1E] flex flex-col items-center justify-center text-center gap-3 my-auto"
+          >
+            <div
+              class="w-12 h-12 bg-[#ECECD8] dark:bg-[#262626] border-2 border-[#222222] dark:border-black flex items-center justify-center text-xl shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]"
+            >
+              ♟️
+            </div>
+            <div class="flex flex-col gap-1">
+              <span class="font-accent text-sm font-bold uppercase text-[#222222] dark:text-[#F3F4F6]">
+                NO SAVED REVIEWS YET
+              </span>
+              <p class="text-xs font-body text-gray-600 dark:text-gray-400 max-w-xs">
+                Games analyzed with Stockfish or imported from Chess.com & Lichess are automatically saved to your browser so you never lose them.
+              </p>
+            </div>
+          </div>
+        } @else {
+          @for (item of historyService.recentReviews(); track item.id) {
+            <div
+              (click)="loadGame(item)"
+              class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1E1E] flex flex-col gap-2 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000] hover:border-[#FF4F00] dark:hover:border-[#FF4F00] transition-all cursor-pointer group"
+            >
+              <!-- Top Row: Date & Result & Delete -->
+              <div class="flex items-center justify-between border-b border-gray-200 dark:border-gray-700/60 pb-1.5 text-[11px] font-label font-bold">
+                <span class="text-gray-600 dark:text-gray-400 flex items-center gap-1.5 truncate">
+                  <span>{{ item.date || 'Recent' }}</span>
+                  @if (item.event) {
+                    <span>•</span>
+                    <span class="truncate max-w-[140px]">{{ item.event }}</span>
+                  }
+                </span>
+
+                <div class="flex items-center gap-1.5 shrink-0">
+                  <span
+                    class="badge-brutal text-[10px] font-black uppercase px-1.5 py-0.5"
+                    [ngClass]="{
+                      'bg-[#10B981] text-white': item.result === '1-0' || item.result === '0-1',
+                      'bg-[#F59E0B] text-black': item.result === '1/2-1/2',
+                      'bg-gray-200 dark:bg-[#262626] text-gray-800 dark:text-gray-200': !item.result || item.result === '*'
+                    }"
+                  >
+                    {{ item.result || '*' }}
+                  </span>
+                  <button
+                    type="button"
+                    (click)="deleteGame($event, item.id)"
+                    class="p-1 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 rounded border border-transparent hover:border-red-300 transition-colors cursor-pointer"
+                    title="Delete this saved review"
+                  >
+                    <app-icon name="trash" size="w-3.5 h-3.5"></app-icon>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Players Matchup -->
+              <div class="grid grid-cols-2 gap-2 text-xs font-accent">
+                <!-- White Player -->
+                <div class="flex flex-col min-w-0 bg-[#ECECD8] dark:bg-[#262626] p-1.5 sm:p-2 border border-[#222222] dark:border-[#373A46]">
+                  <div class="flex items-center gap-1 truncate font-bold text-[#222222] dark:text-[#F3F4F6]">
+                    <span class="text-xs">⚪</span>
+                    <span class="truncate">{{ item.white }}</span>
+                    @if (item.whiteRating) {
+                      <span class="text-[10px] text-gray-500 dark:text-gray-400">({{ item.whiteRating }})</span>
+                    }
+                  </div>
+                  @if (item.whiteAccuracy !== undefined) {
+                    <div class="text-[10px] font-mono font-bold text-[#FF4F00] mt-0.5">
+                      {{ item.whiteAccuracy | number: '1.1-1' }}% Acc
+                    </div>
+                  }
+                </div>
+
+                <!-- Black Player -->
+                <div class="flex flex-col min-w-0 bg-[#ECECD8] dark:bg-[#262626] p-1.5 sm:p-2 border border-[#222222] dark:border-[#373A46]">
+                  <div class="flex items-center gap-1 truncate font-bold text-[#222222] dark:text-[#F3F4F6]">
+                    <span class="text-xs">⚫</span>
+                    <span class="truncate">{{ item.black }}</span>
+                    @if (item.blackRating) {
+                      <span class="text-[10px] text-gray-500 dark:text-gray-400">({{ item.blackRating }})</span>
+                    }
+                  </div>
+                  @if (item.blackAccuracy !== undefined) {
+                    <div class="text-[10px] font-mono font-bold text-[#FF4F00] mt-0.5">
+                      {{ item.blackAccuracy | number: '1.1-1' }}% Acc
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <!-- Bottom Row: Opening & Moves & Click to load -->
+              <div class="flex items-center justify-between text-[11px] font-label text-gray-600 dark:text-gray-400 pt-0.5">
+                <span class="truncate max-w-[220px]">
+                  @if (item.eco) {
+                    <span class="font-bold text-[#222222] dark:text-[#F3F4F6] mr-1">[{{ item.eco }}]</span>
+                  }
+                  <span>{{ item.opening || 'Custom Game' }}</span>
+                </span>
+                <span class="font-bold text-[#FF4F00] group-hover:translate-x-0.5 transition-transform flex items-center gap-1 shrink-0">
+                  <span>{{ item.movesCount }} moves</span>
+                  <span>➔</span>
+                </span>
+              </div>
+            </div>
+          }
+        }
+      </div>
+    </div>
+  </div>
+}

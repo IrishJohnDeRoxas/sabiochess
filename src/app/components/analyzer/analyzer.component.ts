@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ChessGameService } from '../../services/chess-game.service';
 import { SettingsService } from '../../services/settings.service';
+import { SoundService } from '../../services/sound.service';
 import { ChessBoardComponent } from '../chess-board/chess-board.component';
 import { EvalBarComponent } from '../eval-bar/eval-bar.component';
 import { IconComponent } from '../icon/icon.component';
@@ -30,6 +31,7 @@ export class AnalyzerComponent implements OnInit, OnDestroy {
   private readonly router = inject(Router, { optional: true });
   readonly settings = inject(SettingsService);
   readonly game = inject(ChessGameService);
+  private readonly sound = inject(SoundService);
 
   private routeSub?: Subscription;
   private lastLoadedPgn = '';
@@ -83,9 +85,25 @@ export class AnalyzerComponent implements OnInit, OnDestroy {
           event.preventDefault();
         }
         break;
+      case 'e':
+      case 'E':
+        // E: toggle Stockfish live engine evaluation on/off
+        if (this.game.history().length > 0) {
+          const next = !this.settings.autoEvaluation();
+          this.settings.setAutoEvaluation(next);
+          this.settings.flashToast(next ? 'ENGINE ON' : 'ENGINE OFF');
+          event.preventDefault();
+        }
+        break;
       case 'f':
       case 'F':
         this.game.flipBoard();
+        event.preventDefault();
+        break;
+      case 'm':
+      case 'M':
+        this.sound.toggleMute();
+        this.settings.flashToast(this.sound.isMuted() ? '🔇 MUTED' : '🔊 SOUND ON');
         event.preventDefault();
         break;
     }

@@ -157,6 +157,7 @@ export class ChessGameService {
     event: 'Casual Game',
   });
 
+  readonly rawPgn = signal<string>('');
   readonly fen = signal<string>(this.liveChess.fen());
   readonly turn = signal<'w' | 'b'>('w');
   readonly isBoardFlipped = signal<boolean>(false);
@@ -1184,6 +1185,7 @@ export class ChessGameService {
       this.variations.set([]);
       this.activeVariation.set(null);
       this.history.set(fullHistory);
+      this.rawPgn.set(pgnString.trim());
 
       // Reset initial position to START of game so game is not already finished when loaded
       this.currentPlyIndex.set(-1);
@@ -1201,6 +1203,43 @@ export class ChessGameService {
     } catch {
       return false;
     }
+  }
+
+  getPgn(): string {
+    const raw = this.rawPgn();
+    if (raw && raw.length > 5) return raw;
+    return this.generatePgn();
+  }
+
+  generatePgn(): string {
+    const meta = this.matchMetadata();
+    const hist = this.history();
+    if (hist.length === 0) return '';
+
+    let pgn = '';
+    if (meta.event) pgn += `[Event "${meta.event}"]\n`;
+    if (meta.site) pgn += `[Site "${meta.site}"]\n`;
+    if (meta.date) pgn += `[Date "${meta.date}"]\n`;
+    pgn += `[White "${meta.white.name || 'White'}"]\n`;
+    pgn += `[Black "${meta.black.name || 'Black'}"]\n`;
+    if (meta.white.rating) pgn += `[WhiteElo "${meta.white.rating}"]\n`;
+    if (meta.black.rating) pgn += `[BlackElo "${meta.black.rating}"]\n`;
+    if (meta.result) pgn += `[Result "${meta.result}"]\n`;
+    if (meta.eco) pgn += `[ECO "${meta.eco}"]\n`;
+    if (meta.openingName) pgn += `[Opening "${meta.openingName}"]\n`;
+    pgn += '\n';
+
+    const moveTexts: string[] = [];
+    for (let i = 0; i < hist.length; i++) {
+      if (i % 2 === 0) {
+        moveTexts.push(`${Math.floor(i / 2) + 1}. ${hist[i].san}`);
+      } else {
+        moveTexts.push(hist[i].san);
+      }
+    }
+    pgn += moveTexts.join(' ');
+    if (meta.result) pgn += ` ${meta.result}`;
+    return pgn.trim();
   }
 
   loadOnlineGame(

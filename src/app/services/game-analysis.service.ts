@@ -982,6 +982,27 @@ export class GameAnalysisService implements OnDestroy {
     this.progress.set(100);
   }
 
+  restoreAnalysis(
+    moves: MoveAnalysis[],
+    opening?: { eco: string; name: string } | null,
+    playerRatings?: { white?: number; black?: number }
+  ): void {
+    this.currentRunId++;
+    if (this.worker && this.isSearching) {
+      this.worker.postMessage('stop');
+    }
+    this.isSearching = false;
+    this.movesAnalysis.set(moves);
+    if (opening) {
+      this.detectedOpening.set(opening);
+    }
+    if (playerRatings) {
+      this.playerRatings.set(playerRatings);
+    }
+    this.isAnalyzing.set(false);
+    this.progress.set(100);
+  }
+
   clearAnalysis(): void {
     this.currentRunId++;
     if (this.worker && this.isSearching) {
