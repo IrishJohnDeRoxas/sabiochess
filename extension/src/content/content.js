@@ -11,7 +11,54 @@
 
   // Base URL for SabioChess (Defaults to Production https://sabiochess.com)
   const PROD_URL = 'https://sabiochess.com';
+  const FALLBACK_URL = 'https://sabiochess.irishjohnderoxas.workers.dev';
   let sabioBaseUrl = PROD_URL;
+
+  // Health check cache: avoid re-pinging on every action
+  let _healthCacheResult = null;
+  let _healthCacheTime = 0;
+  const HEALTH_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+  /**
+   * Resolve the best available SabioChess URL (prod or fallback).
+   * Returns a promise. Caches result for 5 minutes.
+   */
+  function resolveBaseUrl() {
+    // Respect manual override via localStorage
+    try {
+      const stored = localStorage.getItem('sabiochess_target_url');
+      if (stored && typeof stored === 'string' && stored.trim().length > 0) {
+        sabioBaseUrl = stored.trim().replace(/\/+$/, '');
+        return Promise.resolve(sabioBaseUrl);
+      }
+    } catch {}
+
+    // Return cached result if still fresh
+    if (_healthCacheResult !== null && (Date.now() - _healthCacheTime) < HEALTH_CACHE_TTL) {
+      sabioBaseUrl = _healthCacheResult;
+      return Promise.resolve(sabioBaseUrl);
+    }
+
+    // Ping prod via service worker
+    return new Promise((resolve) => {
+      if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
+        chrome.runtime.sendMessage({ type: 'HEALTH_CHECK', url: PROD_URL }, (response) => {
+          const available = response && response.available;
+          _healthCacheResult = available ? PROD_URL : FALLBACK_URL;
+          _healthCacheTime = Date.now();
+          sabioBaseUrl = _healthCacheResult;
+          if (!available) {
+            console.log('[SabioChess] Prod unavailable, using fallback:', FALLBACK_URL);
+          }
+          resolve(sabioBaseUrl);
+        });
+      } else {
+        // No service worker access — assume prod
+        sabioBaseUrl = PROD_URL;
+        resolve(sabioBaseUrl);
+      }
+    });
+  }
 
   function updateTargetUrl() {
     let target = PROD_URL;
@@ -27,6 +74,8 @@
   }
 
   updateTargetUrl();
+  // Kick off async health check on load
+  resolveBaseUrl();
 
   // Listen to cross-context storage changes
   window.addEventListener('storage', (e) => {
@@ -58,63 +107,132 @@
   };
 
   /**
-   * Selectors for Chess.com game review button
+   * Helper to query elements excluding Sabio injected components
    */
-  function findGameReviewElement() {
-    const selectors = [
-      '[data-cy="game-review-button"]',
-      'button[data-cy="game-over-review-button"]',
-      'button[data-cy="game-review-button"]',
-      'a[aria-label="Game Review"]',
-      'button[aria-label="Game Review"]',
-      '.game-review-buttons-component button',
-      '.game-review-buttons-component a',
-      '.game-review-buttons-component',
-      '.game-review-button',
-      '.game-over-modal-button',
-      '.game-over-buttons-component button',
-      '.daily-game-footer .game-review-button',
-      '.live-game-buttons-game-over button',
-      '.sidebar-view .game-review-buttons-component'
-    ];
-
-    for (const sel of selectors) {
-      const el = document.querySelector(sel);
-      if (el && el.offsetParent !== null) return el;
+  function queryReviewElement(selector) {
+    const list = document.querySelectorAll(selector);
+    for (const el of list) {
+      if (el.id === SABIO_BUTTON_ID || el.closest(`#${SABIO_BUTTON_ID}`)) continue;
+      if (el.offsetParent !== null) return el;
     }
-
-    const candidates = document.querySelectorAll('button, a, div[role="button"], span');
-    for (const el of candidates) {
-      if (el.children.length <= 4 && el.offsetParent !== null) {
-        const text = (el.innerText || el.textContent || '').trim().toLowerCase();
-        if (text === 'game review' || text === 'review game' || text.startsWith('game review')) {
-          return el.closest('button, a, [role="button"], .ui_v5-button-component') || el;
-        }
-      }
-    }
-
     return null;
   }
 
   /**
-   * Injects the Sabio Review button right below Chess.com's Review button
+   * Selectors for Chess.com game review button.
+   * Finds all candidates, then ranks: sidebar > non-modal > modal.
    */
-  function checkAndInjectButton() {
-    const existing = document.getElementById(SABIO_BUTTON_ID);
-    if (existing && document.body.contains(existing)) {
-      return;
+  function findGameReviewElement() {
+    const isSabio = (el) => el.id === SABIO_BUTTON_ID || el.closest(`#${SABIO_BUTTON_ID}`);
+    const isVisible = (el) => el.offsetParent !== null;
+    const allCandidates = [];
+
+    // 1. Semantic attributes (data-cy, aria-label) — most stable
+    const semanticSelectors = [
+      '[data-cy="game-review-button"]',
+      '[data-cy="game-over-review-button"]',
+      '[aria-label="Game Review"]'
+    ];
+    for (const sel of semanticSelectors) {
+      document.querySelectorAll(sel).forEach((el) => {
+        if (!isSabio(el) && isVisible(el) && !allCandidates.includes(el)) allCandidates.push(el);
+      });
     }
 
-    const reviewEl = findGameReviewElement();
-    if (!reviewEl) {
-      return;
+    // 2. Text-content matching
+    document.querySelectorAll('button, a, [role="button"]').forEach((el) => {
+      if (isSabio(el) || !isVisible(el) || allCandidates.includes(el)) return;
+      if (el.children.length > 4) return;
+      const text = (el.innerText || el.textContent || '').trim().toLowerCase();
+      if (text === 'game review' || text === 'review game') {
+        const btn = el.closest('button, a, [role="button"], .ui_v5-button-component') || el;
+        if (!allCandidates.includes(btn)) allCandidates.push(btn);
+      }
+    });
+
+    // 3. URL-based matching — links to game review pages only
+    document.querySelectorAll('a[href*="/game-review/"]').forEach((link) => {
+      if (!isSabio(link) && isVisible(link) && !allCandidates.includes(link)) allCandidates.push(link);
+    });
+
+    // 4. Class-based selectors — fragile, last resort
+    const classSelectors = [
+      '.game-review-buttons-component button',
+      '.game-review-buttons-component a',
+      '.game-review-button',
+      '.game-over-buttons-component button',
+      '.daily-game-footer .game-review-button',
+      '.live-game-buttons-game-over button'
+    ];
+    for (const sel of classSelectors) {
+      document.querySelectorAll(sel).forEach((el) => {
+        if (!isSabio(el) && isVisible(el) && !allCandidates.includes(el)) allCandidates.push(el);
+      });
     }
 
-    const targetEl = reviewEl.closest('button, a, [role="button"], .ui_v5-button-component') || reviewEl;
+    if (allCandidates.length === 0) return null;
 
+    // Rank: sidebar context wins, then non-modal, then modal
+    const inSidebar = (el) => el.closest('.sidebar-view, .game-review-buttons-component, .game-review-emphasis-component');
+    const inModal = (el) => el.closest('[class*="game-over-modal"], [class*="game-over"]');
+
+    // Prefer sidebar candidate that's NOT inside a modal
+    const sidebarHit = allCandidates.find((el) => inSidebar(el) && !inModal(el));
+    if (sidebarHit) return sidebarHit;
+
+    // Prefer any non-modal candidate
+    const nonModalHit = allCandidates.find((el) => !inModal(el));
+    if (nonModalHit) return nonModalHit;
+
+    // Fall back to modal candidate
+    return allCandidates[0];
+  }
+
+  let isInjecting = false;
+
+  /**
+   * Detect if the current page shows a completed game (game-over state).
+   * Used as fallback trigger when no review button is found.
+   */
+  function detectGameOverState() {
+    // Must be on a game page — never trigger on lobby/play/home
+    // Matches: /game/live/<id>, /game/daily/<id>, /game/<id>
+    const isGamePage = /\/game\/(live\/|daily\/)?\d+/.test(window.location.pathname);
+    if (!isGamePage) return false;
+
+    // Check for result indicators on page
+    const bodyText = document.body?.innerText || '';
+    const resultPatterns = /\b(1-0|0-1|1\/2-1\/2|½-½|checkmate|resigned|timeout|draw|stalemate|game\s*over)\b/i;
+    if (resultPatterns.test(bodyText)) return true;
+
+    // Move list exists = game has been played
+    const moveList = document.querySelector(
+      'wc-simple-move-list, .move-list, [class*="move-list"], wc-move-list-row, .move-node'
+    );
+    if (moveList) return true;
+
+    return false;
+  }
+
+  /**
+   * Find the chess board element for floating button positioning
+   */
+  function findBoardElement() {
+    const selectors = ['wc-chess-board', 'chess-board', '#board-single', '#board-vs-personalities', '[class*="board-layout-main"]', '[class*="board"]'];
+    for (const sel of selectors) {
+      const el = document.querySelector(sel);
+      if (el && el.offsetParent !== null) return el;
+    }
+    return null;
+  }
+
+  /**
+   * Creates the Sabio button element
+   */
+  function createSabioButton(isFloating) {
     const sabioBtn = document.createElement('button');
     sabioBtn.id = SABIO_BUTTON_ID;
-    sabioBtn.className = 'sabiochess-review-btn';
+    sabioBtn.className = isFloating ? 'sabiochess-review-btn sabiochess-review-btn--floating' : 'sabiochess-review-btn';
     sabioBtn.type = 'button';
     sabioBtn.title = 'Open instant Stockfish analysis on SabioChess';
     sabioBtn.innerHTML = `
@@ -133,10 +251,95 @@
       handleSabioReviewClick();
     });
 
+    return sabioBtn;
+  }
+
+  /**
+   * Injects the Sabio Review button next to Chess.com's Review button,
+   * or as a floating button near the board when no review element is found.
+   */
+  function checkAndInjectButton() {
+    if (isInjecting) return;
+
+    // Soft URL guard: skip non-game pages, but if a review element is found
+    // on any page (future URL change), still inject
+    const isGamePage = /\/game\//.test(window.location.pathname);
+    if (!isGamePage) {
+      // Quick check: is there a review element? If yes, chess.com changed URLs — proceed anyway
+      const hasReviewElement = document.querySelector(
+        '[data-cy="game-review-button"], [data-cy="game-over-review-button"], [aria-label="Game Review"]'
+      );
+      if (!hasReviewElement) {
+        const existing = document.getElementById(SABIO_BUTTON_ID);
+        if (existing) existing.remove();
+        return;
+      }
+    }
+
+    const reviewEl = findGameReviewElement();
+    const existing = document.getElementById(SABIO_BUTTON_ID);
+
+    if (!reviewEl) {
+      // Floating fallback: game is over but Chess.com's review button not found
+      if (detectGameOverState()) {
+        if (existing && existing.classList.contains('sabiochess-review-btn--floating')) return; // already floating
+        if (existing) existing.remove();
+
+        const board = findBoardElement();
+        if (!board) return;
+
+        try {
+          isInjecting = true;
+          const sabioBtn = createSabioButton(true);
+
+          // Position relative to board
+          const boardRect = board.getBoundingClientRect();
+          sabioBtn.style.position = 'fixed';
+          sabioBtn.style.bottom = `${Math.max(window.innerHeight - boardRect.bottom + 8, 16)}px`;
+          sabioBtn.style.right = `${Math.max(window.innerWidth - boardRect.right, 16)}px`;
+
+          document.body.appendChild(sabioBtn);
+        } finally {
+          isInjecting = false;
+        }
+      } else {
+        if (existing) existing.remove();
+      }
+      return;
+    }
+
+    const targetEl = reviewEl.closest('button, a, [role="button"], .ui_v5-button-component') || reviewEl;
+
+    // Already properly attached to target element
+    if (existing) {
+      // If was floating but now a review element exists, re-inject as inline
+      if (existing.classList.contains('sabiochess-review-btn--floating')) {
+        existing.remove();
+      } else {
+        const sameParent = existing.parentElement === targetEl.parentElement;
+        const isDirectSibling = existing.previousElementSibling === targetEl || targetEl.nextElementSibling === existing;
+        const isFollowing = sameParent && (targetEl.compareDocumentPosition(existing) & Node.DOCUMENT_POSITION_FOLLOWING);
+
+        if (sameParent && (isDirectSibling || isFollowing)) {
+          return;
+        }
+      }
+    }
+
     try {
-      targetEl.insertAdjacentElement('afterend', sabioBtn);
-    } catch {
-      targetEl.parentElement?.appendChild(sabioBtn);
+      isInjecting = true;
+      const existingAgain = document.getElementById(SABIO_BUTTON_ID);
+      if (existingAgain) existingAgain.remove();
+
+      const sabioBtn = createSabioButton(false);
+
+      try {
+        targetEl.insertAdjacentElement('afterend', sabioBtn);
+      } catch {
+        targetEl.parentElement?.appendChild(sabioBtn);
+      }
+    } finally {
+      isInjecting = false;
     }
   }
 
@@ -470,6 +673,9 @@
    * Opens or updates the slide-over sidebar drawer
    */
   async function handleSabioReviewClick() {
+    // Resolve best URL before building sidebar
+    await resolveBaseUrl();
+
     let sidebar = document.getElementById(SIDEBAR_ID);
     const meta = extractPlayerMeta();
     const gameId = extractGameIdFromUrl();
@@ -478,7 +684,6 @@
     let pgn = extractPgnFromDOM();
 
     const buildUrl = (targetPgn) => {
-      updateTargetUrl();
       const params = new URLSearchParams();
       if (targetPgn) params.set('pgn', targetPgn);
       if (meta.isFlipped) params.set('flip', 'true');
@@ -544,6 +749,37 @@
           activePostMessageTimers.push(setTimeout(() => sendPostMessage(undefined), 300));
           activePostMessageTimers.push(setTimeout(() => sendPostMessage(undefined), 800));
         });
+
+        // Fallback: if iframe fails to load, retry with fallback URL
+        let iframeRetried = false;
+        iframe.addEventListener('error', () => {
+          if (!iframeRetried && sabioBaseUrl === PROD_URL) {
+            iframeRetried = true;
+            sabioBaseUrl = FALLBACK_URL;
+            _healthCacheResult = FALLBACK_URL;
+            _healthCacheTime = Date.now();
+            iframe.src = buildUrl(pgn);
+            console.log('[SabioChess] Iframe load failed, retrying with fallback:', FALLBACK_URL);
+          }
+        });
+
+        // Timeout fallback: if iframe doesn't fire 'load' within 8s, switch to fallback
+        const iframeTimeout = setTimeout(() => {
+          if (!iframeRetried && sabioBaseUrl === PROD_URL) {
+            const iframeEl = document.getElementById('sabiochess-iframe');
+            // Check if iframe loaded successfully by trying to read its src
+            if (iframeEl && (!iframeEl.contentDocument || iframeEl.contentDocument.URL === 'about:blank')) {
+              iframeRetried = true;
+              sabioBaseUrl = FALLBACK_URL;
+              _healthCacheResult = FALLBACK_URL;
+              _healthCacheTime = Date.now();
+              iframeEl.src = buildUrl(pgn);
+              console.log('[SabioChess] Iframe timeout, retrying with fallback:', FALLBACK_URL);
+            }
+          }
+        }, 8000);
+
+        iframe.addEventListener('load', () => clearTimeout(iframeTimeout), { once: true });
       }
     } else {
       const iframe = sidebar.querySelector('#sabiochess-iframe');
@@ -586,9 +822,28 @@
   /**
    * Observer & interval polling loop
    */
-  function init() {
-    const observer = new MutationObserver(() => {
+  let injectDebounceTimer = null;
+  function scheduleCheck() {
+    if (injectDebounceTimer) return;
+    injectDebounceTimer = setTimeout(() => {
+      injectDebounceTimer = null;
       checkAndInjectButton();
+    }, 50);
+  }
+
+  function init() {
+    const observer = new MutationObserver((mutations) => {
+      const isOurMutation = mutations.every((m) => {
+        const target = m.target;
+        return target && (
+          target.id === SABIO_BUTTON_ID ||
+          target.id === SIDEBAR_ID ||
+          (typeof target.closest === 'function' && target.closest(`#${SIDEBAR_ID}, #${SABIO_BUTTON_ID}`))
+        );
+      });
+      if (isOurMutation) return;
+
+      scheduleCheck();
     });
 
     observer.observe(document.body, {
@@ -597,7 +852,7 @@
     });
 
     checkAndInjectButton();
-    setInterval(checkAndInjectButton, 500);
+    setInterval(checkAndInjectButton, 1000);
   }
 
   if (document.readyState === 'loading') {

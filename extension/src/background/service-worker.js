@@ -4,6 +4,21 @@
  */
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.type === 'HEALTH_CHECK') {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 3000);
+    fetch(request.url, { method: 'HEAD', signal: controller.signal })
+      .then((res) => {
+        clearTimeout(timeout);
+        sendResponse({ available: res.ok });
+      })
+      .catch(() => {
+        clearTimeout(timeout);
+        sendResponse({ available: false });
+      });
+    return true;
+  }
+
   if (request.type === 'FETCH_CHESSCOM_PGN' || request.type === 'FETCH_PGN') {
     const rawUsers = Array.isArray(request.usernames)
       ? request.usernames

@@ -12,34 +12,95 @@
   margin-top: 10px !important;
   margin-bottom: 8px !important;
   padding: 0 1.6rem !important;
-  min-height: 6.4rem !important;
-  background-color: #1E1F24 !important;
-  color: #FFFFFF !important;
-  font-family: 'Archivo Black', 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif !important;
-  font-size: 2.2rem !important;
+  min-height: 5.6rem !important;
+  background-color: #1e1f24 !important;
+  color: #ffffff !important;
+  font-family:
+    "Archivo Black",
+    "Outfit",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif !important;
+  font-size: 2rem !important;
   font-weight: 800 !important;
   text-transform: uppercase !important;
   letter-spacing: 0.03em !important;
   border: 2.5px solid #000000 !important;
-  box-shadow: 0 5px 0 0 #000000, 0 6px 14px rgba(0, 0, 0, 0.6) !important;
+  box-shadow:
+    0 5px 0 0 #000000,
+    0 6px 14px rgba(0, 0, 0, 0.6) !important;
   border-radius: 4px !important;
   cursor: pointer !important;
-  transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.15s ease !important;
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease,
+    background-color 0.15s ease !important;
   user-select: none !important;
   box-sizing: border-box !important;
   z-index: 100 !important;
   line-height: 1.1428 !important;
 }
 
+/* Floating fallback variant — self-positions near the board */
+.sabiochess-review-btn--floating {
+  position: fixed !important;
+  width: auto !important;
+  max-width: 280px !important;
+  margin: 0 !important;
+  padding: 0 1.4rem !important;
+  min-height: 4.8rem !important;
+  font-size: 1.6rem !important;
+  z-index: 2147483646 !important;
+  animation: sabiochess-float-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) both !important;
+}
+
+@keyframes sabiochess-float-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Modal only specific sizing & spacing */
+.game-over-modal-shell-buttons > .sabiochess-review-btn,
+.game-over-modal-shell .sabiochess-review-btn,
+.game-over-modal-content .sabiochess-review-btn,
+.game-over-modal-body .sabiochess-review-btn,
+[class*="game-over-modal-shell"] .sabiochess-review-btn {
+  margin: 0 var(--space-16, 1.6rem) 6px var(--space-16, 1.6rem) !important;
+  width: calc(100% - 3.2rem) !important;
+  min-height: 5.6rem !important;
+  font-size: 2rem !important;
+}
+
+/* Sidebar button sizing & spacing - seamless full width */
+.game-review-buttons-component .sabiochess-review-btn,
+.game-review-emphasis-component .sabiochess-review-btn,
+.sidebar-view .sabiochess-review-btn {
+  margin-left: 0px !important;
+  margin-right: 0px !important;
+  margin-top: 0px !important;
+  margin-bottom: 0px !important;
+  width: 100% !important;
+}
+
 .sabiochess-review-btn:hover {
-  background-color: #282A32 !important;
+  background-color: #282a32 !important;
   transform: translateY(-2px) !important;
-  box-shadow: 0 7px 0 0 #000000, 0 8px 18px rgba(0, 0, 0, 0.7) !important;
+  box-shadow:
+    0 7px 0 0 #000000,
+    0 8px 18px rgba(0, 0, 0, 0.7) !important;
 }
 
 .sabiochess-review-btn:active {
   transform: translateY(3px) !important;
-  box-shadow: 0 2px 0 0 #000000, 0 2px 4px rgba(0, 0, 0, 0.4) !important;
+  box-shadow:
+    0 2px 0 0 #000000,
+    0 2px 4px rgba(0, 0, 0, 0.4) !important;
 }
 
 .sabiochess-logo-badge {
@@ -48,7 +109,7 @@
   justify-content: center !important;
   width: 3.4rem !important;
   height: 3.4rem !important;
-  background-color: #FF4F00 !important;
+  background-color: #ff4f00 !important;
   border: 2px solid #000000 !important;
   box-shadow: 2.5px 2.5px 0 0 #000000 !important;
   transform: rotate(-3deg) !important;
@@ -71,11 +132,11 @@
   display: inline-flex !important;
   align-items: center !important;
   white-space: nowrap !important;
-  color: #FFFFFF !important;
+  color: #ffffff !important;
 }
 
 .sabiochess-text-orange {
-  color: #FF4F00 !important;
+  color: #ff4f00 !important;
 }
 
 /* Slide-Over Drawer Container */
@@ -86,14 +147,16 @@
   width: 540px !important;
   max-width: 92vw !important;
   height: 100vh !important;
-  background-color: #D9D9D9 !important;
+  background-color: #d9d9d9 !important;
   border-left: 3.5px solid #222222 !important;
   box-shadow: -8px 0 0 0 rgba(34, 34, 34, 0.4) !important;
   z-index: 2147483647 !important; /* Max browser z-index */
   display: flex !important;
   flex-direction: column !important;
   transform: translateX(100%) !important;
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), width 0.2s ease !important;
+  transition:
+    transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    width 0.2s ease !important;
   box-sizing: border-box !important;
   margin: 0 !important;
   padding: 0 !important;
@@ -114,7 +177,7 @@
   justify-content: flex-end !important;
   padding: 8px 12px !important;
   background-color: #222222 !important;
-  color: #FFFFFF !important;
+  color: #ffffff !important;
   border-bottom: 2.5px solid #222222 !important;
   box-sizing: border-box !important;
 }
@@ -129,9 +192,9 @@
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  background: #373A46 !important;
-  color: #FFFFFF !important;
-  border: 1.5px solid #FFFFFF !important;
+  background: #373a46 !important;
+  color: #ffffff !important;
+  border: 1.5px solid #ffffff !important;
   box-shadow: 2px 2px 0 0 #000000 !important;
   padding: 4px 8px !important;
   cursor: pointer !important;
@@ -143,7 +206,7 @@
 }
 
 .sabiochess-header-btn:hover {
-  background: #FF4F00 !important;
+  background: #ff4f00 !important;
 }
 
 .sabiochess-header-btn:active {
@@ -157,6 +220,6 @@
   width: 100% !important;
   height: 100% !important;
   border: none !important;
-  background-color: #D9D9D9 !important;
+  background-color: #d9d9d9 !important;
   display: block !important;
 }
