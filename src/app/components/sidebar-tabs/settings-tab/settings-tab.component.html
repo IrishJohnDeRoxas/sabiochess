@@ -592,32 +592,59 @@
   </div>
 
   <!-- Section 7: Support SabioChess -->
-  <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1E1E] flex flex-col gap-3 border-4 border-[#222222] dark:border-black shadow-[4px_4px_0_0_#222222] dark:shadow-[4px_4px_0_0_#000000]">
+  <div class="card-brutal p-3 sm:p-3.5 bg-white dark:bg-[#1E1E1E] flex flex-col gap-3 border-4 border-[#FF4F00] shadow-[4px_4px_0_0_#FF4F00]">
+    <!-- Header -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b-2 border-[#222222] dark:border-black pb-2 gap-2">
       <div class="flex items-center gap-2 min-w-0">
-        <span class="p-1.5 bg-[#FEF3C7] dark:bg-[#262626] text-[#FF4F00] inline-flex border border-[#222222] dark:border-black shrink-0 font-bold text-sm">
-          <app-icon name="heart" size="w-4 h-4 text-[#FF4F00]"></app-icon>
+        <span class="p-1.5 bg-[#FF4F00] text-white inline-flex border border-[#222222] dark:border-black shrink-0">
+          <app-icon name="heart" size="w-4 h-4"></app-icon>
         </span>
         <div class="min-w-0">
           <h3 class="font-display text-sm sm:text-base uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6] truncate">SUPPORT SABIOCHESS</h3>
-          <p class="font-label text-xs text-gray-600 dark:text-gray-400">100% Free &amp; Unlimited for everyone. Keep the project thriving.</p>
+          <p class="font-label text-xs text-gray-600 dark:text-gray-400">100% Free &amp; Unlimited — no paywalls, ever.</p>
         </div>
       </div>
-      
       <span class="badge-brutal bg-[#00D084] text-[#121212] text-xs sm:text-sm font-bold self-start sm:self-auto shrink-0">
         ⚡ 100% FREE
       </span>
     </div>
 
-    <div class="p-3 bg-[#ECECD8] dark:bg-[#262626] border border-[#222222] dark:border-black flex flex-col sm:flex-row items-center justify-between gap-3">
-      <p class="font-body text-xs sm:text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-        Enjoying unlimited engine analysis without paywalls? Support hosting and continuous development!
-      </p>
+    <!-- What you get -->
+    <p class="font-body text-xs sm:text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+      SabioChess is built and hosted independently — no VC funding, no subscriptions. If you enjoy unlimited Stockfish analysis, AI voice commentary, and zero ads, consider supporting the project.
+    </p>
+
+    <!-- Feature pillars -->
+    <div class="grid grid-cols-3 gap-2">
+      <div class="flex flex-col items-center gap-1 p-2 bg-[#ECECD8] dark:bg-[#262626] border border-[#222222] dark:border-black text-center">
+        <app-icon name="cpu-chip" size="w-4 h-4 text-[#0E4C92] dark:text-[#60A5FA]"></app-icon>
+        <span class="font-accent text-[10px] sm:text-xs font-bold text-[#222222] dark:text-[#F3F4F6] leading-tight uppercase">Stockfish</span>
+        <span class="font-label text-[9px] text-gray-500 dark:text-gray-400 leading-none">Unlimited depth</span>
+      </div>
+      <div class="flex flex-col items-center gap-1 p-2 bg-[#ECECD8] dark:bg-[#262626] border border-[#222222] dark:border-black text-center">
+        <app-icon name="sparkles" size="w-4 h-4 text-[#8B5CF6]"></app-icon>
+        <span class="font-accent text-[10px] sm:text-xs font-bold text-[#222222] dark:text-[#F3F4F6] leading-tight uppercase">AI Voice</span>
+        <span class="font-label text-[9px] text-gray-500 dark:text-gray-400 leading-none">100% on-device</span>
+      </div>
+      <div class="flex flex-col items-center gap-1 p-2 bg-[#ECECD8] dark:bg-[#262626] border border-[#222222] dark:border-black text-center">
+        <app-icon name="shield-check" size="w-4 h-4 text-[#10B981]"></app-icon>
+        <span class="font-accent text-[10px] sm:text-xs font-bold text-[#222222] dark:text-[#F3F4F6] leading-tight uppercase">No Ads</span>
+        <span class="font-label text-[9px] text-gray-500 dark:text-gray-400 leading-none">No tracking</span>
+      </div>
+    </div>
+
+    <!-- CTAs -->
+    <div class="flex flex-col sm:flex-row gap-2">
       <button type="button" (click)="openSupportModal()"
-        class="btn-brutal bg-[#FEF3C7] dark:bg-[#262626] text-[#92400E] dark:text-[#FBBF24] border-2 border-[#222222] dark:border-[#F59E0B]/60 hover:bg-[#FDE68A] dark:hover:bg-[#333333] !py-2 !px-4 text-xs sm:text-sm font-accent font-black uppercase flex items-center gap-1.5 shrink-0 cursor-pointer shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000]">
-        <app-icon name="heart" size="w-4 h-4 text-[#FF4F00]"></app-icon>
+        class="btn-brutal flex-1 bg-[#FF4F00] text-white border-2 border-[#222222] dark:border-black hover:bg-[#e84500] !py-2.5 !px-4 text-xs sm:text-sm font-accent font-black uppercase flex items-center justify-center gap-2 cursor-pointer shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]">
+        <app-icon name="heart" size="w-4 h-4"></app-icon>
         <span>SUPPORT SABIOCHESS</span>
       </button>
+      <a href="https://github.com/IrishJohnDeRoxas/sabiochess" target="_blank" rel="noopener noreferrer"
+        class="btn-brutal bg-[#222222] dark:bg-[#262626] text-white border-2 border-[#222222] dark:border-black hover:bg-[#333333] !py-2.5 !px-4 text-xs sm:text-sm font-accent font-black uppercase flex items-center justify-center gap-2 cursor-pointer shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000] no-underline">
+        <app-icon name="star" size="w-4 h-4"></app-icon>
+        <span>STAR ON GITHUB</span>
+      </a>
     </div>
   </div>
 
