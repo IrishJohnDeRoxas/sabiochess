@@ -229,37 +229,54 @@
 
           <!-- Multi-PV Candidate Lines (if available for this position) -->
           @if (analysisService.liveEngineLines().length > 0) {
-            <div class="flex flex-col gap-1.5 border-t border-[#222222]/20 dark:border-[#373A46] pt-2.5 mt-1">
-              <div class="flex items-center justify-between text-[10px] sm:text-xs font-accent font-bold uppercase text-gray-500 dark:text-gray-400 px-0.5">
+            <div class="flex flex-col border-t border-[#222222]/20 dark:border-[#373A46] mt-1">
+              <!-- Collapsible header -->
+              <button
+                type="button"
+                (click)="candidateLinesExpanded.set(!candidateLinesExpanded())"
+                class="flex items-center justify-between text-[10px] sm:text-xs font-accent font-bold uppercase text-gray-500 dark:text-gray-400 px-0.5 py-2 w-full hover:text-[#FF4F00] dark:hover:text-[#FF4F00] transition-colors cursor-pointer"
+                [title]="candidateLinesExpanded() ? 'Collapse candidate lines' : 'Expand candidate lines'"
+              >
                 <span>Top Candidate Lines</span>
-                <span class="font-mono">depth {{ settings.analysisDepth() }}</span>
-              </div>
-              <div class="flex flex-col gap-1.5">
-                @for (line of analysisService.liveEngineLines(); track line.multipv) {
-                  <div
-                    (mouseenter)="onLineHover(line.multipv)"
-                    (mouseleave)="onLineHover(null)"
-                    (click)="onLineClick(line)"
-                    class="flex items-center gap-2 py-1.5 px-2.5 border border-[#222222]/20 dark:border-[#373A46] hover:border-[#FF4F00] dark:hover:border-[#FF4F00] bg-[#ECECD8]/40 dark:bg-[#262626]/70 hover:bg-[#ECECD8] dark:hover:bg-[#333333] cursor-pointer text-xs transition-colors rounded-xs group select-none"
-                  >
-                    <span
-                      class="font-mono text-[10px] font-bold px-1.5 py-0.5 border rounded-xs shrink-0"
-                      [ngClass]="{
-                        'bg-white text-black border-[#222222]': line.isWhiteAdvantage,
-                        'bg-[#222222] text-white border-gray-600': line.isBlackAdvantage,
-                        'bg-[#D9D9D9] dark:bg-[#333333] text-[#222222] dark:text-white border-[#222222] dark:border-black': line.isEqual
-                      }"
+                <div class="flex items-center gap-2">
+                  <span class="font-mono">depth {{ settings.analysisDepth() }}</span>
+                  <app-icon
+                    name="chevron-down"
+                    size="w-3 h-3"
+                    class="transition-transform duration-200"
+                    [class.rotate-180]="candidateLinesExpanded()"
+                  ></app-icon>
+                </div>
+              </button>
+              <!-- Collapsible body -->
+              @if (candidateLinesExpanded()) {
+                <div class="flex flex-col gap-1.5 pb-2">
+                  @for (line of analysisService.liveEngineLines(); track line.multipv) {
+                    <div
+                      (mouseenter)="onLineHover(line.multipv)"
+                      (mouseleave)="onLineHover(null)"
+                      (click)="onLineClick(line)"
+                      class="flex items-center gap-2 py-1.5 px-2.5 border border-[#222222]/20 dark:border-[#373A46] hover:border-[#FF4F00] dark:hover:border-[#FF4F00] bg-[#ECECD8]/40 dark:bg-[#262626]/70 hover:bg-[#ECECD8] dark:hover:bg-[#333333] cursor-pointer text-xs transition-colors rounded-xs group select-none"
                     >
-                      {{ line.scoreFormatted }}
-                    </span>
-                    <div class="font-accent text-[11px] sm:text-xs leading-relaxed truncate min-w-0 flex-1">
-                      <span class="text-gray-500 dark:text-[#A3A3A3] mr-1 font-bold">{{ line.moveNumberPrefix }}</span>
-                      <strong class="font-extrabold text-[#0E4C92] dark:text-[#60A5FA] group-hover:underline mr-1">{{ line.firstSan }}</strong>
-                      <span class="text-gray-700 dark:text-[#D4D4D4] font-medium">{{ line.restLineSan }}</span>
+                      <span
+                        class="font-mono text-[10px] font-bold px-1.5 py-0.5 border rounded-xs shrink-0"
+                        [ngClass]="{
+                          'bg-white text-black border-[#222222]': line.isWhiteAdvantage,
+                          'bg-[#222222] text-white border-gray-600': line.isBlackAdvantage,
+                          'bg-[#D9D9D9] dark:bg-[#333333] text-[#222222] dark:text-white border-[#222222] dark:border-black': line.isEqual
+                        }"
+                      >
+                        {{ line.scoreFormatted }}
+                      </span>
+                      <div class="font-accent text-[11px] sm:text-xs leading-relaxed truncate min-w-0 flex-1">
+                        <span class="text-gray-500 dark:text-[#A3A3A3] mr-1 font-bold">{{ line.moveNumberPrefix }}</span>
+                        <strong class="font-extrabold text-[#0E4C92] dark:text-[#60A5FA] group-hover:underline mr-1">{{ line.firstSan }}</strong>
+                        <span class="text-gray-700 dark:text-[#D4D4D4] font-medium">{{ line.restLineSan }}</span>
+                      </div>
                     </div>
-                  </div>
-                }
-              </div>
+                  }
+                </div>
+              }
             </div>
           }
         </div>
@@ -780,7 +797,7 @@
 
         <!-- Scrollable Notation Table -->
         <div #movesListContainer class="overflow-y-auto h-44 sm:h-48 lg:h-auto lg:flex-1 lg:min-h-[80px] pr-1 flex flex-col gap-0.5 select-none scroll-smooth">
-          <div class="grid grid-cols-[36px_1fr_1fr] text-xs sm:text-sm font-label font-bold border-b border-[#222222] dark:border-[#373A46] pb-1.5 text-[#222222] dark:text-[#F3F4F6] bg-[#D9D9D9] dark:bg-[#262626] px-2 py-1.5 sticky top-0 z-10">
+          <div class="grid grid-cols-[40px_1fr_1fr] text-xs sm:text-sm font-label font-bold border-b border-[#222222] dark:border-[#373A46] pb-1.5 text-[#222222] dark:text-[#F3F4F6] bg-[#D9D9D9] dark:bg-[#262626] px-2 py-2 sticky top-0 z-10">
             <span>#</span>
             <span>WHITE</span>
             <span>BLACK</span>
@@ -828,22 +845,22 @@
           }
 
           @for (pair of movePairs(); track pair.moveNumber) {
-            <div class="grid grid-cols-[36px_1fr_1fr] text-xs sm:text-sm font-label px-2 py-1 border-b border-gray-100 dark:border-gray-800 hover:bg-[#D9D9D9]/50 dark:hover:bg-[#262626]/50 items-center transition-colors">
-              <span class="text-gray-500 dark:text-gray-400 font-bold text-xs">{{ pair.moveNumber }}.</span>
+            <div class="grid grid-cols-[40px_1fr_1fr] text-xs sm:text-sm font-label px-2 py-1.5 border-b border-gray-100 dark:border-gray-800 hover:bg-[#D9D9D9]/60 dark:hover:bg-[#262626]/60 items-center transition-colors">
+              <span class="text-[#555] dark:text-gray-400 font-bold text-xs">{{ pair.moveNumber }}.</span>
               
               <!-- White Move -->
               <div
                 (click)="jumpTo(pair.whitePly)"
                 [attr.data-active-move]="isMainPlyActive(pair.whitePly)"
-                class="flex items-center justify-between font-bold px-1.5 py-0.5 transition-colors cursor-pointer border border-transparent"
+                class="flex items-center justify-between font-bold px-1.5 py-1 transition-colors cursor-pointer border border-transparent rounded-sm text-[#1a1a1a] dark:text-[#F3F4F6]"
                 [ngClass]="{
                   'bg-[#FF4F00] !text-white shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000] border-[#222222] dark:border-black': isMainPlyActive(pair.whitePly)
                 }"
               >
                 <div class="flex items-center gap-1 truncate">
-                  <span>{{ pair.whiteSan }}</span>
+                  <span class="font-mono">{{ pair.whiteSan }}</span>
                   @if (pair.whiteMoveTime) {
-                    <span class="text-[10px] font-normal opacity-75" [title]="'Time spent: ' + pair.whiteMoveTime + (pair.whiteClock ? ' | Clock: ' + pair.whiteClock : '')">
+                    <span class="text-[10px] font-normal opacity-60" [title]="'Time spent: ' + pair.whiteMoveTime + (pair.whiteClock ? ' | Clock: ' + pair.whiteClock : '')">
                       {{ pair.whiteMoveTime }}
                     </span>
                   }
@@ -865,15 +882,15 @@
                 <div
                   (click)="jumpTo(pair.blackPly)"
                   [attr.data-active-move]="isMainPlyActive(pair.blackPly)"
-                  class="flex items-center justify-between font-bold px-1.5 py-0.5 transition-colors cursor-pointer border border-transparent"
+                  class="flex items-center justify-between font-bold px-1.5 py-1 transition-colors cursor-pointer border border-transparent rounded-sm text-[#1a1a1a] dark:text-[#F3F4F6]"
                   [ngClass]="{
                     'bg-[#FF4F00] !text-white shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000] border-[#222222] dark:border-black': isMainPlyActive(pair.blackPly)
                   }"
                 >
                   <div class="flex items-center gap-1 truncate">
-                    <span>{{ pair.blackSan }}</span>
+                    <span class="font-mono">{{ pair.blackSan }}</span>
                     @if (pair.blackMoveTime) {
-                      <span class="text-[10px] font-normal opacity-75" [title]="'Time spent: ' + pair.blackMoveTime + (pair.blackClock ? ' | Clock: ' + pair.blackClock : '')">
+                      <span class="text-[10px] font-normal opacity-60" [title]="'Time spent: ' + pair.blackMoveTime + (pair.blackClock ? ' | Clock: ' + pair.blackClock : '')">
                         {{ pair.blackMoveTime }}
                       </span>
                     }

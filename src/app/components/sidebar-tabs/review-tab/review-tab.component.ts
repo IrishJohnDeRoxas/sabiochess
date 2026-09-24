@@ -108,6 +108,7 @@ export class ReviewTabComponent {
   readonly isPlayingFollowUp = signal<boolean>(false);
   readonly isFollowUpActive = signal<boolean>(false);
   readonly isBestVariation = signal<boolean>(false);
+  readonly candidateLinesExpanded = signal<boolean>(true);
   private followUpTimer: ReturnType<typeof setTimeout> | null = null;
   private followUpOriginalPly = -1;
 
