@@ -209,7 +209,7 @@
             <button class="sabiochess-header-btn" id="sabiochess-close-btn" title="Close">✕</button>
           </div>
         </div>
-        <iframe class="sabiochess-iframe" id="sabiochess-iframe" src="${targetUrl}" allow="clipboard-read; clipboard-write"></iframe>
+        <iframe class="sabiochess-iframe" id="sabiochess-iframe" src="${targetUrl}" credentialless allow="clipboard-read; clipboard-write"></iframe>
       `;
 
       document.body.appendChild(sidebar);
