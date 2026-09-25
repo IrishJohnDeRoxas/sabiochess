@@ -52,8 +52,8 @@ async function handleFetchLichessPgn(rawUsernames, gameId) {
     const cleanId = gameId.replace(/[^a-zA-Z0-9]/g, '').slice(0, 8);
     if (cleanId) {
       const urls = [
-        `https://lichess.org/game/export/${cleanId}?clocks=false&evals=false&opening=false`,
-        `https://lichess.org/game/export/${cleanId}`
+        `https://lichess.org/game/export/${cleanId}?clocks=true&evals=false&opening=false`,
+        `https://lichess.org/game/export/${cleanId}?clocks=true`
       ];
       for (const url of urls) {
         try {
@@ -78,7 +78,7 @@ async function handleFetchLichessPgn(rawUsernames, gameId) {
 
   for (const username of cleanUsers) {
     try {
-      const url = `https://lichess.org/api/games/user/${encodeURIComponent(username)}?max=5&clocks=false&evals=false&opening=false`;
+      const url = `https://lichess.org/api/games/user/${encodeURIComponent(username)}?max=5&clocks=true&evals=false&opening=false`;
       const res = await fetch(url, {
         headers: { Accept: 'application/x-chess-pgn' }
       });

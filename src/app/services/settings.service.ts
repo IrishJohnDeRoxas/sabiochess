@@ -254,34 +254,38 @@ export class SettingsService {
     }, duration);
   }
 
+  applySettingsData(data: Partial<UserSettings>): void {
+    if (!data) return;
+    if (data.appTheme && data.appTheme !== this.appTheme()) this.appTheme.set(data.appTheme);
+    if (data.boardTheme && data.boardTheme !== this.boardTheme()) this.boardTheme.set(data.boardTheme);
+    if (typeof data.moveSounds === 'boolean' && data.moveSounds !== this.moveSounds()) this.moveSounds.set(data.moveSounds);
+    if (typeof data.memeSounds === 'boolean' && data.memeSounds !== this.memeSounds()) this.memeSounds.set(data.memeSounds);
+    if (data.memePack && data.memePack !== this.memePack()) this.memePack.set(data.memePack);
+    if (typeof data.voiceCommentary === 'boolean' && data.voiceCommentary !== this.voiceCommentary()) this.voiceCommentary.set(data.voiceCommentary);
+    if (data.voiceEngine && data.voiceEngine !== this.voiceEngine()) this.voiceEngine.set(data.voiceEngine);
+    if (data.commentaryVoice && data.commentaryVoice !== this.commentaryVoice()) this.commentaryVoice.set(data.commentaryVoice);
+    if (typeof data.commentarySpeed === 'number' && data.commentarySpeed !== this.commentarySpeed()) this.commentarySpeed.set(data.commentarySpeed);
+    if (typeof data.volume === 'number' && data.volume !== this.volume()) this.volume.set(data.volume);
+    if (typeof data.analysisDepth === 'number' && data.analysisDepth !== this.analysisDepth()) this.analysisDepth.set(data.analysisDepth);
+    if (typeof data.autoEvaluation === 'boolean' && data.autoEvaluation !== this.autoEvaluation()) this.autoEvaluation.set(data.autoEvaluation);
+    if (typeof data.showEvalBar === 'boolean' && data.showEvalBar !== this.showEvalBar()) this.showEvalBar.set(data.showEvalBar);
+    if (typeof data.showCandidateArrows === 'boolean' && data.showCandidateArrows !== this.showCandidateArrows()) this.showCandidateArrows.set(data.showCandidateArrows);
+    if (typeof data.showCoordinates === 'boolean' && data.showCoordinates !== this.showCoordinates()) this.showCoordinates.set(data.showCoordinates);
+    if (typeof data.showMoveClassifications === 'boolean' && data.showMoveClassifications !== this.showMoveClassifications()) this.showMoveClassifications.set(data.showMoveClassifications);
+    if (typeof data.showLegalMoves === 'boolean' && data.showLegalMoves !== this.showLegalMoves()) this.showLegalMoves.set(data.showLegalMoves);
+    if (typeof data.highlightLastMove === 'boolean' && data.highlightLastMove !== this.highlightLastMove()) this.highlightLastMove.set(data.highlightLastMove);
+    if (data.chesscomUsername !== undefined && data.chesscomUsername !== this.chesscomUsername()) this.chesscomUsername.set(data.chesscomUsername);
+    if (data.lichessUsername !== undefined && data.lichessUsername !== this.lichessUsername()) this.lichessUsername.set(data.lichessUsername);
+    if (typeof data.isSupporter === 'boolean' && data.isSupporter !== this.isSupporter()) this.isSupporter.set(data.isSupporter);
+  }
+
   private loadSettings(): void {
     if (typeof localStorage === 'undefined') return;
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return;
       const data = JSON.parse(raw) as Partial<UserSettings>;
-
-      if (data.appTheme) this.appTheme.set(data.appTheme);
-      if (data.boardTheme) this.boardTheme.set(data.boardTheme);
-      if (typeof data.moveSounds === 'boolean') this.moveSounds.set(data.moveSounds);
-      if (typeof data.memeSounds === 'boolean') this.memeSounds.set(data.memeSounds);
-      if (data.memePack) this.memePack.set(data.memePack);
-      if (typeof data.voiceCommentary === 'boolean') this.voiceCommentary.set(data.voiceCommentary);
-      if (data.voiceEngine) this.voiceEngine.set(data.voiceEngine);
-      if (data.commentaryVoice) this.commentaryVoice.set(data.commentaryVoice);
-      if (typeof data.commentarySpeed === 'number') this.commentarySpeed.set(data.commentarySpeed);
-      if (typeof data.volume === 'number') this.volume.set(data.volume);
-      if (typeof data.analysisDepth === 'number') this.analysisDepth.set(data.analysisDepth);
-      if (typeof data.autoEvaluation === 'boolean') this.autoEvaluation.set(data.autoEvaluation);
-      if (typeof data.showEvalBar === 'boolean') this.showEvalBar.set(data.showEvalBar);
-      if (typeof data.showCandidateArrows === 'boolean') this.showCandidateArrows.set(data.showCandidateArrows);
-      if (typeof data.showCoordinates === 'boolean') this.showCoordinates.set(data.showCoordinates);
-      if (typeof data.showMoveClassifications === 'boolean') this.showMoveClassifications.set(data.showMoveClassifications);
-      if (typeof data.showLegalMoves === 'boolean') this.showLegalMoves.set(data.showLegalMoves);
-      if (typeof data.highlightLastMove === 'boolean') this.highlightLastMove.set(data.highlightLastMove);
-      if (data.chesscomUsername) this.chesscomUsername.set(data.chesscomUsername);
-      if (data.lichessUsername) this.lichessUsername.set(data.lichessUsername);
-      if (typeof data.isSupporter === 'boolean') this.isSupporter.set(data.isSupporter);
+      this.applySettingsData(data);
     } catch {
       // Ignore load error
     }
