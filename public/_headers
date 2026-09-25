@@ -1,3 +1,2 @@
 /*
-  Content-Security-Policy: frame-ancestors 'self' https://*.chess.com https://chess.com;
-  X-Frame-Options: ALLOW-FROM https://www.chess.com
+  Content-Security-Policy: frame-ancestors 'self' https://*.chess.com https://chess.com https://*.lichess.org https://lichess.org http://localhost:* http://127.0.0.1:*;

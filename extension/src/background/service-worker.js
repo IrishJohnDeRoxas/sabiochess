@@ -1,6 +1,6 @@
 /**
  * SabioChess Extension Service Worker (Manifest V3)
- * Fetches games from Chess.com public API in the last 30-60 days and matches the current game.
+ * Fetches games from Chess.com & Lichess public APIs and matches current game.
  */
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -15,6 +15,17 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       .catch(() => {
         clearTimeout(timeout);
         sendResponse({ available: false });
+      });
+    return true;
+  }
+
+  if (request.type === 'FETCH_LICHESS_PGN' || (request.type === 'FETCH_PGN' && request.platform === 'lichess')) {
+    handleFetchLichessPgn(request.usernames || [request.username].filter(Boolean), request.gameId)
+      .then((pgn) => {
+        sendResponse({ success: Boolean(pgn), pgn: pgn || '' });
+      })
+      .catch((err) => {
+        sendResponse({ success: false, error: err?.message || 'Failed', pgn: '' });
       });
     return true;
   }
@@ -34,6 +45,59 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true; // Keep channel open for async sendResponse
   }
 });
+
+async function handleFetchLichessPgn(rawUsernames, gameId) {
+  // Strategy 1: Direct game export endpoint by game ID
+  if (gameId) {
+    const cleanId = gameId.replace(/[^a-zA-Z0-9]/g, '').slice(0, 8);
+    if (cleanId) {
+      const urls = [
+        `https://lichess.org/game/export/${cleanId}?clocks=false&evals=false&opening=false`,
+        `https://lichess.org/game/export/${cleanId}`
+      ];
+      for (const url of urls) {
+        try {
+          const res = await fetch(url, {
+            headers: { Accept: 'application/x-chess-pgn' }
+          });
+          if (res.ok) {
+            const text = await res.text();
+            if (text && (text.includes('[') || text.includes('1.'))) {
+              return text;
+            }
+          }
+        } catch {}
+      }
+    }
+  }
+
+  // Strategy 2: User recent games API
+  const cleanUsers = (rawUsernames || [])
+    .map((u) => (u || '').replace(/\(.*?\)/g, '').replace(/[^a-zA-Z0-9_-]/g, '').trim())
+    .filter(Boolean);
+
+  for (const username of cleanUsers) {
+    try {
+      const url = `https://lichess.org/api/games/user/${encodeURIComponent(username)}?max=5&clocks=false&evals=false&opening=false`;
+      const res = await fetch(url, {
+        headers: { Accept: 'application/x-chess-pgn' }
+      });
+      if (res.ok) {
+        const text = await res.text();
+        if (text && (text.includes('[') || text.includes('1.'))) {
+          if (gameId) {
+            const games = text.split(/\n\n(?=\[Event )/);
+            const matched = games.find((g) => g.includes(gameId));
+            if (matched) return matched;
+          }
+          return text.split(/\n\n(?=\[Event )/)[0] || text;
+        }
+      }
+    } catch {}
+  }
+
+  return '';
+}
 
 async function handleFetchChessComPgn(rawUsernames, gameId) {
   const cleanUsers = (rawUsernames || [])

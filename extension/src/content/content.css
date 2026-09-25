@@ -2,7 +2,7 @@
    SabioChess Chrome Extension Stylesheet (Neubrutalism System)
    ========================================================================== */
 
-/* Neubrutalist Injected Review Button */
+/* Neubrutalist Injected Review Button - Base / Chess.com */
 .sabiochess-review-btn {
   display: flex !important;
   align-items: center !important;
@@ -65,7 +65,7 @@
   }
 }
 
-/* Modal only specific sizing & spacing */
+/* Chess.com Modal only specific sizing & spacing */
 .game-over-modal-shell-buttons > .sabiochess-review-btn,
 .game-over-modal-shell .sabiochess-review-btn,
 .game-over-modal-content .sabiochess-review-btn,
@@ -77,7 +77,7 @@
   font-size: 2rem !important;
 }
 
-/* Sidebar button sizing & spacing - seamless full width */
+/* Chess.com Sidebar button sizing & spacing - seamless full width */
 .game-review-buttons-component .sabiochess-review-btn,
 .game-review-emphasis-component .sabiochess-review-btn,
 .sidebar-view .sabiochess-review-btn {
@@ -88,6 +88,100 @@
   width: 100% !important;
 }
 
+/* ==========================================================================
+   Lichess.org Injected Button (Matches .follow-up / Analysis Board sizing)
+   ========================================================================== */
+.sabiochess-review-btn--lichess,
+.follow-up .sabiochess-review-btn,
+.rcontrols .follow-up .sabiochess-review-btn,
+.rcontrols .sabiochess-review-btn {
+  font-family: "Noto Sans", sans-serif, -apple-system, BlinkMacSystemFont !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  line-height: 1.5 !important;
+  text-align: center !important;
+  box-sizing: border-box !important;
+  border-radius: var(---ui-roundness, 7px) !important;
+  margin: 1px 1px 0 !important;
+  padding: 12px 14px !important;
+  min-height: unset !important;
+  height: auto !important;
+  width: calc(100% - 2px) !important;
+  gap: 8px !important;
+  border: 1.5px solid #000000 !important;
+  box-shadow: 0 2px 0 0 #000000 !important;
+  transition: all 0.15s ease !important;
+}
+
+.sabiochess-review-btn--lichess:hover,
+.follow-up .sabiochess-review-btn:hover,
+.rcontrols .follow-up .sabiochess-review-btn:hover {
+  background-color: #282a32 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 3px 0 0 #000000 !important;
+}
+
+.sabiochess-review-btn--lichess:active,
+.follow-up .sabiochess-review-btn:active,
+.rcontrols .follow-up .sabiochess-review-btn:active {
+  transform: translateY(1px) !important;
+  box-shadow: 0 1px 0 0 #000000 !important;
+}
+
+.sabiochess-review-btn--lichess .sabiochess-logo-badge,
+.follow-up .sabiochess-logo-badge,
+.rcontrols .follow-up .sabiochess-logo-badge,
+.rcontrols .sabiochess-logo-badge {
+  width: 20px !important;
+  height: 20px !important;
+  border-radius: 3px !important;
+  border: 1.5px solid #000000 !important;
+  box-shadow: 1.5px 1.5px 0 0 #000000 !important;
+  transform: rotate(-3deg) !important;
+  flex-shrink: 0 !important;
+}
+
+.sabiochess-review-btn--lichess .sabiochess-logo-badge svg,
+.follow-up .sabiochess-logo-badge svg,
+.rcontrols .follow-up .sabiochess-logo-badge svg,
+.rcontrols .sabiochess-logo-badge svg {
+  width: 14px !important;
+  height: 14px !important;
+}
+
+.sabiochess-review-btn--lichess .sabiochess-btn-text,
+.follow-up .sabiochess-btn-text,
+.rcontrols .follow-up .sabiochess-btn-text {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.03em !important;
+  line-height: 1.5 !important;
+}
+
+/* Other Lichess panels (analysis tools, underboard) */
+.analyse__tools .sabiochess-review-btn,
+.analyse__controls .sabiochess-review-btn,
+.round__underboard .sabiochess-review-btn,
+.game__underboard .sabiochess-review-btn,
+.cmn-wrap .sabiochess-review-btn {
+  font-family: "Noto Sans", sans-serif, -apple-system, BlinkMacSystemFont !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  line-height: 1.5 !important;
+  border-radius: var(---ui-roundness, 7px) !important;
+  margin: 4px 1px !important;
+  padding: 10px 12px !important;
+  min-height: unset !important;
+  height: auto !important;
+  width: calc(100% - 2px) !important;
+  gap: 8px !important;
+  border: 1.5px solid #000000 !important;
+  box-shadow: 0 2px 0 0 #000000 !important;
+}
+
+/* Common Hover / Active for Base Button */
 .sabiochess-review-btn:hover {
   background-color: #282a32 !important;
   transform: translateY(-2px) !important;
@@ -107,11 +201,11 @@
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  width: 3.4rem !important;
-  height: 3.4rem !important;
+  width: 3.2rem !important;
+  height: 3.2rem !important;
   background-color: #ff4f00 !important;
   border: 2px solid #000000 !important;
-  box-shadow: 2.5px 2.5px 0 0 #000000 !important;
+  box-shadow: 2px 2px 0 0 #000000 !important;
   transform: rotate(-3deg) !important;
   transition: transform 0.15s ease !important;
   flex-shrink: 0 !important;
@@ -122,8 +216,8 @@
 }
 
 .sabiochess-logo-badge svg {
-  width: 2.2rem !important;
-  height: 2.2rem !important;
+  width: 2rem !important;
+  height: 2rem !important;
   display: block !important;
   filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.15)) !important;
 }
