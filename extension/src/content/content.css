@@ -29,7 +29,7 @@
   box-shadow:
     0 5px 0 0 #000000,
     0 6px 14px rgba(0, 0, 0, 0.6) !important;
-  border-radius: 4px !important;
+  border-radius: 0 !important;
   cursor: pointer !important;
   transition:
     transform 0.12s ease,
@@ -113,7 +113,7 @@
   line-height: 1.2 !important;
   text-align: center !important;
   box-sizing: border-box !important;
-  border-radius: 4px !important;
+  border-radius: 0 !important;
   margin: 6px 0 2px 0 !important;
   padding: 8px 12px !important;
   min-height: 44px !important;
@@ -159,7 +159,7 @@
 .rcontrols .sabiochess-logo-badge {
   width: 24px !important;
   height: 24px !important;
-  border-radius: 3px !important;
+  border-radius: 0 !important;
   border: 1.5px solid #000000 !important;
   box-shadow: 1.5px 1.5px 0 0 #000000 !important;
 }
@@ -203,20 +203,23 @@
   background-color: #ff4f00 !important;
   border: 2px solid #000000 !important;
   box-shadow: 2px 2px 0 0 #000000 !important;
-  border-radius: 4px !important;
-  transform: rotate(-3deg) !important;
+  border-radius: 0 !important;
+  transform: none !important;
   transition: transform 0.15s ease !important;
   flex-shrink: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 .sabiochess-review-btn:hover .sabiochess-logo-badge {
-  transform: rotate(0deg) scale(1.05) !important;
+  transform: scale(1.05) !important;
 }
 
 .sabiochess-logo-badge svg {
-  width: 17px !important;
-  height: 17px !important;
+  width: 18px !important;
+  height: 18px !important;
   display: block !important;
+  margin: auto !important;
   filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.15)) !important;
 }
 
@@ -302,7 +305,7 @@
   border: 1.5px solid #ffffff !important;
   box-shadow: 2px 2px 0 0 #000000 !important;
   cursor: pointer !important;
-  border-radius: 3px !important;
+  border-radius: 0 !important;
   transition:
     background-color 0.12s ease,
     transform 0.1s ease,

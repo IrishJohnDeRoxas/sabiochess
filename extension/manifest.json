@@ -3,7 +3,7 @@
   "name": "SabioChess - Chess.com & Lichess Reviewer",
   "version": "1.2.0",
   "description": "One-click instant game review and Stockfish analysis sidebar for completed Chess.com and Lichess games.",
-  "permissions": [],
+  "permissions": ["storage"],
   "host_permissions": [
     "https://www.chess.com/*",
     "https://chess.com/*",

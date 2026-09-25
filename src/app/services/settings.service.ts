@@ -55,6 +55,14 @@ export class SettingsService {
   constructor() {
     this.loadSettings();
 
+    if (typeof window !== 'undefined') {
+      window.addEventListener('message', (event: MessageEvent) => {
+        if (event.data && event.data.type === 'SABIO_APPLY_SETTINGS' && event.data.settings) {
+          this.applySettingsData(event.data.settings);
+        }
+      });
+    }
+
     // Effect to apply .dark class to HTML element
     effect(() => {
       const isDark = this.appTheme() === 'dark';
@@ -292,11 +300,26 @@ export class SettingsService {
   }
 
   private saveSettings(state: UserSettings): void {
-    if (typeof localStorage === 'undefined') return;
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    } catch {
-      // Ignore save error
+    if (typeof localStorage !== 'undefined') {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch {
+        // Ignore save error
+      }
+    }
+
+    if (typeof window !== 'undefined' && window.parent && window.parent !== window) {
+      try {
+        window.parent.postMessage(
+          {
+            type: 'SABIO_SETTINGS_CHANGED',
+            settings: state,
+          },
+          '*'
+        );
+      } catch {
+        // Ignore postMessage error
+      }
     }
   }
 }

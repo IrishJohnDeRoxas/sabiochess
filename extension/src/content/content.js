@@ -134,9 +134,11 @@
     sabioBtn.title = 'Open instant Stockfish analysis on SabioChess';
     sabioBtn.innerHTML = `
       <div class="sabiochess-logo-badge">
-        <svg viewBox="0 0 45 45" width="22" height="22" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M22.5 7.5 C20 7.5 18 9.5 18 12 C18 13.1 18.4 14.1 19 14.9 C16.8 16.2 15.5 18.5 15.5 21.2 C15.5 23.4 16.5 25.3 18.1 26.6 C14.8 27.8 10 32.5 10 40.5 L35 40.5 C35 32.5 30.2 27.8 26.9 26.6 C28.5 25.3 29.5 23.4 29.5 21.2 C29.5 18.5 28.2 16.2 26 14.9 C26.6 14.1 27 13.1 27 12 C27 9.5 25 7.5 22.5 7.5 Z" fill="#FFFFFF" stroke="#222222" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
-          <line x1="12" y1="39" x2="33" y2="39" stroke="#222222" stroke-width="2" stroke-linecap="round"/>
+        <svg viewBox="0 0 45 45" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g transform="translate(0, -1.5)">
+            <path d="M22.5 7.5 C20 7.5 18 9.5 18 12 C18 13.1 18.4 14.1 19 14.9 C16.8 16.2 15.5 18.5 15.5 21.2 C15.5 23.4 16.5 25.3 18.1 26.6 C14.8 27.8 10 32.5 10 40.5 L35 40.5 C35 32.5 30.2 27.8 26.9 26.6 C28.5 25.3 29.5 23.4 29.5 21.2 C29.5 18.5 28.2 16.2 26 14.9 C26.6 14.1 27 13.1 27 12 C27 9.5 25 7.5 22.5 7.5 Z" fill="#FFFFFF" stroke="#222222" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+            <line x1="12" y1="39" x2="33" y2="39" stroke="#222222" stroke-width="2" stroke-linecap="round"/>
+          </g>
         </svg>
       </div>
       <span class="sabiochess-btn-text">REVIEW ON SABIO<span class="sabiochess-text-orange">CHESS</span></span>
@@ -149,6 +151,62 @@
     });
 
     return sabioBtn;
+  }
+
+  const EXTENSION_SETTINGS_KEY = 'sabiochess_extension_settings_v2';
+
+  function saveExtensionSettings(settings) {
+    if (!settings || typeof settings !== 'object') return;
+    if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
+      try {
+        chrome.storage.local.set({ [EXTENSION_SETTINGS_KEY]: settings });
+      } catch {}
+    }
+    try {
+      localStorage.setItem(EXTENSION_SETTINGS_KEY, JSON.stringify(settings));
+    } catch {}
+  }
+
+  function getExtensionSettings(callback) {
+    if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
+      try {
+        chrome.storage.local.get([EXTENSION_SETTINGS_KEY], (res) => {
+          if (res && res[EXTENSION_SETTINGS_KEY]) {
+            callback(res[EXTENSION_SETTINGS_KEY]);
+            return;
+          }
+          fallbackLocal();
+        });
+        return;
+      } catch {}
+    }
+    fallbackLocal();
+
+    function fallbackLocal() {
+      try {
+        const raw = localStorage.getItem(EXTENSION_SETTINGS_KEY);
+        if (raw) {
+          callback(JSON.parse(raw));
+          return;
+        }
+      } catch {}
+      callback(null);
+    }
+  }
+
+  function syncSettingsToIframe(iframe) {
+    if (!iframe || !iframe.contentWindow) return;
+    getExtensionSettings((settings) => {
+      if (settings && iframe && iframe.contentWindow) {
+        iframe.contentWindow.postMessage(
+          {
+            type: 'SABIO_APPLY_SETTINGS',
+            settings: settings
+          },
+          '*'
+        );
+      }
+    });
   }
 
   let activeSidebarPgn = '';
@@ -236,7 +294,7 @@
             </button>
           </div>
         </div>
-        <iframe class="sabiochess-iframe" id="sabiochess-iframe" src="${targetUrl}" credentialless allow="clipboard-read; clipboard-write"></iframe>
+        <iframe class="sabiochess-iframe" id="sabiochess-iframe" src="${targetUrl}" allow="clipboard-read; clipboard-write"></iframe>
       `;
 
       document.body.appendChild(sidebar);
@@ -263,6 +321,7 @@
       const iframe = sidebar.querySelector('#sabiochess-iframe');
       if (iframe) {
         iframe.addEventListener('load', () => {
+          syncSettingsToIframe(iframe);
           queueSendRetries();
         });
       }
@@ -272,6 +331,7 @@
         if (!iframe.src || iframe.src !== targetUrl) {
           iframe.src = targetUrl;
         } else {
+          syncSettingsToIframe(iframe);
           queueSendRetries();
         }
       }
@@ -295,12 +355,20 @@
     }
   }
 
-  // Listen for acknowledgments and ready state from SabioChess App
+  // Listen for acknowledgments, ready state, and settings changes from SabioChess App
   window.addEventListener('message', (event) => {
-    if (event.data && event.data.type === 'SABIO_PGN_LOADED') {
+    if (!event.data || typeof event.data !== 'object') return;
+
+    if (event.data.type === 'SABIO_PGN_LOADED') {
       clearActiveTimers();
-    } else if (event.data && event.data.type === 'SABIO_READY') {
+    } else if (event.data.type === 'SABIO_READY') {
+      const iframe = document.getElementById('sabiochess-iframe');
+      if (iframe) {
+        syncSettingsToIframe(iframe);
+      }
       sendActivePostMessage();
+    } else if (event.data.type === 'SABIO_SETTINGS_CHANGED' && event.data.settings) {
+      saveExtensionSettings(event.data.settings);
     }
   });
 
