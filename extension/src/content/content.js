@@ -161,6 +161,7 @@
    * Opens or updates the slide-over sidebar drawer with the game
    */
   async function openSabioSidebar({ initialPgn, meta, gameId, platform, fetchOfficialPgnFn }) {
+    updateTargetUrl();
     await resolveBaseUrl();
 
     let sidebar = document.getElementById(SIDEBAR_ID);
@@ -175,6 +176,8 @@
       params.set('source', `${platform}_extension`);
       return `${sabioBaseUrl}/?${params.toString()}`;
     };
+
+    const targetUrl = buildUrl(pgn);
 
     const sendPostMessage = (customPgn) => {
       const pgnToSend = customPgn || pgn;
@@ -206,7 +209,7 @@
             <button class="sabiochess-header-btn" id="sabiochess-close-btn" title="Close">✕</button>
           </div>
         </div>
-        <iframe class="sabiochess-iframe" id="sabiochess-iframe" src="${buildUrl(pgn)}" allow="clipboard-read; clipboard-write"></iframe>
+        <iframe class="sabiochess-iframe" id="sabiochess-iframe" src="${targetUrl}" allow="clipboard-read; clipboard-write"></iframe>
       `;
 
       document.body.appendChild(sidebar);
@@ -231,41 +234,12 @@
           activePostMessageTimers.push(setTimeout(() => sendPostMessage(undefined), 300));
           activePostMessageTimers.push(setTimeout(() => sendPostMessage(undefined), 800));
         });
-
-        let iframeRetried = false;
-        iframe.addEventListener('error', () => {
-          if (!iframeRetried && sabioBaseUrl === PROD_URL) {
-            iframeRetried = true;
-            sabioBaseUrl = FALLBACK_URL;
-            _healthCacheResult = FALLBACK_URL;
-            _healthCacheTime = Date.now();
-            iframe.src = buildUrl(pgn);
-            console.log('[SabioChess] Iframe load failed, retrying with fallback:', FALLBACK_URL);
-          }
-        });
-
-        const iframeTimeout = setTimeout(() => {
-          if (!iframeRetried && sabioBaseUrl === PROD_URL) {
-            const iframeEl = document.getElementById('sabiochess-iframe');
-            if (iframeEl && (!iframeEl.contentDocument || iframeEl.contentDocument.URL === 'about:blank')) {
-              iframeRetried = true;
-              sabioBaseUrl = FALLBACK_URL;
-              _healthCacheResult = FALLBACK_URL;
-              _healthCacheTime = Date.now();
-              iframeEl.src = buildUrl(pgn);
-              console.log('[SabioChess] Iframe timeout, retrying with fallback:', FALLBACK_URL);
-            }
-          }
-        }, 8000);
-
-        iframe.addEventListener('load', () => clearTimeout(iframeTimeout), { once: true });
       }
     } else {
       const iframe = sidebar.querySelector('#sabiochess-iframe');
       if (iframe) {
-        const expectedPrefix = sabioBaseUrl.replace(/\/+$/, '');
-        if (!iframe.src || !iframe.src.startsWith(expectedPrefix)) {
-          iframe.src = buildUrl(pgn);
+        if (!iframe.src || iframe.src !== targetUrl) {
+          iframe.src = targetUrl;
         } else {
           sendPostMessage(undefined);
           clearActiveTimers();
