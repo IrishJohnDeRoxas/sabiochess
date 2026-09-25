@@ -89,96 +89,93 @@
 }
 
 /* ==========================================================================
-   Lichess.org Injected Button (Matches .follow-up / Analysis Board sizing)
+   Lichess.org & Shared Injected Button Styling (Responsive Neubrutalism)
    ========================================================================== */
 .sabiochess-review-btn--lichess,
 .follow-up .sabiochess-review-btn,
 .rcontrols .follow-up .sabiochess-review-btn,
-.rcontrols .sabiochess-review-btn {
-  font-family: "Noto Sans", sans-serif, -apple-system, BlinkMacSystemFont !important;
-  font-size: 14px !important;
-  font-weight: 700 !important;
-  text-transform: uppercase !important;
-  line-height: 1.5 !important;
-  text-align: center !important;
-  box-sizing: border-box !important;
-  border-radius: var(---ui-roundness, 7px) !important;
-  margin: 1px 1px 0 !important;
-  padding: 12px 14px !important;
-  min-height: unset !important;
-  height: auto !important;
-  width: calc(100% - 2px) !important;
-  gap: 8px !important;
-  border: 1.5px solid #000000 !important;
-  box-shadow: 0 2px 0 0 #000000 !important;
-  transition: all 0.15s ease !important;
-}
-
-.sabiochess-review-btn--lichess:hover,
-.follow-up .sabiochess-review-btn:hover,
-.rcontrols .follow-up .sabiochess-review-btn:hover {
-  background-color: #282a32 !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 3px 0 0 #000000 !important;
-}
-
-.sabiochess-review-btn--lichess:active,
-.follow-up .sabiochess-review-btn:active,
-.rcontrols .follow-up .sabiochess-review-btn:active {
-  transform: translateY(1px) !important;
-  box-shadow: 0 1px 0 0 #000000 !important;
-}
-
-.sabiochess-review-btn--lichess .sabiochess-logo-badge,
-.follow-up .sabiochess-logo-badge,
-.rcontrols .follow-up .sabiochess-logo-badge,
-.rcontrols .sabiochess-logo-badge {
-  width: 20px !important;
-  height: 20px !important;
-  border-radius: 3px !important;
-  border: 1.5px solid #000000 !important;
-  box-shadow: 1.5px 1.5px 0 0 #000000 !important;
-  transform: rotate(-3deg) !important;
-  flex-shrink: 0 !important;
-}
-
-.sabiochess-review-btn--lichess .sabiochess-logo-badge svg,
-.follow-up .sabiochess-logo-badge svg,
-.rcontrols .follow-up .sabiochess-logo-badge svg,
-.rcontrols .sabiochess-logo-badge svg {
-  width: 14px !important;
-  height: 14px !important;
-}
-
-.sabiochess-review-btn--lichess .sabiochess-btn-text,
-.follow-up .sabiochess-btn-text,
-.rcontrols .follow-up .sabiochess-btn-text {
-  font-size: 14px !important;
-  font-weight: 700 !important;
-  letter-spacing: 0.03em !important;
-  line-height: 1.5 !important;
-}
-
-/* Other Lichess panels (analysis tools, underboard) */
+.rcontrols .sabiochess-review-btn,
 .analyse__tools .sabiochess-review-btn,
 .analyse__controls .sabiochess-review-btn,
 .round__underboard .sabiochess-review-btn,
 .game__underboard .sabiochess-review-btn,
 .cmn-wrap .sabiochess-review-btn {
-  font-family: "Noto Sans", sans-serif, -apple-system, BlinkMacSystemFont !important;
-  font-size: 14px !important;
-  font-weight: 700 !important;
+  font-family:
+    "Archivo Black",
+    "Outfit",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif !important;
+  font-size: clamp(12px, 1.05vw + 7px, 15px) !important;
+  font-weight: 800 !important;
   text-transform: uppercase !important;
-  line-height: 1.5 !important;
-  border-radius: var(---ui-roundness, 7px) !important;
-  margin: 4px 1px !important;
-  padding: 10px 12px !important;
-  min-height: unset !important;
+  letter-spacing: 0.025em !important;
+  line-height: 1.2 !important;
+  text-align: center !important;
+  box-sizing: border-box !important;
+  border-radius: 4px !important;
+  margin: 6px 0 2px 0 !important;
+  padding: 8px 12px !important;
+  min-height: 44px !important;
   height: auto !important;
-  width: calc(100% - 2px) !important;
+  width: 100% !important;
+  max-width: 100% !important;
   gap: 8px !important;
+  background-color: #1e1f24 !important;
+  color: #ffffff !important;
+  border: 2px solid #000000 !important;
+  box-shadow:
+    0 4px 0 0 #000000,
+    0 4px 10px rgba(0, 0, 0, 0.5) !important;
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease,
+    background-color 0.15s ease !important;
+}
+
+.sabiochess-review-btn--lichess:hover,
+.follow-up .sabiochess-review-btn:hover,
+.rcontrols .follow-up .sabiochess-review-btn:hover,
+.rcontrols .sabiochess-review-btn:hover {
+  background-color: #282a32 !important;
+  transform: translateY(-2px) !important;
+  box-shadow:
+    0 5px 0 0 #000000,
+    0 6px 14px rgba(0, 0, 0, 0.6) !important;
+}
+
+.sabiochess-review-btn--lichess:active,
+.follow-up .sabiochess-review-btn:active,
+.rcontrols .follow-up .sabiochess-review-btn:active,
+.rcontrols .sabiochess-review-btn:active {
+  transform: translateY(2px) !important;
+  box-shadow:
+    0 1px 0 0 #000000,
+    0 1px 3px rgba(0, 0, 0, 0.4) !important;
+}
+
+.sabiochess-review-btn--lichess .sabiochess-logo-badge,
+.follow-up .sabiochess-logo-badge,
+.rcontrols .sabiochess-logo-badge {
+  width: 24px !important;
+  height: 24px !important;
+  border-radius: 3px !important;
   border: 1.5px solid #000000 !important;
-  box-shadow: 0 2px 0 0 #000000 !important;
+  box-shadow: 1.5px 1.5px 0 0 #000000 !important;
+}
+
+.sabiochess-review-btn--lichess .sabiochess-logo-badge svg,
+.follow-up .sabiochess-logo-badge svg,
+.rcontrols .sabiochess-logo-badge svg {
+  width: 15px !important;
+  height: 15px !important;
+}
+
+.sabiochess-review-btn--lichess .sabiochess-btn-text,
+.follow-up .sabiochess-btn-text,
+.rcontrols .sabiochess-btn-text {
+  font-size: inherit !important;
+  letter-spacing: inherit !important;
 }
 
 /* Common Hover / Active for Base Button */
@@ -201,11 +198,12 @@
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  width: 3.2rem !important;
-  height: 3.2rem !important;
+  width: 28px !important;
+  height: 28px !important;
   background-color: #ff4f00 !important;
   border: 2px solid #000000 !important;
   box-shadow: 2px 2px 0 0 #000000 !important;
+  border-radius: 4px !important;
   transform: rotate(-3deg) !important;
   transition: transform 0.15s ease !important;
   flex-shrink: 0 !important;
@@ -216,8 +214,8 @@
 }
 
 .sabiochess-logo-badge svg {
-  width: 2rem !important;
-  height: 2rem !important;
+  width: 17px !important;
+  height: 17px !important;
   display: block !important;
   filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.15)) !important;
 }
@@ -227,6 +225,16 @@
   align-items: center !important;
   white-space: nowrap !important;
   color: #ffffff !important;
+  font-family:
+    "Archivo Black",
+    "Outfit",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif !important;
+  font-size: clamp(13px, 1.1vw + 6px, 17px) !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.03em !important;
+  line-height: 1.1428 !important;
 }
 
 .sabiochess-text-orange {
@@ -286,21 +294,32 @@
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
+  width: 28px !important;
+  height: 28px !important;
+  padding: 0 !important;
   background: #373a46 !important;
   color: #ffffff !important;
   border: 1.5px solid #ffffff !important;
   box-shadow: 2px 2px 0 0 #000000 !important;
-  padding: 4px 8px !important;
   cursor: pointer !important;
-  font-weight: bold !important;
-  font-size: 12px !important;
-  line-height: 1 !important;
-  border-radius: 0px !important;
-  transition: background-color 0.12s ease !important;
+  border-radius: 3px !important;
+  transition:
+    background-color 0.12s ease,
+    transform 0.1s ease,
+    box-shadow 0.1s ease !important;
+}
+
+.sabiochess-header-btn svg {
+  display: block !important;
+  width: 14px !important;
+  height: 14px !important;
+  flex-shrink: 0 !important;
 }
 
 .sabiochess-header-btn:hover {
   background: #ff4f00 !important;
+  transform: translate(-1px, -1px) !important;
+  box-shadow: 3px 3px 0 0 #000000 !important;
 }
 
 .sabiochess-header-btn:active {

@@ -151,10 +151,37 @@
     return sabioBtn;
   }
 
+  let activeSidebarPgn = '';
+  let activeSidebarMeta = null;
   let activePostMessageTimers = [];
+
   const clearActiveTimers = () => {
     activePostMessageTimers.forEach((t) => clearTimeout(t));
     activePostMessageTimers = [];
+  };
+
+  const sendActivePostMessage = () => {
+    const iframe = document.getElementById('sabiochess-iframe');
+    if (iframe && iframe.contentWindow && activeSidebarPgn) {
+      iframe.contentWindow.postMessage(
+        {
+          type: 'LOAD_PGN',
+          pgn: activeSidebarPgn,
+          flip: Boolean(activeSidebarMeta && activeSidebarMeta.isFlipped),
+          user: activeSidebarMeta?.targetUser || '',
+          targetUser: activeSidebarMeta?.targetUser || '',
+          autoAnalyze: true
+        },
+        '*'
+      );
+    }
+  };
+
+  const queueSendRetries = () => {
+    clearActiveTimers();
+    [0, 150, 400, 800, 1500, 2500, 4000].forEach((delay) => {
+      activePostMessageTimers.push(setTimeout(sendActivePostMessage, delay));
+    });
   };
 
   /**
@@ -165,7 +192,8 @@
     await resolveBaseUrl();
 
     let sidebar = document.getElementById(SIDEBAR_ID);
-    let pgn = initialPgn || '';
+    activeSidebarPgn = initialPgn || '';
+    activeSidebarMeta = meta || null;
 
     const buildUrl = (targetPgn) => {
       const params = new URLSearchParams();
@@ -177,26 +205,7 @@
       return `${sabioBaseUrl}/?${params.toString()}`;
     };
 
-    const targetUrl = buildUrl(pgn);
-
-    const sendPostMessage = (customPgn) => {
-      const pgnToSend = customPgn || pgn;
-      const iframe = document.getElementById('sabiochess-iframe');
-
-      if (iframe && iframe.contentWindow && pgnToSend) {
-        iframe.contentWindow.postMessage(
-          {
-            type: 'LOAD_PGN',
-            pgn: pgnToSend,
-            flip: Boolean(meta && meta.isFlipped),
-            user: meta?.targetUser || '',
-            targetUser: meta?.targetUser || '',
-            autoAnalyze: true
-          },
-          '*'
-        );
-      }
-    };
+    const targetUrl = buildUrl(activeSidebarPgn);
 
     if (!sidebar) {
       sidebar = document.createElement('div');
@@ -204,9 +213,27 @@
       sidebar.innerHTML = `
         <div class="sabiochess-sidebar-header">
           <div class="sabiochess-sidebar-actions">
-            <button class="sabiochess-header-btn" id="sabiochess-expand-btn" title="Toggle wider sidebar">⇲</button>
-            <button class="sabiochess-header-btn" id="sabiochess-open-tab" title="Open full tab">↗</button>
-            <button class="sabiochess-header-btn" id="sabiochess-close-btn" title="Close">✕</button>
+            <button class="sabiochess-header-btn" id="sabiochess-expand-btn" title="Expand sidebar width">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <polyline points="9 21 3 21 3 15"></polyline>
+                <line x1="21" y1="3" x2="14" y2="10"></line>
+                <line x1="3" y1="21" x2="10" y2="14"></line>
+              </svg>
+            </button>
+            <button class="sabiochess-header-btn" id="sabiochess-open-tab" title="Open in new tab">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <line x1="10" y1="14" x2="21" y2="3"></line>
+              </svg>
+            </button>
+            <button class="sabiochess-header-btn" id="sabiochess-close-btn" title="Close">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
           </div>
         </div>
         <iframe class="sabiochess-iframe" id="sabiochess-iframe" src="${targetUrl}" credentialless allow="clipboard-read; clipboard-write"></iframe>
@@ -219,20 +246,24 @@
       });
 
       sidebar.querySelector('#sabiochess-expand-btn')?.addEventListener('click', () => {
-        sidebar?.classList.toggle('expanded');
+        const isExpanded = sidebar?.classList.toggle('expanded');
+        const expandBtn = sidebar?.querySelector('#sabiochess-expand-btn');
+        if (expandBtn) {
+          expandBtn.title = isExpanded ? 'Collapse sidebar' : 'Expand sidebar width';
+          expandBtn.innerHTML = isExpanded
+            ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 14 10 14 10 20"></polyline><polyline points="20 10 14 10 14 4"></polyline><line x1="14" y1="10" x2="21" y2="3"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>`
+            : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>`;
+        }
       });
 
       sidebar.querySelector('#sabiochess-open-tab')?.addEventListener('click', () => {
-        window.open(buildUrl(pgn), '_blank');
+        window.open(buildUrl(activeSidebarPgn), '_blank');
       });
 
       const iframe = sidebar.querySelector('#sabiochess-iframe');
       if (iframe) {
         iframe.addEventListener('load', () => {
-          sendPostMessage(undefined);
-          clearActiveTimers();
-          activePostMessageTimers.push(setTimeout(() => sendPostMessage(undefined), 300));
-          activePostMessageTimers.push(setTimeout(() => sendPostMessage(undefined), 800));
+          queueSendRetries();
         });
       }
     } else {
@@ -241,12 +272,12 @@
         if (!iframe.src || iframe.src !== targetUrl) {
           iframe.src = targetUrl;
         } else {
-          sendPostMessage(undefined);
-          clearActiveTimers();
-          activePostMessageTimers.push(setTimeout(() => sendPostMessage(undefined), 300));
+          queueSendRetries();
         }
       }
     }
+
+    queueSendRetries();
 
     // Slide-in animation
     requestAnimationFrame(() => {
@@ -257,18 +288,19 @@
     if (typeof fetchOfficialPgnFn === 'function') {
       fetchOfficialPgnFn().then((officialPgn) => {
         if (officialPgn && officialPgn.trim().length > 0) {
-          pgn = officialPgn;
-          clearActiveTimers();
-          sendPostMessage(officialPgn);
+          activeSidebarPgn = officialPgn;
+          queueSendRetries();
         }
       });
     }
   }
 
-  // Listen for acknowledgments from SabioChess App
+  // Listen for acknowledgments and ready state from SabioChess App
   window.addEventListener('message', (event) => {
     if (event.data && event.data.type === 'SABIO_PGN_LOADED') {
       clearActiveTimers();
+    } else if (event.data && event.data.type === 'SABIO_READY') {
+      sendActivePostMessage();
     }
   });
 
@@ -315,21 +347,31 @@
     },
 
     detectGameOverState() {
-      // 1. Follow-up action box exists
-      if (document.querySelector('.follow-up, .rcontrols .follow-up')) return true;
+      // 1. Active play indicators (resign/draw buttons by ARIA, data attributes, actions)
+      const isPlaying = document.querySelector(
+        '[data-act="resign"], [data-act="draw"], [aria-label*="resign" i], [aria-label*="draw" i], .rcontrols .resign, button.resign, .force-resign, .round__app.playing, main.round.playing'
+      );
+      if (isPlaying && isPlaying.offsetParent !== null) return false;
 
-      // 2. Result text indicators
-      const resultEl = document.querySelector('.rcontrols .result, .result-wrap, .status, p.status, .game__meta');
-      if (resultEl && resultEl.textContent?.trim()) return true;
+      // 2. Post-game action links (functional URLs: rematch, new game, analysis)
+      const postGameAction = document.querySelector(
+        'a[href*="/analysis"], a[href*="/rematch"], a[href*="/new-opponent"], a.analysis, .follow-up, .round__app.finished, main.round.finished'
+      );
+      if (postGameAction && postGameAction.offsetParent !== null) return true;
 
-      const bodyText = document.body?.innerText || '';
-      const resultPatterns = /\b(1-0|0-1|1\/2-1\/2|½-½|checkmate|resigned|timeout|draw|stalemate|time\s*forfeit|game\s*over)\b/i;
-      if (resultPatterns.test(bodyText)) return true;
+      // 3. Analysis pages
+      const pathname = window.location.pathname;
+      if (pathname.startsWith('/analysis')) return true;
 
-      // 3. Move list exists
-      if (document.querySelector('rmoves, kwdb, tview2, .analyse__moves, u8t, .moves, [data-ply]')) return true;
+      // 4. Game outcome text indicators
+      const resultEl = document.querySelector('.rcontrols .result, .result-wrap, .status, p.status, .game__meta .status, .game__meta, [data-result]');
+      if (resultEl) {
+        const text = (resultEl.textContent || '').trim();
+        const resultPatterns = /\b(1-0|0-1|1\/2-1\/2|½-½|victorious|checkmate|resigned|timeout|time\s*out|draw|stalemate|time\s*forfeit|game\s*over)\b/i;
+        if (resultPatterns.test(text)) return true;
+      }
 
-      return Boolean(this.extractGameId());
+      return false;
     },
 
     findBoardElement() {
@@ -342,30 +384,53 @@
     },
 
     findInjectionTarget() {
-      const isSabio = (el) => el.id === SABIO_BUTTON_ID || el.closest(`#${SABIO_BUTTON_ID}`);
-      const isVisible = (el) => el.offsetParent !== null;
+      if (!this.detectGameOverState()) return null;
 
-      // Priority 1: Inside .follow-up container (Game Over control panel)
-      const followUp = document.querySelector('.rcontrols .follow-up, .follow-up');
+      const isSabio = (el) => el.id === SABIO_BUTTON_ID || el.closest(`#${SABIO_BUTTON_ID}`);
+      const isVisible = (el) => el && el.offsetParent !== null;
+
+      // 1. Inside .follow-up container (Game Over action panel on right side)
+      const followUp = document.querySelector('.follow-up, .rcontrols .follow-up, .round__side .follow-up, .round__app .follow-up');
       if (followUp && isVisible(followUp)) {
-        // Look for Analysis Board button inside follow-up
-        const analysisBtn = followUp.querySelector('a.analysis, a.fbt.analysis, a[href*="/analysis"], a.rematch, a.fbt, a[href*="#"]');
-        if (analysisBtn && !isSabio(analysisBtn)) {
+        const buttons = Array.from(followUp.querySelectorAll('a, button, .fbt')).filter((el) => !isSabio(el));
+        const analysisBtn = buttons.find((el) => {
+          const text = (el.textContent || '').trim().toLowerCase();
+          const href = el.getAttribute('href') || '';
+          return text.includes('analysis') || el.classList.contains('analysis') || href.includes('analysis');
+        });
+
+        if (analysisBtn) {
           return { element: analysisBtn, placement: 'afterend' };
         }
+
+        if (buttons.length > 0) {
+          return { element: buttons[buttons.length - 1], placement: 'afterend' };
+        }
+
         return { element: followUp, placement: 'appendChild' };
       }
 
-      // Priority 2: Analysis tools controls panel
-      const analyseControls = document.querySelector('.analyse__tools .analyse__controls, .analyse__side .analyse__tools, .analyse__controls');
+      // 2. Buttons in right side controls matching "Analysis board", "Rematch", or "New opponent"
+      const candidateBtns = Array.from(document.querySelectorAll('.round__side a, .round__side button, .rcontrols a, .rcontrols button, a.fbt, button.fbt, a.analysis'));
+      const foundBtn = candidateBtns.find((el) => {
+        if (isSabio(el) || !isVisible(el)) return false;
+        const text = (el.textContent || '').trim().toLowerCase();
+        return text.includes('analysis board') || text.includes('analysis') || text.includes('rematch') || text.includes('opponent');
+      });
+      if (foundBtn) {
+        return { element: foundBtn, placement: 'afterend' };
+      }
+
+      // 3. Analysis page tools panel (/analysis/...)
+      const analyseControls = document.querySelector('.analyse__tools .analyse__controls, .analyse__side .analyse__tools, .analyse__controls, .analyse__side');
       if (analyseControls && isVisible(analyseControls)) {
         return { element: analyseControls, placement: 'appendChild' };
       }
 
-      // Priority 3: Underboard / side controls
-      const underboard = document.querySelector('.round__underboard .cmn-wrap, .round__underboard, .game__underboard, .round__side .rcontrols');
-      if (underboard && isVisible(underboard)) {
-        return { element: underboard, placement: 'prepend' };
+      // 4. Side controls fallback (only when game is finished)
+      const sideControls = document.querySelector('.round__side .rcontrols, .round__side, .rcontrols, .round__underboard');
+      if (sideControls && isVisible(sideControls)) {
+        return { element: sideControls, placement: 'appendChild' };
       }
 
       return null;
@@ -434,7 +499,7 @@
     extractPgnFromDOM() {
       const moveNodes = Array.from(
         document.querySelectorAll(
-          'rmoves move, kwdb move, tview2 move, .analyse__moves move, u8t move, l4x move, .moves move, [data-san], [data-ply]'
+          'rmoves u8t, rmoves move, tview2 move, tview2 u8t, .analyse__moves move, .analyse__moves u8t, .round__app u8t, .round__app move, .rreplay u8t, u8t, [data-san], [data-ply]'
         )
       );
 
@@ -447,7 +512,7 @@
         }
 
         const clone = node.cloneNode(true);
-        clone.querySelectorAll('eval, time, index, [class*="eval"], [class*="time"], [class*="glyph"]').forEach((el) => el.remove());
+        clone.querySelectorAll('eval, time, index, c3t, .c3t, [class*="eval"], [class*="time"], [class*="glyph"]').forEach((el) => el.remove());
         let text = (clone.textContent || '').trim();
         text = text.replace(/^[0-9]+(\.|\s|\.\.\.)+/, '').trim();
         text = text.replace(/[^a-zA-Z0-9+=#xX\-]/g, '').trim();
@@ -658,17 +723,30 @@
     },
 
     detectGameOverState() {
+      // 1. If actively playing (resign button visible), NOT game over
+      const isPlaying = document.querySelector(
+        '[data-cy="resign-button"], button[aria-label="Resign"], .resign-button-component, .live-game-buttons-component:not(.live-game-buttons-game-over)'
+      );
+      if (isPlaying && isPlaying.offsetParent !== null) return false;
+
+      // 2. Official Game Review button exists (only rendered when game is over)
+      if (this.findGameReviewElement()) return true;
+
+      // 3. Game over modal, game over dialog or header
+      if (document.querySelector('[class*="game-over-modal"], [class*="game-over-dialog"], .game-over-buttons-component, [data-cy="game-over-header"]')) {
+        return true;
+      }
+
       const isGamePage = /\/game\/(live\/|daily\/)?\d+/.test(window.location.pathname);
       if (!isGamePage) return false;
 
-      const bodyText = document.body?.innerText || '';
-      const resultPatterns = /\b(1-0|0-1|1\/2-1\/2|½-½|checkmate|resigned|timeout|draw|stalemate|game\s*over)\b/i;
-      if (resultPatterns.test(bodyText)) return true;
-
-      const moveList = document.querySelector(
-        'wc-simple-move-list, .move-list, [class*="move-list"], wc-move-list-row, .move-node'
-      );
-      if (moveList) return true;
+      // 4. Game outcome / result indicators
+      const resultEl = document.querySelector('.game-result, [data-cy="game-over-header"], .header-title-component, .game-over-header');
+      if (resultEl) {
+        const text = (resultEl.textContent || '').trim();
+        const resultPatterns = /\b(1-0|0-1|1\/2-1\/2|½-½|won|lost|checkmate|resigned|timeout|time\s*out|draw|stalemate|game\s*over)\b/i;
+        if (resultPatterns.test(text)) return true;
+      }
 
       return false;
     },

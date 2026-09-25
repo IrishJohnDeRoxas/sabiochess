@@ -118,6 +118,11 @@ export class AnalyzerComponent implements OnInit, OnDestroy {
 
     if (typeof window !== 'undefined') {
       window.addEventListener('message', this.messageHandler);
+      try {
+        if (window.parent && window.parent !== window) {
+          window.parent.postMessage({ type: 'SABIO_READY' }, '*');
+        }
+      } catch {}
     }
   }
 
