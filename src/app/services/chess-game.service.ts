@@ -1051,13 +1051,13 @@ export class ChessGameService {
     this.updateState();
     this.heuristicEvalScore.set(0.0);
     this.analysisService.clearAnalysis();
+    this.isBoardFlipped.set(false);
     this.matchMetadata.set(this.getDefaultMetadata());
   }
 
   private getDefaultMetadata(): MatchMetadata {
-    const defaultUser = this.settings.chesscomUsername() || 'White';
     return {
-      white: { name: defaultUser, rating: 1500 },
+      white: { name: 'White', rating: 1500 },
       black: { name: 'Black', rating: 1500 },
       event: 'Casual Game',
     };
@@ -1293,6 +1293,7 @@ export class ChessGameService {
       this.updateState();
       this.updateEvalHeuristic();
       this.analysisService.clearAnalysis();
+      this.matchMetadata.set(this.getDefaultMetadata());
       if (flip !== undefined || targetUser !== undefined) {
         this.applyBoardOrientation(flip, targetUser);
       }
