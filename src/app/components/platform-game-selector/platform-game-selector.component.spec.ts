@@ -36,9 +36,41 @@ describe('PlatformGameSelectorComponent', () => {
     expect(component.activePlatform()).toBe('chess.com');
   });
 
-  it('should remain on chess.com and ignore lichess since it is locked in development', () => {
+  it('should switch between chess.com and lichess platforms', () => {
     component.selectPlatform('lichess');
+    expect(component.activePlatform()).toBe('lichess');
+    expect(component.username()).toBe('EricRosen');
+
+    component.selectPlatform('chess.com');
     expect(component.activePlatform()).toBe('chess.com');
+    expect(component.username()).toBe('Hikaru');
+  });
+
+  it('should fetch and cache games for lichess', async () => {
+    const mockLichessGames = [
+      {
+        id: 'lichess-1',
+        white: 'EricRosen',
+        black: 'Opponent',
+        date: '2026-09-20',
+        timeControl: '5m Blitz',
+        result: '1-0',
+        userResult: 'win' as const,
+        pgn: '1. d4 d5 2. c4 1-0',
+        platform: 'lichess' as const,
+      },
+    ];
+
+    vi.spyOn(platformService, 'fetchLichessGames').mockResolvedValue(mockLichessGames);
+
+    component.selectPlatform('lichess');
+    component.username.set('EricRosen');
+    await component.fetchGames();
+
+    expect(component.gamesList()).toEqual(mockLichessGames);
+    const cached = localStorage.getItem('sabiochess_cached_games_lichess_ericrosen');
+    expect(cached).toBeTruthy();
+    expect(JSON.parse(cached!).games).toEqual(mockLichessGames);
   });
 
   it('should clear username when clearUsername is invoked', () => {

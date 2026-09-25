@@ -40,16 +40,21 @@ export class PlatformGameSelectorComponent implements OnInit {
   readonly gamesList = signal<FetchedGame[]>([]);
 
   ngOnInit(): void {
-    this.restoreCachedGames();
+    const initialUser =
+      this.activePlatform() === 'chess.com'
+        ? this.settings.chesscomUsername() || 'Hikaru'
+        : this.settings.lichessUsername() || 'EricRosen';
+    this.username.set(initialUser);
+    this.restoreCachedGames(this.activePlatform(), initialUser);
   }
 
   selectPlatform(platform: PlatformType): void {
-    if (platform === 'lichess') {
-      return;
-    }
     this.activePlatform.set(platform);
     this.errorMessage.set(null);
-    const storedUsername = this.settings.chesscomUsername() || 'Hikaru';
+    const storedUsername =
+      platform === 'chess.com'
+        ? this.settings.chesscomUsername() || 'Hikaru'
+        : this.settings.lichessUsername() || 'EricRosen';
     this.username.set(storedUsername);
     this.restoreCachedGames(platform, storedUsername);
   }

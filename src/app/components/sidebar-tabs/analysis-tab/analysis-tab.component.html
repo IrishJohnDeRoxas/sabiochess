@@ -22,17 +22,21 @@
   }
 
   @if (game.history().length === 0) {
-    <!-- Empty State: No Moves Yet -->
-    <div class="card-brutal p-5 bg-white dark:bg-[#1E1E1E] text-center flex flex-col items-center gap-3 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]">
-      <div class="w-12 h-12 bg-[#FF4F00] text-white border-2 border-[#222222] dark:border-black flex items-center justify-center font-black text-xl shadow-[2px_2px_0_0_#222222]">
-        ♟
+    <!-- Empty State: Platform Game Importer & Info -->
+    <div class="flex flex-col gap-2.5">
+      <app-platform-game-selector (gameSelected)="onOnlineGameSelected($event)"></app-platform-game-selector>
+
+      <div class="card-brutal p-5 bg-white dark:bg-[#1E1E1E] text-center flex flex-col items-center gap-3 shadow-[3px_3px_0_0_#222222] dark:shadow-[3px_3px_0_0_#000000]">
+        <div class="w-12 h-12 bg-[#FF4F00] text-white border-2 border-[#222222] dark:border-black flex items-center justify-center font-black text-xl shadow-[2px_2px_0_0_#222222]">
+          ♟
+        </div>
+        <div class="font-display text-sm sm:text-base uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6]">
+          NO MOVES RECORDED YET
+        </div>
+        <p class="font-body text-xs text-gray-600 dark:text-gray-400 max-w-[260px] leading-relaxed">
+          Play moves on the board or fetch a game from Chess.com or Lichess to view full calculation, accuracy, and move breakdown.
+        </p>
       </div>
-      <div class="font-display text-sm sm:text-base uppercase tracking-tight text-[#222222] dark:text-[#F3F4F6]">
-        NO MOVES RECORDED YET
-      </div>
-      <p class="font-body text-xs text-gray-600 dark:text-gray-400 max-w-[260px] leading-relaxed">
-        Play moves on the board or load a PGN game to view full calculation, accuracy, and move breakdown.
-      </p>
     </div>
   } @else if (!analysisService.summary() && !analysisService.isAnalyzing()) {
     <!-- Ready to Analyze State -->

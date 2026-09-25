@@ -6,6 +6,8 @@ import { SettingsService } from '../../../services/settings.service';
 import { MoveClassification, LiveEngineLine } from '../../../models/analysis.model';
 import { IconComponent, IconName } from '../../icon/icon.component';
 import { VariationBannerComponent } from '../../variation-banner/variation-banner.component';
+import { PlatformGameSelectorComponent } from '../../platform-game-selector/platform-game-selector.component';
+import { FetchedGame } from '../../../services/platform-importer.service';
 
 export interface ReportClassificationRow {
   key: MoveClassification;
@@ -38,7 +40,7 @@ export interface MomentumChartData {
 @Component({
   selector: 'app-analysis-tab',
   standalone: true,
-  imports: [CommonModule, IconComponent, VariationBannerComponent],
+  imports: [CommonModule, IconComponent, VariationBannerComponent, PlatformGameSelectorComponent],
   templateUrl: './analysis-tab.component.html',
   styleUrls: ['./analysis-tab.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -49,6 +51,10 @@ export class AnalysisTabComponent {
   readonly settings = inject(SettingsService);
 
   readonly startReview = output<void>();
+
+  onOnlineGameSelected(_game: FetchedGame): void {
+    this.settings.flashToast('ONLINE GAME LOADED');
+  }
 
   readonly reportClassificationRows = computed<ReportClassificationRow[]>(() => {
     const sum = this.analysisService.summary();

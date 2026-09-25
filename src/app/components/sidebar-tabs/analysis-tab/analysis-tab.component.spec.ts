@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { AnalysisTabComponent } from './analysis-tab.component';
 import { ChessGameService } from '../../../services/chess-game.service';
 import { GameAnalysisService } from '../../../services/game-analysis.service';
@@ -14,7 +16,13 @@ describe('AnalysisTabComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AnalysisTabComponent],
-      providers: [ChessGameService, GameAnalysisService, SettingsService],
+      providers: [
+        ChessGameService,
+        GameAnalysisService,
+        SettingsService,
+        provideHttpClient(),
+        provideHttpClientTesting(),
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AnalysisTabComponent);
