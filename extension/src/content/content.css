@@ -7,12 +7,13 @@
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 0.75rem !important;
+  gap: var(--columnGap, 0.8rem) !important;
   width: 100% !important;
   margin-top: 8px !important;
   margin-bottom: 8px !important;
-  padding: 0 1rem !important;
-  min-height: 4.6rem !important;
+  padding: var(--buttonPaddings, 0 var(--space-16, 1.6rem)) !important;
+  min-height: var(--buttonHeight, 6.4rem) !important;
+  height: var(--buttonHeight, auto) !important;
   background-color: #1e1f24 !important;
   color: #ffffff !important;
   font-family:
@@ -21,7 +22,7 @@
     -apple-system,
     BlinkMacSystemFont,
     sans-serif !important;
-  font-size: clamp(12px, 1.05vw + 4px, 15px) !important;
+  font-size: clamp(13px, 1.1vw + 5px, 16px) !important;
   font-weight: 800 !important;
   text-transform: uppercase !important;
   letter-spacing: 0.025em !important;
@@ -38,7 +39,7 @@
   user-select: none !important;
   box-sizing: border-box !important;
   z-index: 100 !important;
-  line-height: 1.15 !important;
+  line-height: 1.1428 !important;
 }
 
 /* Floating fallback variant — self-positions near the board */
@@ -73,7 +74,8 @@
 [class*="game-over-modal-shell"] .sabiochess-review-btn {
   margin: 0 var(--space-16, 1.6rem) 6px var(--space-16, 1.6rem) !important;
   width: calc(100% - 3.2rem) !important;
-  min-height: 4.8rem !important;
+  min-height: var(--buttonHeight, 6.4rem) !important;
+  height: var(--buttonHeight, auto) !important;
   font-size: clamp(13px, 1.1vw + 5px, 16px) !important;
 }
 
