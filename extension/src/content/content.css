@@ -7,12 +7,12 @@
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 1.2rem !important;
+  gap: 0.75rem !important;
   width: 100% !important;
-  margin-top: 10px !important;
+  margin-top: 8px !important;
   margin-bottom: 8px !important;
-  padding: 0 1.6rem !important;
-  min-height: 5.6rem !important;
+  padding: 0 1rem !important;
+  min-height: 4.6rem !important;
   background-color: #1e1f24 !important;
   color: #ffffff !important;
   font-family:
@@ -21,14 +21,14 @@
     -apple-system,
     BlinkMacSystemFont,
     sans-serif !important;
-  font-size: 2rem !important;
+  font-size: clamp(12px, 1.05vw + 4px, 15px) !important;
   font-weight: 800 !important;
   text-transform: uppercase !important;
-  letter-spacing: 0.03em !important;
-  border: 2.5px solid #000000 !important;
+  letter-spacing: 0.025em !important;
+  border: 2px solid #000000 !important;
   box-shadow:
-    0 5px 0 0 #000000,
-    0 6px 14px rgba(0, 0, 0, 0.6) !important;
+    0 4px 0 0 #000000,
+    0 4px 10px rgba(0, 0, 0, 0.5) !important;
   border-radius: 0 !important;
   cursor: pointer !important;
   transition:
@@ -38,7 +38,7 @@
   user-select: none !important;
   box-sizing: border-box !important;
   z-index: 100 !important;
-  line-height: 1.1428 !important;
+  line-height: 1.15 !important;
 }
 
 /* Floating fallback variant — self-positions near the board */
@@ -73,8 +73,8 @@
 [class*="game-over-modal-shell"] .sabiochess-review-btn {
   margin: 0 var(--space-16, 1.6rem) 6px var(--space-16, 1.6rem) !important;
   width: calc(100% - 3.2rem) !important;
-  min-height: 5.6rem !important;
-  font-size: 2rem !important;
+  min-height: 4.8rem !important;
+  font-size: clamp(13px, 1.1vw + 5px, 16px) !important;
 }
 
 /* Chess.com Sidebar button sizing & spacing - seamless full width */
@@ -222,11 +222,11 @@
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  width: 28px !important;
-  height: 28px !important;
+  width: 22px !important;
+  height: 22px !important;
   background-color: #ff4f00 !important;
-  border: 2px solid #000000 !important;
-  box-shadow: 2px 2px 0 0 #000000 !important;
+  border: 1.5px solid #000000 !important;
+  box-shadow: 1.5px 1.5px 0 0 #000000 !important;
   border-radius: 0 !important;
   transform: rotate(-2deg) !important;
   transition: transform 0.15s ease, box-shadow 0.15s ease !important;
@@ -245,8 +245,8 @@
 }
 
 .sabiochess-logo-badge svg {
-  width: 18px !important;
-  height: 18px !important;
+  width: 14px !important;
+  height: 14px !important;
   display: block !important;
   margin: auto !important;
   filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.15)) !important;
@@ -263,10 +263,10 @@
     -apple-system,
     BlinkMacSystemFont,
     sans-serif !important;
-  font-size: clamp(13px, 1.1vw + 6px, 17px) !important;
+  font-size: clamp(12px, 1.05vw + 4px, 15px) !important;
   font-weight: 800 !important;
-  letter-spacing: 0.03em !important;
-  line-height: 1.1428 !important;
+  letter-spacing: 0.025em !important;
+  line-height: 1.15 !important;
 }
 
 .sabiochess-text-orange {
