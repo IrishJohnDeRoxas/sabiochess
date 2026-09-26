@@ -377,11 +377,12 @@
     isInjecting: false,
 
     STATIC_ROUTES: new Set([
-      'analysis', 'training', 'practice', 'broadcast', 'streamer',
+      '', 'analysis', 'training', 'practice', 'broadcast', 'streamer',
       'tournament', 'inbox', 'account', 'editor', 'paste', 'learn',
       'patron', 'teams', 'team', 'forum', 'blog', 'video', 'swiss',
       'simul', 'streak', 'storm', 'racer', 'coach', 'games', 'player',
-      'page', 'insights', 'tv'
+      'page', 'insights', 'tv', 'study', 'class', 'coordinate', 'puzzle',
+      'pref', 'settings', 'faq', 'about', 'contact', 'terms', 'privacy'
     ]),
 
     extractGameId() {
@@ -413,24 +414,33 @@
     },
 
     detectGameOverState() {
+      const pathname = window.location.pathname;
+      if (pathname === '/' || pathname === '') return false;
+
+      const gameId = this.extractGameId();
+      const isAnalysis = pathname.startsWith('/analysis');
+      if (!gameId && !isAnalysis) return false;
+
       // 1. Active play indicators (resign/draw buttons by ARIA, data attributes, actions)
       const isPlaying = document.querySelector(
         '[data-act="resign"], [data-act="draw"], [aria-label*="resign" i], [aria-label*="draw" i], .rcontrols .resign, button.resign, .force-resign, .round__app.playing, main.round.playing'
       );
       if (isPlaying && isPlaying.offsetParent !== null) return false;
 
-      // 2. Post-game action links (functional URLs: rematch, new game, analysis)
+      // 2. Post-game action links inside game containers (functional URLs: rematch, new game, analysis)
       const postGameAction = document.querySelector(
-        'a[href*="/analysis"], a[href*="/rematch"], a[href*="/new-opponent"], a.analysis, .follow-up, .round__app.finished, main.round.finished'
+        '.follow-up a, .round__side a[href*="/analysis"], .rcontrols a[href*="/analysis"], .round__app.finished, main.round.finished, .round__side a[href*="/rematch"], .rcontrols a[href*="/rematch"], .round__side a[href*="/new-opponent"], .rcontrols a[href*="/new-opponent"]'
       );
       if (postGameAction && postGameAction.offsetParent !== null) return true;
 
-      // 3. Analysis pages
-      const pathname = window.location.pathname;
-      if (pathname.startsWith('/analysis')) return true;
+      // 3. Analysis pages (only if analysis tools are rendered)
+      if (isAnalysis) {
+        const analyseControls = document.querySelector('.analyse__tools, .analyse__side, .analyse__controls');
+        if (analyseControls && analyseControls.offsetParent !== null) return true;
+      }
 
       // 4. Game outcome text indicators
-      const resultEl = document.querySelector('.rcontrols .result, .result-wrap, .status, p.status, .game__meta .status, .game__meta, [data-result]');
+      const resultEl = document.querySelector('.rcontrols .result, .round__side .result, .result-wrap, .status, p.status, .game__meta .status, .game__meta, [data-result]');
       if (resultEl) {
         const text = (resultEl.textContent || '').trim();
         const resultPatterns = /\b(1-0|0-1|1\/2-1\/2|½-½|victorious|checkmate|resigned|timeout|time\s*out|draw|stalemate|time\s*forfeit|game\s*over)\b/i;
@@ -441,10 +451,10 @@
     },
 
     findBoardElement() {
-      const selectors = ['cg-board', 'cg-container', '.cg-wrap', 'main.round', 'main.analyse', '.round__app'];
+      const selectors = ['main.round cg-board', 'main.analyse cg-board', '.round__app cg-board', '.analyse__board cg-board', '.main-board cg-board', 'main cg-board', 'cg-board'];
       for (const sel of selectors) {
         const el = document.querySelector(sel);
-        if (el && el.offsetParent !== null) return el;
+        if (el && el.offsetParent !== null && !el.closest('.tv-game, .mini-board, #dasher_app, header, footer')) return el;
       }
       return null;
     },
