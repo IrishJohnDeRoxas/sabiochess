@@ -154,6 +154,16 @@
     0 1px 3px rgba(0, 0, 0, 0.4) !important;
 }
 
+.sabiochess-review-btn,
+.sabiochess-review-btn *,
+.sabiochess-review-btn::before,
+.sabiochess-review-btn::after,
+.sabiochess-review-btn--floating,
+.sabiochess-review-btn--lichess,
+.sabiochess-logo-badge {
+  border-radius: 0 !important;
+}
+
 .sabiochess-review-btn--lichess .sabiochess-logo-badge,
 .follow-up .sabiochess-logo-badge,
 .rcontrols .sabiochess-logo-badge {
@@ -162,6 +172,20 @@
   border-radius: 0 !important;
   border: 1.5px solid #000000 !important;
   box-shadow: 1.5px 1.5px 0 0 #000000 !important;
+  transform: rotate(-2deg) !important;
+  transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+}
+
+.sabiochess-review-btn--lichess:hover .sabiochess-logo-badge,
+.follow-up .sabiochess-review-btn:hover .sabiochess-logo-badge,
+.rcontrols .sabiochess-review-btn:hover .sabiochess-logo-badge {
+  transform: rotate(0deg) scale(1.05) !important;
+}
+
+.sabiochess-review-btn--lichess:active .sabiochess-logo-badge,
+.follow-up .sabiochess-review-btn:active .sabiochess-logo-badge,
+.rcontrols .sabiochess-review-btn:active .sabiochess-logo-badge {
+  transform: rotate(0deg) translate(1px, 1px) !important;
 }
 
 .sabiochess-review-btn--lichess .sabiochess-logo-badge svg,
@@ -204,15 +228,20 @@
   border: 2px solid #000000 !important;
   box-shadow: 2px 2px 0 0 #000000 !important;
   border-radius: 0 !important;
-  transform: none !important;
-  transition: transform 0.15s ease !important;
+  transform: rotate(-2deg) !important;
+  transition: transform 0.15s ease, box-shadow 0.15s ease !important;
   flex-shrink: 0 !important;
   margin: 0 !important;
   padding: 0 !important;
+  user-select: none !important;
 }
 
 .sabiochess-review-btn:hover .sabiochess-logo-badge {
-  transform: scale(1.05) !important;
+  transform: rotate(0deg) scale(1.05) !important;
+}
+
+.sabiochess-review-btn:active .sabiochess-logo-badge {
+  transform: rotate(0deg) translate(1px, 1px) !important;
 }
 
 .sabiochess-logo-badge svg {
