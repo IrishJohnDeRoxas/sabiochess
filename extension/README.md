@@ -15,10 +15,12 @@ When you finish a game on Chess.com or Lichess, the extension automatically dete
 - **Slide-Over Sidebar Drawer**: Smooth slide-in sidebar overlay with expand, minimize, and full-tab opening capabilities.
 - **Zero-Config Instant Analysis**: Auto-passes game PGN and triggers engine review on load.
 
----
+## Installation
 
-## Installation (Developer Mode)
+### Chrome Web Store (Recommended)
+Install directly from the **[Chrome Web Store](https://chromewebstore.google.com/detail/sabiochess-chesscom-liche/kpecdkmnbheapnajbpaflejaaiehmdhn)**.
 
+### Manual / Developer Mode Installation
 1. Open Google Chrome (or any Chromium browser like Brave, Edge, Arc).
 2. Go to `chrome://extensions/`.
 3. Enable **Developer mode** using the toggle switch in the top-right corner.

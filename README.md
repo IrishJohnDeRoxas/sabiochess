@@ -65,12 +65,14 @@ npm run build
 
 ---
 
-## Browser Extension (Chess.com Integration)
+## Browser Extension (Chess.com & Lichess Integration)
 
-The `extension/` directory contains the official Manifest V3 Chrome extension.
+The official SabioChess Chrome Extension is live on the **[Chrome Web Store](https://chromewebstore.google.com/detail/sabiochess-chesscom-liche/kpecdkmnbheapnajbpaflejaaiehmdhn)**.
 
-### Dev Testing on Chess.com:
-By default, the extension loads `https://sabiochess.com`. To point it to your local dev server while testing on Chess.com, open the browser console (`Cmd+Option+I` on chess.com) and run:
+The `extension/` directory contains the source code for the Manifest V3 extension.
+
+### Dev Testing (Chess.com & Lichess):
+By default, the extension loads `https://sabiochess.com`. To point it to your local dev server while testing on Chess.com or Lichess.org, open the browser console (`Cmd+Option+I` / `F12`) and run:
 
 ```javascript
 // Point to local development:

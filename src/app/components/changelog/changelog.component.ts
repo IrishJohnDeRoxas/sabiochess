@@ -44,12 +44,24 @@ export class ChangelogComponent implements OnInit {
     {
       version: 'v1.6.0',
       date: 'September 2026',
-      title: 'Candidate Move Arrows, Engine Variations & Clean Navigation',
+      title: 'Lichess Integration, Candidate Move Arrows & Extension Rollout',
       summary:
-        'Dynamic on-board candidate move arrows for top Stockfish evaluation lines, SAN-formatted multi-line variations preview, clean URL navigation after game import, and configurable candidate arrows toggle.',
+        'Complete Lichess.org integration with direct match lookup and browser extension support, interactive on-board candidate move arrows, engine line SAN previews, and official support email.',
       isLatest: true,
       tag: 'Latest Release',
       items: [
+        {
+          type: 'feature',
+          title: 'Lichess Game Import & Match Archive Lookup',
+          description:
+            'Directly import and analyze games from Lichess.org by username or game ID alongside Chess.com, with automatic PGN parsing, clock tracking, and player metadata extraction.',
+        },
+        {
+          type: 'feature',
+          title: 'Lichess Browser Extension Support',
+          description:
+            'Expanded the SabioChess browser extension to support Lichess.org in addition to Chess.com. Seamlessly injects one-click "Review on SabioChess" buttons on completed match and analysis screens.',
+        },
         {
           type: 'engine',
           title: 'Candidate Move Arrows on Board',

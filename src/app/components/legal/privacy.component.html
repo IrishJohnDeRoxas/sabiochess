@@ -272,27 +272,29 @@
         </div>
       </section>
 
-      <!-- Section 6: Browser Extension (SabioChess - Chess.com Reviewer) -->
+      <!-- Section 6: Browser Extension (SabioChess - Chess.com & Lichess Reviewer) -->
       <section id="extension" class="card-brutal p-6 sm:p-8 relative scroll-mt-24 border-l-[6px] border-l-[#FF4F00]">
         <div class="section-watermark select-none absolute top-4 right-6 font-display text-4xl sm:text-5xl text-[#FF4F00]/20 font-black pointer-events-none">
           06
         </div>
         <h2 class="font-display text-xl sm:text-2xl text-[#222222] dark:text-[#F3F4F6] uppercase mb-4 tracking-tight">
-          6. Browser Extension (SabioChess - Chess.com Reviewer)
+          6. Browser Extension (SabioChess - Chess.com &amp; Lichess Reviewer)
         </h2>
         <div class="font-body text-sm sm:text-base text-gray-800 dark:text-gray-200 leading-relaxed space-y-3 font-medium">
           <p>
-            The <strong>SabioChess - Chess.com Reviewer</strong> browser extension operates under the same strict privacy principles as our web workbench:
+            The <strong>SabioChess - Chess.com &amp; Lichess Reviewer</strong> browser extension (available on the
+            <a href="https://chromewebstore.google.com/detail/sabiochess-chesscom-liche/kpecdkmnbheapnajbpaflejaaiehmdhn" target="_blank" rel="noopener noreferrer" class="text-[#0E4C92] dark:text-[#60A5FA] hover:underline font-bold">Chrome Web Store</a>)
+            operates under the same strict privacy principles as our web workbench:
           </p>
           <ul class="list-disc pl-5 space-y-2 text-sm sm:text-base">
             <li>
-              <strong class="text-[#222222] dark:text-white">Zero Elevated Permissions (permissions: []):</strong> The extension requests no privileged browser permissions (no <code>storage</code>, no <code>activeTab</code>, no background tabs, and no cookies). It operates solely within the scope of post-game Chess.com pages.
+              <strong class="text-[#222222] dark:text-white">Zero Elevated Permissions (permissions: []):</strong> The extension requests no privileged browser permissions (no <code>storage</code>, no <code>activeTab</code>, no background tabs, and no cookies). It operates solely within the scope of post-game Chess.com and Lichess.org pages.
             </li>
             <li>
-              <strong class="text-[#222222] dark:text-white">Narrow Host Scope (chess.com):</strong> Host permissions are strictly restricted to <code>https://*.chess.com/*</code> and <code>https://api.chess.com/*</code> exclusively to identify completed game states (PGN/FEN), inject the review button and sidebar iframe, and query the public game archive for the current match.
+              <strong class="text-[#222222] dark:text-white">Narrow Host Scope (chess.com &amp; lichess.org):</strong> Host permissions are strictly restricted to <code>https://*.chess.com/*</code>, <code>https://api.chess.com/*</code>, <code>https://*.lichess.org/*</code>, and <code>https://sabiochess.com/*</code> exclusively to identify completed game states (PGN/FEN), inject the review button and sidebar iframe, and query the public game archive for the current match.
             </li>
             <li>
-              <strong class="text-[#222222] dark:text-white">No Personal Data Collection or Tracking:</strong> The extension does not access, read, or collect passwords, account credentials, payment info, chat messages, or browsing activity outside of Chess.com completed game boards.
+              <strong class="text-[#222222] dark:text-white">No Personal Data Collection or Tracking:</strong> The extension does not access, read, or collect passwords, account credentials, payment info, chat messages, or browsing activity outside of Chess.com and Lichess completed game boards.
             </li>
             <li>
               <strong class="text-[#222222] dark:text-white">100% Local Engine Computation:</strong> Stockfish engine analysis runs entirely inside the local browser WebAssembly sandbox. No game data is transmitted to, logged on, or sold to remote servers.
