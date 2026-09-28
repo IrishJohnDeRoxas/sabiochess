@@ -75,6 +75,12 @@ export class ChangelogComponent implements OnInit {
             'Automatically cleans PGN, FEN, and game identifier query parameters from the browser address bar once a game or position is loaded, keeping links tidy.',
         },
         {
+          type: 'improvement',
+          title: 'Official Support & Inquiries Email',
+          description:
+            'Configured and linked official support contact channel at contact@sabiochess.com across the footer, privacy policy, and terms of service.',
+        },
+        {
           type: 'fix',
           title: 'Cloudflare SPA Redirect Optimization',
           description:
