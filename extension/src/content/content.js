@@ -475,15 +475,6 @@
       return false;
     },
 
-    findBoardElement() {
-      const selectors = ['main.round cg-board', 'main.analyse cg-board', '.round__app cg-board', '.analyse__board cg-board', '.main-board cg-board', 'main cg-board', 'cg-board'];
-      for (const sel of selectors) {
-        const el = document.querySelector(sel);
-        if (el && el.offsetParent !== null && !el.closest('.tv-game, .mini-board, #dasher_app, header, footer')) return el;
-      }
-      return null;
-    },
-
     findInjectionTarget() {
       if (!this.detectGameOverState()) return null;
 
@@ -706,16 +697,9 @@
           if (existing && existing.classList.contains('sabiochess-review-btn--floating')) return;
           if (existing) existing.remove();
 
-          const board = this.findBoardElement();
-          if (!board) return;
-
           try {
             this.isInjecting = true;
             const sabioBtn = createSabioButton(true, () => this.handleReviewClick(), 'sabiochess-review-btn--lichess');
-            const boardRect = board.getBoundingClientRect();
-            sabioBtn.style.position = 'fixed';
-            sabioBtn.style.bottom = `${Math.max(window.innerHeight - boardRect.bottom + 8, 16)}px`;
-            sabioBtn.style.right = `${Math.max(window.innerWidth - boardRect.right, 16)}px`;
             document.body.appendChild(sabioBtn);
           } finally {
             this.isInjecting = false;
@@ -868,15 +852,6 @@
       }
 
       return false;
-    },
-
-    findBoardElement() {
-      const selectors = ['wc-chess-board', 'chess-board', '#board-single', '#board-vs-personalities', '[class*="board-layout-main"]', '[class*="board"]'];
-      for (const sel of selectors) {
-        const el = document.querySelector(sel);
-        if (el && el.offsetParent !== null) return el;
-      }
-      return null;
     },
 
     detectFigurine(node) {
@@ -1144,16 +1119,9 @@
           if (existing && existing.classList.contains('sabiochess-review-btn--floating')) return;
           if (existing) existing.remove();
 
-          const board = this.findBoardElement();
-          if (!board) return;
-
           try {
             this.isInjecting = true;
             const sabioBtn = createSabioButton(true, () => this.handleReviewClick());
-            const boardRect = board.getBoundingClientRect();
-            sabioBtn.style.position = 'fixed';
-            sabioBtn.style.bottom = `${Math.max(window.innerHeight - boardRect.bottom + 8, 16)}px`;
-            sabioBtn.style.right = `${Math.max(window.innerWidth - boardRect.right, 16)}px`;
             document.body.appendChild(sabioBtn);
           } finally {
             this.isInjecting = false;

@@ -42,9 +42,11 @@
   line-height: 1.1428 !important;
 }
 
-/* Floating fallback variant — self-positions near the board */
+/* Floating fallback variant — fixed to viewport bottom-right corner */
 .sabiochess-review-btn--floating {
   position: fixed !important;
+  bottom: 20px !important;
+  right: 20px !important;
   width: auto !important;
   max-width: 280px !important;
   margin: 0 !important;
