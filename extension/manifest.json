@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "SabioChess - Free Chess Analysis & Game Review",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "description": "Free chess analysis and game reviewer for Chess.com & Lichess. Instant Stockfish chess analyzer, eval bar, and blunder review.",
   "permissions": ["storage"],
   "host_permissions": [

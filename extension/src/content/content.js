@@ -250,6 +250,21 @@
     }
   }
 
+  // Close sidebar when clicking outside of it
+  document.addEventListener(
+    'pointerdown',
+    (e) => {
+      const sidebar = document.getElementById(SIDEBAR_ID);
+      if (!sidebar || !sidebar.classList.contains('open')) return;
+
+      if (sidebar.contains(e.target)) return;
+      if (e.target && e.target.closest && e.target.closest(`.${SABIO_BUTTON_ID}, #${SABIO_BUTTON_ID}, .sabiochess-review-btn`)) return;
+
+      closeSabioSidebar();
+    },
+    true
+  );
+
   /**
    * Opens or updates the slide-over sidebar drawer with the game
    */
