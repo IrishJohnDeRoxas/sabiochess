@@ -75,7 +75,7 @@
   margin-left: var(--space-16, 1.6rem) !important;
   margin-right: var(--space-16, 1.6rem) !important;
   margin-top: 0px !important;
-  margin-bottom: 0px !important;
+  margin-bottom: 3px !important;
   width: calc(100% - 3.2rem) !important;
   min-height: var(--buttonHeight, 6.4rem) !important;
   height: var(--buttonHeight, auto) !important;

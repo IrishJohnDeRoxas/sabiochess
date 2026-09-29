@@ -755,6 +755,7 @@
     findGameReviewElement() {
       const isSabio = (el) => el.id === SABIO_BUTTON_ID || el.closest(`#${SABIO_BUTTON_ID}`);
       const isVisible = (el) => el && el.offsetParent !== null;
+      const isTallyCard = (el) => el.closest('.quick-analysis-tally-component, .quick-analysis-animated-tally-component, [class*="tally"]');
 
       const inModal = (el) => el.closest(
         '[class*="game-over-modal"], [class*="game-over-dialog"], [class*="game-over-shell"], [class*="game-over"]'
@@ -765,48 +766,39 @@
 
       const allCandidates = [];
 
-      const semanticSelectors = [
+      // 1. Primary explicit button selectors (Modal & Sidebar)
+      const primarySelectors = [
+        '.game-over-modal-shell-buttons a',
+        '.game-over-modal-shell-buttons button',
+        '.game-review-buttons-component a',
+        '.game-review-buttons-component button',
         '[data-cy="game-review-button"]',
-        '[data-cy="game-over-review-button"]',
+        '[data-cy="game-over-review-button"]'
+      ];
+      for (const sel of primarySelectors) {
+        document.querySelectorAll(sel).forEach((el) => {
+          if (!isSabio(el) && isVisible(el) && !isTallyCard(el) && !allCandidates.includes(el)) {
+            allCandidates.push(el);
+          }
+        });
+      }
+
+      // 2. Fallback text/attribute selectors
+      const fallbackSelectors = [
         '[aria-label="Game Review"]',
         '[aria-label*="Game Review" i]',
-        '[class*="game-over-modal"] [aria-label*="Game Review" i]',
-        '[class*="game-over-modal"] a[href*="/analysis/"]',
-        '[class*="game-over-modal"] a[href*="/game-review/"]'
+        'a[href*="/game-review/"]'
       ];
-      for (const sel of semanticSelectors) {
+      for (const sel of fallbackSelectors) {
         document.querySelectorAll(sel).forEach((el) => {
-          if (!isSabio(el) && isVisible(el) && !allCandidates.includes(el)) allCandidates.push(el);
+          if (!isSabio(el) && isVisible(el) && !isTallyCard(el) && !allCandidates.includes(el)) {
+            const btn = el.closest('button, a, [role="button"], .ui_v5-button-component') || el;
+            if (!allCandidates.includes(btn)) allCandidates.push(btn);
+          }
         });
       }
 
-      document.querySelectorAll('button, a, [role="button"]').forEach((el) => {
-        if (isSabio(el) || !isVisible(el) || allCandidates.includes(el)) return;
-        if (el.children.length > 4) return;
-        const text = (el.innerText || el.textContent || '').trim().toLowerCase();
-        if (text === 'game review' || text === 'review game') {
-          const btn = el.closest('button, a, [role="button"], .ui_v5-button-component') || el;
-          if (!allCandidates.includes(btn)) allCandidates.push(btn);
-        }
-      });
-
-      document.querySelectorAll('a[href*="/game-review/"]').forEach((link) => {
-        if (!isSabio(link) && isVisible(link) && !allCandidates.includes(link)) allCandidates.push(link);
-      });
-
-      const classSelectors = [
-        '.game-review-buttons-component button',
-        '.game-review-buttons-component a',
-        '.game-review-button',
-        '.game-over-buttons-component button',
-        '.daily-game-footer .game-review-button',
-        '.live-game-buttons-game-over button'
-      ];
-      for (const sel of classSelectors) {
-        document.querySelectorAll(sel).forEach((el) => {
-          if (!isSabio(el) && isVisible(el) && !allCandidates.includes(el)) allCandidates.push(el);
-        });
-      }
+      if (allCandidates.length === 0) return null;
 
       // Priority 1: Modal candidate
       const modalHit = allCandidates.find((el) => inModal(el));
@@ -1158,17 +1150,30 @@
         return;
       }
 
-      const targetEl = reviewEl.closest('button, a, [role="button"], .ui_v5-button-component') || reviewEl;
+      const inModal = (el) => el && el.closest(
+        '[class*="game-over-modal"], [class*="game-over-dialog"], [class*="game-over-shell"], [class*="game-over"]'
+      );
+
+      let targetEl;
+      if (inModal(reviewEl)) {
+        targetEl = reviewEl.closest('button, a, [role="button"], .ui_v5-button-component') || reviewEl;
+      } else {
+        const reviewContainer = document.querySelector('.game-review-buttons-component');
+        if (reviewContainer) {
+          targetEl = reviewContainer;
+        } else {
+          targetEl = reviewEl.closest('button, a, [role="button"], .ui_v5-button-component') || reviewEl;
+        }
+      }
 
       if (existing) {
         if (existing.classList.contains('sabiochess-review-btn--floating')) {
           existing.remove();
         } else {
           const sameParent = existing.parentElement === targetEl.parentElement;
-          const isDirectSibling = existing.previousElementSibling === targetEl || targetEl.nextElementSibling === existing;
-          const isFollowing = sameParent && (targetEl.compareDocumentPosition(existing) & Node.DOCUMENT_POSITION_FOLLOWING);
+          const isDirectPrecedingSibling = targetEl.previousElementSibling === existing;
 
-          if (sameParent && (isDirectSibling || isFollowing)) {
+          if (sameParent && isDirectPrecedingSibling) {
             return;
           }
         }
@@ -1182,9 +1187,9 @@
         const sabioBtn = createSabioButton(false, () => this.handleReviewClick());
 
         try {
-          targetEl.insertAdjacentElement('afterend', sabioBtn);
+          targetEl.insertAdjacentElement('beforebegin', sabioBtn);
         } catch {
-          targetEl.parentElement?.appendChild(sabioBtn);
+          targetEl.parentElement?.insertBefore(sabioBtn, targetEl);
         }
       } finally {
         this.isInjecting = false;
