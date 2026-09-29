@@ -1257,7 +1257,7 @@
         this.nonModalTimer = setTimeout(() => {
           this.nonModalTimer = null;
           this.doInject(this.findGameReviewElement());
-        }, 400);
+        }, 800);
       }
     }
   };
