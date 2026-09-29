@@ -17,8 +17,8 @@
   background-color: #1e1f24 !important;
   color: #ffffff !important;
   font-family:
-    "Archivo Black",
-    "Outfit",
+    'Archivo Black',
+    'Outfit',
     -apple-system,
     BlinkMacSystemFont,
     sans-serif !important;
@@ -71,8 +71,11 @@
 .game-over-modal-shell .sabiochess-review-btn,
 .game-over-modal-content .sabiochess-review-btn,
 .game-over-modal-body .sabiochess-review-btn,
-[class*="game-over-modal-shell"] .sabiochess-review-btn {
-  margin: 0 var(--space-16, 1.6rem) 6px var(--space-16, 1.6rem) !important;
+[class*='game-over-modal-shell'] .sabiochess-review-btn {
+  margin-left: var(--space-16, 1.6rem) !important;
+  margin-right: var(--space-16, 1.6rem) !important;
+  margin-top: 0px !important;
+  margin-bottom: 0px !important;
   width: calc(100% - 3.2rem) !important;
   min-height: var(--buttonHeight, 6.4rem) !important;
   height: var(--buttonHeight, auto) !important;
@@ -83,11 +86,11 @@
 .game-review-buttons-component .sabiochess-review-btn,
 .game-review-emphasis-component .sabiochess-review-btn,
 .sidebar-view .sabiochess-review-btn {
-  margin-left: 0px !important;
-  margin-right: 0px !important;
+  margin-left: var(--space-16, 1.6rem) !important;
+  margin-right: var(--space-16, 1.6rem) !important;
   margin-top: 0px !important;
-  margin-bottom: 0px !important;
-  width: 100% !important;
+  margin-bottom: var(--space-16, 1.6rem) !important;
+  width: calc(100% - 3.2rem) !important;
 }
 
 /* ==========================================================================
@@ -103,8 +106,8 @@
 .game__underboard .sabiochess-review-btn,
 .cmn-wrap .sabiochess-review-btn {
   font-family:
-    "Archivo Black",
-    "Outfit",
+    'Archivo Black',
+    'Outfit',
     -apple-system,
     BlinkMacSystemFont,
     sans-serif !important;
@@ -175,7 +178,9 @@
   border: 1.5px solid #000000 !important;
   box-shadow: 1.5px 1.5px 0 0 #000000 !important;
   transform: rotate(-2deg) !important;
-  transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease !important;
 }
 
 .sabiochess-review-btn--lichess:hover .sabiochess-logo-badge,
@@ -231,7 +236,9 @@
   box-shadow: 1.5px 1.5px 0 0 #000000 !important;
   border-radius: 0 !important;
   transform: rotate(-2deg) !important;
-  transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease !important;
   flex-shrink: 0 !important;
   margin: 0 !important;
   padding: 0 !important;
@@ -260,8 +267,8 @@
   white-space: nowrap !important;
   color: #ffffff !important;
   font-family:
-    "Archivo Black",
-    "Outfit",
+    'Archivo Black',
+    'Outfit',
     -apple-system,
     BlinkMacSystemFont,
     sans-serif !important;

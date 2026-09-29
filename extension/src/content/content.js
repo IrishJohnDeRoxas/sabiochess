@@ -750,16 +750,29 @@
      ========================================================================== */
   const ChessComAdapter = {
     isInjecting: false,
+    nonModalTimer: null,
 
     findGameReviewElement() {
       const isSabio = (el) => el.id === SABIO_BUTTON_ID || el.closest(`#${SABIO_BUTTON_ID}`);
-      const isVisible = (el) => el.offsetParent !== null;
+      const isVisible = (el) => el && el.offsetParent !== null;
+
+      const inModal = (el) => el.closest(
+        '[class*="game-over-modal"], [class*="game-over-dialog"], [class*="game-over-shell"], [class*="game-over"]'
+      );
+      const inSidebar = (el) => el.closest(
+        '.sidebar-view, .game-review-buttons-component, .game-review-emphasis-component, #board-layout-sidebar, .board-layout-sidebar'
+      );
+
       const allCandidates = [];
 
       const semanticSelectors = [
         '[data-cy="game-review-button"]',
         '[data-cy="game-over-review-button"]',
-        '[aria-label="Game Review"]'
+        '[aria-label="Game Review"]',
+        '[aria-label*="Game Review" i]',
+        '[class*="game-over-modal"] [aria-label*="Game Review" i]',
+        '[class*="game-over-modal"] a[href*="/analysis/"]',
+        '[class*="game-over-modal"] a[href*="/game-review/"]'
       ];
       for (const sel of semanticSelectors) {
         document.querySelectorAll(sel).forEach((el) => {
@@ -795,18 +808,30 @@
         });
       }
 
-      if (allCandidates.length === 0) return null;
+      // Priority 1: Modal candidate
+      const modalHit = allCandidates.find((el) => inModal(el));
+      if (modalHit) return modalHit;
 
-      const inSidebar = (el) => el.closest('.sidebar-view, .game-review-buttons-component, .game-review-emphasis-component');
-      const inModal = (el) => el.closest('[class*="game-over-modal"], [class*="game-over"]');
+      // Modal container buttons fallback
+      const modalContainer = document.querySelector(
+        '[class*="game-over-modal-shell-buttons"], [class*="game-over-modal-content"], [class*="game-over-modal"]'
+      );
+      if (modalContainer && isVisible(modalContainer)) {
+        const modalBtn = modalContainer.querySelector('a, button, .ui_v5-button-component');
+        if (modalBtn && !isSabio(modalBtn) && isVisible(modalBtn)) {
+          return modalBtn;
+        }
+      }
 
+      // Priority 2: Sidebar candidate
       const sidebarHit = allCandidates.find((el) => inSidebar(el) && !inModal(el));
       if (sidebarHit) return sidebarHit;
 
+      // Priority 3: Any non-modal candidate
       const nonModalHit = allCandidates.find((el) => !inModal(el));
       if (nonModalHit) return nonModalHit;
 
-      return allCandidates[0];
+      return allCandidates[0] || null;
     },
 
     detectGameOverState() {
@@ -1103,23 +1128,8 @@
       });
     },
 
-    checkAndInject() {
+    doInject(reviewEl) {
       if (this.isInjecting) return;
-
-      const isGamePage = /\/game\//.test(window.location.pathname);
-      if (!isGamePage) {
-        const hasReviewElement = document.querySelector(
-          '[data-cy="game-review-button"], [data-cy="game-over-review-button"], [aria-label="Game Review"]'
-        );
-        if (!hasReviewElement) {
-          const existing = document.getElementById(SABIO_BUTTON_ID);
-          if (existing) existing.remove();
-          closeSabioSidebar();
-          return;
-        }
-      }
-
-      const reviewEl = this.findGameReviewElement();
       const existing = document.getElementById(SABIO_BUTTON_ID);
 
       if (!reviewEl) {
@@ -1178,6 +1188,71 @@
         }
       } finally {
         this.isInjecting = false;
+      }
+    },
+
+    checkAndInject() {
+      if (this.isInjecting) return;
+
+      const isGamePage = /\/game\//.test(window.location.pathname);
+      if (!isGamePage) {
+        const hasReviewElement = document.querySelector(
+          '[data-cy="game-review-button"], [data-cy="game-over-review-button"], [aria-label="Game Review"]'
+        );
+        if (!hasReviewElement) {
+          if (this.nonModalTimer) {
+            clearTimeout(this.nonModalTimer);
+            this.nonModalTimer = null;
+          }
+          const existing = document.getElementById(SABIO_BUTTON_ID);
+          if (existing) existing.remove();
+          closeSabioSidebar();
+          return;
+        }
+      }
+
+      const reviewEl = this.findGameReviewElement();
+      const existing = document.getElementById(SABIO_BUTTON_ID);
+
+      const inModal = (el) => el && el.closest(
+        '[class*="game-over-modal"], [class*="game-over-dialog"], [class*="game-over-shell"], [class*="game-over"]'
+      );
+      const isTargetInModal = reviewEl ? Boolean(inModal(reviewEl)) : false;
+
+      // 1. Target is in MODAL: Highest Priority -> Inject IMMEDIATELY!
+      if (isTargetInModal) {
+        if (this.nonModalTimer) {
+          clearTimeout(this.nonModalTimer);
+          this.nonModalTimer = null;
+        }
+        this.doInject(reviewEl);
+        return;
+      }
+
+      // If button was previously in modal, remove it when modal closes
+      if (existing && inModal(existing)) {
+        existing.remove();
+      }
+
+      // 2. If button is already injected in non-modal target container, stay there
+      if (reviewEl) {
+        const targetEl = reviewEl.closest('button, a, [role="button"], .ui_v5-button-component') || reviewEl;
+        if (existing && existing.parentElement === targetEl.parentElement) {
+          if (this.nonModalTimer) {
+            clearTimeout(this.nonModalTimer);
+            this.nonModalTimer = null;
+          }
+          this.doInject(reviewEl);
+          return;
+        }
+      }
+
+      // 3. Non-modal target (Sidebar or Board fallback): delay injection so game-over modal has time to appear without flickering in sidebar first
+      if (!this.nonModalTimer) {
+        this.nonModalTimer = setTimeout(() => {
+          this.nonModalTimer = null;
+          this.doInject(this.findGameReviewElement());
+        }, 400);
       }
     }
   };
