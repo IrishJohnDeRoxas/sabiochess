@@ -1155,10 +1155,10 @@
           existing.remove();
         } else {
           const sameParent = existing.parentElement === targetEl.parentElement;
-          const isDirectSibling = existing.nextElementSibling === targetEl || targetEl.previousElementSibling === existing;
-          const isPreceding = sameParent && (targetEl.compareDocumentPosition(existing) & Node.DOCUMENT_POSITION_PRECEDING);
+          const isDirectSibling = existing.previousElementSibling === targetEl || targetEl.nextElementSibling === existing;
+          const isFollowing = sameParent && (targetEl.compareDocumentPosition(existing) & Node.DOCUMENT_POSITION_FOLLOWING);
 
-          if (sameParent && (isDirectSibling || isPreceding)) {
+          if (sameParent && (isDirectSibling || isFollowing)) {
             return;
           }
         }
@@ -1172,9 +1172,9 @@
         const sabioBtn = createSabioButton(false, () => this.handleReviewClick());
 
         try {
-          targetEl.insertAdjacentElement('beforebegin', sabioBtn);
+          targetEl.insertAdjacentElement('afterend', sabioBtn);
         } catch {
-          targetEl.parentElement?.prepend(sabioBtn);
+          targetEl.parentElement?.appendChild(sabioBtn);
         }
       } finally {
         this.isInjecting = false;
