@@ -241,6 +241,16 @@
   };
 
   /**
+   * Closes the slide-over sidebar drawer with animation
+   */
+  function closeSabioSidebar() {
+    const sidebar = document.getElementById(SIDEBAR_ID);
+    if (sidebar && sidebar.classList.contains('open')) {
+      sidebar.classList.remove('open');
+    }
+  }
+
+  /**
    * Opens or updates the slide-over sidebar drawer with the game
    */
   async function openSabioSidebar({ initialPgn, meta, gameId, platform, fetchOfficialPgnFn }) {
@@ -697,6 +707,7 @@
           }
         } else {
           if (existing) existing.remove();
+          closeSabioSidebar();
         }
         return;
       }
@@ -1103,6 +1114,7 @@
         if (!hasReviewElement) {
           const existing = document.getElementById(SABIO_BUTTON_ID);
           if (existing) existing.remove();
+          closeSabioSidebar();
           return;
         }
       }
@@ -1131,6 +1143,7 @@
           }
         } else {
           if (existing) existing.remove();
+          closeSabioSidebar();
         }
         return;
       }
