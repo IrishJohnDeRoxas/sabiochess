@@ -128,7 +128,9 @@
   function createSabioButton(isFloating, onClickHandler, extraClass = '') {
     const sabioBtn = document.createElement('button');
     sabioBtn.id = SABIO_BUTTON_ID;
-    const baseClass = isFloating ? 'sabiochess-review-btn sabiochess-review-btn--floating' : 'sabiochess-review-btn';
+    const baseClass = isFloating
+      ? 'sabiochess-review-btn sabiochess-review-btn--floating'
+      : 'sabiochess-review-btn';
     sabioBtn.className = extraClass ? `${baseClass} ${extraClass}` : baseClass;
     sabioBtn.type = 'button';
     sabioBtn.title = 'Open instant Stockfish analysis on SabioChess';
@@ -199,9 +201,9 @@
         iframe.contentWindow.postMessage(
           {
             type: 'SABIO_APPLY_SETTINGS',
-            settings: settings
+            settings: settings,
           },
-          '*'
+          '*',
         );
       }
     });
@@ -226,9 +228,9 @@
           flip: Boolean(activeSidebarMeta && activeSidebarMeta.isFlipped),
           user: activeSidebarMeta?.targetUser || '',
           targetUser: activeSidebarMeta?.targetUser || '',
-          autoAnalyze: true
+          autoAnalyze: true,
         },
-        '*'
+        '*',
       );
     }
   };
@@ -250,6 +252,8 @@
     }
   }
 
+  const NOTICE_MODAL_ID = 'sabiochess-notice-modal';
+
   // Close sidebar when clicking outside of it
   document.addEventListener(
     'pointerdown',
@@ -258,12 +262,82 @@
       if (!sidebar || !sidebar.classList.contains('open')) return;
 
       if (sidebar.contains(e.target)) return;
-      if (e.target && e.target.closest && e.target.closest(`.${SABIO_BUTTON_ID}, #${SABIO_BUTTON_ID}, .sabiochess-review-btn`)) return;
+      if (
+        e.target &&
+        e.target.closest &&
+        (e.target.closest(`.${SABIO_BUTTON_ID}, #${SABIO_BUTTON_ID}, .sabiochess-review-btn`) ||
+          e.target.closest(
+            `#${NOTICE_MODAL_ID}, .sabiochess-modal-overlay, .sabiochess-modal-card`,
+          ))
+      ) {
+        return;
+      }
 
       closeSabioSidebar();
     },
-    true
+    true,
   );
+
+  function showNewAccountModal({ username, onOpenAnyway }) {
+    const existing = document.getElementById(NOTICE_MODAL_ID);
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = NOTICE_MODAL_ID;
+    overlay.className = 'sabiochess-modal-overlay';
+    overlay.innerHTML = `
+      <div class="sabiochess-modal-card">
+        <div class="sabiochess-modal-header">
+          <div class="sabiochess-modal-badge">⚠️ NOTICE</div>
+          <button type="button" class="sabiochess-modal-close" id="sabiochess-modal-close-btn" aria-label="Close">&times;</button>
+        </div>
+        <div class="sabiochess-modal-body">
+          <h3 class="sabiochess-modal-title">New Account Detected</h3>
+          <p class="sabiochess-modal-text">
+            Chess.com takes <strong>5-10 minutes</strong> to index live games for newly registered accounts (<em>${username || 'new player'}</em>).
+          </p>
+          <p class="sabiochess-modal-subtext">
+            Your latest game is not yet available in Chess.com's public API archives. You can open SabioChess anyway and paste your PGN manually, or check back in a few minutes.
+          </p>
+        </div>
+        <div class="sabiochess-modal-actions">
+          <button type="button" class="sabiochess-modal-btn sabiochess-modal-btn--primary" id="sabiochess-modal-proceed-btn">
+            Open SabioChess Anyway
+          </button>
+          <button type="button" class="sabiochess-modal-btn sabiochess-modal-btn--secondary" id="sabiochess-modal-cancel-btn">
+            Dismiss
+          </button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    const closeModal = (andCloseSidebar = false) => {
+      overlay.classList.add('sabiochess-modal--closing');
+      setTimeout(() => overlay.remove(), 160);
+      if (andCloseSidebar) {
+        closeSabioSidebar();
+      }
+    };
+
+    overlay
+      .querySelector('#sabiochess-modal-close-btn')
+      ?.addEventListener('click', () => closeModal(true));
+    overlay
+      .querySelector('#sabiochess-modal-cancel-btn')
+      ?.addEventListener('click', () => closeModal(true));
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeModal(true);
+    });
+
+    overlay.querySelector('#sabiochess-modal-proceed-btn')?.addEventListener('click', () => {
+      closeModal(false);
+      const sidebar = document.getElementById(SIDEBAR_ID);
+      if (sidebar) sidebar.classList.add('open');
+      if (typeof onOpenAnyway === 'function') onOpenAnyway();
+    });
+  }
 
   /**
    * Opens or updates the slide-over sidebar drawer with the game
@@ -369,10 +443,18 @@
 
     // Asynchronously fetch official PGN via background worker
     if (typeof fetchOfficialPgnFn === 'function') {
-      fetchOfficialPgnFn().then((officialPgn) => {
+      fetchOfficialPgnFn().then((result) => {
+        const officialPgn = typeof result === 'string' ? result : result?.pgn;
         if (officialPgn && officialPgn.trim().length > 0) {
           activeSidebarPgn = officialPgn;
           queueSendRetries();
+        } else if (!activeSidebarPgn && result && result.isNewAccount) {
+          showNewAccountModal({
+            username: result.newUsername || meta?.targetUser || '',
+            onOpenAnyway: () => {
+              sidebar?.classList.add('open');
+            },
+          });
         }
       });
     }
@@ -402,12 +484,46 @@
     isInjecting: false,
 
     STATIC_ROUTES: new Set([
-      '', 'analysis', 'training', 'practice', 'broadcast', 'streamer',
-      'tournament', 'inbox', 'account', 'editor', 'paste', 'learn',
-      'patron', 'teams', 'team', 'forum', 'blog', 'video', 'swiss',
-      'simul', 'streak', 'storm', 'racer', 'coach', 'games', 'player',
-      'page', 'insights', 'tv', 'study', 'class', 'coordinate', 'puzzle',
-      'pref', 'settings', 'faq', 'about', 'contact', 'terms', 'privacy'
+      '',
+      'analysis',
+      'training',
+      'practice',
+      'broadcast',
+      'streamer',
+      'tournament',
+      'inbox',
+      'account',
+      'editor',
+      'paste',
+      'learn',
+      'patron',
+      'teams',
+      'team',
+      'forum',
+      'blog',
+      'video',
+      'swiss',
+      'simul',
+      'streak',
+      'storm',
+      'racer',
+      'coach',
+      'games',
+      'player',
+      'page',
+      'insights',
+      'tv',
+      'study',
+      'class',
+      'coordinate',
+      'puzzle',
+      'pref',
+      'settings',
+      'faq',
+      'about',
+      'contact',
+      'terms',
+      'privacy',
     ]),
 
     extractGameId() {
@@ -418,14 +534,23 @@
       // Handle /analysis/standard/6nyeBPlN or /analysis/6nyeBPlN
       if (segments[0] === 'analysis') {
         const candidate = segments[segments.length - 1];
-        if (candidate && candidate.length >= 8 && candidate !== 'analysis' && candidate !== 'standard') {
+        if (
+          candidate &&
+          candidate.length >= 8 &&
+          candidate !== 'analysis' &&
+          candidate !== 'standard'
+        ) {
           return candidate.slice(0, 8);
         }
       }
 
       // Handle /{gameId} or /{gameId}/white or /{gameId}/black
       const firstSegment = segments[0];
-      if (firstSegment && firstSegment.length >= 8 && !this.STATIC_ROUTES.has(firstSegment.toLowerCase())) {
+      if (
+        firstSegment &&
+        firstSegment.length >= 8 &&
+        !this.STATIC_ROUTES.has(firstSegment.toLowerCase())
+      ) {
         return firstSegment.slice(0, 8);
       }
 
@@ -448,27 +573,32 @@
 
       // 1. Active play indicators (resign/draw buttons by ARIA, data attributes, actions)
       const isPlaying = document.querySelector(
-        '[data-act="resign"], [data-act="draw"], [aria-label*="resign" i], [aria-label*="draw" i], .rcontrols .resign, button.resign, .force-resign, .round__app.playing, main.round.playing'
+        '[data-act="resign"], [data-act="draw"], [aria-label*="resign" i], [aria-label*="draw" i], .rcontrols .resign, button.resign, .force-resign, .round__app.playing, main.round.playing',
       );
       if (isPlaying && isPlaying.offsetParent !== null) return false;
 
       // 2. Post-game action links inside game containers (functional URLs: rematch, new game, analysis)
       const postGameAction = document.querySelector(
-        '.follow-up a, .round__side a[href*="/analysis"], .rcontrols a[href*="/analysis"], .round__app.finished, main.round.finished, .round__side a[href*="/rematch"], .rcontrols a[href*="/rematch"], .round__side a[href*="/new-opponent"], .rcontrols a[href*="/new-opponent"]'
+        '.follow-up a, .round__side a[href*="/analysis"], .rcontrols a[href*="/analysis"], .round__app.finished, main.round.finished, .round__side a[href*="/rematch"], .rcontrols a[href*="/rematch"], .round__side a[href*="/new-opponent"], .rcontrols a[href*="/new-opponent"]',
       );
       if (postGameAction && postGameAction.offsetParent !== null) return true;
 
       // 3. Analysis pages (only if analysis tools are rendered)
       if (isAnalysis) {
-        const analyseControls = document.querySelector('.analyse__tools, .analyse__side, .analyse__controls');
+        const analyseControls = document.querySelector(
+          '.analyse__tools, .analyse__side, .analyse__controls',
+        );
         if (analyseControls && analyseControls.offsetParent !== null) return true;
       }
 
       // 4. Game outcome text indicators
-      const resultEl = document.querySelector('.rcontrols .result, .round__side .result, .result-wrap, .status, p.status, .game__meta .status, .game__meta, [data-result]');
+      const resultEl = document.querySelector(
+        '.rcontrols .result, .round__side .result, .result-wrap, .status, p.status, .game__meta .status, .game__meta, [data-result]',
+      );
       if (resultEl) {
         const text = (resultEl.textContent || '').trim();
-        const resultPatterns = /\b(1-0|0-1|1\/2-1\/2|½-½|victorious|checkmate|resigned|timeout|time\s*out|draw|stalemate|time\s*forfeit|game\s*over)\b/i;
+        const resultPatterns =
+          /\b(1-0|0-1|1\/2-1\/2|½-½|victorious|checkmate|resigned|timeout|time\s*out|draw|stalemate|time\s*forfeit|game\s*over)\b/i;
         if (resultPatterns.test(text)) return true;
       }
 
@@ -482,13 +612,21 @@
       const isVisible = (el) => el && el.offsetParent !== null;
 
       // 1. Inside .follow-up container (Game Over action panel on right side)
-      const followUp = document.querySelector('.follow-up, .rcontrols .follow-up, .round__side .follow-up, .round__app .follow-up');
+      const followUp = document.querySelector(
+        '.follow-up, .rcontrols .follow-up, .round__side .follow-up, .round__app .follow-up',
+      );
       if (followUp && isVisible(followUp)) {
-        const buttons = Array.from(followUp.querySelectorAll('a, button, .fbt')).filter((el) => !isSabio(el));
+        const buttons = Array.from(followUp.querySelectorAll('a, button, .fbt')).filter(
+          (el) => !isSabio(el),
+        );
         const analysisBtn = buttons.find((el) => {
           const text = (el.textContent || '').trim().toLowerCase();
           const href = el.getAttribute('href') || '';
-          return text.includes('analysis') || el.classList.contains('analysis') || href.includes('analysis');
+          return (
+            text.includes('analysis') ||
+            el.classList.contains('analysis') ||
+            href.includes('analysis')
+          );
         });
 
         if (analysisBtn) {
@@ -503,24 +641,37 @@
       }
 
       // 2. Buttons in right side controls matching "Analysis board", "Rematch", or "New opponent"
-      const candidateBtns = Array.from(document.querySelectorAll('.round__side a, .round__side button, .rcontrols a, .rcontrols button, a.fbt, button.fbt, a.analysis'));
+      const candidateBtns = Array.from(
+        document.querySelectorAll(
+          '.round__side a, .round__side button, .rcontrols a, .rcontrols button, a.fbt, button.fbt, a.analysis',
+        ),
+      );
       const foundBtn = candidateBtns.find((el) => {
         if (isSabio(el) || !isVisible(el)) return false;
         const text = (el.textContent || '').trim().toLowerCase();
-        return text.includes('analysis board') || text.includes('analysis') || text.includes('rematch') || text.includes('opponent');
+        return (
+          text.includes('analysis board') ||
+          text.includes('analysis') ||
+          text.includes('rematch') ||
+          text.includes('opponent')
+        );
       });
       if (foundBtn) {
         return { element: foundBtn, placement: 'afterend' };
       }
 
       // 3. Analysis page tools panel (/analysis/...)
-      const analyseControls = document.querySelector('.analyse__tools .analyse__controls, .analyse__side .analyse__tools, .analyse__controls, .analyse__side');
+      const analyseControls = document.querySelector(
+        '.analyse__tools .analyse__controls, .analyse__side .analyse__tools, .analyse__controls, .analyse__side',
+      );
       if (analyseControls && isVisible(analyseControls)) {
         return { element: analyseControls, placement: 'appendChild' };
       }
 
       // 4. Side controls fallback (only when game is finished)
-      const sideControls = document.querySelector('.round__side .rcontrols, .round__side, .rcontrols, .round__underboard');
+      const sideControls = document.querySelector(
+        '.round__side .rcontrols, .round__side, .rcontrols, .round__underboard',
+      );
       if (sideControls && isVisible(sideControls)) {
         return { element: sideControls, placement: 'appendChild' };
       }
@@ -543,28 +694,37 @@
         return cleanUsername(el.textContent || '');
       };
 
-      const topEl = document.querySelector('.ruser-top, .ruser.top, .player.top, [class*="player-top"]');
-      const bottomEl = document.querySelector('.ruser-bottom, .ruser.bottom, .player.bottom, [class*="player-bottom"]');
+      const topEl = document.querySelector(
+        '.ruser-top, .ruser.top, .player.top, [class*="player-top"]',
+      );
+      const bottomEl = document.querySelector(
+        '.ruser-bottom, .ruser.bottom, .player.bottom, [class*="player-bottom"]',
+      );
 
       let topName = getUsernameFromEl(topEl);
       let bottomName = getUsernameFromEl(bottomEl);
 
       // Logged-in user in navigation
-      const loggedInEl = document.querySelector('#user_tag, a#user_tag, [data-user], #dasher_app .user-link');
+      const loggedInEl = document.querySelector(
+        '#user_tag, a#user_tag, [data-user], #dasher_app .user-link',
+      );
       const loggedInUser = cleanUsername(
         loggedInEl?.getAttribute('data-user') ||
-        document.body.getAttribute('data-user') ||
-        loggedInEl?.textContent ||
-        ''
+          document.body.getAttribute('data-user') ||
+          loggedInEl?.textContent ||
+          '',
       );
 
       // Orientation detection
-      let isFlipped = document.querySelector(
-        'cg-wrap.orientation-black, .orientation-black, cg-board.black, .is2d.black, [class*="black-orientation"]'
-      ) !== null;
+      let isFlipped =
+        document.querySelector(
+          'cg-wrap.orientation-black, .orientation-black, cg-board.black, .is2d.black, [class*="black-orientation"]',
+        ) !== null;
 
       if (!isFlipped) {
-        const rankTexts = Array.from(document.querySelectorAll('.ranks text, .ranks coord, coord.rank'));
+        const rankTexts = Array.from(
+          document.querySelectorAll('.ranks text, .ranks coord, coord.rank'),
+        );
         if (rankTexts.length > 0) {
           const firstRank = rankTexts[0].textContent?.trim();
           if (firstRank === '1') isFlipped = true;
@@ -584,15 +744,15 @@
         blackName,
         isFlipped,
         usernames,
-        targetUser
+        targetUser,
       };
     },
 
     extractPgnFromDOM() {
       const moveNodes = Array.from(
         document.querySelectorAll(
-          'rmoves u8t, rmoves move, tview2 move, tview2 u8t, .analyse__moves move, .analyse__moves u8t, .round__app u8t, .round__app move, .rreplay u8t, u8t, [data-san], [data-ply]'
-        )
+          'rmoves u8t, rmoves move, tview2 move, tview2 u8t, .analyse__moves move, .analyse__moves u8t, .round__app u8t, .round__app move, .rreplay u8t, u8t, [data-san], [data-ply]',
+        ),
       );
 
       const moves = [];
@@ -604,15 +764,17 @@
         }
 
         const clone = node.cloneNode(true);
-        clone.querySelectorAll('eval, time, index, c3t, .c3t, [class*="eval"], [class*="time"], [class*="glyph"]').forEach((el) => el.remove());
+        clone
+          .querySelectorAll(
+            'eval, time, index, c3t, .c3t, [class*="eval"], [class*="time"], [class*="glyph"]',
+          )
+          .forEach((el) => el.remove());
         let text = (clone.textContent || '').trim();
         text = text.replace(/^[0-9]+(\.|\s|\.\.\.)+/, '').trim();
         text = text.replace(/[^a-zA-Z0-9+=#xX\-]/g, '').trim();
 
         if (text) {
-          text = text
-            .replace(/^0-0-0([\+#]?)$/i, 'O-O-O$1')
-            .replace(/^0-0([\+#]?)$/i, 'O-O$1');
+          text = text.replace(/^0-0-0([\+#]?)$/i, 'O-O-O$1').replace(/^0-0([\+#]?)$/i, 'O-O$1');
         }
 
         if (isValidSan(text)) {
@@ -632,7 +794,7 @@
         `[Date "${dateStr}"]`,
         `[White "${meta.whiteName}"]`,
         `[Black "${meta.blackName}"]`,
-        `[Result "*"]`
+        `[Result "*"]`,
       ].join('\n');
 
       let moveText = '';
@@ -656,18 +818,18 @@
               type: 'FETCH_LICHESS_PGN',
               platform: 'lichess',
               gameId: gameId,
-              usernames: usernames
+              usernames: usernames,
             },
             (response) => {
               if (response && response.success && response.pgn) {
-                resolve(response.pgn);
+                resolve({ pgn: response.pgn, isNewAccount: false });
               } else {
-                resolve('');
+                resolve({ pgn: '', isNewAccount: false });
               }
-            }
+            },
           );
         } else {
-          resolve('');
+          resolve({ pgn: '', isNewAccount: false });
         }
       });
     },
@@ -682,7 +844,7 @@
         meta: meta,
         gameId: gameId,
         platform: 'lichess',
-        fetchOfficialPgnFn: () => this.fetchOfficialPgn(gameId, meta.usernames)
+        fetchOfficialPgnFn: () => this.fetchOfficialPgn(gameId, meta.usernames),
       });
     },
 
@@ -699,7 +861,11 @@
 
           try {
             this.isInjecting = true;
-            const sabioBtn = createSabioButton(true, () => this.handleReviewClick(), 'sabiochess-review-btn--lichess');
+            const sabioBtn = createSabioButton(
+              true,
+              () => this.handleReviewClick(),
+              'sabiochess-review-btn--lichess',
+            );
             document.body.appendChild(sabioBtn);
           } finally {
             this.isInjecting = false;
@@ -727,7 +893,11 @@
         const existingAgain = document.getElementById(SABIO_BUTTON_ID);
         if (existingAgain) existingAgain.remove();
 
-        const sabioBtn = createSabioButton(false, () => this.handleReviewClick(), 'sabiochess-review-btn--lichess');
+        const sabioBtn = createSabioButton(
+          false,
+          () => this.handleReviewClick(),
+          'sabiochess-review-btn--lichess',
+        );
 
         if (placement === 'afterend') {
           targetEl.insertAdjacentElement('afterend', sabioBtn);
@@ -737,11 +907,17 @@
           targetEl.appendChild(sabioBtn);
         }
       } catch {
-        targetEl.parentElement?.appendChild(createSabioButton(false, () => this.handleReviewClick(), 'sabiochess-review-btn--lichess'));
+        targetEl.parentElement?.appendChild(
+          createSabioButton(
+            false,
+            () => this.handleReviewClick(),
+            'sabiochess-review-btn--lichess',
+          ),
+        );
       } finally {
         this.isInjecting = false;
       }
-    }
+    },
   };
 
   /* ==========================================================================
@@ -754,14 +930,19 @@
     findGameReviewElement() {
       const isSabio = (el) => el.id === SABIO_BUTTON_ID || el.closest(`#${SABIO_BUTTON_ID}`);
       const isVisible = (el) => el && el.offsetParent !== null;
-      const isTallyCard = (el) => el.closest('.quick-analysis-tally-component, .quick-analysis-animated-tally-component, [class*="tally"]');
+      const isTallyCard = (el) =>
+        el.closest(
+          '.quick-analysis-tally-component, .quick-analysis-animated-tally-component, [class*="tally"]',
+        );
 
-      const inModal = (el) => el.closest(
-        '[class*="game-over-modal"], [class*="game-over-dialog"], [class*="game-over-shell"], [class*="game-over"]'
-      );
-      const inSidebar = (el) => el.closest(
-        '.sidebar-view, .game-review-buttons-component, .game-review-emphasis-component, #board-layout-sidebar, .board-layout-sidebar'
-      );
+      const inModal = (el) =>
+        el.closest(
+          '[class*="game-over-modal"], [class*="game-over-dialog"], [class*="game-over-shell"], [class*="game-over"]',
+        );
+      const inSidebar = (el) =>
+        el.closest(
+          '.sidebar-view, .game-review-buttons-component, .game-review-emphasis-component, #board-layout-sidebar, .board-layout-sidebar',
+        );
 
       const allCandidates = [];
 
@@ -772,7 +953,7 @@
         '.game-review-buttons-component a',
         '.game-review-buttons-component button',
         '[data-cy="game-review-button"]',
-        '[data-cy="game-over-review-button"]'
+        '[data-cy="game-over-review-button"]',
       ];
       for (const sel of primarySelectors) {
         document.querySelectorAll(sel).forEach((el) => {
@@ -786,7 +967,7 @@
       const fallbackSelectors = [
         '[aria-label="Game Review"]',
         '[aria-label*="Game Review" i]',
-        'a[href*="/game-review/"]'
+        'a[href*="/game-review/"]',
       ];
       for (const sel of fallbackSelectors) {
         document.querySelectorAll(sel).forEach((el) => {
@@ -805,7 +986,7 @@
 
       // Modal container buttons fallback
       const modalContainer = document.querySelector(
-        '[class*="game-over-modal-shell-buttons"], [class*="game-over-modal-content"], [class*="game-over-modal"]'
+        '[class*="game-over-modal-shell-buttons"], [class*="game-over-modal-content"], [class*="game-over-modal"]',
       );
       if (modalContainer && isVisible(modalContainer)) {
         const modalBtn = modalContainer.querySelector('a, button, .ui_v5-button-component');
@@ -828,7 +1009,7 @@
     detectGameOverState() {
       // 1. If actively playing (resign button visible), NOT game over
       const isPlaying = document.querySelector(
-        '[data-cy="resign-button"], button[aria-label="Resign"], .resign-button-component, .live-game-buttons-component:not(.live-game-buttons-game-over)'
+        '[data-cy="resign-button"], button[aria-label="Resign"], .resign-button-component, .live-game-buttons-component:not(.live-game-buttons-game-over)',
       );
       if (isPlaying && isPlaying.offsetParent !== null) return false;
 
@@ -836,7 +1017,11 @@
       if (this.findGameReviewElement()) return true;
 
       // 3. Game over modal, game over dialog or header
-      if (document.querySelector('[class*="game-over-modal"], [class*="game-over-dialog"], .game-over-buttons-component, [data-cy="game-over-header"]')) {
+      if (
+        document.querySelector(
+          '[class*="game-over-modal"], [class*="game-over-dialog"], .game-over-buttons-component, [data-cy="game-over-header"]',
+        )
+      ) {
         return true;
       }
 
@@ -844,10 +1029,13 @@
       if (!isGamePage) return false;
 
       // 4. Game outcome / result indicators
-      const resultEl = document.querySelector('.game-result, [data-cy="game-over-header"], .header-title-component, .game-over-header');
+      const resultEl = document.querySelector(
+        '.game-result, [data-cy="game-over-header"], .header-title-component, .game-over-header',
+      );
       if (resultEl) {
         const text = (resultEl.textContent || '').trim();
-        const resultPatterns = /\b(1-0|0-1|1\/2-1\/2|½-½|won|lost|checkmate|resigned|timeout|time\s*out|draw|stalemate|game\s*over)\b/i;
+        const resultPatterns =
+          /\b(1-0|0-1|1\/2-1\/2|½-½|won|lost|checkmate|resigned|timeout|time\s*out|draw|stalemate|game\s*over)\b/i;
         if (resultPatterns.test(text)) return true;
       }
 
@@ -857,20 +1045,61 @@
     detectFigurine(node) {
       if (!node) return '';
 
-      const dataFig = node.getAttribute('data-figurine') || node.getAttribute('data-piece') ||
-                      node.querySelector('[data-figurine]')?.getAttribute('data-figurine') ||
-                      node.querySelector('[data-piece]')?.getAttribute('data-piece');
+      const dataFig =
+        node.getAttribute('data-figurine') ||
+        node.getAttribute('data-piece') ||
+        node.querySelector('[data-figurine]')?.getAttribute('data-figurine') ||
+        node.querySelector('[data-piece]')?.getAttribute('data-piece');
       if (dataFig) return dataFig.toUpperCase();
 
-      const figEl = node.querySelector('[class*="chess-"], [class*="icon-font-chess"], [class*="figurine"], [class*="knight"], [class*="bishop"], [class*="rook"], [class*="queen"], [class*="king"], [class*="piece"], span[data-piece]') || node;
-      const rawClass = typeof figEl.className === 'string' ? figEl.className : (figEl.getAttribute?.('class') || '');
+      const figEl =
+        node.querySelector(
+          '[class*="chess-"], [class*="icon-font-chess"], [class*="figurine"], [class*="knight"], [class*="bishop"], [class*="rook"], [class*="queen"], [class*="king"], [class*="piece"], span[data-piece]',
+        ) || node;
+      const rawClass =
+        typeof figEl.className === 'string' ? figEl.className : figEl.getAttribute?.('class') || '';
       const classStr = ' ' + rawClass.toLowerCase().replace(/[-_]/g, ' ') + ' ';
 
-      if (classStr.includes(' knight ') || classStr.includes(' chess n ') || classStr.includes(' wn ') || classStr.includes(' bn ') || classStr.includes(' n ')) return 'N';
-      if (classStr.includes(' bishop ') || classStr.includes(' chess b ') || classStr.includes(' wb ') || classStr.includes(' bb ') || classStr.includes(' b ')) return 'B';
-      if (classStr.includes(' rook ') || classStr.includes(' chess r ') || classStr.includes(' wr ') || classStr.includes(' br ') || classStr.includes(' r ')) return 'R';
-      if (classStr.includes(' queen ') || classStr.includes(' chess q ') || classStr.includes(' wq ') || classStr.includes(' bq ') || classStr.includes(' q ')) return 'Q';
-      if (classStr.includes(' king ') || classStr.includes(' chess k ') || classStr.includes(' wk ') || classStr.includes(' bk ') || classStr.includes(' k ')) return 'K';
+      if (
+        classStr.includes(' knight ') ||
+        classStr.includes(' chess n ') ||
+        classStr.includes(' wn ') ||
+        classStr.includes(' bn ') ||
+        classStr.includes(' n ')
+      )
+        return 'N';
+      if (
+        classStr.includes(' bishop ') ||
+        classStr.includes(' chess b ') ||
+        classStr.includes(' wb ') ||
+        classStr.includes(' bb ') ||
+        classStr.includes(' b ')
+      )
+        return 'B';
+      if (
+        classStr.includes(' rook ') ||
+        classStr.includes(' chess r ') ||
+        classStr.includes(' wr ') ||
+        classStr.includes(' br ') ||
+        classStr.includes(' r ')
+      )
+        return 'R';
+      if (
+        classStr.includes(' queen ') ||
+        classStr.includes(' chess q ') ||
+        classStr.includes(' wq ') ||
+        classStr.includes(' bq ') ||
+        classStr.includes(' q ')
+      )
+        return 'Q';
+      if (
+        classStr.includes(' king ') ||
+        classStr.includes(' chess k ') ||
+        classStr.includes(' wk ') ||
+        classStr.includes(' bk ') ||
+        classStr.includes(' k ')
+      )
+        return 'K';
 
       return '';
     },
@@ -885,7 +1114,11 @@
 
       const fig = this.detectFigurine(node);
       const clone = node.cloneNode(true);
-      clone.querySelectorAll('.clock-component, .time, .badge, .eval, [data-cy="eval"], .move-time-component, .move-time, [class*="time"], [class*="clock"], [class*="eval"], .icon-font-chess, [class*="icon"]').forEach((el) => el.remove());
+      clone
+        .querySelectorAll(
+          '.clock-component, .time, .badge, .eval, [data-cy="eval"], .move-time-component, .move-time, [class*="time"], [class*="clock"], [class*="eval"], .icon-font-chess, [class*="icon"]',
+        )
+        .forEach((el) => el.remove());
 
       let raw = (clone.textContent || '').trim();
       raw = raw
@@ -909,7 +1142,12 @@
 
       if (!raw) return '';
 
-      if (fig && !raw.startsWith('O-O') && !raw.toUpperCase().startsWith(fig) && !/^[KQRNB]/.test(raw)) {
+      if (
+        fig &&
+        !raw.startsWith('O-O') &&
+        !raw.toUpperCase().startsWith(fig) &&
+        !/^[KQRNB]/.test(raw)
+      ) {
         raw = fig + raw;
       }
 
@@ -926,7 +1164,9 @@
           const m = (link.getAttribute('href') || '').match(/\/member\/([a-zA-Z0-9_-]+)/);
           if (m && m[1]) return cleanUsername(m[1]);
         }
-        const namedEl = el.querySelector('.user-username-component, .user-tagline-username, [data-username], .username');
+        const namedEl = el.querySelector(
+          '.user-username-component, .user-tagline-username, [data-username], .username',
+        );
         if (namedEl) {
           const u = namedEl.getAttribute('data-username') || namedEl.textContent;
           if (u) return cleanUsername(u);
@@ -934,17 +1174,26 @@
         return cleanUsername(el.innerText?.split(/[\s(]/)[0] || '');
       };
 
-      const topEl = document.querySelector('.board-layout-player-top, .board-layout-top, .player-component.top, .player-component.player-top, [class*="player-top"]');
-      const bottomEl = document.querySelector('.board-layout-player-bottom, .board-layout-bottom, .player-component.bottom, .player-component.player-bottom, [class*="player-bottom"]');
+      const topEl = document.querySelector(
+        '.board-layout-player-top, .board-layout-top, .player-component.top, .player-component.player-top, [class*="player-top"]',
+      );
+      const bottomEl = document.querySelector(
+        '.board-layout-player-bottom, .board-layout-bottom, .player-component.bottom, .player-component.player-bottom, [class*="player-bottom"]',
+      );
 
       let topName = getUsernameFromEl(topEl);
       let bottomName = getUsernameFromEl(bottomEl);
 
       if (!topName || !bottomName) {
-        const playerComponents = Array.from(document.querySelectorAll('.player-component, .user-tagline-component, [class*="player-row"]'));
+        const playerComponents = Array.from(
+          document.querySelectorAll(
+            '.player-component, .user-tagline-component, [class*="player-row"]',
+          ),
+        );
         if (playerComponents.length >= 2) {
           if (!topName) topName = getUsernameFromEl(playerComponents[0]);
-          if (!bottomName) bottomName = getUsernameFromEl(playerComponents[playerComponents.length - 1]);
+          if (!bottomName)
+            bottomName = getUsernameFromEl(playerComponents[playerComponents.length - 1]);
         }
       }
 
@@ -962,16 +1211,30 @@
       if (bottomName && !usernames.includes(bottomName)) usernames.unshift(bottomName);
       if (topName && !usernames.includes(topName)) usernames.push(topName);
 
-      const loggedInEl = document.querySelector('meta[name="user-username"], meta[name="username"], [data-username], .user-nav-username, .nav-menu-user-username, #user-nav [data-username]');
-      const loggedInUser = cleanUsername(loggedInEl?.getAttribute('content') || loggedInEl?.getAttribute('data-username') || loggedInEl?.textContent || '');
+      const loggedInEl = document.querySelector(
+        'meta[name="user-username"], meta[name="username"], [data-username], .user-nav-username, .nav-menu-user-username, #user-nav [data-username]',
+      );
+      const loggedInUser = cleanUsername(
+        loggedInEl?.getAttribute('content') ||
+          loggedInEl?.getAttribute('data-username') ||
+          loggedInEl?.textContent ||
+          '',
+      );
       if (loggedInUser && !usernames.includes(loggedInUser)) {
         usernames.push(loggedInUser);
       }
 
-      let isFlipped = document.querySelector('.board.flipped, .board-layout-main.flipped, .board.black, [class*="board-flipped"], wc-chess-board.flipped, chess-board.flipped, [flipped="true"]') !== null;
+      let isFlipped =
+        document.querySelector(
+          '.board.flipped, .board-layout-main.flipped, .board.black, [class*="board-flipped"], wc-chess-board.flipped, chess-board.flipped, [flipped="true"]',
+        ) !== null;
 
       if (!isFlipped) {
-        const coordTexts = Array.from(document.querySelectorAll('.coordinates text, text.coordinate-light, text.coordinate-dark, [class*="coordinate"]'));
+        const coordTexts = Array.from(
+          document.querySelectorAll(
+            '.coordinates text, text.coordinate-light, text.coordinate-dark, [class*="coordinate"]',
+          ),
+        );
         const text8 = coordTexts.find((el) => el.textContent?.trim() === '8');
         const text1 = coordTexts.find((el) => el.textContent?.trim() === '1');
         if (text8 && text1) {
@@ -992,7 +1255,7 @@
         blackName,
         isFlipped,
         usernames,
-        targetUser
+        targetUser,
       };
     },
 
@@ -1006,7 +1269,7 @@
         `[Date "${dateStr}"]`,
         `[White "${meta.whiteName}"]`,
         `[Black "${meta.blackName}"]`,
-        `[Result "*"]`
+        `[Result "*"]`,
       ].join('\n');
 
       let moveText = '';
@@ -1025,14 +1288,12 @@
     extractPgnFromDOM() {
       const moveNodes = Array.from(
         document.querySelectorAll(
-          'wc-simple-move-list .node, .move-list .node, .move-list-component .node, [data-whole-move-number] .node, .move-node'
-        )
+          'wc-simple-move-list .node, .move-list .node, .move-list-component .node, [data-whole-move-number] .node, .move-node',
+        ),
       );
 
       if (moveNodes.length > 0) {
-        const moves = moveNodes
-          .map((n) => this.parseMoveSan(n))
-          .filter((m) => m && isValidSan(m));
+        const moves = moveNodes.map((n) => this.parseMoveSan(n)).filter((m) => m && isValidSan(m));
 
         if (moves.length > 0) {
           return this.formatPgnString(moves);
@@ -1041,15 +1302,19 @@
 
       const moveRows = Array.from(
         document.querySelectorAll(
-          'wc-move-list-row, .move-list-row, .move-row, tr.move-row, .vertical-move-list .row'
-        )
+          'wc-move-list-row, .move-list-row, .move-row, tr.move-row, .vertical-move-list .row',
+        ),
       );
 
       if (moveRows.length > 0) {
         const moves = [];
         for (const row of moveRows) {
-          const whiteMoveEl = row.querySelector('.white.node, .white-move, .move:first-of-type, [data-color="w"], div:nth-child(2)');
-          const blackMoveEl = row.querySelector('.black.node, .black-move, .move:last-of-type, [data-color="b"], div:nth-child(3)');
+          const whiteMoveEl = row.querySelector(
+            '.white.node, .white-move, .move:first-of-type, [data-color="w"], div:nth-child(2)',
+          );
+          const blackMoveEl = row.querySelector(
+            '.black.node, .black-move, .move:last-of-type, [data-color="b"], div:nth-child(3)',
+          );
 
           const wSan = this.parseMoveSan(whiteMoveEl);
           if (wSan && isValidSan(wSan)) moves.push(wSan);
@@ -1067,9 +1332,12 @@
     },
 
     extractGameIdFromUrl() {
-      const match = window.location.pathname.match(/(?:game\/(?:live|daily)|game|analysis\/game\/(?:live|daily))\/(\d+)/) ||
-                    window.location.href.match(/[?&#]g=(\d+)/) ||
-                    window.location.pathname.match(/\/(\d+)(?:\?|$)/);
+      const match =
+        window.location.pathname.match(
+          /(?:game\/(?:live|daily)|game|analysis\/game\/(?:live|daily))\/(\d+)/,
+        ) ||
+        window.location.href.match(/[?&#]g=(\d+)/) ||
+        window.location.pathname.match(/\/(\d+)(?:\?|$)/);
       return match ? match[1] : null;
     },
 
@@ -1080,18 +1348,22 @@
             {
               type: 'FETCH_CHESSCOM_PGN',
               usernames: usernames,
-              gameId: gameId
+              gameId: gameId,
             },
             (response) => {
               if (response && response.success && response.pgn) {
-                resolve(response.pgn);
+                resolve({ pgn: response.pgn, isNewAccount: false });
               } else {
-                resolve('');
+                resolve({
+                  pgn: '',
+                  isNewAccount: Boolean(response?.isNewAccount),
+                  newUsername: response?.newUsername || '',
+                });
               }
-            }
+            },
           );
         } else {
-          resolve('');
+          resolve({ pgn: '', isNewAccount: false });
         }
       });
     },
@@ -1106,7 +1378,7 @@
         meta: meta,
         gameId: gameId,
         platform: 'chesscom',
-        fetchOfficialPgnFn: () => this.fetchOfficialPgn(meta.usernames, gameId)
+        fetchOfficialPgnFn: () => this.fetchOfficialPgn(meta.usernames, gameId),
       });
     },
 
@@ -1133,19 +1405,23 @@
         return;
       }
 
-      const inModal = (el) => el && el.closest(
-        '[class*="game-over-modal"], [class*="game-over-dialog"], [class*="game-over-shell"], [class*="game-over"]'
-      );
+      const inModal = (el) =>
+        el &&
+        el.closest(
+          '[class*="game-over-modal"], [class*="game-over-dialog"], [class*="game-over-shell"], [class*="game-over"]',
+        );
 
       let targetEl;
       if (inModal(reviewEl)) {
-        targetEl = reviewEl.closest('button, a, [role="button"], .ui_v5-button-component') || reviewEl;
+        targetEl =
+          reviewEl.closest('button, a, [role="button"], .ui_v5-button-component') || reviewEl;
       } else {
         const reviewContainer = document.querySelector('.game-review-buttons-component');
         if (reviewContainer) {
           targetEl = reviewContainer;
         } else {
-          targetEl = reviewEl.closest('button, a, [role="button"], .ui_v5-button-component') || reviewEl;
+          targetEl =
+            reviewEl.closest('button, a, [role="button"], .ui_v5-button-component') || reviewEl;
         }
       }
 
@@ -1185,7 +1461,7 @@
       const isGamePage = /\/game\//.test(window.location.pathname);
       if (!isGamePage) {
         const hasReviewElement = document.querySelector(
-          '[data-cy="game-review-button"], [data-cy="game-over-review-button"], [aria-label="Game Review"]'
+          '[data-cy="game-review-button"], [data-cy="game-over-review-button"], [aria-label="Game Review"]',
         );
         if (!hasReviewElement) {
           if (this.nonModalTimer) {
@@ -1202,9 +1478,11 @@
       const reviewEl = this.findGameReviewElement();
       const existing = document.getElementById(SABIO_BUTTON_ID);
 
-      const inModal = (el) => el && el.closest(
-        '[class*="game-over-modal"], [class*="game-over-dialog"], [class*="game-over-shell"], [class*="game-over"]'
-      );
+      const inModal = (el) =>
+        el &&
+        el.closest(
+          '[class*="game-over-modal"], [class*="game-over-dialog"], [class*="game-over-shell"], [class*="game-over"]',
+        );
       const isTargetInModal = reviewEl ? Boolean(inModal(reviewEl)) : false;
 
       // 1. Target is in MODAL: Highest Priority -> Inject IMMEDIATELY!
@@ -1224,7 +1502,8 @@
 
       // 2. If button is already injected in non-modal target container, stay there
       if (reviewEl) {
-        const targetEl = reviewEl.closest('button, a, [role="button"], .ui_v5-button-component') || reviewEl;
+        const targetEl =
+          reviewEl.closest('button, a, [role="button"], .ui_v5-button-component') || reviewEl;
         if (existing && existing.parentElement === targetEl.parentElement) {
           if (this.nonModalTimer) {
             clearTimeout(this.nonModalTimer);
@@ -1242,7 +1521,7 @@
           this.doInject(this.findGameReviewElement());
         }, 800);
       }
-    }
+    },
   };
 
   /* ==========================================================================
@@ -1264,10 +1543,12 @@
       const observer = new MutationObserver((mutations) => {
         const isOurMutation = mutations.every((m) => {
           const target = m.target;
-          return target && (
-            target.id === SABIO_BUTTON_ID ||
-            target.id === SIDEBAR_ID ||
-            (typeof target.closest === 'function' && target.closest(`#${SIDEBAR_ID}, #${SABIO_BUTTON_ID}`))
+          return (
+            target &&
+            (target.id === SABIO_BUTTON_ID ||
+              target.id === SIDEBAR_ID ||
+              (typeof target.closest === 'function' &&
+                target.closest(`#${SIDEBAR_ID}, #${SABIO_BUTTON_ID}`)))
           );
         });
         if (isOurMutation) return;
@@ -1277,7 +1558,7 @@
 
       observer.observe(document.body, {
         childList: true,
-        subtree: true
+        subtree: true,
       });
 
       activeAdapter.checkAndInject();

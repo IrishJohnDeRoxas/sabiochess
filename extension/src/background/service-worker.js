@@ -36,11 +36,20 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       : [request.username, request.whiteUser, request.blackUser].filter(Boolean);
 
     handleFetchChessComPgn(rawUsers, request.gameId)
-      .then((pgn) => {
-        sendResponse({ success: Boolean(pgn), pgn: pgn || '' });
+      .then((result) => {
+        if (typeof result === 'string') {
+          sendResponse({ success: Boolean(result), pgn: result || '', isNewAccount: false });
+        } else {
+          sendResponse({
+            success: Boolean(result?.pgn),
+            pgn: result?.pgn || '',
+            isNewAccount: Boolean(result?.isNewAccount),
+            newUsername: result?.newUsername || ''
+          });
+        }
       })
       .catch((err) => {
-        sendResponse({ success: false, error: err?.message || 'Failed', pgn: '' });
+        sendResponse({ success: false, error: err?.message || 'Failed', pgn: '', isNewAccount: false });
       });
     return true; // Keep channel open for async sendResponse
   }
@@ -104,7 +113,54 @@ async function handleFetchChessComPgn(rawUsernames, gameId) {
     .map((u) => (u || '').replace(/\(.*?\)/g, '').replace(/[^a-zA-Z0-9_-]/g, '').toLowerCase().trim())
     .filter(Boolean);
 
-  // Strategy 1: Fetch user archives for last 30-60 days and filter by gameId
+  if (!cleanUsers.length && !gameId) {
+    return { pgn: '', isNewAccount: false };
+  }
+
+  // Fast Check 1: Check account creation timestamp (< 48 hours) immediately
+  for (const username of cleanUsers) {
+    try {
+      const profileUrl = `https://api.chess.com/pub/player/${encodeURIComponent(username)}`;
+      const profileRes = await fetch(profileUrl);
+      if (profileRes.ok) {
+        const profileData = await profileRes.json();
+        if (profileData && typeof profileData.joined === 'number') {
+          const ageSeconds = Date.now() / 1000 - profileData.joined;
+          if (ageSeconds < 48 * 3600) {
+            return {
+              pgn: '',
+              isNewAccount: true,
+              newUsername: profileData.username || username
+            };
+          }
+        }
+      }
+    } catch {}
+  }
+
+  // Fast Check 2: If gameId exists, try direct callback endpoints
+  if (gameId) {
+    const callbackUrls = [
+      `https://www.chess.com/callback/live/game/${gameId}`,
+      `https://www.chess.com/callback/daily/game/${gameId}`
+    ];
+    for (const url of callbackUrls) {
+      try {
+        const res = await fetch(url);
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.pgn) {
+            return { pgn: data.pgn, isNewAccount: false };
+          }
+          if (data && data.game && data.game.pgn) {
+            return { pgn: data.game.pgn, isNewAccount: false };
+          }
+        }
+      } catch {}
+    }
+  }
+
+  // Strategy 3: Fetch user archives for established accounts (last 30-60 days)
   for (const username of cleanUsers) {
     try {
       const archivesUrl = `https://api.chess.com/pub/player/${encodeURIComponent(username)}/games/archives`;
@@ -133,7 +189,7 @@ async function handleFetchChessComPgn(rawUsernames, gameId) {
               (g.uuid && g.uuid === gameId)
             );
             if (matched && matched.pgn) {
-              return matched.pgn;
+              return { pgn: matched.pgn, isNewAccount: false };
             }
           }
 
@@ -141,7 +197,7 @@ async function handleFetchChessComPgn(rawUsernames, gameId) {
           if (!gameId && monthData.games.length > 0) {
             const latest = monthData.games[monthData.games.length - 1];
             if (latest && latest.pgn) {
-              return latest.pgn;
+              return { pgn: latest.pgn, isNewAccount: false };
             }
           }
         } catch {}
@@ -149,27 +205,5 @@ async function handleFetchChessComPgn(rawUsernames, gameId) {
     } catch {}
   }
 
-  // Strategy 2: If gameId exists, try direct callback endpoints
-  if (gameId) {
-    const callbackUrls = [
-      `https://www.chess.com/callback/live/game/${gameId}`,
-      `https://www.chess.com/callback/daily/game/${gameId}`
-    ];
-    for (const url of callbackUrls) {
-      try {
-        const res = await fetch(url);
-        if (res.ok) {
-          const data = await res.json();
-          if (data && data.pgn) {
-            return data.pgn;
-          }
-          if (data && data.game && data.game.pgn) {
-            return data.game.pgn;
-          }
-        }
-      } catch {}
-    }
-  }
-
-  return '';
+  return { pgn: '', isNewAccount: false };
 }
