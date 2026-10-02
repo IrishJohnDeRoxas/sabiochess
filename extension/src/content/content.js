@@ -563,15 +563,44 @@
       return null;
     },
 
-    getMoveCount() {
-      const moveNodes = document.querySelectorAll(
-        'rmoves u8t, rmoves move, tview2 move, tview2 u8t, .analyse__moves move, .analyse__moves u8t, .round__app u8t, .round__app move, .rreplay u8t, [data-san], [data-ply]',
+    extractMovesArray() {
+      const moveNodes = Array.from(
+        document.querySelectorAll(
+          'rmoves u8t, rmoves move, tview2 move, tview2 u8t, .analyse__moves move, .analyse__moves u8t, .round__app u8t, .round__app move, .rreplay u8t, u8t, [data-san], [data-ply]',
+        ),
       );
-      if (moveNodes.length > 0) return moveNodes.length;
-      const domPgn = this.extractPgnFromDOM();
-      if (!domPgn) return 0;
-      const movesOnly = domPgn.replace(/\[.*?\]\n?/g, '').trim();
-      return movesOnly ? movesOnly.split(/\s+/).filter((w) => !/^\d+\.?$/.test(w) && !/^(1-0|0-1|1\/2-1\/2|\*)$/.test(w)).length : 0;
+
+      const moves = [];
+      for (const node of moveNodes) {
+        const directSan = node.getAttribute('data-san');
+        if (directSan && isValidSan(directSan)) {
+          moves.push(directSan);
+          continue;
+        }
+
+        const clone = node.cloneNode(true);
+        clone
+          .querySelectorAll(
+            'eval, time, index, c3t, .c3t, [class*="eval"], [class*="time"], [class*="glyph"]',
+          )
+          .forEach((el) => el.remove());
+        let text = (clone.textContent || '').trim();
+        text = text.replace(/^[0-9]+(\.|\s|\.\.\.)+/, '').trim();
+        text = text.replace(/[^a-zA-Z0-9+=#xX\-]/g, '').trim();
+
+        if (text) {
+          text = text.replace(/^0-0-0([\+#]?)$/i, 'O-O-O$1').replace(/^0-0([\+#]?)$/i, 'O-O$1');
+        }
+
+        if (isValidSan(text)) {
+          moves.push(text);
+        }
+      }
+      return moves;
+    },
+
+    getMoveCount() {
+      return this.extractMovesArray().length;
     },
 
     isGameAborted() {
@@ -791,39 +820,7 @@
     },
 
     extractPgnFromDOM() {
-      const moveNodes = Array.from(
-        document.querySelectorAll(
-          'rmoves u8t, rmoves move, tview2 move, tview2 u8t, .analyse__moves move, .analyse__moves u8t, .round__app u8t, .round__app move, .rreplay u8t, u8t, [data-san], [data-ply]',
-        ),
-      );
-
-      const moves = [];
-      for (const node of moveNodes) {
-        const directSan = node.getAttribute('data-san');
-        if (directSan && isValidSan(directSan)) {
-          moves.push(directSan);
-          continue;
-        }
-
-        const clone = node.cloneNode(true);
-        clone
-          .querySelectorAll(
-            'eval, time, index, c3t, .c3t, [class*="eval"], [class*="time"], [class*="glyph"]',
-          )
-          .forEach((el) => el.remove());
-        let text = (clone.textContent || '').trim();
-        text = text.replace(/^[0-9]+(\.|\s|\.\.\.)+/, '').trim();
-        text = text.replace(/[^a-zA-Z0-9+=#xX\-]/g, '').trim();
-
-        if (text) {
-          text = text.replace(/^0-0-0([\+#]?)$/i, 'O-O-O$1').replace(/^0-0([\+#]?)$/i, 'O-O$1');
-        }
-
-        if (isValidSan(text)) {
-          moves.push(text);
-        }
-      }
-
+      const moves = this.extractMovesArray();
       if (moves.length === 0) return '';
 
       const meta = this.extractPlayerMeta();
@@ -975,24 +972,47 @@
     isInjecting: false,
     nonModalTimer: null,
 
-    getMoveCount() {
-      const moveNodes = document.querySelectorAll(
-        'wc-simple-move-list .node, .move-list .node, .move-list-component .node, [data-whole-move-number] .node, .move-node, wc-move-list-row, .move-list-row, .move-row, tr.move-row',
+    extractMovesArray() {
+      const moveNodes = Array.from(
+        document.querySelectorAll(
+          'wc-simple-move-list .node, .move-list .node, .move-list-component .node, [data-whole-move-number] .node, .move-node',
+        ),
       );
+
       if (moveNodes.length > 0) {
-        return Array.from(moveNodes).filter((n) => {
-          const txt = (n.textContent || '').trim();
-          return txt && !/^\d+\.?$/.test(txt) && !/^(1-0|0-1|1\/2-1\/2|\*)$/.test(txt);
-        }).length;
+        const moves = moveNodes.map((n) => this.parseMoveSan(n)).filter((m) => m && isValidSan(m));
+        if (moves.length > 0) return moves;
       }
-      const domPgn = this.extractPgnFromDOM();
-      if (!domPgn) return 0;
-      const movesOnly = domPgn.replace(/\[.*?\]\n?/g, '').trim();
-      return movesOnly
-        ? movesOnly
-            .split(/\s+/)
-            .filter((w) => !/^\d+\.?$/.test(w) && !/^(1-0|0-1|1\/2-1\/2|\*)$/.test(w)).length
-        : 0;
+
+      const moveRows = Array.from(
+        document.querySelectorAll(
+          'wc-move-list-row, .move-list-row, .move-row, tr.move-row, .vertical-move-list .row',
+        ),
+      );
+
+      if (moveRows.length > 0) {
+        const moves = [];
+        for (const row of moveRows) {
+          const whiteMoveEl = row.querySelector(
+            '.white.node, .white-move, .move:first-of-type, [data-color="w"], div:nth-child(2)',
+          );
+          const blackMoveEl = row.querySelector(
+            '.black.node, .black-move, .move:last-of-type, [data-color="b"], div:nth-child(3)',
+          );
+
+          const wSan = this.parseMoveSan(whiteMoveEl);
+          if (wSan && isValidSan(wSan)) moves.push(wSan);
+
+          const bSan = this.parseMoveSan(blackMoveEl);
+          if (bSan && isValidSan(bSan)) moves.push(bSan);
+        }
+        if (moves.length > 0) return moves;
+      }
+      return [];
+    },
+
+    getMoveCount() {
+      return this.extractMovesArray().length;
     },
 
     isGameAborted() {
@@ -1484,49 +1504,8 @@
     },
 
     extractPgnFromDOM() {
-      const moveNodes = Array.from(
-        document.querySelectorAll(
-          'wc-simple-move-list .node, .move-list .node, .move-list-component .node, [data-whole-move-number] .node, .move-node',
-        ),
-      );
-
-      if (moveNodes.length > 0) {
-        const moves = moveNodes.map((n) => this.parseMoveSan(n)).filter((m) => m && isValidSan(m));
-
-        if (moves.length > 0) {
-          return this.formatPgnString(moves);
-        }
-      }
-
-      const moveRows = Array.from(
-        document.querySelectorAll(
-          'wc-move-list-row, .move-list-row, .move-row, tr.move-row, .vertical-move-list .row',
-        ),
-      );
-
-      if (moveRows.length > 0) {
-        const moves = [];
-        for (const row of moveRows) {
-          const whiteMoveEl = row.querySelector(
-            '.white.node, .white-move, .move:first-of-type, [data-color="w"], div:nth-child(2)',
-          );
-          const blackMoveEl = row.querySelector(
-            '.black.node, .black-move, .move:last-of-type, [data-color="b"], div:nth-child(3)',
-          );
-
-          const wSan = this.parseMoveSan(whiteMoveEl);
-          if (wSan && isValidSan(wSan)) moves.push(wSan);
-
-          const bSan = this.parseMoveSan(blackMoveEl);
-          if (bSan && isValidSan(bSan)) moves.push(bSan);
-        }
-
-        if (moves.length > 0) {
-          return this.formatPgnString(moves);
-        }
-      }
-
-      return '';
+      const moves = this.extractMovesArray();
+      return moves.length > 0 ? this.formatPgnString(moves) : '';
     },
 
     extractGameIdFromUrl() {
