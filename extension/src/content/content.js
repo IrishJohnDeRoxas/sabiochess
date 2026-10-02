@@ -563,24 +563,35 @@
       return null;
     },
 
+    getMoveCount() {
+      const moveNodes = document.querySelectorAll(
+        'rmoves u8t, rmoves move, tview2 move, tview2 u8t, .analyse__moves move, .analyse__moves u8t, .round__app u8t, .round__app move, .rreplay u8t, [data-san], [data-ply]',
+      );
+      if (moveNodes.length > 0) return moveNodes.length;
+      const domPgn = this.extractPgnFromDOM();
+      if (!domPgn) return 0;
+      const movesOnly = domPgn.replace(/\[.*?\]\n?/g, '').trim();
+      return movesOnly ? movesOnly.split(/\s+/).filter((w) => !/^\d+\.?$/.test(w) && !/^(1-0|0-1|1\/2-1\/2|\*)$/.test(w)).length : 0;
+    },
+
     isGameAborted() {
       // 1. Semantic attributes: images, SVGs, or fair-play links
       if (
         document.querySelector(
-          'img[src*="abort" i], img[alt*="abort" i], svg[aria-label*="abort" i], [data-glyph*="abort" i], [class*="abort" i], a[href*="fair-play"], a[href*="sportsmanship"]',
+          'img[src*="abort" i], img[alt*="abort" i], svg[aria-label*="abort" i], [data-glyph*="abort" i], [class*="abort" i], a[href*="fair-play" i], a[href*="sportsmanship" i]',
         )
       ) {
         return true;
       }
 
-      // 2. Scan dialogs, headings, and status elements for aborted text
+      // 2. Scan dialogs, headings, alerts, and status elements for aborted text
       const elements = document.querySelectorAll(
-        'dialog, [role="dialog"], [role="status"], [class*="status" i], [class*="result" i], [class*="follow-up" i], [class*="meta" i], h1, h2, h3, h4, .round__side, .rcontrols',
+        'dialog, [role="dialog"], [role="alert"], [role="status"], [class*="status" i], [class*="result" i], [class*="follow-up" i], [class*="meta" i], [class*="alert" i], [class*="toast" i], [class*="message" i], h1, h2, h3, h4, .round__side, .rcontrols',
       );
       for (const el of elements) {
         if (el.offsetParent !== null || el.offsetHeight > 0) {
           const text = (el.textContent || '').trim();
-          if (/\b(game\s*aborted|aborted)\b/i.test(text)) {
+          if (/\babort/i.test(text)) {
             return true;
           }
         }
@@ -598,6 +609,9 @@
       const gameId = this.extractGameId();
       const isAnalysis = pathname.startsWith('/analysis');
       if (!gameId && !isAnalysis) return false;
+
+      // Move count check: fewer than 2 moves (0 or 1 ply) without analysis page is not game over
+      if (!isAnalysis && this.getMoveCount() < 2) return false;
 
       // 1. Active play indicators (resign/draw buttons by ARIA, data attributes, actions)
       const isPlaying = document.querySelector(
@@ -961,11 +975,31 @@
     isInjecting: false,
     nonModalTimer: null,
 
+    getMoveCount() {
+      const moveNodes = document.querySelectorAll(
+        'wc-simple-move-list .node, .move-list .node, .move-list-component .node, [data-whole-move-number] .node, .move-node, wc-move-list-row, .move-list-row, .move-row, tr.move-row',
+      );
+      if (moveNodes.length > 0) {
+        return Array.from(moveNodes).filter((n) => {
+          const txt = (n.textContent || '').trim();
+          return txt && !/^\d+\.?$/.test(txt) && !/^(1-0|0-1|1\/2-1\/2|\*)$/.test(txt);
+        }).length;
+      }
+      const domPgn = this.extractPgnFromDOM();
+      if (!domPgn) return 0;
+      const movesOnly = domPgn.replace(/\[.*?\]\n?/g, '').trim();
+      return movesOnly
+        ? movesOnly
+            .split(/\s+/)
+            .filter((w) => !/^\d+\.?$/.test(w) && !/^(1-0|0-1|1\/2-1\/2|\*)$/.test(w)).length
+        : 0;
+    },
+
     isGameAborted() {
       // 1. Semantic attributes: images, SVGs, or fair-play/sportsmanship links
       if (
         document.querySelector(
-          'img[src*="abort" i], img[alt*="abort" i], svg[aria-label*="abort" i], [data-glyph*="abort" i], [class*="abort" i], a[href*="fair-play"], a[href*="sportsmanship"]',
+          'img[src*="abort" i], img[alt*="abort" i], svg[aria-label*="abort" i], [data-glyph*="abort" i], [class*="abort" i], a[href*="fair-play" i], a[href*="sportsmanship" i]',
         )
       ) {
         return true;
@@ -978,29 +1012,58 @@
       for (const m of modals) {
         if (m.offsetParent !== null || m.offsetHeight > 0) {
           const text = (m.textContent || '').trim();
-          if (/\b(game\s*aborted|aborted|aborting\s*games)\b/i.test(text)) {
+          if (/\babort/i.test(text)) {
             return true;
           }
         }
       }
 
-      // 3. Scan all headings (h1-h6, [role="heading"]) on the page
-      const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6, [role="heading"]');
-      for (const h of headings) {
-        const text = (h.textContent || '').trim();
-        if (/\b(game\s*aborted|aborted)\b/i.test(text)) {
+      // 3. Scan all alerts, toasts, notifications, banners, messages
+      const alertEls = document.querySelectorAll(
+        '[id*="alert" i], [class*="alert" i], [class*="toast" i], [class*="flash" i], [class*="notice" i], [class*="banner" i], [class*="notification" i], [class*="message" i], [role="alert"]',
+      );
+      for (const el of alertEls) {
+        const text = (el.textContent || '').trim();
+        if (/\babort/i.test(text)) {
           return true;
         }
       }
 
-      // 4. Any status/result containers on page
+      // 4. Scan all headings (h1-h6, [role="heading"]) on the page
+      const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6, [role="heading"]');
+      for (const h of headings) {
+        const text = (h.textContent || '').trim();
+        if (/\babort/i.test(text)) {
+          return true;
+        }
+      }
+
+      // 5. Any status/result containers on page
       const statusEls = document.querySelectorAll(
         '[class*="result" i], [class*="status" i], [class*="header" i], [class*="overview" i], [role="status"], [aria-live]',
       );
       for (const el of statusEls) {
         const text = (el.textContent || '').trim();
-        if (/\b(game\s*aborted|aborted)\b/i.test(text)) {
+        if (/\babort/i.test(text)) {
           return true;
+        }
+      }
+
+      // 6. If move count is < 2 and there is no official game review button AND draw/game-over text is displayed (e.g. 1. d4 1/2-1/2 on abort)
+      const moves = this.getMoveCount();
+      if (moves < 2) {
+        const hasOfficialReview = Boolean(
+          document.querySelector(
+            '[data-cy="game-review-button"], [data-cy="game-over-review-button"], [aria-label*="Game Review" i], a[href*="/game-review/"]',
+          ),
+        );
+        if (!hasOfficialReview) {
+          const hasResult = document.querySelector(
+            '.game-result, [data-cy="game-over-header"], .header-title-component, .game-over-header, wc-simple-move-list, .move-list',
+          );
+          if (hasResult && /1\/2-1\/2|½-½|\*/.test(hasResult.textContent || '')) {
+            return true;
+          }
         }
       }
 
@@ -1138,6 +1201,7 @@
 
     detectGameOverState() {
       if (this.isGameAborted()) return false;
+
       // 1. If actively playing (resign button visible), NOT game over
       const isPlaying = document.querySelector(
         '[data-cy="resign-button"], button[aria-label="Resign"], .resign-button-component, .live-game-buttons-component:not(.live-game-buttons-game-over)',
@@ -1147,7 +1211,10 @@
       // 2. Official Game Review button exists (only rendered when game is over)
       if (this.findGameReviewElement()) return true;
 
-      // 3. Game over modal, game over dialog or header
+      // 3. Move count check: games with fewer than 2 half-moves cannot be a finished reviewable game
+      if (this.getMoveCount() < 2) return false;
+
+      // 4. Game over modal, game over dialog or header
       if (
         document.querySelector(
           '[class*="game-over-modal"], [class*="game-over-dialog"], .game-over-buttons-component, [data-cy="game-over-header"]',
@@ -1159,7 +1226,7 @@
       const isGamePage = /\/game\/(live\/|daily\/)?\d+/.test(window.location.pathname);
       if (!isGamePage) return false;
 
-      // 4. Game outcome / result indicators
+      // 5. Game outcome / result indicators
       const resultEl = document.querySelector(
         '.game-result, [data-cy="game-over-header"], .header-title-component, .game-over-header',
       );
