@@ -563,7 +563,35 @@
       return null;
     },
 
+    isGameAborted() {
+      // 1. Semantic attributes: images, SVGs, or fair-play links
+      if (
+        document.querySelector(
+          'img[src*="abort" i], img[alt*="abort" i], svg[aria-label*="abort" i], [data-glyph*="abort" i], [class*="abort" i], a[href*="fair-play"], a[href*="sportsmanship"]',
+        )
+      ) {
+        return true;
+      }
+
+      // 2. Scan dialogs, headings, and status elements for aborted text
+      const elements = document.querySelectorAll(
+        'dialog, [role="dialog"], [role="status"], [class*="status" i], [class*="result" i], [class*="follow-up" i], [class*="meta" i], h1, h2, h3, h4, .round__side, .rcontrols',
+      );
+      for (const el of elements) {
+        if (el.offsetParent !== null || el.offsetHeight > 0) {
+          const text = (el.textContent || '').trim();
+          if (/\b(game\s*aborted|aborted)\b/i.test(text)) {
+            return true;
+          }
+        }
+      }
+
+      return false;
+    },
+
     detectGameOverState() {
+      if (this.isGameAborted()) return false;
+
       const pathname = window.location.pathname;
       if (pathname === '/' || pathname === '') return false;
 
@@ -851,6 +879,12 @@
     checkAndInject() {
       if (this.isInjecting) return;
 
+      if (this.isGameAborted()) {
+        const existing = document.getElementById(SABIO_BUTTON_ID);
+        if (existing) existing.remove();
+        return;
+      }
+
       const targetInfo = this.findInjectionTarget();
       const existing = document.getElementById(SABIO_BUTTON_ID);
 
@@ -927,7 +961,55 @@
     isInjecting: false,
     nonModalTimer: null,
 
+    isGameAborted() {
+      // 1. Semantic attributes: images, SVGs, or fair-play/sportsmanship links
+      if (
+        document.querySelector(
+          'img[src*="abort" i], img[alt*="abort" i], svg[aria-label*="abort" i], [data-glyph*="abort" i], [class*="abort" i], a[href*="fair-play"], a[href*="sportsmanship"]',
+        )
+      ) {
+        return true;
+      }
+
+      // 2. Scan all modals/dialogs (by HTML5 tag, ARIA roles, or partial class) for aborted text
+      const modals = document.querySelectorAll(
+        'dialog, [role="dialog"], [role="alertdialog"], [aria-modal="true"], [class*="modal" i], [class*="dialog" i], [class*="game-over" i]',
+      );
+      for (const m of modals) {
+        if (m.offsetParent !== null || m.offsetHeight > 0) {
+          const text = (m.textContent || '').trim();
+          if (/\b(game\s*aborted|aborted|aborting\s*games)\b/i.test(text)) {
+            return true;
+          }
+        }
+      }
+
+      // 3. Scan all headings (h1-h6, [role="heading"]) on the page
+      const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6, [role="heading"]');
+      for (const h of headings) {
+        const text = (h.textContent || '').trim();
+        if (/\b(game\s*aborted|aborted)\b/i.test(text)) {
+          return true;
+        }
+      }
+
+      // 4. Any status/result containers on page
+      const statusEls = document.querySelectorAll(
+        '[class*="result" i], [class*="status" i], [class*="header" i], [class*="overview" i], [role="status"], [aria-live]',
+      );
+      for (const el of statusEls) {
+        const text = (el.textContent || '').trim();
+        if (/\b(game\s*aborted|aborted)\b/i.test(text)) {
+          return true;
+        }
+      }
+
+      return false;
+    },
+
     findGameReviewElement() {
+      if (this.isGameAborted()) return null;
+
       const isSabio = (el) => el.id === SABIO_BUTTON_ID || el.closest(`#${SABIO_BUTTON_ID}`);
       const isVisible = (el) => el && el.offsetParent !== null;
       const isTallyCard = (el) =>
@@ -937,27 +1019,71 @@
 
       const inModal = (el) =>
         el.closest(
-          '[class*="game-over-modal"], [class*="game-over-dialog"], [class*="game-over-shell"], [class*="game-over"]',
+          'dialog, [role="dialog"], [role="alertdialog"], [aria-modal="true"], [class*="modal" i], [class*="dialog" i], [class*="game-over" i]',
         );
       const inSidebar = (el) =>
         el.closest(
-          '.sidebar-view, .game-review-buttons-component, .game-review-emphasis-component, #board-layout-sidebar, .board-layout-sidebar',
+          '.sidebar-view, .game-review-buttons-component, .game-review-emphasis-component, #board-layout-sidebar, .board-layout-sidebar, [class*="sidebar" i]',
         );
+
+      const isReviewCandidate = (el) => {
+        if (!el || isSabio(el) || !isVisible(el) || isTallyCard(el)) return false;
+        const text = (el.textContent || '').trim().toLowerCase();
+        const aria = (el.getAttribute('aria-label') || '').toLowerCase();
+        const href = (el.getAttribute('href') || '').toLowerCase();
+        const dataCy = (el.getAttribute('data-cy') || '').toLowerCase();
+
+        // Explicit review/analysis indicators
+        if (
+          text.includes('review') ||
+          text.includes('analysis') ||
+          text.includes('analyze') ||
+          aria.includes('review') ||
+          aria.includes('analysis') ||
+          href.includes('game-review') ||
+          href.includes('analysis') ||
+          dataCy.includes('review')
+        ) {
+          return true;
+        }
+
+        // Inside game-over modal: reject generic actions (new game, rematch, close)
+        const modal = inModal(el);
+        if (modal) {
+          const isGenericAction =
+            /\b(new\s*\d*\s*min|rematch|new\s*game|play|close|cancel)\b/i.test(text) ||
+            /\b(close|cancel|rematch)\b/i.test(aria);
+          if (!isGenericAction) {
+            return true;
+          }
+        }
+
+        return false;
+      };
 
       const allCandidates = [];
 
       // 1. Primary explicit button selectors (Modal & Sidebar)
       const primarySelectors = [
-        '.game-over-modal-shell-buttons a',
-        '.game-over-modal-shell-buttons button',
-        '.game-review-buttons-component a',
-        '.game-review-buttons-component button',
         '[data-cy="game-review-button"]',
         '[data-cy="game-over-review-button"]',
+        '[data-cy*="review" i]',
+        'a[href*="/game-review/"]',
+        'a[href*="/analysis"]',
+        '[aria-label*="Game Review" i]',
+        '[aria-label*="Review" i]',
+        '.game-review-buttons-component a',
+        '.game-review-buttons-component button',
+        '.game-over-modal-shell-buttons a',
+        '.game-over-modal-shell-buttons button',
+        '[class*="game-review" i] a',
+        '[class*="game-review" i] button',
+        '[class*="game-over" i] a',
+        '[class*="game-over" i] button',
       ];
       for (const sel of primarySelectors) {
         document.querySelectorAll(sel).forEach((el) => {
-          if (!isSabio(el) && isVisible(el) && !isTallyCard(el) && !allCandidates.includes(el)) {
+          if (isReviewCandidate(el) && !allCandidates.includes(el)) {
             allCandidates.push(el);
           }
         });
@@ -965,15 +1091,18 @@
 
       // 2. Fallback text/attribute selectors
       const fallbackSelectors = [
-        '[aria-label="Game Review"]',
-        '[aria-label*="Game Review" i]',
         'a[href*="/game-review/"]',
+        'a[href*="/analysis"]',
+        'button',
+        'a',
       ];
       for (const sel of fallbackSelectors) {
         document.querySelectorAll(sel).forEach((el) => {
-          if (!isSabio(el) && isVisible(el) && !isTallyCard(el) && !allCandidates.includes(el)) {
+          if (isReviewCandidate(el) && !allCandidates.includes(el)) {
             const btn = el.closest('button, a, [role="button"], .ui_v5-button-component') || el;
-            if (!allCandidates.includes(btn)) allCandidates.push(btn);
+            if (isReviewCandidate(btn) && !allCandidates.includes(btn)) {
+              allCandidates.push(btn);
+            }
           }
         });
       }
@@ -986,11 +1115,12 @@
 
       // Modal container buttons fallback
       const modalContainer = document.querySelector(
-        '[class*="game-over-modal-shell-buttons"], [class*="game-over-modal-content"], [class*="game-over-modal"]',
+        'dialog, [role="dialog"], [role="alertdialog"], [aria-modal="true"], [class*="game-over-modal-shell-buttons"], [class*="game-over-modal-content"], [class*="game-over-modal"], [class*="game-over"]',
       );
       if (modalContainer && isVisible(modalContainer)) {
-        const modalBtn = modalContainer.querySelector('a, button, .ui_v5-button-component');
-        if (modalBtn && !isSabio(modalBtn) && isVisible(modalBtn)) {
+        const modalBtns = Array.from(modalContainer.querySelectorAll('a, button, [role="button"], .ui_v5-button-component'));
+        const modalBtn = modalBtns.find(isReviewCandidate);
+        if (modalBtn) {
           return modalBtn;
         }
       }
@@ -1007,6 +1137,7 @@
     },
 
     detectGameOverState() {
+      if (this.isGameAborted()) return false;
       // 1. If actively playing (resign button visible), NOT game over
       const isPlaying = document.querySelector(
         '[data-cy="resign-button"], button[aria-label="Resign"], .resign-button-component, .live-game-buttons-component:not(.live-game-buttons-game-over)',
@@ -1457,6 +1588,16 @@
 
     checkAndInject() {
       if (this.isInjecting) return;
+
+      if (this.isGameAborted()) {
+        if (this.nonModalTimer) {
+          clearTimeout(this.nonModalTimer);
+          this.nonModalTimer = null;
+        }
+        const existing = document.getElementById(SABIO_BUTTON_ID);
+        if (existing) existing.remove();
+        return;
+      }
 
       const isGamePage = /\/game\//.test(window.location.pathname);
       if (!isGamePage) {
