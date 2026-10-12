@@ -3,6 +3,7 @@
 > **Master Chess Analysis & Real-Time AI Voice Coach — 100% Free, Private, and Running Client-Side.**
 
 [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-Donate-orange?style=for-the-badge&logo=buy-me-a-coffee)](https://buymeacoffee.com/sabiochess)
+[![Chrome Web Store](https://img.shields.io/badge/Chrome_Web_Store-Extension-blue?style=for-the-badge&logo=googlechrome)](https://chromewebstore.google.com/detail/sabiochess-free-chess-ana/kpecdkmnbheapnajbpaflejaaiehmdhn)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg?style=for-the-badge)](https://www.gnu.org/licenses/gpl-3.0)
 [![Angular](https://img.shields.io/badge/Angular-22-DD0031?style=for-the-badge&logo=angular)](https://angular.dev)
 [![Engine](https://img.shields.io/badge/Stockfish-WASM-black?style=for-the-badge)](https://stockfishchess.org)

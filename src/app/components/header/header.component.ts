@@ -16,6 +16,8 @@ import { SettingsService } from '../../services/settings.service';
 export class HeaderComponent {
   readonly settings = inject(SettingsService);
   readonly isMobileMenuOpen = signal<boolean>(false);
+  readonly chromeExtensionUrl =
+    'https://chromewebstore.google.com/detail/sabiochess-free-chess-ana/kpecdkmnbheapnajbpaflejaaiehmdhn';
 
   @ViewChild('mobileMenuContainer') mobileMenuContainer?: ElementRef<HTMLElement>;
 
