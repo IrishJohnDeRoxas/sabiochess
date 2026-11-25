@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, output, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { FetchedGame, PlatformImporterService } from '../../services/platform-importer.service';
+import { FetchedGame, PlatformImporterService, parsePlatformInput } from '../../services/platform-importer.service';
 import { ChessGameService } from '../../services/chess-game.service';
 import { SettingsService } from '../../services/settings.service';
 import { IconComponent } from '../icon/icon.component';
@@ -102,15 +102,31 @@ export class PlatformGameSelectorComponent implements OnInit {
 
     try {
       let games: FetchedGame[] = [];
+      const parsed = parsePlatformInput(user);
+
+      if (parsed.isGameUrlOrId && parsed.platform && parsed.platform !== this.activePlatform()) {
+        this.activePlatform.set(parsed.platform);
+      }
+
       if (this.activePlatform() === 'chess.com') {
-        this.settings.setChesscomUsername(user);
+        if (!parsed.isGameUrlOrId) {
+          this.settings.setChesscomUsername(user);
+        } else if (parsed.extractedUsername) {
+          this.settings.setChesscomUsername(parsed.extractedUsername);
+        }
         games = await this.platformService.fetchChessComGames(user);
       } else {
-        this.settings.setLichessUsername(user);
+        if (!parsed.isGameUrlOrId) {
+          this.settings.setLichessUsername(user);
+        }
         games = await this.platformService.fetchLichessGames(user);
       }
       this.gamesList.set(games);
       this.saveGamesToCache(this.activePlatform(), user, games);
+
+      if (parsed.isGameUrlOrId && games.length === 1) {
+        this.loadGame(games[0]);
+      }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Could not fetch games from platform';
       this.errorMessage.set(msg);

@@ -38,7 +38,7 @@
         [ngModel]="username()"
         (ngModelChange)="onUsernameChange($event)"
         name="username"
-        [placeholder]="activePlatform() === 'chess.com' ? 'Chess.com Username (e.g. Hikaru)' : 'Lichess Username (e.g. EricRosen)'"
+        [placeholder]="activePlatform() === 'chess.com' ? 'Chess.com Username or Game URL (e.g. Hikaru)' : 'Lichess Username or Game URL (e.g. EricRosen)'"
         class="w-full h-9 bg-[#D9D9D9] dark:bg-[#262626] border-2 border-[#222222] dark:border-[#373A46] pl-3 pr-8 text-xs sm:text-sm font-label text-[#222222] dark:text-[#F3F4F6] focus:bg-white dark:focus:bg-[#1E1E1E] focus:outline-none focus:border-[#FF4F00] uppercase placeholder:normal-case box-border"
       />
       @if (username()) {

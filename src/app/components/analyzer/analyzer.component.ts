@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 import { ChessGameService } from '../../services/chess-game.service';
 import { SettingsService } from '../../services/settings.service';
 import { SoundService } from '../../services/sound.service';
+import { PlatformImporterService } from '../../services/platform-importer.service';
 import { ChessBoardComponent } from '../chess-board/chess-board.component';
 import { EvalBarComponent } from '../eval-bar/eval-bar.component';
 import { IconComponent } from '../icon/icon.component';
@@ -32,6 +33,7 @@ export class AnalyzerComponent implements OnInit, OnDestroy {
   readonly settings = inject(SettingsService);
   readonly game = inject(ChessGameService);
   private readonly sound = inject(SoundService);
+  private readonly platformImporter = inject(PlatformImporterService);
 
   private routeSub?: Subscription;
   private lastLoadedPgn = '';
@@ -165,6 +167,8 @@ export class AnalyzerComponent implements OnInit, OnDestroy {
     const rawFen = params['fen'];
     const sample = params['sample'];
     const flip = params['flip'];
+    const gameId = params['gameId'] || params['game'];
+    const platform = params['platform'];
     let loaded = false;
 
     if (rawPgn) {
@@ -191,6 +195,33 @@ export class AnalyzerComponent implements OnInit, OnDestroy {
     } else if (sample) {
       this.game.loadSampleGame(sample);
       loaded = true;
+    } else if (gameId) {
+      const targetUser = params['user'] || params['username'] || params['player'] || '';
+      if (platform === 'lichess' || /^[a-zA-Z0-9]{8}$/.test(gameId)) {
+        this.platformImporter
+          .fetchLichessGames(targetUser, gameId)
+          .then((games) => {
+            if (games.length > 0 && games[0].pgn) {
+              this.game.loadPgn(games[0].pgn);
+              this.applyBoardOrientation(flip, targetUser);
+              this.settings.flashToast('GAME LOADED FROM LICHESS');
+              this.clearQueryParams();
+            }
+          })
+          .catch(() => {});
+      } else {
+        this.platformImporter
+          .fetchChessComGames(targetUser, gameId)
+          .then((games) => {
+            if (games.length > 0 && games[0].pgn) {
+              this.game.loadPgn(games[0].pgn);
+              this.applyBoardOrientation(flip, targetUser);
+              this.settings.flashToast('GAME LOADED FROM CHESS.COM');
+              this.clearQueryParams();
+            }
+          })
+          .catch(() => {});
+      }
     }
 
     const targetUser = params['user'] || params['username'] || params['player'];

@@ -155,12 +155,45 @@ async function handleFetchChessComPgn(rawUsernames, gameId) {
           if (data && data.game && data.game.pgn) {
             return { pgn: data.game.pgn, isNewAccount: false };
           }
+
+          // Check if callback metadata contains Date and players for instant targeted archive lookup
+          const gameDate = data?.game?.pgnHeaders?.Date;
+          if (gameDate && typeof gameDate === 'string') {
+            const dateParts = gameDate.split('.');
+            if (dateParts.length >= 2) {
+              const year = dateParts[0];
+              const month = dateParts[1].padStart(2, '0');
+              const candidateUsers = [
+                data.players?.top?.username,
+                data.players?.bottom?.username,
+                ...cleanUsers
+              ].filter(Boolean);
+
+              for (const u of candidateUsers) {
+                try {
+                  const monthArchiveUrl = `https://api.chess.com/pub/player/${encodeURIComponent(u.toLowerCase())}/games/${year}/${month}`;
+                  const mRes = await fetch(monthArchiveUrl);
+                  if (mRes.ok) {
+                    const mData = await mRes.json();
+                    const matched = mData?.games?.find((g) =>
+                      (g.url && g.url.includes(gameId)) ||
+                      (g.pgn && g.pgn.includes(gameId)) ||
+                      (g.uuid && g.uuid === gameId)
+                    );
+                    if (matched && matched.pgn) {
+                      return { pgn: matched.pgn, isNewAccount: false };
+                    }
+                  }
+                } catch {}
+              }
+            }
+          }
         }
       } catch {}
     }
   }
 
-  // Strategy 3: Fetch user archives for established accounts (last 30-60 days)
+  // Strategy 3: Fetch user archives (check last 12-24 months if gameId specified)
   for (const username of cleanUsers) {
     try {
       const archivesUrl = `https://api.chess.com/pub/player/${encodeURIComponent(username)}/games/archives`;
@@ -170,10 +203,13 @@ async function handleFetchChessComPgn(rawUsernames, gameId) {
       const archData = await archRes.json();
       if (!archData.archives || !archData.archives.length) continue;
 
-      // Check last 2 months (current + previous month = 30-60 days)
-      const recentArchives = archData.archives.slice(-2).reverse();
+      // If specific gameId requested, search all archives backwards!
+      // Otherwise check last 6 months (up to 40 games)
+      const archivesToSearch = gameId
+        ? [...archData.archives].reverse()
+        : archData.archives.slice(-6).reverse();
 
-      for (const archiveUrl of recentArchives) {
+      for (const archiveUrl of archivesToSearch) {
         try {
           const monthRes = await fetch(archiveUrl);
           if (!monthRes.ok) continue;

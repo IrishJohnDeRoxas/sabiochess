@@ -102,6 +102,44 @@
     }
   };
 
+  window.__testFetchGame = async (url = window.location.href) => {
+    console.group('[SabioChess Extension Test] Fetching Game');
+    console.log('Testing URL:', url);
+    try {
+      const match =
+        url.match(/(?:game\/(?:live|daily)|game)\/(\d+)/i) ||
+        url.match(/[?&#]g=(\d+)/i) ||
+        url.match(/\/(\d+)(?:\?|$)/);
+      const gameId = match ? match[1] : null;
+
+      let username = null;
+      try {
+        const u = new URL(url.startsWith('http') ? url : `https://${url}`);
+        username = u.searchParams.get('username') || u.searchParams.get('user');
+      } catch {}
+
+      const meta = ChessComAdapter.extractPlayerMeta();
+      const usernames = [username, ...(meta?.usernames || [])].filter(Boolean);
+
+      console.log('Parsed gameId:', gameId, 'usernames:', usernames);
+
+      const result = await ChessComAdapter.fetchOfficialPgn(usernames, gameId);
+      console.log('Extension Service Worker Result:', result);
+      if (result?.pgn) {
+        console.log(`PGN found! (${result.pgn.length} chars)`);
+        console.log('Full PGN:\n' + result.pgn);
+      } else {
+        console.warn('No PGN returned by extension service worker.');
+      }
+      console.groupEnd();
+      return result;
+    } catch (err) {
+      console.error('[SabioChess Extension Test] Error:', err);
+      console.groupEnd();
+      throw err;
+    }
+  };
+
   /**
    * Validate if a string is a legitimate Chess SAN move
    */
@@ -355,6 +393,8 @@
       if (targetPgn) params.set('pgn', targetPgn);
       if (meta && meta.isFlipped) params.set('flip', 'true');
       if (meta && meta.targetUser) params.set('user', meta.targetUser);
+      if (gameId) params.set('gameId', gameId);
+      if (platform) params.set('platform', platform);
       params.set('autoAnalyze', 'true');
       params.set('source', `${platform}_extension`);
       return `${sabioBaseUrl}/?${params.toString()}`;
