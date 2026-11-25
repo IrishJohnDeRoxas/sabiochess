@@ -307,6 +307,7 @@ export class GameAnalysisService implements OnDestroy {
 
   private currentRunId = 0;
   private isSearching = false;
+  private analysisTimeoutTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {
     this.initWorker();
@@ -383,7 +384,45 @@ export class GameAnalysisService implements OnDestroy {
     }
   }
 
+  private clearWatchdogTimer(): void {
+    if (this.analysisTimeoutTimer) {
+      clearTimeout(this.analysisTimeoutTimer);
+      this.analysisTimeoutTimer = null;
+    }
+  }
+
+  private handleWorkerTimeout(runId: number, index: number): void {
+    if (this.currentRunId !== runId || !this.isAnalyzing() || this.currentAnalyzeIndex !== index) return;
+
+    this.isSearching = false;
+    const fen = this.getFenForIndex(index);
+    let score: number | null = null;
+    let mate: number | null = null;
+
+    try {
+      const chess = new Chess(fen);
+      score = this.evaluatePosition(chess);
+    } catch {}
+
+    this.currentEvals[index] = {
+      score,
+      mate,
+      bestMove: null,
+      pv: [],
+    };
+
+    this.currentAnalyzeIndex++;
+    this.progress.set(Math.round((this.currentAnalyzeIndex / (this.currentHistory.length + 1)) * 100));
+
+    if (this.currentAnalyzeIndex <= this.currentHistory.length) {
+      this.evaluateNextWorkerPosition();
+    } else {
+      this.finishWorkerAnalysis();
+    }
+  }
+
   private parseWorkerBestMove(message: string): void {
+    this.clearWatchdogTimer();
     if (!this.isAnalyzing() || !this.isSearching) return;
     if (this.currentAnalyzeIndex >= this.currentEvals.length) return;
 
@@ -414,6 +453,7 @@ export class GameAnalysisService implements OnDestroy {
   }
 
   private evaluateNextWorkerPosition(): void {
+    this.clearWatchdogTimer();
     if (!this.worker || !this.isAnalyzing()) return;
     if (this.currentAnalyzeIndex > this.currentHistory.length) return;
 
@@ -426,6 +466,16 @@ export class GameAnalysisService implements OnDestroy {
 
     this.isSearching = true;
     const depth = this.settings?.analysisDepth ? this.settings.analysisDepth() : 14;
+
+    const runId = this.currentRunId;
+    const analyzeIdx = this.currentAnalyzeIndex;
+    this.analysisTimeoutTimer = setTimeout(() => {
+      this.zone.run(() => {
+        if (this.currentRunId !== runId || !this.isAnalyzing() || this.currentAnalyzeIndex !== analyzeIdx) return;
+        this.handleWorkerTimeout(runId, analyzeIdx);
+      });
+    }, 6000);
+
     this.worker.postMessage(`position fen ${fen}`);
     this.worker.postMessage(`go depth ${depth}`);
   }
@@ -481,6 +531,20 @@ export class GameAnalysisService implements OnDestroy {
   ): Promise<void> {
     if (!history || history.length === 0) return;
 
+    // If analysis is already running on the exact same move sequence, do not restart
+    if (this.isAnalyzing() && this.currentHistory.length === history.length) {
+      const isSame = this.currentHistory.every(
+        (m, idx) => m.san === history[idx]?.san && m.fen === history[idx]?.fen
+      );
+      if (isSame) {
+        if (playerRatings) {
+          this.setPlayerRatings(playerRatings);
+        }
+        return;
+      }
+    }
+
+    this.clearWatchdogTimer();
     this.currentRunId++;
 
     if (playerRatings) {
@@ -518,6 +582,7 @@ export class GameAnalysisService implements OnDestroy {
   }
 
   private finishWorkerAnalysis(): void {
+    this.clearWatchdogTimer();
     this.isAnalyzing.set(false);
     this.progress.set(100);
 
@@ -987,6 +1052,7 @@ export class GameAnalysisService implements OnDestroy {
     opening?: { eco: string; name: string } | null,
     playerRatings?: { white?: number; black?: number }
   ): void {
+    this.clearWatchdogTimer();
     this.currentRunId++;
     if (this.worker && this.isSearching) {
       this.worker.postMessage('stop');
@@ -1004,6 +1070,7 @@ export class GameAnalysisService implements OnDestroy {
   }
 
   clearAnalysis(): void {
+    this.clearWatchdogTimer();
     this.currentRunId++;
     if (this.worker && this.isSearching) {
       this.worker.postMessage('stop');

@@ -169,14 +169,18 @@ export class AnalyzerComponent implements OnInit, OnDestroy {
     const flip = params['flip'];
     const gameId = params['gameId'] || params['game'];
     const platform = params['platform'];
+    const targetUser = params['user'] || params['username'] || params['player'];
     let loaded = false;
 
     if (rawPgn) {
       const pgnToLoad = this.cleanPgnString(rawPgn);
       if (pgnToLoad === this.lastLoadedPgn && this.game.history().length > 0) {
+        if (flip !== undefined || targetUser !== undefined) {
+          this.applyBoardOrientation(flip, targetUser);
+        }
         return;
       }
-      const success = this.game.loadPgn(pgnToLoad);
+      const success = this.game.loadPgn(pgnToLoad, undefined, targetUser, flip);
       if (success) {
         this.lastLoadedPgn = pgnToLoad;
         this.settings.flashToast('GAME LOADED FOR ANALYSIS');
@@ -189,21 +193,23 @@ export class AnalyzerComponent implements OnInit, OnDestroy {
           fenToLoad = decodeURIComponent(rawFen).trim();
         }
       } catch {}
-      this.game.loadFen(fenToLoad);
+      this.game.loadFen(fenToLoad, flip, targetUser);
       this.settings.flashToast('POSITION LOADED');
       loaded = true;
     } else if (sample) {
       this.game.loadSampleGame(sample);
+      if (flip !== undefined || targetUser !== undefined) {
+        this.applyBoardOrientation(flip, targetUser);
+      }
       loaded = true;
     } else if (gameId) {
-      const targetUser = params['user'] || params['username'] || params['player'] || '';
+      const targetUserParam = targetUser || '';
       if (platform === 'lichess' || /^[a-zA-Z0-9]{8}$/.test(gameId)) {
         this.platformImporter
-          .fetchLichessGames(targetUser, gameId)
+          .fetchLichessGames(targetUserParam, gameId)
           .then((games) => {
             if (games.length > 0 && games[0].pgn) {
-              this.game.loadPgn(games[0].pgn);
-              this.applyBoardOrientation(flip, targetUser);
+              this.game.loadPgn(games[0].pgn, undefined, targetUserParam, flip);
               this.settings.flashToast('GAME LOADED FROM LICHESS');
               this.clearQueryParams();
             }
@@ -211,11 +217,10 @@ export class AnalyzerComponent implements OnInit, OnDestroy {
           .catch(() => {});
       } else {
         this.platformImporter
-          .fetchChessComGames(targetUser, gameId)
+          .fetchChessComGames(targetUserParam, gameId)
           .then((games) => {
             if (games.length > 0 && games[0].pgn) {
-              this.game.loadPgn(games[0].pgn);
-              this.applyBoardOrientation(flip, targetUser);
+              this.game.loadPgn(games[0].pgn, undefined, targetUserParam, flip);
               this.settings.flashToast('GAME LOADED FROM CHESS.COM');
               this.clearQueryParams();
             }
@@ -224,8 +229,9 @@ export class AnalyzerComponent implements OnInit, OnDestroy {
       }
     }
 
-    const targetUser = params['user'] || params['username'] || params['player'];
-    this.applyBoardOrientation(flip, targetUser);
+    if (flip !== undefined || targetUser !== undefined) {
+      this.applyBoardOrientation(flip, targetUser);
+    }
 
     if (loaded && (rawPgn || rawFen || sample)) {
       this.clearQueryParams();
@@ -257,7 +263,9 @@ export class AnalyzerComponent implements OnInit, OnDestroy {
 
       if (!pgn) return;
       if (pgn === this.lastLoadedPgn && this.game.history().length > 0) {
-        this.applyBoardOrientation(data.flip, targetUser);
+        if (data.flip !== undefined || targetUser !== undefined) {
+          this.applyBoardOrientation(data.flip, targetUser);
+        }
         try {
           if (window.parent && window.parent !== window) {
             window.parent.postMessage({ type: 'SABIO_PGN_LOADED', success: true }, '*');
@@ -265,10 +273,12 @@ export class AnalyzerComponent implements OnInit, OnDestroy {
         } catch {}
         return;
       }
-      const success = this.game.loadPgn(pgn);
+      const success = this.game.loadPgn(pgn, undefined, targetUser, data.flip);
       if (success) {
         this.lastLoadedPgn = pgn;
-        this.applyBoardOrientation(data.flip, targetUser);
+        if (data.flip !== undefined || targetUser !== undefined) {
+          this.applyBoardOrientation(data.flip, targetUser);
+        }
         this.settings.flashToast('GAME LOADED FOR ANALYSIS');
 
         // Acknowledge back to parent extension iframe
