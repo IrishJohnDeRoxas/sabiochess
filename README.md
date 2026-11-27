@@ -70,6 +70,8 @@ npm run build
 
 The official SabioChess Chrome Extension is live on the **[Chrome Web Store](https://chromewebstore.google.com/detail/sabiochess-chesscom-liche/kpecdkmnbheapnajbpaflejaaiehmdhn)**.
 
+https://github.com/user-attachments/assets/437387e4-185e-4f4d-bd20-3bb3e5850a3d
+
 The `extension/` directory contains the source code for the Manifest V3 extension.
 
 ### Dev Testing (Chess.com & Lichess):

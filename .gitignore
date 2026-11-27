@@ -30,6 +30,8 @@ yarn-error.log
 .history/*
 
 # Miscellaneous
+*.mp4
+*.mov
 /.angular/cache
 .sass-cache/
 /connect.lock

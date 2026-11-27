@@ -20,6 +20,8 @@ When you finish a game on Chess.com or Lichess, the extension automatically dete
 ### Chrome Web Store (Recommended)
 Install directly from the **[Chrome Web Store](https://chromewebstore.google.com/detail/sabiochess-chesscom-liche/kpecdkmnbheapnajbpaflejaaiehmdhn)**.
 
+https://github.com/user-attachments/assets/437387e4-185e-4f4d-bd20-3bb3e5850a3d
+
 ### Manual / Developer Mode Installation
 1. Open Google Chrome (or any Chromium browser like Brave, Edge, Arc).
 2. Go to `chrome://extensions/`.
