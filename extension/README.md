@@ -15,6 +15,9 @@ When you finish a game on Chess.com or Lichess, the extension automatically dete
 - **Slide-Over Sidebar Drawer**: Smooth slide-in sidebar overlay with expand, minimize, and full-tab opening capabilities.
 - **Zero-Config Instant Analysis**: Auto-passes game PGN and triggers engine review on load.
 
+### In Action
+https://github.com/user-attachments/assets/46a282aa-5848-4a2e-a45a-a9476e40f430
+
 ## Installation
 
 ### Chrome Web Store (Recommended)
