@@ -42,6 +42,8 @@ export class SettingsService {
   readonly isSupporter = signal<boolean>(DEFAULT_SETTINGS.isSupporter);
   readonly isSupportModalOpen = signal<boolean>(false);
   readonly isExtensionModalOpen = signal<boolean>(false);
+  readonly isExtensionBannerDismissed = signal<boolean>(false);
+  readonly isEmbedded = signal<boolean>(false);
 
   readonly toastMessage = signal<string | null>(null);
   private toastTimer: ReturnType<typeof setTimeout> | null = null;
@@ -57,6 +59,12 @@ export class SettingsService {
     this.loadSettings();
 
     if (typeof window !== 'undefined') {
+      try {
+        this.isEmbedded.set(window.parent !== window || window.self !== window.top);
+      } catch {
+        this.isEmbedded.set(true);
+      }
+
       window.addEventListener('message', (event: MessageEvent) => {
         if (event.data && event.data.type === 'SABIO_APPLY_SETTINGS' && event.data.settings) {
           this.applySettingsData(event.data.settings);
@@ -226,6 +234,15 @@ export class SettingsService {
     this.isExtensionModalOpen.set(false);
   }
 
+  dismissExtensionBanner(): void {
+    this.isExtensionBannerDismissed.set(true);
+    if (typeof localStorage !== 'undefined') {
+      try {
+        localStorage.setItem('sabiochess_ext_banner_dismissed', 'true');
+      } catch {}
+    }
+  }
+
   resetToDefaults(): void {
     this.appTheme.set(DEFAULT_SETTINGS.appTheme);
     this.boardTheme.set(DEFAULT_SETTINGS.boardTheme);
@@ -299,6 +316,7 @@ export class SettingsService {
   private loadSettings(): void {
     if (typeof localStorage === 'undefined') return;
     try {
+      this.isExtensionBannerDismissed.set(localStorage.getItem('sabiochess_ext_banner_dismissed') === 'true');
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return;
       const data = JSON.parse(raw) as Partial<UserSettings>;

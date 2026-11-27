@@ -4,7 +4,7 @@
  * Falls back to cache when offline.
  */
 
-const CACHE_NAME = 'sabiochess-v1';
+const CACHE_NAME = 'sabiochess-v2';
 
 // Core shell assets to pre-cache on install
 const PRECACHE_URLS = [

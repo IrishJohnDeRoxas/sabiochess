@@ -68,23 +68,6 @@
     </button>
   </form>
 
-  <!-- 1-Click Extension Video Tutorial Callout -->
-  <div class="px-2.5 py-1.5 bg-[#ECECD8]/60 dark:bg-[#262626] border border-[#222222]/30 dark:border-[#373A46] flex items-center justify-between gap-2 text-xs">
-    <div class="flex items-center gap-1.5 min-w-0">
-      <app-icon name="puzzle-piece" size="w-3.5 h-3.5 text-[#FF4F00] shrink-0"></app-icon>
-      <span class="font-body text-[11px] text-gray-700 dark:text-gray-300 truncate">Skip manual fetch with Chrome Extension</span>
-    </div>
-    <button
-      type="button"
-      (click)="settings.openExtensionModal()"
-      class="badge-brutal !py-0.5 !px-2 bg-[#FF4F00] text-white font-accent text-[10px] font-black uppercase tracking-wider flex items-center gap-1 cursor-pointer hover:opacity-90 shrink-0"
-      title="Watch 20s extension install tutorial video"
-    >
-      <app-icon name="play" size="w-2.5 h-2.5"></app-icon>
-      <span>TUTORIAL</span>
-    </button>
-  </div>
-
   <!-- Error Message Banner -->
   @if (errorMessage()) {
     <div class="bg-[#EF4444] text-white text-xs sm:text-sm font-accent p-2.5 border-2 border-[#222222] dark:border-black shadow-[2px_2px_0_0_#222222] dark:shadow-[2px_2px_0_0_#000000] flex items-center gap-2 font-bold">
