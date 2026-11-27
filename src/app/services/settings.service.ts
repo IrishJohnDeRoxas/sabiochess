@@ -41,6 +41,7 @@ export class SettingsService {
   readonly lichessUsername = signal<string>(DEFAULT_SETTINGS.lichessUsername);
   readonly isSupporter = signal<boolean>(DEFAULT_SETTINGS.isSupporter);
   readonly isSupportModalOpen = signal<boolean>(false);
+  readonly isExtensionModalOpen = signal<boolean>(false);
 
   readonly toastMessage = signal<string | null>(null);
   private toastTimer: ReturnType<typeof setTimeout> | null = null;
@@ -215,6 +216,14 @@ export class SettingsService {
 
   closeSupportModal(): void {
     this.isSupportModalOpen.set(false);
+  }
+
+  openExtensionModal(): void {
+    this.isExtensionModalOpen.set(true);
+  }
+
+  closeExtensionModal(): void {
+    this.isExtensionModalOpen.set(false);
   }
 
   resetToDefaults(): void {
