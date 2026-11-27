@@ -48,15 +48,6 @@ export class HeaderComponent {
     this.isMobileMenuOpen.set(false);
   }
 
-  openExtensionModal(): void {
-    this.settings.openExtensionModal();
-  }
-
-  openExtensionModalFromMobile(): void {
-    this.closeMobileMenu();
-    this.settings.openExtensionModal();
-  }
-
   openSupportModal(): void {
     this.closeMobileMenu();
     this.settings.openSupportModal();
