@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SettingsService } from './settings.service';
+import { SoundService } from './sound.service';
 
 describe('SettingsService', () => {
   let service: SettingsService;
@@ -93,5 +94,17 @@ describe('SettingsService', () => {
   it('should flash toast message and reset after duration', () => {
     service.flashToast('TEST MESSAGE', 1000);
     expect(service.toastMessage()).toBe('TEST MESSAGE');
+  });
+
+  it('should not fetch sound files during startup when memeSounds is disabled', () => {
+    const fetchSpy = vi.spyOn(globalThis, 'fetch');
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [SettingsService, SoundService],
+    });
+    TestBed.inject(SoundService);
+    TestBed.inject(SettingsService);
+    expect(fetchSpy).not.toHaveBeenCalled();
+    fetchSpy.mockRestore();
   });
 });

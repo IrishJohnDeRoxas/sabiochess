@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { PlayerInfo } from '../../services/chess-game.service';
 import { PlayerOutcomeStatus } from '../../utils/chess-outcome.util';
 import { IconComponent } from '../icon/icon.component';
+import { ChessPieceComponent } from '../chess-piece/chess-piece.component';
 
 @Component({
   selector: 'app-player-card',
   standalone: true,
-  imports: [CommonModule, IconComponent],
+  imports: [CommonModule, IconComponent, ChessPieceComponent],
   templateUrl: './player-card.component.html',
   styleUrls: ['./player-card.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

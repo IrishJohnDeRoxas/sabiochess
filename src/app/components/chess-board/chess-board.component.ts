@@ -3,12 +3,13 @@ import { CommonModule } from '@angular/common';
 import { ChessGameService, BoardSquareData } from '../../services/chess-game.service';
 import { SettingsService } from '../../services/settings.service';
 import { IconComponent, IconName } from '../icon/icon.component';
+import { ChessPieceComponent } from '../chess-piece/chess-piece.component';
 import { MoveClassification, getHeroIconForClass } from '../../models/analysis.model';
 
 @Component({
   selector: 'app-chess-board',
   standalone: true,
-  imports: [CommonModule, IconComponent],
+  imports: [CommonModule, IconComponent, ChessPieceComponent],
   templateUrl: './chess-board.component.html',
   styleUrls: ['./chess-board.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -19,11 +20,6 @@ export class ChessBoardComponent {
 
   onSquareClick(squareData: BoardSquareData): void {
     this.game.handleSquareClick(squareData.square);
-  }
-
-  getPieceSvgUrl(piece: { type: string; color: 'w' | 'b' } | null): string {
-    if (!piece) return '';
-    return `pieces/${piece.color}${piece.type.toUpperCase()}.svg`;
   }
 
   getHeroIcon(classification?: MoveClassification): IconName {

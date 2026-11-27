@@ -29,6 +29,14 @@ describe('ChessBoardComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should render all 32 starting pieces as inline SVGs without external img requests', () => {
+    const pieces = Array.from(fixture.nativeElement.querySelectorAll('app-chess-piece svg')) as SVGElement[];
+    const externalImages = fixture.nativeElement.querySelectorAll('img');
+    expect(pieces.length).toBe(32);
+    expect(externalImages.length).toBe(0);
+    expect(pieces.every((svg) => svg.children.length > 0)).toBe(true);
+  });
+
   it('should render annotation badge when move classification is available', () => {
     gameService.loadSampleGame('opera');
     analysisService.movesAnalysis.set([

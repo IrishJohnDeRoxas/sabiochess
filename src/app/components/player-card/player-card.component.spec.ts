@@ -19,6 +19,15 @@ describe('PlayerCardComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should render king avatar as inline SVG without external img requests', () => {
+    fixture.componentRef.setInput('color', 'b');
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelectorAll('app-chess-piece svg').length).toBe(1);
+    expect(compiled.querySelectorAll('img').length).toBe(0);
+  });
+
   it('should display player name, rating and title', () => {
     fixture.componentRef.setInput('player', {
       name: 'Hikaru Nakamura',

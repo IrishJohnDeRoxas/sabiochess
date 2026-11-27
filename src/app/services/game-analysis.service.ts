@@ -40,11 +40,15 @@ export class GameAnalysisService implements OnDestroy {
 
   private worker: Worker | null = null;
   private isWorkerReady = false;
+  private workerUciOk = false;
   private workerAvailable = false;
+  private workerInitAttempted = false;
 
   private liveWorker: Worker | null = null;
   private isLiveWorkerReady = false;
   private liveWorkerAvailable = false;
+  private liveWorkerTimer: ReturnType<typeof setTimeout> | null = null;
+  private isDestroyed = false;
   private currentLiveFen = '';
   private pendingLiveFen: string | null = null;
   private isLiveSearching = false;
@@ -310,11 +314,36 @@ export class GameAnalysisService implements OnDestroy {
   private analysisTimeoutTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {
-    this.initWorker();
-    this.initLiveWorker();
+    this.scheduleLiveWorkerInit();
+  }
+
+  private scheduleLiveWorkerInit(): void {
+    if (typeof window === 'undefined' || typeof Worker === 'undefined') {
+      this.liveWorkerAvailable = false;
+      return;
+    }
+
+    const start = () => {
+      this.liveWorkerTimer = null;
+      if (!this.isDestroyed) {
+        this.initLiveWorker();
+      }
+    };
+
+    if (typeof requestAnimationFrame === 'function') {
+      requestAnimationFrame(() => {
+        if (!this.isDestroyed) {
+          this.liveWorkerTimer = setTimeout(start, 0);
+        }
+      });
+    } else {
+      this.liveWorkerTimer = setTimeout(start, 0);
+    }
   }
 
   private initWorker(): void {
+    if (this.workerInitAttempted) return;
+    this.workerInitAttempted = true;
     if (typeof Worker === 'undefined') {
       this.workerAvailable = false;
       return;
@@ -328,6 +357,13 @@ export class GameAnalysisService implements OnDestroy {
         this.zone.run(() => {
           this.workerAvailable = false;
           this.isSearching = false;
+          if (this.isAnalyzing() && this.currentHistory.length > 0) {
+            this.clearWatchdogTimer();
+            void this.runHeuristicAnalysis(this.currentHistory, this.detectedOpening()).then(() => {
+              this.resolveAnalysisPromise?.();
+              this.resolveAnalysisPromise = null;
+            });
+          }
         });
       };
       this.worker.postMessage('uci');
@@ -339,6 +375,7 @@ export class GameAnalysisService implements OnDestroy {
 
   private handleWorkerMessage(message: string): void {
     if (message === 'uciok') {
+      this.workerUciOk = true;
       this.worker?.postMessage('isready');
     } else if (message === 'readyok') {
       this.isWorkerReady = true;
@@ -564,14 +601,20 @@ export class GameAnalysisService implements OnDestroy {
     this.currentEvals = new Array(history.length + 1);
     this.currentAnalyzeIndex = 0;
 
+    if (!this.worker && !this.workerInitAttempted) {
+      this.initWorker();
+    }
+
     if (this.workerAvailable && this.worker) {
       if (this.isSearching) {
         this.worker.postMessage('stop');
         this.isSearching = false;
       }
       this.isWorkerReady = false;
-      this.worker.postMessage('ucinewgame');
-      this.worker.postMessage('isready');
+      if (this.workerUciOk) {
+        this.worker.postMessage('ucinewgame');
+        this.worker.postMessage('isready');
+      }
       return new Promise((resolve) => {
         this.resolveAnalysisPromise = resolve;
       });
@@ -1387,6 +1430,11 @@ export class GameAnalysisService implements OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.isDestroyed = true;
+    if (this.liveWorkerTimer) {
+      clearTimeout(this.liveWorkerTimer);
+      this.liveWorkerTimer = null;
+    }
     if (this.worker) {
       this.worker.postMessage('quit');
       this.worker.terminate();

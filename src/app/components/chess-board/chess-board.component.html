@@ -32,11 +32,11 @@
 
         <!-- Piece SVG -->
         @if (square.piece) {
-          <img
-            [src]="getPieceSvgUrl(square.piece)"
-            [alt]="(square.piece.color === 'w' ? 'White ' : 'Black ') + square.piece.type"
+          <app-chess-piece
+            [color]="square.piece.color"
+            [type]="square.piece.type"
+            [label]="(square.piece.color === 'w' ? 'White ' : 'Black ') + square.piece.type"
             class="piece-img select-none pointer-events-none"
-            draggable="false"
           />
         }
 

@@ -47,6 +47,7 @@ export class SettingsService {
 
   readonly toastMessage = signal<string | null>(null);
   private toastTimer: ReturnType<typeof setTimeout> | null = null;
+  private memePreloadScheduled = false;
 
   readonly isDarkMode = computed(() => this.appTheme() === 'dark');
 
@@ -71,6 +72,13 @@ export class SettingsService {
         }
       });
     }
+
+    // Lazily preload meme sound clips only after startup idle if meme audio is enabled
+    effect(() => {
+      if (this.memeSounds() && (this.memePack() === 'meme' || this.memePack() === 'shuffle')) {
+        this.scheduleMemeSoundPreload();
+      }
+    });
 
     // Effect to apply .dark class to HTML element
     effect(() => {
@@ -311,6 +319,22 @@ export class SettingsService {
     if (data.chesscomUsername !== undefined && data.chesscomUsername !== this.chesscomUsername()) this.chesscomUsername.set(data.chesscomUsername);
     if (data.lichessUsername !== undefined && data.lichessUsername !== this.lichessUsername()) this.lichessUsername.set(data.lichessUsername);
     if (typeof data.isSupporter === 'boolean' && data.isSupporter !== this.isSupporter()) this.isSupporter.set(data.isSupporter);
+  }
+
+  private scheduleMemeSoundPreload(): void {
+    if (this.memePreloadScheduled || typeof window === 'undefined') return;
+    this.memePreloadScheduled = true;
+
+    const preload = () => this.soundService.preloadMemeSounds();
+    const win = window as Window & {
+      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+    };
+
+    if (typeof win.requestIdleCallback === 'function') {
+      win.requestIdleCallback(preload, { timeout: 2500 });
+    } else {
+      setTimeout(preload, 1500);
+    }
   }
 
   private loadSettings(): void {

@@ -46,7 +46,21 @@ export class OpeningBookService {
   private isLoaded = false;
 
   constructor() {
-    this.loadOpeningsDatabase();
+    this.scheduleLoadOpeningsDatabase();
+  }
+
+  private scheduleLoadOpeningsDatabase(): void {
+    if (typeof window === 'undefined') return;
+
+    const load = () => {
+      void this.loadOpeningsDatabase();
+    };
+
+    if (typeof requestAnimationFrame === 'function') {
+      requestAnimationFrame(() => setTimeout(load, 0));
+    } else {
+      setTimeout(load, 0);
+    }
   }
 
   private async loadOpeningsDatabase(): Promise<void> {

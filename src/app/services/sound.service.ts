@@ -163,6 +163,7 @@ export class SoundService {
   private lastPlayedUrlByClassification = new Map<MoveClassification, string>();
   private activeTracks: ActiveAudioTrack[] = [];
   private currentAudio: HTMLAudioElement | null = null;
+  private hasPreloadedMemeSounds = false;
 
   constructor() {
     if (typeof window !== 'undefined') {
@@ -191,9 +192,6 @@ export class SoundService {
           }
         });
       }
-
-      // Preload sound buffers across all sound packs in background silently
-      this.preloadAllSounds();
     }
   }
 
@@ -302,16 +300,31 @@ export class SoundService {
     }
   }
 
-  private preloadAllSounds(): void {
-    const packs = [MEME_POOLS, ARCADE_POOLS, CARTOON_POOLS, CLASSICAL_POOLS];
-    for (const poolMap of packs) {
-      const classifications = Object.keys(poolMap) as MoveClassification[];
-      for (const c of classifications) {
-        const tracks = poolMap[c] || [];
-        for (const t of tracks) {
-          this.loadAudioBuffer(t.url).catch(() => {});
-        }
+  /**
+   * Lazily preload meme audio files in small batches when meme sounds are active.
+   * Arcade, cartoon, and classical packs use procedural Web Audio synth and need no downloads.
+   */
+  preloadMemeSounds(): void {
+    if (this.hasPreloadedMemeSounds || typeof window === 'undefined' || !window.fetch) {
+      return;
+    }
+    this.hasPreloadedMemeSounds = true;
+
+    const urls = Object.values(MEME_POOLS)
+      .flat()
+      .map((t) => t.url);
+
+    let nextIndex = 0;
+    const workerCount = Math.min(3, urls.length);
+    const runNext = async (): Promise<void> => {
+      while (nextIndex < urls.length) {
+        const url = urls[nextIndex++];
+        await this.loadAudioBuffer(url).catch(() => {});
       }
+    };
+
+    for (let i = 0; i < workerCount; i++) {
+      void runNext();
     }
   }
 

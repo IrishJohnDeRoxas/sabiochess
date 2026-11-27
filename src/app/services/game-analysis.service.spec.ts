@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { GameAnalysisService } from './game-analysis.service';
 import { OpeningBookService } from './opening-book.service';
@@ -131,6 +131,27 @@ describe('GameAnalysisService', () => {
     // Up 98% win chance / +900 cp, sacrificing a piece is not a brilliancy
     const classification = svc.classifyMove(0, -50, true, 98, true, 96, 900);
     expect(classification).toBe('best');
+  });
+
+  it('should not spawn Stockfish workers synchronously on startup', () => {
+    const postMessage = vi.fn();
+    const terminate = vi.fn();
+    const workerSpy = vi.fn(function (this: any) {
+      this.postMessage = postMessage;
+      this.terminate = terminate;
+    });
+    vi.stubGlobal('Worker', workerSpy);
+    try {
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        providers: [GameAnalysisService, OpeningBookService, SettingsService],
+      });
+      const freshService = TestBed.inject(GameAnalysisService);
+      expect(workerSpy).not.toHaveBeenCalled();
+      freshService.ngOnDestroy();
+    } finally {
+      vi.unstubAllGlobals();
+    }
   });
 });
 
